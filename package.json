@@ -1,0 +1,30 @@
+{
+	"name": "leaflet-ivv",
+	"version": "0.1.0",
+	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
+	"dependencies": {"leaflet": "~0.6"},
+	"devDependencies": {
+		"jshint": "~2.1.4",
+		"mocha": "~1.10.0",
+		"happen": "~0.1.2",
+		"karma": "~0.8.6",
+		"uglify-js": "~2.3.6",
+		"jake": "~0.5.16"
+	},
+	"main": "dist/leaflet.ivv.js",
+	"scripts": {
+		"test": "jake test",
+		"prepublish": "jake"
+	},
+	"license" : "GPL",
+	"repository": {
+		"type": "svn",
+		"url": "https://astromatic.net/privsvn/software/leafview"
+	},
+  "contributors": [
+	"Emmanuel Bertin <bertin@iap.fr> (http://www.astromatic.net/team/emmanuel)",
+	"Chiara Marmo <chiara.marmo@u-psud.fr> (http://planeto.geol.u-psud.fr/Chiara-Marmo.html?lang=en)",
+	"Ruven Pillay <ruven@c2rmf.cnrs.fr> (http://iipimage.sourceforge.net/contact)"
+	],
+	"keywords": ["wcs", "astronomy"]
+}
