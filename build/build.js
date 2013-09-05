@@ -1,9 +1,9 @@
 var fs = require('fs'),
     jshint = require('jshint'),
     UglifyJS = require('uglify-js'),
-
     deps = require('./deps.js').deps,
-    hintrc = require('./hintrc.js').config;
+    hintrc = require('./hintrc.js').config,
+		$ = require('jquery-browser');
 
 function lintFiles(files) {
 
@@ -119,8 +119,9 @@ exports.build = function (compsBase32, buildName) {
 	var copy = fs.readFileSync('src/copyright.js', 'utf8'),
 	    intro = '(function (window, document, undefined) {',
 	    outro = '}(window, document));',
-	    newSrc = copy + intro + combineFiles(files) + outro,
-
+			// newSrc = copy + intro + combineFiles(files) + outro,
+			// Removed intro and outro to make jQuery support easier
+	    newSrc = copy + combineFiles(files),
 	    pathPart = 'dist/leaflet.ivv' + (buildName ? '-' + buildName : ''),
 	    srcPath = pathPart + '-src.js',
 

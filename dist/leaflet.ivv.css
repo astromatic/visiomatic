@@ -1,0 +1,95 @@
+/*
+# CSS definitions
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud,
+#                        Ruven Pillay - C2RMF/CNRS
+#
+#	License:		GNU General Public License
+#
+#	This code is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#	This code is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#	You should have received a copy of the GNU General Public License
+#	along with this code. If not, see <http://www.gnu.org/licenses/>.
+#
+#	Last modified:		05/09/2013
+*/
+.leaflet-control-zoom-in {
+	background-image: url(icon-magnifyplus.svg);
+	color: rgba(255,255,255,0) !important;
+	}
+
+.leaflet-control-zoom-out {
+	background-image: url(icon-magnifyminus.svg);
+	color: rgba(255,255,255,0) !important;
+	}
+
+
+.leaflet-control-iipimage-button {
+	background-image: url(icon-contrast.svg);
+}
+
+.leaflet-control-iipplot-button {
+	background-image: url(icon-plot.svg);
+}
+
+.leaflet-control-iipimage .leaflet-control-iipimage-dialog,
+.leaflet-control-iipimage-expanded .leaflet-control-iipimage-button,
+.leaflet-control-iipplot .leaflet-control-iipplot-dialog,
+.leaflet-control-iipplot-expanded .leaflet-control-iipplot-button {
+	display: none;
+	}
+
+.leaflet-control-iipimage-expanded .leaflet-control-iipimage-dialog,
+.leaflet-control-iipplot-expanded .leaflet-control-iipplot-dialog
+	{
+	display: block;
+	position: relative;
+	}
+
+.leaflet-control-iipimage-expanded,
+.leaflet-control-iipplot-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+}
+
+.ui-spinner-down {
+	right: 28px;
+	top: 0px;
+}
+.ui-spinner-up {
+	right: 0px;
+}
+
+.ui-spinner-down .icon-minus {
+	background-image: url(icon-minus.svg);
+	margin: 2px;
+	top: 0px;
+	left: 0px;
+  width: 24px;
+  height: 24px;
+}
+.ui-spinner-up .icon-plus {
+	background-image: url(icon-plus.svg);
+	margin: 2px;
+	top: 0px;
+	left: 0px;
+  width: 24px;
+  height: 24px;
+}
+
+
+.ui-icon {
+    width: 26px;
+    height: 26px;
+}
+

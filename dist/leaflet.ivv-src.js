@@ -1,5 +1,5 @@
 /*
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC
+#	Copyright:    (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
@@ -17,27 +17,14 @@
 #	along with this plug-in. If not, see <http://www.gnu.org/licenses/>.
 */
 
-(function (window, document, undefined) {/*
+/*
 # L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
 # (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud
-#
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified:		26/07/2013
 */
@@ -167,21 +154,8 @@ L.Projection.WCS.ZEA = L.extend({}, L.Projection.WCS.zenithal, {
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud
-#
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified:		26/07/2013
 */
@@ -342,99 +316,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getIIPMetaData: function (url) {
+		this.requestURI(url.replace(/\&.*$/g, '') +
+			'&obj=IIP,1.0&obj=Max-size&obj=Tile-size' +
+			'&obj=Resolution-number&obj=Min-Max-sample-values',
+			'getting IIP metadata',
+			this._parseMetadata, this);
+	},
 
-		var httpRequest;
-		var _this = this;
-
-		function _getRequest() {
-			if (httpRequest.readyState === 4) {
-				if (httpRequest.status === 200) {
-					var response = httpRequest.responseText;
-					var tmp = response.split('Max-size');
-					if (!tmp[1]) {
-						alert('Error: Unexpected response from IIP server ' + _this.server);
-					}
-					var size = tmp[1].split(' ');
-					var maxsize = {
-						x: parseInt(size[0].substring(1, size[0].length), 10),
-						y: parseInt(size[1], 10)
-					};
-					tmp = response.split('Tile-size');
-					size = tmp[1].split(' ');
-					_this.iipTileSize = {
-						x: parseInt(size[0].substring(1, size[0].length), 10),
-						y: parseInt(size[1], 10)
-					};
-					tmp = response.split('Resolution-number');
-					var maxzoom = parseInt(tmp[1].substring(1, tmp[1].length), 10) - 1;
-					// Find the lowest and highest zoom levels
-					var gridsize = {x: 2, y: 2};
-					for (var z = 0; z <= maxzoom && gridsize.x > 1 && gridsize.y > 1; z++) {
-						var imagesize = {
-							x: Math.floor(maxsize.x / Math.pow(2, maxzoom + z)),
-							y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
-						};
-						gridsize = {
-							x: Math.ceil(imagesize.x / _this.iipTileSize.x),
-							y: Math.ceil(imagesize.y / _this.iipTileSize.y)
-						};
-					}
-					_this.iipMinZoom = z - 1;
-					if (_this.iipMinZoom > _this.options.minZoom) {
-						_this.options.minZoom = _this.iipMinZoom;
-					}
-					_this.iipMaxZoom = _this.iipMinZoom + maxzoom;
-					if (!_this.options.maxZoom) {
-						_this.options.maxZoom = _this.iipMaxZoom + 2;
-					}
-					if (!_this.options.maxNativeZoom) {
-						_this.options.maxNativeZoom = _this.iipMaxZoom;
-					}
-					// Set grid sizes
-					for (z = 0; z <= _this.iipMaxZoom; z++) {
-						_this.iipImageSize[z] = {
-							x: Math.floor(maxsize.x / Math.pow(2, _this.iipMaxZoom - z)),
-							y: Math.floor(maxsize.y / Math.pow(2, _this.iipMaxZoom - z))
-						};
-						_this.iipGridSize[z] = {
-							x: Math.ceil(_this.iipImageSize[z].x / _this.iipTileSize.x),
-							y: Math.ceil(_this.iipImageSize[z].y / _this.iipTileSize.y)
-						};
-					}
-					for (z = _this.iipMaxZoom; z <= _this.options.maxZoom; z++) {
-						_this.iipGridSize[z] = _this.iipGridSize[_this.iipMaxZoom];
-					}
-					tmp = response.split('Min-Max-sample-values:');
-					if (!tmp[1]) {
-						alert('Error: Unexpected response from server ' + this.server);
-					}
-					var minmax = tmp[1].split(' ');
-					var arraylen = Math.floor(minmax.length / 2);
-					var n = 0;
-					for (var l = 0; l < minmax.length, n < arraylen; l++) {
-						if (minmax[l] !== '') {
-							_this.iipMinValue[n] = parseFloat(minmax[l]);
-							n++;
-						}
-					}
-					var nn = 0;
-					for (var ll = l; ll < minmax.length; ll++) {
-						if (minmax[l] !== '') {
-							_this.iipMaxValue[nn] = parseFloat(minmax[l]);
-							nn++;
-						}
-					}
-
-					if (_this.options.bounds) {
-						_this.options.bounds = L.latLngBounds(_this.options.bounds);
-					}
-					_this.iipMetaReady = true;
-					_this.fire('metaload');
-				} else {
-					alert('There was a problem with the IIP metadata request.');
-				}
-			}
-		}
+	requestURI: function (uri, purpose, action) {
+		var	context = this,
+			httpRequest;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -450,14 +341,105 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			}
 		}
 		if (!httpRequest) {
-			alert('Giving up: Cannot create an XMLHTTP instance for getting IIP metadata');
+			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
 			return false;
 		}
-		httpRequest.onreadystatechange = _getRequest;
-		httpRequest.open('GET', url.replace(/\&.*$/g, '') +
-			'&obj=IIP,1.0&obj=Max-size&obj=Tile-size' +
-			'&obj=Resolution-number&obj=Min-Max-sample-values');
+		httpRequest.onreadystatechange = function () {
+			action(context, httpRequest);
+		};
+		httpRequest.open('GET', uri);
 		httpRequest.send();
+	},
+
+	_parseMetadata: function (layer, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText;
+				var tmp = response.split('Max-size');
+				if (!tmp[1]) {
+					alert('Error: Unexpected response from IIP server ' +
+					 layer._url.replace(/\?.*$/g, ''));
+				}
+				var size = tmp[1].split(' ');
+				var maxsize = {
+					x: parseInt(size[0].substring(1, size[0].length), 10),
+					y: parseInt(size[1], 10)
+				};
+				tmp = response.split('Tile-size');
+				size = tmp[1].split(' ');
+				layer.iipTileSize = {
+					x: parseInt(size[0].substring(1, size[0].length), 10),
+					y: parseInt(size[1], 10)
+				};
+				tmp = response.split('Resolution-number');
+				var maxzoom = parseInt(tmp[1].substring(1, tmp[1].length), 10) - 1;
+				// Find the lowest and highest zoom levels
+				var gridsize = {x: 2, y: 2};
+				for (var z = 0; z <= maxzoom && gridsize.x > 1 && gridsize.y > 1; z++) {
+					var imagesize = {
+						x: Math.floor(maxsize.x / Math.pow(2, maxzoom + z)),
+						y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
+					};
+					gridsize = {
+						x: Math.ceil(imagesize.x / layer.iipTileSize.x),
+						y: Math.ceil(imagesize.y / layer.iipTileSize.y)
+					};
+				}
+				layer.iipMinZoom = z - 1;
+				if (layer.iipMinZoom > layer.options.minZoom) {
+					layer.options.minZoom = layer.iipMinZoom;
+				}
+				layer.iipMaxZoom = layer.iipMinZoom + maxzoom;
+				if (!layer.options.maxZoom) {
+					layer.options.maxZoom = layer.iipMaxZoom + 2;
+				}
+				if (!layer.options.maxNativeZoom) {
+					layer.options.maxNativeZoom = layer.iipMaxZoom;
+				}
+				// Set grid sizes
+				for (z = 0; z <= layer.iipMaxZoom; z++) {
+					layer.iipImageSize[z] = {
+						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
+						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
+					};
+					layer.iipGridSize[z] = {
+						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
+						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
+					};
+				}
+				for (z = layer.iipMaxZoom; z <= layer.options.maxZoom; z++) {
+					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
+				}
+				tmp = response.split('Min-Max-sample-values:');
+				if (!tmp[1]) {
+					alert('Error: Unexpected response from server ' + this.server);
+				}
+				var minmax = tmp[1].split(' ');
+				var arraylen = Math.floor(minmax.length / 2);
+				var n = 0;
+				for (var l = 0; l < minmax.length, n < arraylen; l++) {
+					if (minmax[l] !== '') {
+						layer.iipMinValue[n] = parseFloat(minmax[l]);
+						n++;
+					}
+				}
+				var nn = 0;
+				for (var ll = l; ll < minmax.length; ll++) {
+					if (minmax[l] !== '') {
+						layer.iipMaxValue[nn] = parseFloat(minmax[l]);
+						nn++;
+					}
+				}
+
+				if (layer.options.bounds) {
+					layer.options.bounds = L.latLngBounds(layer.options.bounds);
+				}
+				layer.iipMetaReady = true;
+				layer.fire('metaload');
+			} else {
+				alert('There was a problem with the IIP metadata request.');
+			}
+		}
 	},
 
 	addTo: function (map) {
@@ -475,6 +457,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_addToMap: function () {
 		this._premap.addLayer(this);
+		this._premap = undefined;
 	},
 
 	_getTileSizeFac: function () {
@@ -619,33 +602,100 @@ L.tileLayer.iip = function (url, options) {
 
 
 /*
-# L.Control.AdjustLayers adjusts the rendering of an IIP layer
+# L.Control.IIP adjusts the rendering of an IIP layer
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
-#
-# derived from the L.Control.ActiveLayers plugin
-# (see https://github.com/vogdb/Leaflet.ActiveLayers)
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
-#
-#	Last modified:		26/07/2013
+#	Last modified:		01/09/2013
 */
-L.Control.AdjustLayers = L.Control.Layers.extend({
+L.Control.IIP = L.Control.extend({
+	options: {
+		title: 'a control related to IIPImage',
+		collapsed: true,
+		position: 'topleft',
+	},
+
+	initialize: function (baseLayers,  options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iipimage';
+		this._layers = baseLayers;
+	},
+
+	onAdd: function (map) {
+		var className = this._className,
+			container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+		container.setAttribute('aria-haspopup', true);
+
+		if (!L.Browser.touch) {
+			L.DomEvent.disableClickPropagation(container);
+			L.DomEvent.on(container, 'mousewheel', L.DomEvent.stopPropagation);
+		} else {
+			L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
+		}
+
+		this._dialog = L.DomUtil.create('div', className + '-dialog', container);
+		if (this.options.collapsed) {
+			if (!L.Browser.android) {
+				L.DomEvent
+				    .on(container, 'mouseover', this._expand, this)
+				    .on(container, 'mouseout', this._collapse, this);
+			}
+
+			var link = this._link = L.DomUtil.create('a', className + '-button leaflet-bar', container);
+			link.href = '#';
+			link.title = this.options.title;
+
+			if (L.Browser.touch) {
+				L.DomEvent
+				    .on(link, 'click', L.DomEvent.stop)
+				    .on(link, 'click', this._expand, this);
+			}
+			else {
+				L.DomEvent.on(link, 'focus', this._expand, this);
+			}
+
+			this._map.on('click', this._collapse, this);
+			// TODO keyboard accessibility
+		} else {
+			this._expand();
+		}
+
+		this._checkLayer();
+
+		return	this._container;
+	},
+
+	_checkLayer: function () {
+		var layer = this._layer = this._findActiveBaseLayer();
+		if (layer) {
+			this._initDialog();
+		} else if (this._prelayer) {
+			// Layer metadata are not ready yet: listen for 'metaload' event
+			this._prelayer.once('metaload', this._checkLayer, this);
+		}
+	},
+
+	_initDialog: function () {
+		var className = this._className,
+			container = this._container,
+			dialog = this._dialog,
+			link = this._link,
+			layer = this._layer;
+    // Setup the rest of the dialog window here
+	},
+
+	_expand: function () {
+		L.DomUtil.addClass(this._container, this._className + '-expanded');
+	},
+
+	_collapse: function () {
+		this._container.className = this._container.className.replace(' ' + this._className + '-expanded', '');
+	},
 
   /**
 * Get currently active base layer on the map
@@ -661,131 +711,21 @@ L.Control.AdjustLayers = L.Control.Layers.extend({
 * @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
 * and l @see #getActiveBaseLayer jsdoc.
 */
-	getActiveOverlayLayers: function () {
-		return this._activeOverlayLayers;
-	},
-
-	onAdd: function (map) {
-		var container = L.Control.Layers.prototype.onAdd.call(this, map);
-
-//    this._activeBaseLayer = this._findActiveBaseLayer();
-//    this._activeOverlayLayers = this._findActiveOverlayLayers();
-		return container;
-	},
 
 	_findActiveBaseLayer: function () {
 		var layers = this._layers;
-		for (var layerId in layers) {
-			if (this._layers.hasOwnProperty(layerId)) {
-				var layer = layers[layerId];
-				if (!layer.overlay && this._map.hasLayer(layer.layer)) {
+		this._prelayer = undefined;
+		for (var layername in layers) {
+			var layer = layers[layername];
+			if (!layer.overlay) {
+				if (layer._premap) {
+					this._prelayer = layer;
+				} else if (this._map.hasLayer(layer) && layer.iipContrast) {
 					return layer;
 				}
 			}
 		}
-		throw new Error('Control doesn\'t have any active base layer!');
-	},
-
-	_findActiveOverlayLayers: function () {
-		var result = {};
-		var layers = this._layers;
-		for (var layerId in layers) {
-			if (this._layers.hasOwnProperty(layerId)) {
-				var layer = layers[layerId];
-				if (layer.overlay && this._map.hasLayer(layer.layer)) {
-					result[layerId] = layer;
-				}
-			}
-		}
-		return result;
-	},
-
-	_onInputClick: function () {
-		var i, input, obj,
-			inputs = this._form.getElementsByClassName('leaflet-control-layers-selector'),
-			inputsLen = inputs.length,
-			baseLayer;
-
-		this._handlingClick = true;
-
-		for (i = 0; i < inputsLen; i++) {
-			input = inputs[i];
-			obj = this._layers[input.layerId];
-
-			if (input.checked && !this._map.hasLayer(obj.layer)) {
-				this._map.addLayer(obj.layer);
-				if (!obj.overlay) {
-					baseLayer = obj.layer;
-					this._activeBaseLayer = obj;
-				} else {
-					this._activeOverlayLayers[input.layerId] = obj;
-				}
-			} else if (!input.checked && this._map.hasLayer(obj.layer)) {
-				this._map.removeLayer(obj.layer);
-				if (obj.overlay) {
-					delete this._activeOverlayLayers[input.layerId];
-				}
-			}
-		}
-
-		if (baseLayer) {
-			this._map.setZoom(this._map.getZoom());
-			this._map.fire('baselayerchange', {layer: baseLayer});
-		}
-
-		this._handlingClick = false;
-	},
-
-	_addItem: function (obj) {
-		var	_this = this;
-
-		var label = document.createElement('div'),
-				input,
-				checked = this._map.hasLayer(obj.layer);
-
-		if (obj.overlay) {
-			input = document.createElement('input');
-			input.type = 'checkbox';
-			input.className = 'leaflet-control-layers-selector';
-			input.defaultChecked = checked;
-		} else {
-			input = this._createRadioElement('leaflet-base-layers', checked);
-		}
-
-		input.layerId = L.stamp(obj.layer);
-
-		L.DomEvent.on(input, 'click', this._onInputClick, this);
-
-		var name = document.createElement('span');
-		name.innerHTML = ' ' + obj.name + ' ';
-		label.appendChild(input);
-		label.appendChild(name);
-
-		if (!obj.overlay) {
-			var	mininput = document.createElement('input');
-			mininput.className = 'leaflet-minValue';
-			mininput.type = 'text';
-			mininput.value = String(obj.layer.iipMinValue[0]);
-			mininput.layer = obj.layer;
-			label.appendChild(mininput);
-			L.DomEvent.on(mininput, 'change', function () {
-				_this._onInputChange(mininput, 'iipMinValue[0]');
-			}, this);
-
-			var	maxinput = document.createElement('input');
-			maxinput.className = 'leaflet-minValue';
-			maxinput.type = 'text';
-			maxinput.value = String(obj.layer.iipMaxValue[0]);
-			maxinput.layer = obj.layer;
-			label.appendChild(maxinput);
-			L.DomEvent.on(maxinput, 'change', function () {
-				_this._onInputChange(maxinput, 'iipMaxValue[0]');
-			}, this);
-		}
-
-		var container = obj.overlay ? this._overlaysList : this._baseLayersList;
-		container.appendChild(label);
-		return label;
+		return undefined;
 	},
 
 	_onInputChange:	function (input, pname) {
@@ -800,10 +740,165 @@ L.Control.AdjustLayers = L.Control.Layers.extend({
 
 });
 
-L.control.adjustLayers = function (baseLayers, overlays, options) {
-	return new L.Control.AdjustLayers(baseLayers, overlays, options);
+L.control.iip = function (baseLayers, options) {
+	return new L.Control.IIP(baseLayers, options);
 };
 
 
 
-}(window, document));
+/*
+# L.Control.IIP.image adjusts the rendering of an IIP layer
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				         Chiara Marmo - IDES/Paris-Sud
+#
+#	License:		GNU General Public License
+#
+#	This code is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#	This code is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#	You should have received a copy of the GNU General Public License
+#	along with this code. If not, see <http://www.gnu.org/licenses/>.
+#
+#	Last modified:		05/09/2013
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery-browser');
+}
+
+L.Control.IIP.Image = L.Control.IIP.extend({
+	options: {
+		title: 'Image adjustment',
+		collapsed: true,
+		position: 'topleft',
+	},
+
+	initialize: function (baseLayers,  options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iipimage';
+		this._layers = baseLayers;
+	},
+
+	_initDialog: function () {
+
+		var _this = this,
+			className = this._className,
+			dialog = this._dialog,
+			layer = this._layer;
+		this._min = L.DomUtil.create('div', className + '-min', dialog);
+		this._max = L.DomUtil.create('div', className + '-max', dialog);
+		this._separator = L.DomUtil.create('div', className + '-separator', dialog);
+
+		var step = ((layer.iipMaxValue[0] - layer.iipMinValue[0]) / 100.0).toPrecision(1);
+		var	mininput = document.createElement('input');
+		mininput.className = 'leaflet-minValue';
+		mininput.type = 'text';
+		mininput.value = String(layer.iipMinValue[0]);
+		mininput.layer = layer;
+		this._min.appendChild(mininput);
+		$('.leaflet-minValue').spinner({
+			stop: function (event, ui) {
+				_this._onInputChange(mininput, 'iipMinValue[0]');
+			},
+			icons: { down: 'icon-minus', up: 'icon-plus' },
+			step: step
+		});
+		L.DomEvent.on(mininput, 'change', function () {
+			_this._onInputChange(mininput, 'iipMinValue[0]');
+		}, this);
+
+		var	maxinput = document.createElement('input');
+		maxinput.className = 'leaflet-maxValue';
+		maxinput.type = 'text';
+		maxinput.value = String(layer.iipMaxValue[0]);
+		maxinput.layer = layer;
+		this._max.appendChild(maxinput);
+		$('.leaflet-maxValue').spinner({
+			stop: function (event, ui) {
+				_this._onInputChange(maxinput, 'iipMaxValue[0]');
+			},
+			icons: { down: 'icon-minus', up: 'icon-plus' },
+			step: step
+		});
+		L.DomEvent.on(maxinput, 'change', function () {
+			_this._onInputChange(maxinput, 'iipMaxValue[0]');
+		}, this);
+
+	},
+
+});
+
+L.control.iip.image = function (baseLayers, options) {
+	return new L.Control.IIP.Image(baseLayers, options);
+};
+
+
+
+/*
+# L.Control.IIP.Plot manages plots related to IIP layers
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                    Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		05/09/2013
+*/
+L.Control.IIP.Plot = L.Control.IIP.extend({
+	options: {
+		title: 'Image adjustment',
+		collapsed: true,
+		position: 'topleft',
+	},
+
+	initialize: function (baseLayers,  options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iipplot';
+		this._layers = baseLayers;
+	},
+
+	_initDialog: function () {
+		var className = this._className,
+			dialog = this._dialog,
+			layer = this._layer;
+		this._profile = L.DomUtil.create('div', className + '-profile', dialog);
+		var	profinput = document.createElement('input');
+		profinput.className = 'leaflet-profile';
+		profinput.type = 'button';
+		profinput.layer = layer;
+		this._profile.appendChild(profinput);
+		L.DomEvent.on(profinput, 'click', this.getProfile, this);
+	},
+
+	getProfile: function (e) {
+		this._layer.requestURI(this._layer._url.replace(/\&.*$/g, '') +
+			'&PFL=9:20,100-9000,2000',
+			'getting IIP layer profile',
+			this._parseProfile, this);
+	},
+
+	_parseProfile: function (plot, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText;
+			}
+		}
+	}
+});
+
+L.control.iip.plot = function (baseLayers, options) {
+	return new L.Control.IIP.Plot(baseLayers, options);
+};
+
+
+

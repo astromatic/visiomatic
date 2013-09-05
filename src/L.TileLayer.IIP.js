@@ -86,99 +86,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getIIPMetaData: function (url) {
+		this.requestURI(url.replace(/\&.*$/g, '') +
+			'&obj=IIP,1.0&obj=Max-size&obj=Tile-size' +
+			'&obj=Resolution-number&obj=Min-Max-sample-values',
+			'getting IIP metadata',
+			this._parseMetadata, this);
+	},
 
-		var httpRequest;
-		var _this = this;
-
-		function _getRequest() {
-			if (httpRequest.readyState === 4) {
-				if (httpRequest.status === 200) {
-					var response = httpRequest.responseText;
-					var tmp = response.split('Max-size');
-					if (!tmp[1]) {
-						alert('Error: Unexpected response from IIP server ' + _this.server);
-					}
-					var size = tmp[1].split(' ');
-					var maxsize = {
-						x: parseInt(size[0].substring(1, size[0].length), 10),
-						y: parseInt(size[1], 10)
-					};
-					tmp = response.split('Tile-size');
-					size = tmp[1].split(' ');
-					_this.iipTileSize = {
-						x: parseInt(size[0].substring(1, size[0].length), 10),
-						y: parseInt(size[1], 10)
-					};
-					tmp = response.split('Resolution-number');
-					var maxzoom = parseInt(tmp[1].substring(1, tmp[1].length), 10) - 1;
-					// Find the lowest and highest zoom levels
-					var gridsize = {x: 2, y: 2};
-					for (var z = 0; z <= maxzoom && gridsize.x > 1 && gridsize.y > 1; z++) {
-						var imagesize = {
-							x: Math.floor(maxsize.x / Math.pow(2, maxzoom + z)),
-							y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
-						};
-						gridsize = {
-							x: Math.ceil(imagesize.x / _this.iipTileSize.x),
-							y: Math.ceil(imagesize.y / _this.iipTileSize.y)
-						};
-					}
-					_this.iipMinZoom = z - 1;
-					if (_this.iipMinZoom > _this.options.minZoom) {
-						_this.options.minZoom = _this.iipMinZoom;
-					}
-					_this.iipMaxZoom = _this.iipMinZoom + maxzoom;
-					if (!_this.options.maxZoom) {
-						_this.options.maxZoom = _this.iipMaxZoom + 2;
-					}
-					if (!_this.options.maxNativeZoom) {
-						_this.options.maxNativeZoom = _this.iipMaxZoom;
-					}
-					// Set grid sizes
-					for (z = 0; z <= _this.iipMaxZoom; z++) {
-						_this.iipImageSize[z] = {
-							x: Math.floor(maxsize.x / Math.pow(2, _this.iipMaxZoom - z)),
-							y: Math.floor(maxsize.y / Math.pow(2, _this.iipMaxZoom - z))
-						};
-						_this.iipGridSize[z] = {
-							x: Math.ceil(_this.iipImageSize[z].x / _this.iipTileSize.x),
-							y: Math.ceil(_this.iipImageSize[z].y / _this.iipTileSize.y)
-						};
-					}
-					for (z = _this.iipMaxZoom; z <= _this.options.maxZoom; z++) {
-						_this.iipGridSize[z] = _this.iipGridSize[_this.iipMaxZoom];
-					}
-					tmp = response.split('Min-Max-sample-values:');
-					if (!tmp[1]) {
-						alert('Error: Unexpected response from server ' + this.server);
-					}
-					var minmax = tmp[1].split(' ');
-					var arraylen = Math.floor(minmax.length / 2);
-					var n = 0;
-					for (var l = 0; l < minmax.length, n < arraylen; l++) {
-						if (minmax[l] !== '') {
-							_this.iipMinValue[n] = parseFloat(minmax[l]);
-							n++;
-						}
-					}
-					var nn = 0;
-					for (var ll = l; ll < minmax.length; ll++) {
-						if (minmax[l] !== '') {
-							_this.iipMaxValue[nn] = parseFloat(minmax[l]);
-							nn++;
-						}
-					}
-
-					if (_this.options.bounds) {
-						_this.options.bounds = L.latLngBounds(_this.options.bounds);
-					}
-					_this.iipMetaReady = true;
-					_this.fire('metaload');
-				} else {
-					alert('There was a problem with the IIP metadata request.');
-				}
-			}
-		}
+	requestURI: function (uri, purpose, action) {
+		var	context = this,
+			httpRequest;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -194,14 +111,105 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			}
 		}
 		if (!httpRequest) {
-			alert('Giving up: Cannot create an XMLHTTP instance for getting IIP metadata');
+			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
 			return false;
 		}
-		httpRequest.onreadystatechange = _getRequest;
-		httpRequest.open('GET', url.replace(/\&.*$/g, '') +
-			'&obj=IIP,1.0&obj=Max-size&obj=Tile-size' +
-			'&obj=Resolution-number&obj=Min-Max-sample-values');
+		httpRequest.onreadystatechange = function () {
+			action(context, httpRequest);
+		};
+		httpRequest.open('GET', uri);
 		httpRequest.send();
+	},
+
+	_parseMetadata: function (layer, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText;
+				var tmp = response.split('Max-size');
+				if (!tmp[1]) {
+					alert('Error: Unexpected response from IIP server ' +
+					 layer._url.replace(/\?.*$/g, ''));
+				}
+				var size = tmp[1].split(' ');
+				var maxsize = {
+					x: parseInt(size[0].substring(1, size[0].length), 10),
+					y: parseInt(size[1], 10)
+				};
+				tmp = response.split('Tile-size');
+				size = tmp[1].split(' ');
+				layer.iipTileSize = {
+					x: parseInt(size[0].substring(1, size[0].length), 10),
+					y: parseInt(size[1], 10)
+				};
+				tmp = response.split('Resolution-number');
+				var maxzoom = parseInt(tmp[1].substring(1, tmp[1].length), 10) - 1;
+				// Find the lowest and highest zoom levels
+				var gridsize = {x: 2, y: 2};
+				for (var z = 0; z <= maxzoom && gridsize.x > 1 && gridsize.y > 1; z++) {
+					var imagesize = {
+						x: Math.floor(maxsize.x / Math.pow(2, maxzoom + z)),
+						y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
+					};
+					gridsize = {
+						x: Math.ceil(imagesize.x / layer.iipTileSize.x),
+						y: Math.ceil(imagesize.y / layer.iipTileSize.y)
+					};
+				}
+				layer.iipMinZoom = z - 1;
+				if (layer.iipMinZoom > layer.options.minZoom) {
+					layer.options.minZoom = layer.iipMinZoom;
+				}
+				layer.iipMaxZoom = layer.iipMinZoom + maxzoom;
+				if (!layer.options.maxZoom) {
+					layer.options.maxZoom = layer.iipMaxZoom + 2;
+				}
+				if (!layer.options.maxNativeZoom) {
+					layer.options.maxNativeZoom = layer.iipMaxZoom;
+				}
+				// Set grid sizes
+				for (z = 0; z <= layer.iipMaxZoom; z++) {
+					layer.iipImageSize[z] = {
+						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
+						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
+					};
+					layer.iipGridSize[z] = {
+						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
+						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
+					};
+				}
+				for (z = layer.iipMaxZoom; z <= layer.options.maxZoom; z++) {
+					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
+				}
+				tmp = response.split('Min-Max-sample-values:');
+				if (!tmp[1]) {
+					alert('Error: Unexpected response from server ' + this.server);
+				}
+				var minmax = tmp[1].split(' ');
+				var arraylen = Math.floor(minmax.length / 2);
+				var n = 0;
+				for (var l = 0; l < minmax.length, n < arraylen; l++) {
+					if (minmax[l] !== '') {
+						layer.iipMinValue[n] = parseFloat(minmax[l]);
+						n++;
+					}
+				}
+				var nn = 0;
+				for (var ll = l; ll < minmax.length; ll++) {
+					if (minmax[l] !== '') {
+						layer.iipMaxValue[nn] = parseFloat(minmax[l]);
+						nn++;
+					}
+				}
+
+				if (layer.options.bounds) {
+					layer.options.bounds = L.latLngBounds(layer.options.bounds);
+				}
+				layer.iipMetaReady = true;
+				layer.fire('metaload');
+			} else {
+				alert('There was a problem with the IIP metadata request.');
+			}
+		}
 	},
 
 	addTo: function (map) {
@@ -219,6 +227,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_addToMap: function () {
 		this._premap.addLayer(this);
+		this._premap = undefined;
 	},
 
 	_getTileSizeFac: function () {

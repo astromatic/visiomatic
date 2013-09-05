@@ -19,7 +19,7 @@ exports.config = {
 	"noempty": true,
 	"nonew": true,
 	"undef": true,
-	"unused": true,
+	"unused": false,
 	"quotmark": "single",
 
 	// whitespace
