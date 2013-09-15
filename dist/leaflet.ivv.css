@@ -22,6 +22,8 @@
 #
 #	Last modified:		05/09/2013
 */
+
+/* Left control bar */
 .leaflet-control-zoom-in {
 	background-image: url(icon-magnifyplus.svg);
 	color: rgba(255,255,255,0) !important;
@@ -41,6 +43,7 @@
 	background-image: url(icon-plot.svg);
 }
 
+/* IIP image dialog */
 .leaflet-control-iipimage .leaflet-control-iipimage-dialog,
 .leaflet-control-iipimage-expanded .leaflet-control-iipimage-button,
 .leaflet-control-iipplot .leaflet-control-iipplot-dialog,
@@ -62,12 +65,58 @@
 	background: #fff;
 }
 
+/* IIP Image dialog elements */
+.leaflet-control-iipimage-element {
+	line-height: 30px;
+	vertical-align: middle;
+}
+
+.leaflet-control-iipimage-label {
+	margin-right: 4px;
+}
+
+.leaflet-slider-input {
+	width: 40px;
+	margin-right: 4px;
+}
+
+.ui-icon,.ui-button {
+	width: 26px;
+	height: 26px;
+}
+
+.leaflet-cmap-grey {
+	background-image: url(icon-grey.svg);
+}
+.leaflet-cmap-jet {
+	background-image: url(icon-jet.svg);
+}
+.leaflet-cmap-hot {
+	background-image: url(icon-hot.svg);
+}
+.leaflet-cmap-cold {
+	background-image: url(icon-cold.svg);
+}
+/* jQuery-UI spinner */
+.ui-spinner {
+	float: right;
+	height: 24px;
+	width: 150px;
+}
+
+.ui-spinner-input {
+	line-height: 20px;
+	vertical-align: top;
+}
+
 .ui-spinner-down {
 	right: 28px;
 	top: 0px;
+	cursor: pointer;
 }
 .ui-spinner-up {
 	right: 0px;
+	cursor: pointer;
 }
 
 .ui-spinner-down .icon-minus {
@@ -87,9 +136,13 @@
   height: 24px;
 }
 
-
-.ui-icon {
-    width: 26px;
-    height: 26px;
+/* jQuery-UI slider */
+.ui-slider {
+	float: right;
+	top: 8px;
+	width: 80px;
 }
 
+.ui-slider-handle {
+	top: 50%;
+}

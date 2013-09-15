@@ -70,9 +70,22 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 // Return base zoom level at a given resolution for a given tile size
 	zoom1: function (point, tileSize) {
 		return Math.ceil(Math.log(Math.max(point.x / tileSize.x, point.y / tileSize.y)) / Math.LN2);
+	},
 
+// Distance between p1 and p2 in degrees
+	distance: function (p1, p2) {
+
+		var d2r = L.LatLng.DEG_TO_RAD,
+		 lat1 = p1.lat * d2r,
+		 lat2 = p2.lat * d2r,
+		 dLat = lat2 - lat1,
+		 dLon = (p2.lng - p1.lng) * d2r,
+		 sin1 = Math.sin(dLat / 2),
+		 sin2 = Math.sin(dLon / 2);
+
+		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
+
+		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * L.LatLng.RAD_TO_DEG;
 	}
-
 });
-
 

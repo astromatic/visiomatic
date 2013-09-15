@@ -13,7 +13,7 @@ L.Control.IIP = L.Control.extend({
 	options: {
 		title: 'a control related to IIPImage',
 		collapsed: true,
-		position: 'topleft',
+		position: 'topleft'
 	},
 
 	initialize: function (baseLayers,  options) {
@@ -117,7 +117,7 @@ L.Control.IIP = L.Control.extend({
 			if (!layer.overlay) {
 				if (layer._premap) {
 					this._prelayer = layer;
-				} else if (this._map.hasLayer(layer) && layer.iipContrast) {
+				} else if (this._map.hasLayer(layer) && layer.iip) {
 					return layer;
 				}
 			}
@@ -125,12 +125,12 @@ L.Control.IIP = L.Control.extend({
 		return undefined;
 	},
 
-	_onInputChange:	function (input, pname) {
+	_onInputChange:	function (input, pname, value) {
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			input.layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = input.value;
+			input.layer.iip[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			input.layer[pnamearr[0]] = input.value;
+			input.layer.iip[pnamearr[0]] = value;
 		}
 		input.layer.redraw();
 	}

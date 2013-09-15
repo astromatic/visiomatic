@@ -220,11 +220,24 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 // Return base zoom level at a given resolution for a given tile size
 	zoom1: function (point, tileSize) {
 		return Math.ceil(Math.log(Math.max(point.x / tileSize.x, point.y / tileSize.y)) / Math.LN2);
+	},
 
+// Distance between p1 and p2 in degrees
+	distance: function (p1, p2) {
+
+		var d2r = L.LatLng.DEG_TO_RAD,
+		 lat1 = p1.lat * d2r,
+		 lat2 = p2.lat * d2r,
+		 dLat = lat2 - lat1,
+		 dLon = (p2.lng - p1.lng) * d2r,
+		 sin1 = Math.sin(dLat / 2),
+		 sin2 = Math.sin(dLon / 2);
+
+		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
+
+		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * L.LatLng.RAD_TO_DEG;
 	}
-
 });
-
 
 
 
@@ -262,6 +275,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		noWrap:	true,
 		contrast: 1.0,
 		gamma: 1.0,
+		cMap: 'grey',
 		/*
 		maxNativeZoom: null,
 		zIndex: null,
@@ -275,6 +289,28 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		*/
 		unloadInvisibleTiles: L.Browser.mobile,
 		updateWhenIdle: L.Browser.mobile
+	},
+
+	iip: {
+		TileSize: {x: 512, y: 512},
+		ImageSize: [],
+		GridSize: [],
+		BPP: 8,
+		MinZoom: 0,
+		MaxZoom: 0,
+		Contrast: 1,
+		Gamma: 1,
+		CMap: 'grey',
+		MinValue: [],
+		MaxValue: []
+	},
+
+	iipdefault: {
+		Contrast: 1,
+		Gamma: 1,
+		CMap: 'grey',
+		MinValue: [],
+		MaxValue: []
 	},
 
 	initialize: function (url, options) {
@@ -293,32 +329,27 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			this.options.maxZoom--;
 		}
 
-		this._url = url;
+		this._url = url.replace(/\&.*$/g, '');
 
 		var subdomains = this.options.subdomains;
 
 		if (typeof subdomains === 'string') {
 			this.options.subdomains = subdomains.split('');
 		}
-		this.iipTileSize = {x: 512, y: 512};
-		this.iipImageSize = [];
-		this.iipImageSize[0] = this.iipTileSize;
-		this.iipGridSize = [];
-		this.iipGridSize[0] = {x: 1, y: 1};
-		this.iipMinZoom = this.iipMaxZoom = 0;
-		this.iipContrast = this.options.contrast;
-		this.iipGamma = this.options.gamma;
-		this.iipMinValue = [];
-		this.iipMaxValue = [];
-		this.iipMinValue[0] = 0.0;
-		this.iipMaxValue[0] = 255.0;
-		this.getIIPMetaData(url);
+		this.iip.ImageSize[0] = this.iip.TileSize;
+		this.iip.GridSize[0] = {x: 1, y: 1};
+		this.iip.Contrast = this.options.contrast;
+		this.iip.Gamma = this.options.gamma;
+		this.iip.MinValue[0] = 0.0;
+		this.iip.MaxValue[0] = 255.0;
+		this.getIIPMetaData(this._url);
 	},
 
 	getIIPMetaData: function (url) {
-		this.requestURI(url.replace(/\&.*$/g, '') +
-			'&obj=IIP,1.0&obj=Max-size&obj=Tile-size' +
-			'&obj=Resolution-number&obj=Min-Max-sample-values',
+		this.requestURI(url +
+			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
+			'&obj=resolution-number&obj=bits-per-channel' +
+			'&obj=min-max-sample-values',
 			'getting IIP metadata',
 			this._parseMetadata, this);
 	},
@@ -367,7 +398,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				};
 				tmp = response.split('Tile-size');
 				size = tmp[1].split(' ');
-				layer.iipTileSize = {
+				layer.iip.TileSize = {
 					x: parseInt(size[0].substring(1, size[0].length), 10),
 					y: parseInt(size[1], 10)
 				};
@@ -381,35 +412,39 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
 					};
 					gridsize = {
-						x: Math.ceil(imagesize.x / layer.iipTileSize.x),
-						y: Math.ceil(imagesize.y / layer.iipTileSize.y)
+						x: Math.ceil(imagesize.x / layer.iip.TileSize.x),
+						y: Math.ceil(imagesize.y / layer.iip.TileSize.y)
 					};
 				}
-				layer.iipMinZoom = z - 1;
-				if (layer.iipMinZoom > layer.options.minZoom) {
-					layer.options.minZoom = layer.iipMinZoom;
+				layer.iip.MinZoom = z - 1;
+				if (layer.iip.MinZoom > layer.options.minZoom) {
+					layer.options.minZoom = layer.iip.MinZoom;
 				}
-				layer.iipMaxZoom = layer.iipMinZoom + maxzoom;
+				layer.iip.MaxZoom = layer.iip.MinZoom + maxzoom;
 				if (!layer.options.maxZoom) {
-					layer.options.maxZoom = layer.iipMaxZoom + 2;
+					layer.options.maxZoom = layer.iip.MaxZoom + 2;
 				}
 				if (!layer.options.maxNativeZoom) {
-					layer.options.maxNativeZoom = layer.iipMaxZoom;
+					layer.options.maxNativeZoom = layer.iip.MaxZoom;
 				}
 				// Set grid sizes
-				for (z = 0; z <= layer.iipMaxZoom; z++) {
-					layer.iipImageSize[z] = {
-						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
-						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
+				for (z = 0; z <= layer.iip.MaxZoom; z++) {
+					layer.iip.ImageSize[z] = {
+						x: Math.floor(maxsize.x / Math.pow(2, layer.iip.MaxZoom - z)),
+						y: Math.floor(maxsize.y / Math.pow(2, layer.iip.MaxZoom - z))
 					};
-					layer.iipGridSize[z] = {
-						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
-						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
+					layer.iip.GridSize[z] = {
+						x: Math.ceil(layer.iip.ImageSize[z].x / layer.iip.TileSize.x),
+						y: Math.ceil(layer.iip.ImageSize[z].y / layer.iip.TileSize.y)
 					};
 				}
-				for (z = layer.iipMaxZoom; z <= layer.options.maxZoom; z++) {
-					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
+				for (z = layer.iip.MaxZoom; z <= layer.options.maxZoom; z++) {
+					layer.iip.GridSize[z] = layer.iip.GridSize[layer.iip.MaxZoom];
 				}
+				tmp = response.split('Bits-per-channel');
+				layer.iip.BPP = parseInt(tmp[1].substring(1, tmp[1].length), 10);
+				// Only 32bit data are likely to be linearly quantized
+				layer.iip.Gamma = layer.iip.BPP >= 32 ? 0.45 : 1.0;
 				tmp = response.split('Min-Max-sample-values:');
 				if (!tmp[1]) {
 					alert('Error: Unexpected response from server ' + this.server);
@@ -419,14 +454,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				var n = 0;
 				for (var l = 0; l < minmax.length, n < arraylen; l++) {
 					if (minmax[l] !== '') {
-						layer.iipMinValue[n] = parseFloat(minmax[l]);
+						layer.iipdefault.MinValue[n] = layer.iip.MinValue[n] = parseFloat(minmax[l]);
 						n++;
 					}
 				}
 				var nn = 0;
 				for (var ll = l; ll < minmax.length; ll++) {
 					if (minmax[l] !== '') {
-						layer.iipMaxValue[nn] = parseFloat(minmax[l]);
+						layer.iipdefault.MaxValue[nn] = layer.iip.MaxValue[nn] = parseFloat(minmax[l]);
 						nn++;
 					}
 				}
@@ -434,7 +469,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				if (layer.options.bounds) {
 					layer.options.bounds = L.latLngBounds(layer.options.bounds);
 				}
-				layer.iipMetaReady = true;
+				layer.iip.MetaReady = true;
 				layer.fire('metaload');
 			} else {
 				alert('There was a problem with the IIP metadata request.');
@@ -443,7 +478,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	addTo: function (map) {
-		if (this.iipMetaReady) {
+		if (this.iip.MetaReady) {
 			// IIP data are ready so we can go
 			map.addLayer(this);
 		}
@@ -470,7 +505,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_getTileSize: function () {
 		var zoomfac = this._getTileSizeFac();
-		return {x: this.iipTileSize.x * zoomfac, y: this.iipTileSize.y * zoomfac};
+		return {x: this.iip.TileSize.x * zoomfac, y: this.iip.TileSize.y * zoomfac};
 	},
 
 	_update: function () {
@@ -515,8 +550,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			return false; // already loaded
 		}
 		var z = this._getZoomForUrl();
-		if (tilePoint.x >= this.iipGridSize[z].x ||
-			tilePoint.y >= this.iipGridSize[z].y) {
+		if (tilePoint.x >= this.iip.GridSize[z].x ||
+			tilePoint.y >= this.iip.GridSize[z].y) {
 			return false;
 		}
 
@@ -531,7 +566,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 
 		if (options.bounds) {
-			var tileSize = this.iipTileSize,
+			var tileSize = this.iip.TileSize,
 			    nwPoint = this._vecMul(tilePoint.clone(), tileSize),
 			    sePoint = nwPoint.add(tileSize),
 			    nw = this._map.unproject(nwPoint),
@@ -558,15 +593,23 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (tilePoint) {
-		return L.Util.template(this._url, L.extend({
-			s: this._getSubdomain(tilePoint),
-			z: tilePoint.z - this.iipMinZoom,
-			c: this.iipContrast,
-			g: this.iipGamma,
-			m: this.iipMinValue,
-			M: this.iipMaxValue,
-			t: tilePoint.x + this.iipGridSize[tilePoint.z].x * tilePoint.y
-		}, this.options));
+		var str = this._url;
+		if (this.iip.CMap !== this.iipdefault.CMap) {
+			str += '&CMP=' + this.iip.CMap;
+		}
+		if (this.iip.Contrast !== this.iipdefault.Contrast) {
+			str += '&CNT=' + this.iip.Contrast.toString();
+		}
+		if (this.iip.Gamma !== this.iipdefault.Gamma) {
+			str += '&GAM=' + this.iip.Gamma.toString();
+		}
+		if (this.iip.MinValue[0] !== this.iipdefault.MinValue[0] ||
+		 this.iip.MaxValue[0] !== this.iipdefault.MaxValue[0]) {
+			str += '&MINMAX=1,' + this.iip.MinValue[0].toString() + ',' +
+				this.iip.MaxValue[0].toString();
+		}
+		return str + '&JTL=' + (tilePoint.z - this.iip.MinZoom).toString() + ',' +
+		 (tilePoint.x + this.iip.GridSize[tilePoint.z].x * tilePoint.y).toString();
 	},
 
 	_createTile: function () {
@@ -616,7 +659,7 @@ L.Control.IIP = L.Control.extend({
 	options: {
 		title: 'a control related to IIPImage',
 		collapsed: true,
-		position: 'topleft',
+		position: 'topleft'
 	},
 
 	initialize: function (baseLayers,  options) {
@@ -720,7 +763,7 @@ L.Control.IIP = L.Control.extend({
 			if (!layer.overlay) {
 				if (layer._premap) {
 					this._prelayer = layer;
-				} else if (this._map.hasLayer(layer) && layer.iipContrast) {
+				} else if (this._map.hasLayer(layer) && layer.iip) {
 					return layer;
 				}
 			}
@@ -728,12 +771,12 @@ L.Control.IIP = L.Control.extend({
 		return undefined;
 	},
 
-	_onInputChange:	function (input, pname) {
+	_onInputChange:	function (input, pname, value) {
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			input.layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = input.value;
+			input.layer.iip[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			input.layer[pnamearr[0]] = input.value;
+			input.layer.iip[pnamearr[0]] = value;
 		}
 		input.layer.redraw();
 	}
@@ -768,7 +811,7 @@ L.control.iip = function (baseLayers, options) {
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		05/09/2013
+#	Last modified:		14/09/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -779,6 +822,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 	options: {
 		title: 'Image adjustment',
 		collapsed: true,
+		cmap: 'grey',
 		position: 'topleft',
 	},
 
@@ -793,48 +837,129 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			dialog = this._dialog,
-			layer = this._layer;
-		this._min = L.DomUtil.create('div', className + '-min', dialog);
-		this._max = L.DomUtil.create('div', className + '-max', dialog);
+			layer = this._layer,
+			cmaps = ['grey', 'jet', 'cold', 'hot'],
+			elem;
+
+		// Colour lookup table (Colour maps)
+		elem = this._addDialogLine('LUT:');
+		var cmapinput = L.DomUtil.create('span', className + '-cmaps', elem);
+		for (var i in cmaps) {
+			var	button = document.createElement('input');
+			button.className = 'leaflet-cmap-' + cmaps[i];
+			button.type = 'button';
+			button.name = 'button';
+			button.cmap = cmaps[i];
+			button.layer = layer;
+			cmapinput.appendChild(button);
+			if (cmaps[i] === this.options.cmap) {
+				button.checked = 'checked';
+			}
+		}
+
+		$('.' + className + '-cmaps').buttonset();
+		$('.' + className + '-cmaps :button').click(function (e) {
+			_this._onInputChange(this, 'CMap', this.cmap);
+		});
+
 		this._separator = L.DomUtil.create('div', className + '-separator', dialog);
 
-		var step = ((layer.iipMaxValue[0] - layer.iipMinValue[0]) / 100.0).toPrecision(1);
-		var	mininput = document.createElement('input');
-		mininput.className = 'leaflet-minValue';
+		// Min and max pixel values
+		var step = ((layer.iip.MaxValue[0] - layer.iip.MinValue[0]) / 100.0).toPrecision(1);
+
+		// Min
+		elem = this._addDialogLine('Min:');
+		var	mininput = L.DomUtil.create('input', '', elem);
+		mininput.id = 'leaflet-minvalue';
 		mininput.type = 'text';
-		mininput.value = String(layer.iipMinValue[0]);
+		mininput.value = String(layer.iip.MinValue[0]);
 		mininput.layer = layer;
-		this._min.appendChild(mininput);
-		$('.leaflet-minValue').spinner({
+		$('#leaflet-minvalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(mininput, 'iipMinValue[0]');
+				_this._onInputChange(mininput, 'MinValue[0]', mininput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step
 		});
 		L.DomEvent.on(mininput, 'change', function () {
-			_this._onInputChange(mininput, 'iipMinValue[0]');
+			_this._onInputChange(mininput, 'MinValue[0]', mininput.value);
 		}, this);
 
-		var	maxinput = document.createElement('input');
-		maxinput.className = 'leaflet-maxValue';
+		// Max
+		elem = this._addDialogLine('Max:');
+		var	maxinput = L.DomUtil.create('input', '', elem);
+		maxinput.id = 'leaflet-maxvalue';
 		maxinput.type = 'text';
-		maxinput.value = String(layer.iipMaxValue[0]);
+		maxinput.value = String(layer.iip.MaxValue[0]);
 		maxinput.layer = layer;
-		this._max.appendChild(maxinput);
-		$('.leaflet-maxValue').spinner({
+		$('#leaflet-maxvalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(maxinput, 'iipMaxValue[0]');
+				_this._onInputChange(maxinput, 'MaxValue[0]', maxinput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step
 		});
 		L.DomEvent.on(maxinput, 'change', function () {
-			_this._onInputChange(maxinput, 'iipMaxValue[0]');
+			_this._onInputChange(maxinput, 'MaxValue[0]', maxinput.value);
 		}, this);
 
+		// Gamma
+		elem = this._addDialogLine('Gamma:');
+		var	gaminput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		gaminput.type = 'text';
+		gaminput.value = String(layer.iip.Gamma);
+		gaminput.layer = layer;
+		var	gamslider = L.DomUtil.create('span', '', elem);
+		gamslider.id = 'leaflet-gamma-slider';
+		$('#leaflet-gamma-slider').slider({
+			stop: function (event, ui) {
+				_this._onInputChange(gaminput, 'Gamma', ui.value);
+			},
+			slide: function (event, ui) {
+				gaminput.value = ui.value;
+			},
+			value: String(layer.iip.Gamma),
+			step: 0.05,
+			min: 0.05,
+			max: 2.0
+		});
+		L.DomEvent.on(gaminput, 'change', function () {
+			_this._onInputChange(gaminput, 'Gamma', gaminput.value);
+			$('#leaflet-gamma-slider').slider('value', gaminput.value);
+		}, this);
+
+		// Contrast
+		elem = this._addDialogLine('Contrast:');
+		var	continput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		continput.type = 'text';
+		continput.value = String(layer.iip.Contrast);
+		continput.layer = layer;
+		var	contslider = L.DomUtil.create('span', '', elem);
+		contslider.id = 'leaflet-contrast-slider';
+		$('#leaflet-contrast-slider').slider({
+			stop: function (event, ui) {
+				_this._onInputChange(continput, 'Contrast', ui.value);
+			},
+			slide: function (event, ui) {
+				continput.value = ui.value;
+			},
+			value: String(layer.iip.Contrast),
+			step: 0.05,
+			min: 0.05,
+			max: 4.0
+		});
+		L.DomEvent.on(continput, 'change', function () {
+			_this._onInputChange(continput, 'Contrast', continput.value);
+			$('#leaflet-contrast-slider').slider('value', continput.value);
+		}, this);
 	},
 
+	_addDialogLine: function (label) {
+		var elem = L.DomUtil.create('div', this._className + '-element', this._dialog),
+		 text = L.DomUtil.create('span', this._className + '-label', elem);
+		text.innerHTML = label;
+		return elem;
+	}
 });
 
 L.control.iip.image = function (baseLayers, options) {
@@ -854,6 +979,51 @@ L.control.iip.image = function (baseLayers, options) {
 #
 #	Last modified:		05/09/2013
 */
+
+L.Draw.Line = L.Draw.Polyline.extend({
+	_updateFinishHandler: function () {
+		var markerCount = this._markers.length;
+		// The last marker should have a click handler to close the polyline
+		if (markerCount > 1) {
+			this._markers[markerCount - 1].on('click', this._finishShape, this);
+		}
+
+		// Remove the old marker click handler (as only the last point should close the polyline)
+		if (markerCount > 2) {
+			this._markers[markerCount - 2].off('click', this._finishShape, this);
+		}
+
+		if (markerCount >= 2) {
+			this._finishShape();
+		}
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.CRS.WCS.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	}
+
+});
+
 L.Control.IIP.Plot = L.Control.IIP.extend({
 	options: {
 		title: 'Image adjustment',
@@ -881,6 +1051,20 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 	},
 
 	getProfile: function (e) {
+		L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Click to end drawing line.';
+		var drawline = new L.Draw.Line(this._map),
+		 _this = this;
+
+		this._map.on('draw:created', function (e) {
+			var layer = e.layer;
+			_this._map.addLayer(layer);
+			drawline.removeHooks();
+			console.log(layer._latlngs);
+		}
+
+		);
+		drawline.addHooks();
+
 		this._layer.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=9:20,100-9000,2000',
 			'getting IIP layer profile',
@@ -899,6 +1083,7 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 L.control.iip.plot = function (baseLayers, options) {
 	return new L.Control.IIP.Plot(baseLayers, options);
 };
+
 
 
 

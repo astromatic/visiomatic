@@ -9,6 +9,51 @@
 #
 #	Last modified:		05/09/2013
 */
+
+L.Draw.Line = L.Draw.Polyline.extend({
+	_updateFinishHandler: function () {
+		var markerCount = this._markers.length;
+		// The last marker should have a click handler to close the polyline
+		if (markerCount > 1) {
+			this._markers[markerCount - 1].on('click', this._finishShape, this);
+		}
+
+		// Remove the old marker click handler (as only the last point should close the polyline)
+		if (markerCount > 2) {
+			this._markers[markerCount - 2].off('click', this._finishShape, this);
+		}
+
+		if (markerCount >= 2) {
+			this._finishShape();
+		}
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.CRS.WCS.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	}
+
+});
+
 L.Control.IIP.Plot = L.Control.IIP.extend({
 	options: {
 		title: 'Image adjustment',
@@ -36,6 +81,20 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 	},
 
 	getProfile: function (e) {
+		L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Click to end drawing line.';
+		var drawline = new L.Draw.Line(this._map),
+		 _this = this;
+
+		this._map.on('draw:created', function (e) {
+			var layer = e.layer;
+			_this._map.addLayer(layer);
+			drawline.removeHooks();
+			console.log(layer._latlngs);
+		}
+
+		);
+		drawline.addHooks();
+
 		this._layer.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=9:20,100-9000,2000',
 			'getting IIP layer profile',
@@ -54,4 +113,5 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 L.control.iip.plot = function (baseLayers, options) {
 	return new L.Control.IIP.Plot(baseLayers, options);
 };
+
 
