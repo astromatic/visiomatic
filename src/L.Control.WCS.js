@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		04/10/2013
+#	Last modified:		07/10/2013
 */
 L.Control.WCS = L.Control.extend({
 	options: {

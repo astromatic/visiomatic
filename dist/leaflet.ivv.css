@@ -154,7 +154,13 @@
   display: block;
 }
 
-/* Reticle fading */
+/* Reticle */
+
+.leaflet-reticle {
+	background-image: url(reticle.svg);
+  width: 26px;
+  height: 26px;
+}
 
 .leaflet-dragging .leaflet-reticle {
 	opacity: 1;
