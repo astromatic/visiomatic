@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/07/2013
+#	Last modified:		07/10/2013
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -28,7 +28,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	initialize: function () {
 		var projparam = this.projparam;
-		this.transformation = new L.Transformation(1, -1, -1, projparam.naxis.y);
+		this.transformation = new L.Transformation(1, -0.5, -1, projparam.naxis.y + 0.5);
 		projparam.projection.paraminit(projparam);
 		this.code += ':' + projparam.projection.code;
 		this.ready = true;
