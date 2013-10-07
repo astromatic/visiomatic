@@ -17,9 +17,9 @@ L.Catalog = {
 		 array = [],
 		 geo = {type: 'FeatureCollection', features: []};
 
-		for (i in lines) {
+		for (var i in lines) {
 			var line = lines[i];
-			if (badreg.test(line) == false) {
+			if (badreg.test(line) === false) {
 				var feature = {
 					type: 'Feature',
 					id: '',
@@ -28,18 +28,18 @@ L.Catalog = {
 					},
 					geometry: {
 						type: 'Point',
-						coordinates: [0.0,0.0]
+						coordinates: [0.0, 0.0]
 					},
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;
 
-				cell = line.split(';');
+				var cell = line.split(';');
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
 				var mags = cell.slice(3);
-				for (j in mags) {
+				for (var j in mags) {
 					properties.mags.push(parseFloat(mags[j]));
 				}
 				geo.features.push(feature);
@@ -55,9 +55,11 @@ L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
 	color: 'red',
 	maglim: 17.0,
 	service: 'CDS',
-	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=II/246&-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&-c={ra}%2b{dec},eq=J2000&-c.bd={dra},{ddec}',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=II/246&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+	 '-c={ra}%2b{dec},eq=J2000&-c.bd={dra},{ddec}',
 	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['Jmag','Hmag','Kmag'],
+	properties: ['Jmag', 'Hmag', 'Kmag'],
 	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={ra}%2b{dec},eq=J2000&-c.rs=0.01'
 });
 
@@ -67,9 +69,11 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	color: 'green',
 	maglim: 25.0,
 	service: 'CDS',
-	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&-c={ra},{dec}&-c.bd={dra},{ddec}',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-c={ra},{dec}&-c.bd={dra},{ddec}',
 	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['umag','gmag','rmag','imag','zmag'],
+	properties: ['umag', 'gmag', 'rmag', 'imag', 'zmag'],
 	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=V/139/sdss9&-c={ra}%2b{dec},eq=J2000&-c.rs=0.01'
 });
 
@@ -85,9 +89,9 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 	},
 
 	_initLayout: function () {
-	L.Control.Layers.prototype._initLayout.call(this);
+		L.Control.Layers.prototype._initLayout.call(this);
 
-	var newoverlay = this._newoverlay = L.DomUtil.create('div', 'leaflet-control-newoverlay', this._form);
+		var newoverlay = this._newoverlay = L.DomUtil.create('div', 'leaflet-control-newoverlay', this._form);
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		newoverlay.setAttribute('aria-haspopup', true);
 
@@ -131,7 +135,7 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 			overdialog = this._newoverlaydialog,
 			className = this._newoverlay.className;
 
-		var	button = document.createElement('input');
+		var button = document.createElement('input');
 		button.className = 'leaflet-newoverlay-2mass leaflet-control-bar';
 		button.type = 'button';
 		overdialog.appendChild(button);
@@ -139,7 +143,7 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 			_this.getCatalog(L.Catalog.TwoMASS);
 		}, this);
 
-		var	button = document.createElement('input');
+		button = document.createElement('input');
 		button.className = 'leaflet-newoverlay-sdss leaflet-control-bar';
 		button.type = 'button';
 		overdialog.appendChild(button);
@@ -160,20 +164,20 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		var _this = this,
 		center = this._map.getCenter(),
 		 bounds = this._map.getBounds(),
-		 lngfac = Math.abs(Math.cos(center.lat))*L.LatLng.DEG_TO_RAD,
+		 lngfac = Math.abs(Math.cos(center.lat)) * L.LatLng.DEG_TO_RAD,
 		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
 		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
 
 		if (dlat > 1.0) {
-		  dlat = 1.0;
+			dlat = 1.0;
 		} else if (dlat < 0.0001) {
-		  dlat = 0.0001;
+			dlat = 0.0001;
 		}
 		if (lngfac > 0.0) {
-			if (dlng*lngfac > 1.0) {
-			  dlng = 1.0 / lngfac;
-			} else if (dlng*lngfac > 1.0) {
-			  dlng = 1.0 / lngfac;
+			if (dlng * lngfac > 1.0) {
+				dlng = 1.0 / lngfac;
+			} else if (dlng * lngfac > 1.0) {
+				dlng = 1.0 / lngfac;
 			}
 		}
 
@@ -191,25 +195,25 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 	_loadCatalog: function (catalog, _this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-console.log(catalog);
 				var response = httpRequest.responseText,
 				 geo = catalog.toGeoJSON(response),
 				 geocatalog = L.geoJson(geo, {
 					onEachFeature: function (feature, layer) {
 						if (feature.properties && feature.properties.mags) {
 							layer.bindPopup(_this._popup(feature, catalog));
-    				}
+						}
 					},
 					pointToLayer: function (feature, latlng) {
-						return L.circleMarker(latlng,
-							{radius: feature.properties.mags[0]?
-							 8 + catalog.maglim - feature.properties.mags[0] : 8});
+						return L.circleMarker(latlng, {
+							radius: feature.properties.mags[0] ?
+							 8 + catalog.maglim - feature.properties.mags[0] : 8
+						});
 					},
-					style: function(feature) {
+					style: function (feature) {
 						return {color: catalog.color};
 					}
 				}).addTo(_this._map);
-			_this.addOverlay(geo, catalog.name);
+				_this.addOverlay(geo, catalog.name);
 			} else {
 				alert('There was a problem with the request to ' + catalog.service + '.');
 			}

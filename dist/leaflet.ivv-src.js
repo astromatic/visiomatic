@@ -18,6 +18,48 @@
 */
 
 /*
+# L.IIPUtils contains general utility methods
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                    Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		24/09/2013
+*/
+L.IIPUtils = {
+// Ajax call to server
+	requestURI: function (uri, purpose, action, context) {
+		var	httpRequest;
+
+		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
+			httpRequest = new XMLHttpRequest();
+		} else if (window.ActiveXObject) { // IE
+			try {
+				httpRequest = new ActiveXObject('Msxml2.XMLHTTP');
+			}
+			catch (e) {
+				try {
+					httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
+				}
+				catch (e) {}
+			}
+		}
+		if (!httpRequest) {
+			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
+			return false;
+		}
+		httpRequest.open('GET', uri);
+		httpRequest.onreadystatechange = function () {
+			action(context, httpRequest);
+		};
+		httpRequest.send();
+	},
+};
+
+
+
+/*
 # L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
 # (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
@@ -251,20 +293,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
-#
-#	Last modified:		26/07/2013
+#	Last modified:		04/10/2013
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -277,6 +306,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		gamma: 1.0,
 		cMap: 'grey',
 		/*
+		quality: null,
 		maxNativeZoom: null,
 		zIndex: null,
 		tms: false,
@@ -302,7 +332,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		Gamma: 1,
 		CMap: 'grey',
 		MinValue: [],
-		MaxValue: []
+		MaxValue: [],
+		Quality: 90
 	},
 
 	iipdefault: {
@@ -310,7 +341,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		Gamma: 1,
 		CMap: 'grey',
 		MinValue: [],
-		MaxValue: []
+		MaxValue: [],
+		Quality: 90
 	},
 
 	initialize: function (url, options) {
@@ -346,40 +378,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getIIPMetaData: function (url) {
-		this.requestURI(url +
+		L.IIPUtils.requestURI(url +
 			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
 			'&obj=resolution-number&obj=bits-per-channel' +
 			'&obj=min-max-sample-values',
 			'getting IIP metadata',
 			this._parseMetadata, this);
-	},
-
-	requestURI: function (uri, purpose, action) {
-		var	context = this,
-			httpRequest;
-
-		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-			httpRequest = new XMLHttpRequest();
-		} else if (window.ActiveXObject) { // IE
-			try {
-				httpRequest = new ActiveXObject('Msxml2.XMLHTTP');
-			}
-			catch (e) {
-				try {
-					httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
-				}
-				catch (e) {}
-			}
-		}
-		if (!httpRequest) {
-			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
-			return false;
-		}
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
-		httpRequest.open('GET', uri);
-		httpRequest.send();
 	},
 
 	_parseMetadata: function (layer, httpRequest) {
@@ -444,7 +448,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				tmp = response.split('Bits-per-channel');
 				layer.iip.BPP = parseInt(tmp[1].substring(1, tmp[1].length), 10);
 				// Only 32bit data are likely to be linearly quantized
-				layer.iip.Gamma = layer.iip.BPP >= 32 ? 0.45 : 1.0;
+				layer.iip.Gamma = layer.iip.BPP >= 32 ? 2.2 : 1.0;
 				tmp = response.split('Min-Max-sample-values:');
 				if (!tmp[1]) {
 					alert('Error: Unexpected response from server ' + this.server);
@@ -601,12 +605,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			str += '&CNT=' + this.iip.Contrast.toString();
 		}
 		if (this.iip.Gamma !== this.iipdefault.Gamma) {
-			str += '&GAM=' + this.iip.Gamma.toString();
+			str += '&GAM=' + (1.0 / this.iip.Gamma).toFixed(4);
 		}
 		if (this.iip.MinValue[0] !== this.iipdefault.MinValue[0] ||
 		 this.iip.MaxValue[0] !== this.iipdefault.MaxValue[0]) {
 			str += '&MINMAX=1,' + this.iip.MinValue[0].toString() + ',' +
 				this.iip.MaxValue[0].toString();
+		}
+		if (this.iip.Quality !== this.iipdefault.Quality) {
+			str += '&QLT=' + this.iip.Quality.toString();
 		}
 		return str + '&JTL=' + (tilePoint.z - this.iip.MinZoom).toString() + ',' +
 		 (tilePoint.x + this.iip.GridSize[tilePoint.z].x * tilePoint.y).toString();
@@ -689,17 +696,17 @@ L.Control.IIP = L.Control.extend({
 				    .on(container, 'mouseout', this._collapse, this);
 			}
 
-			var link = this._link = L.DomUtil.create('a', className + '-button leaflet-bar', container);
-			link.href = '#';
-			link.title = this.options.title;
+			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
+			toggle.href = '#';
+			toggle.title = this.options.title;
 
 			if (L.Browser.touch) {
 				L.DomEvent
-				    .on(link, 'click', L.DomEvent.stop)
-				    .on(link, 'click', this._expand, this);
+				    .on(toggle, 'click', L.DomEvent.stop)
+				    .on(toggle, 'click', this._expand, this);
 			}
 			else {
-				L.DomEvent.on(link, 'focus', this._expand, this);
+				L.DomEvent.on(toggle, 'focus', this._expand, this);
 			}
 
 			this._map.on('click', this._collapse, this);
@@ -727,7 +734,7 @@ L.Control.IIP = L.Control.extend({
 		var className = this._className,
 			container = this._container,
 			dialog = this._dialog,
-			link = this._link,
+			toggle = this._toggle,
 			layer = this._layer;
     // Setup the rest of the dialog window here
 	},
@@ -811,7 +818,7 @@ L.control.iip = function (baseLayers, options) {
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		14/09/2013
+#	Last modified:		04/10/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -905,53 +912,64 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		// Gamma
 		elem = this._addDialogLine('Gamma:');
-		var	gaminput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		var	gaminput = L.DomUtil.create('input', '', elem);
+		gaminput.id = 'leaflet-gammavalue';
 		gaminput.type = 'text';
 		gaminput.value = String(layer.iip.Gamma);
 		gaminput.layer = layer;
-		var	gamslider = L.DomUtil.create('span', '', elem);
-		gamslider.id = 'leaflet-gamma-slider';
-		$('#leaflet-gamma-slider').slider({
+		$('#leaflet-gammavalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(gaminput, 'Gamma', ui.value);
+				_this._onInputChange(maxinput, 'Gamma', gaminput.value);
 			},
-			slide: function (event, ui) {
-				gaminput.value = ui.value;
-			},
-			value: String(layer.iip.Gamma),
+			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
-			min: 0.05,
-			max: 2.0
+			min: 0.5,
+			max: 5.0,
 		});
 		L.DomEvent.on(gaminput, 'change', function () {
 			_this._onInputChange(gaminput, 'Gamma', gaminput.value);
-			$('#leaflet-gamma-slider').slider('value', gaminput.value);
 		}, this);
 
 		// Contrast
 		elem = this._addDialogLine('Contrast:');
-		var	continput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		var	continput = L.DomUtil.create('input', '', elem);
+		continput.id = 'leaflet-contrastvalue';
 		continput.type = 'text';
 		continput.value = String(layer.iip.Contrast);
 		continput.layer = layer;
-		var	contslider = L.DomUtil.create('span', '', elem);
-		contslider.id = 'leaflet-contrast-slider';
-		$('#leaflet-contrast-slider').slider({
+		$('#leaflet-contrastvalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(continput, 'Contrast', ui.value);
+				_this._onInputChange(maxinput, 'Contrast', continput.value);
 			},
-			slide: function (event, ui) {
-				continput.value = ui.value;
-			},
-			value: String(layer.iip.Contrast),
+			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
-			min: 0.05,
-			max: 4.0
+			min: 0.0,
+			max: 10.0,
 		});
 		L.DomEvent.on(continput, 'change', function () {
 			_this._onInputChange(continput, 'Contrast', continput.value);
-			$('#leaflet-contrast-slider').slider('value', continput.value);
 		}, this);
+
+		// JPEG quality
+		elem = this._addDialogLine('JPEG quality:');
+		var	qualinput = L.DomUtil.create('input', '', elem);
+		qualinput.id = 'leaflet-qualvalue';
+		qualinput.type = 'text';
+		qualinput.value = String(layer.iip.Quality);
+		qualinput.layer = layer;
+		$('#leaflet-qualvalue').spinner({
+			stop: function (event, ui) {
+				_this._onInputChange(maxinput, 'Quality', qualinput.value);
+			},
+			icons: { down: 'icon-minus', up: 'icon-plus' },
+			step: 1,
+			min: 0,
+			max: 100,
+		});
+		L.DomEvent.on(qualinput, 'change', function () {
+			_this._onInputChange(qualinput, 'quality', qualinput.value);
+		}, this);
+
 	},
 
 	_addDialogLine: function (label) {
@@ -1085,5 +1103,345 @@ L.control.iip.plot = function (baseLayers, options) {
 };
 
 
+
+
+/*
+# L.Control.Layers.Catalogs Manage catalog queries and display
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		03/10/2013
+*/
+
+L.Catalog = {
+	_csvToGeoJSON: function (str) {
+		// Check to see if the delimiter is defined. If not, then default to comma.
+		var badreg = new RegExp('#|--|^$'),
+		 lines = str.split('\n'),
+		 array = [],
+		 geo = {type: 'FeatureCollection', features: []};
+
+		for (var i in lines) {
+			var line = lines[i];
+			if (badreg.test(line) === false) {
+				var feature = {
+					type: 'Feature',
+					id: '',
+					properties: {
+						mags: []
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [0.0, 0.0]
+					},
+				},
+				geometry = feature.geometry,
+				properties = feature.properties;
+
+				var cell = line.split(';');
+				feature.id = cell[0];
+				geometry.coordinates[0] = parseFloat(cell[1]);
+				geometry.coordinates[1] = parseFloat(cell[2]);
+				var mags = cell.slice(3);
+				for (var j in mags) {
+					properties.mags.push(parseFloat(mags[j]));
+				}
+				geo.features.push(feature);
+			}
+		}
+		return geo;
+	},
+};
+
+L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
+	name: '2MASS point sources',
+	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al., 2003)',
+	color: 'red',
+	maglim: 17.0,
+	service: 'CDS',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=II/246&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+	 '-c={ra}%2b{dec},eq=J2000&-c.bd={dra},{ddec}',
+	toGeoJSON: L.Catalog._csvToGeoJSON,
+	properties: ['Jmag', 'Hmag', 'Kmag'],
+	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={ra}%2b{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.SDSS = L.extend({}, L.Catalog, {
+	name: 'SDSS release 9',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al., 2012)',
+	color: 'green',
+	maglim: 25.0,
+	service: 'CDS',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-c={ra},{dec}&-c.bd={dra},{ddec}',
+	toGeoJSON: L.Catalog._csvToGeoJSON,
+	properties: ['umag', 'gmag', 'rmag', 'imag', 'zmag'],
+	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=V/139/sdss9&-c={ra}%2b{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Control.Layers.Catalogs = L.Control.Layers.extend({
+	options: {
+		title: 'overlay menu',
+		collapsed: true,
+		position: 'topright',
+		newoverlay: {
+			title: 'Overlay menu',
+			collapsed: true
+		}
+	},
+
+	_initLayout: function () {
+		L.Control.Layers.prototype._initLayout.call(this);
+
+		var newoverlay = this._newoverlay = L.DomUtil.create('div', 'leaflet-control-newoverlay', this._form);
+		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+		newoverlay.setAttribute('aria-haspopup', true);
+
+		if (!L.Browser.touch) {
+			L.DomEvent.disableClickPropagation(newoverlay);
+			L.DomEvent.on(newoverlay, 'mousewheel', L.DomEvent.stopPropagation);
+		} else {
+			L.DomEvent.on(newoverlay, 'click', L.DomEvent.stopPropagation);
+		}
+
+		this._newoverlaydialog = L.DomUtil.create('div', newoverlay.className + '-dialog', newoverlay);
+		if (this.options.newoverlay.collapsed) {
+			if (!L.Browser.android) {
+				L.DomEvent
+				    .on(newoverlay, 'mouseover', this._newoverlayexpand, this)
+				    .on(newoverlay, 'mouseout', this._newoverlaycollapse, this);
+			}
+
+			var toggle = this._newoverlaytoggle = L.DomUtil.create('a', newoverlay.className + '-toggle', newoverlay);
+			toggle.href = '#';
+			toggle.innerHTML = '...';
+			toggle.title = this.options.newoverlay.title;
+
+			if (L.Browser.touch) {
+				L.DomEvent
+			    .on(toggle, 'click', L.DomEvent.stop);
+			}
+			L.DomEvent.on(toggle, 'click', this._newoverlayexpand, this);
+
+			this._map.on('click', this._newoverlaycollapse, this);
+			// TODO keyboard accessibility
+		} else {
+			this._newoverlayexpand();
+		}
+
+		this._initDialog();
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			overdialog = this._newoverlaydialog,
+			className = this._newoverlay.className;
+
+		var button = document.createElement('input');
+		button.className = 'leaflet-newoverlay-2mass leaflet-control-bar';
+		button.type = 'button';
+		overdialog.appendChild(button);
+		L.DomEvent.on(button, 'click', function () {
+			_this.getCatalog(L.Catalog.TwoMASS);
+		}, this);
+
+		button = document.createElement('input');
+		button.className = 'leaflet-newoverlay-sdss leaflet-control-bar';
+		button.type = 'button';
+		overdialog.appendChild(button);
+		L.DomEvent.on(button, 'click', function () {
+			_this.getCatalog(L.Catalog.SDSS);
+		}, this);
+	},
+
+	_newoverlayexpand: function () {
+		L.DomUtil.addClass(this._newoverlay, 'leaflet-control-newoverlay-expanded');
+	},
+
+	_newoverlaycollapse: function () {
+		this._newoverlay.className = this._newoverlay.className.replace(' leaflet-control-newoverlay-expanded', '');
+	},
+
+	getCatalog: function (catalog) {
+		var _this = this,
+		center = this._map.getCenter(),
+		 bounds = this._map.getBounds(),
+		 lngfac = Math.abs(Math.cos(center.lat)) * L.LatLng.DEG_TO_RAD,
+		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
+		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
+
+		if (dlat > 1.0) {
+			dlat = 1.0;
+		} else if (dlat < 0.0001) {
+			dlat = 0.0001;
+		}
+		if (lngfac > 0.0) {
+			if (dlng * lngfac > 1.0) {
+				dlng = 1.0 / lngfac;
+			} else if (dlng * lngfac > 1.0) {
+				dlng = 1.0 / lngfac;
+			}
+		}
+
+		L.IIPUtils.requestURI(
+			L.Util.template(catalog.uri, L.extend({
+				ra: center.lng.toFixed(6),
+				dec: center.lat.toFixed(6),
+				dra: dlng.toFixed(4),
+				ddec: dlat.toFixed(4)
+			})), 'getting ' + catalog.service + ' data', function (context, httpRequest) {
+				_this._loadCatalog(catalog, context, httpRequest);
+			}, this, true);
+	},
+
+	_loadCatalog: function (catalog, _this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText,
+				 geo = catalog.toGeoJSON(response),
+				 geocatalog = L.geoJson(geo, {
+					onEachFeature: function (feature, layer) {
+						if (feature.properties && feature.properties.mags) {
+							layer.bindPopup(_this._popup(feature, catalog));
+						}
+					},
+					pointToLayer: function (feature, latlng) {
+						return L.circleMarker(latlng, {
+							radius: feature.properties.mags[0] ?
+							 8 + catalog.maglim - feature.properties.mags[0] : 8
+						});
+					},
+					style: function (feature) {
+						return {color: catalog.color};
+					}
+				}).addTo(_this._map);
+				_this.addOverlay(geo, catalog.name);
+			} else {
+				alert('There was a problem with the request to ' + catalog.service + '.');
+			}
+		}
+	},
+
+	_popup: function (feature, catalog) {
+		var str = '<div>';
+		if (catalog.objuri) {
+			str += 'ID: <a href=\"' +  L.Util.template(catalog.objuri, L.extend({
+				ra: feature.geometry.coordinates[0].toFixed(6),
+				dec: feature.geometry.coordinates[1].toFixed(6)
+			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
+		} else {
+			str += 'ID: ' + feature.id + '</div>';
+		}
+		for	(var i in catalog.properties) {
+			str += '<div>' + catalog.properties[i] + ': ' + feature.properties.mags[i].toString() + '</div>';
+		}
+		return str;
+	}
+
+});
+
+L.control.layers.catalogs = function (layers, options) {
+	return new L.Control.Layers.Catalogs(layers, options);
+};
+
+
+
+/*
+# L.Control.WCS Manage coordinate display and input
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		04/10/2013
+*/
+L.Control.WCS = L.Control.extend({
+	options: {
+		position: 'bottomleft',
+		units: 'HMS'
+	},
+
+	onAdd: function (map) {
+		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
+			style = reticle.style;
+		style.position = 'absolute';
+		style.left = '50%';
+		style.bottom = '50%';
+		style.textAlign = 'center';
+		style.verticalAlign = 'middle';
+		reticle.innerHTML = '+';
+
+		this._container = L.DomUtil.create('div', 'leaflet-control-wcs');
+		L.DomEvent.disableClickPropagation(this._container);
+		this._container.innerHTML = '';
+		map.on('drag', this._onDrag, this);
+		return this._container;
+	},
+
+	onRemove: function (map) {
+		map.off('drag', this._onDrag);
+	},
+
+	_onDrag: function (e) {
+		this._container.innerHTML = this._latLngToHMSDMS(this._map.getCenter());
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	_latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = h.toString() + ':' + m.toString() + ':' + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + sgn + d.toString() + ':' + m.toString() + ':' + sf.toFixed(2);
+	},
+
+
+});
+
+L.Map.mergeOptions({
+    positionControl: false
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.positionControl) {
+        this.positionControl = new L.Control.MousePosition();
+        this.addControl(this.positionControl);
+    }
+});
+
+L.control.wcs = function (options) {
+    return new L.Control.WCS(options);
+};
 
 

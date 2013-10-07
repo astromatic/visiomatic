@@ -320,7 +320,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			str += '&CNT=' + this.iip.Contrast.toString();
 		}
 		if (this.iip.Gamma !== this.iipdefault.Gamma) {
-			str += '&GAM=' + (1.0/this.iip.Gamma).toFixed(4);
+			str += '&GAM=' + (1.0 / this.iip.Gamma).toFixed(4);
 		}
 		if (this.iip.MinValue[0] !== this.iipdefault.MinValue[0] ||
 		 this.iip.MaxValue[0] !== this.iipdefault.MaxValue[0]) {

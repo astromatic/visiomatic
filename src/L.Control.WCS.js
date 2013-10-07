@@ -12,7 +12,7 @@ L.Control.WCS = L.Control.extend({
 	options: {
 		position: 'bottomleft',
 		units: 'HMS'
-   },
+	},
 
 	onAdd: function (map) {
 		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
@@ -32,18 +32,18 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	onRemove: function (map) {
-		map.off('drag', this._onDrag)
+		map.off('drag', this._onDrag);
 	},
 
 	_onDrag: function (e) {
-    this._container.innerHTML = this._latLngToHMSDMS(this._map.getCenter());
-  },
+		this._container.innerHTML = this._latLngToHMSDMS(this._map.getCenter());
+	},
 
 	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
 	_latLngToHMSDMS : function (latlng) {
-		var	lng = (latlng.lng + 360.0) / 360.0;
+		var lng = (latlng.lng + 360.0) / 360.0;
 		lng = (lng - Math.floor(lng)) * 24.0;
-		var	h = Math.floor (lng),
+		var h = Math.floor(lng),
 		 mf = (lng - h) * 60.0,
 		 m = Math.floor(mf),
 		 sf = (mf - m) * 60.0;
@@ -55,9 +55,9 @@ L.Control.WCS = L.Control.extend({
 			h++;
 			m = 0;
 		}
-		str = h.toString() + ':' + m.toString() + ':' + sf.toFixed(3);
-		var lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat< 0.0 ? '-' : '+',
+		var str = h.toString() + ':' + m.toString() + ':' + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
 		 d = Math.floor(lat);
 		mf = (lat - d) * 60.0;
 		m = Math.floor(mf);
