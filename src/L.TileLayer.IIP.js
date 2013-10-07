@@ -8,20 +8,7 @@
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
-#
-#	Last modified:		26/07/2013
+#	Last modified:		04/10/2013
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -34,6 +21,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		gamma: 1.0,
 		cMap: 'grey',
 		/*
+		quality: null,
 		maxNativeZoom: null,
 		zIndex: null,
 		tms: false,
@@ -59,7 +47,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		Gamma: 1,
 		CMap: 'grey',
 		MinValue: [],
-		MaxValue: []
+		MaxValue: [],
+		Quality: 90
 	},
 
 	iipdefault: {
@@ -67,7 +56,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		Gamma: 1,
 		CMap: 'grey',
 		MinValue: [],
-		MaxValue: []
+		MaxValue: [],
+		Quality: 90
 	},
 
 	initialize: function (url, options) {
@@ -103,40 +93,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getIIPMetaData: function (url) {
-		this.requestURI(url +
+		L.IIPUtils.requestURI(url +
 			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
 			'&obj=resolution-number&obj=bits-per-channel' +
 			'&obj=min-max-sample-values',
 			'getting IIP metadata',
 			this._parseMetadata, this);
-	},
-
-	requestURI: function (uri, purpose, action) {
-		var	context = this,
-			httpRequest;
-
-		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-			httpRequest = new XMLHttpRequest();
-		} else if (window.ActiveXObject) { // IE
-			try {
-				httpRequest = new ActiveXObject('Msxml2.XMLHTTP');
-			}
-			catch (e) {
-				try {
-					httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
-				}
-				catch (e) {}
-			}
-		}
-		if (!httpRequest) {
-			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
-			return false;
-		}
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
-		httpRequest.open('GET', uri);
-		httpRequest.send();
 	},
 
 	_parseMetadata: function (layer, httpRequest) {
@@ -201,7 +163,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				tmp = response.split('Bits-per-channel');
 				layer.iip.BPP = parseInt(tmp[1].substring(1, tmp[1].length), 10);
 				// Only 32bit data are likely to be linearly quantized
-				layer.iip.Gamma = layer.iip.BPP >= 32 ? 0.45 : 1.0;
+				layer.iip.Gamma = layer.iip.BPP >= 32 ? 2.2 : 1.0;
 				tmp = response.split('Min-Max-sample-values:');
 				if (!tmp[1]) {
 					alert('Error: Unexpected response from server ' + this.server);
@@ -358,12 +320,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			str += '&CNT=' + this.iip.Contrast.toString();
 		}
 		if (this.iip.Gamma !== this.iipdefault.Gamma) {
-			str += '&GAM=' + this.iip.Gamma.toString();
+			str += '&GAM=' + (1.0/this.iip.Gamma).toFixed(4);
 		}
 		if (this.iip.MinValue[0] !== this.iipdefault.MinValue[0] ||
 		 this.iip.MaxValue[0] !== this.iipdefault.MaxValue[0]) {
 			str += '&MINMAX=1,' + this.iip.MinValue[0].toString() + ',' +
 				this.iip.MaxValue[0].toString();
+		}
+		if (this.iip.Quality !== this.iipdefault.Quality) {
+			str += '&QLT=' + this.iip.Quality.toString();
 		}
 		return str + '&JTL=' + (tilePoint.z - this.iip.MinZoom).toString() + ',' +
 		 (tilePoint.x + this.iip.GridSize[tilePoint.z].x * tilePoint.y).toString();

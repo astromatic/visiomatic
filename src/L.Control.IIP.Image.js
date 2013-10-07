@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		14/09/2013
+#	Last modified:		04/10/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -114,53 +114,64 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		// Gamma
 		elem = this._addDialogLine('Gamma:');
-		var	gaminput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		var	gaminput = L.DomUtil.create('input', '', elem);
+		gaminput.id = 'leaflet-gammavalue';
 		gaminput.type = 'text';
 		gaminput.value = String(layer.iip.Gamma);
 		gaminput.layer = layer;
-		var	gamslider = L.DomUtil.create('span', '', elem);
-		gamslider.id = 'leaflet-gamma-slider';
-		$('#leaflet-gamma-slider').slider({
+		$('#leaflet-gammavalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(gaminput, 'Gamma', ui.value);
+				_this._onInputChange(maxinput, 'Gamma', gaminput.value);
 			},
-			slide: function (event, ui) {
-				gaminput.value = ui.value;
-			},
-			value: String(layer.iip.Gamma),
+			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
-			min: 0.05,
-			max: 2.0
+			min: 0.5,
+			max: 5.0,
 		});
 		L.DomEvent.on(gaminput, 'change', function () {
 			_this._onInputChange(gaminput, 'Gamma', gaminput.value);
-			$('#leaflet-gamma-slider').slider('value', gaminput.value);
 		}, this);
 
 		// Contrast
 		elem = this._addDialogLine('Contrast:');
-		var	continput = L.DomUtil.create('input', 'leaflet-slider-input', elem);
+		var	continput = L.DomUtil.create('input', '', elem);
+		continput.id = 'leaflet-contrastvalue';
 		continput.type = 'text';
 		continput.value = String(layer.iip.Contrast);
 		continput.layer = layer;
-		var	contslider = L.DomUtil.create('span', '', elem);
-		contslider.id = 'leaflet-contrast-slider';
-		$('#leaflet-contrast-slider').slider({
+		$('#leaflet-contrastvalue').spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(continput, 'Contrast', ui.value);
+				_this._onInputChange(maxinput, 'Contrast', continput.value);
 			},
-			slide: function (event, ui) {
-				continput.value = ui.value;
-			},
-			value: String(layer.iip.Contrast),
+			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
-			min: 0.05,
-			max: 4.0
+			min: 0.0,
+			max: 10.0,
 		});
 		L.DomEvent.on(continput, 'change', function () {
 			_this._onInputChange(continput, 'Contrast', continput.value);
-			$('#leaflet-contrast-slider').slider('value', continput.value);
 		}, this);
+
+		// JPEG quality
+		elem = this._addDialogLine('JPEG quality:');
+		var	qualinput = L.DomUtil.create('input', '', elem);
+		qualinput.id = 'leaflet-qualvalue';
+		qualinput.type = 'text';
+		qualinput.value = String(layer.iip.Quality);
+		qualinput.layer = layer;
+		$('#leaflet-qualvalue').spinner({
+			stop: function (event, ui) {
+				_this._onInputChange(maxinput, 'Quality', qualinput.value);
+			},
+			icons: { down: 'icon-minus', up: 'icon-plus' },
+			step: 1,
+			min: 0,
+			max: 100,
+		});
+		L.DomEvent.on(qualinput, 'change', function () {
+			_this._onInputChange(qualinput, 'quality', qualinput.value);
+		}, this);
+
 	},
 
 	_addDialogLine: function (label) {

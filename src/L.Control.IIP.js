@@ -43,17 +43,17 @@ L.Control.IIP = L.Control.extend({
 				    .on(container, 'mouseout', this._collapse, this);
 			}
 
-			var link = this._link = L.DomUtil.create('a', className + '-button leaflet-bar', container);
-			link.href = '#';
-			link.title = this.options.title;
+			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
+			toggle.href = '#';
+			toggle.title = this.options.title;
 
 			if (L.Browser.touch) {
 				L.DomEvent
-				    .on(link, 'click', L.DomEvent.stop)
-				    .on(link, 'click', this._expand, this);
+				    .on(toggle, 'click', L.DomEvent.stop)
+				    .on(toggle, 'click', this._expand, this);
 			}
 			else {
-				L.DomEvent.on(link, 'focus', this._expand, this);
+				L.DomEvent.on(toggle, 'focus', this._expand, this);
 			}
 
 			this._map.on('click', this._collapse, this);
@@ -81,7 +81,7 @@ L.Control.IIP = L.Control.extend({
 		var className = this._className,
 			container = this._container,
 			dialog = this._dialog,
-			link = this._link,
+			toggle = this._toggle,
 			layer = this._layer;
     // Setup the rest of the dialog window here
 	},
