@@ -20,8 +20,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		contrast: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
+		quality: 90,
 		/*
-		quality: null,
 		maxNativeZoom: null,
 		zIndex: null,
 		tms: false,
@@ -34,21 +34,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		*/
 		unloadInvisibleTiles: L.Browser.mobile,
 		updateWhenIdle: L.Browser.mobile
-	},
-
-	iip: {
-		TileSize: {x: 512, y: 512},
-		ImageSize: [],
-		GridSize: [],
-		BPP: 8,
-		MinZoom: 0,
-		MaxZoom: 0,
-		Contrast: 1,
-		Gamma: 1,
-		CMap: 'grey',
-		MinValue: [],
-		MaxValue: [],
-		Quality: 90
 	},
 
 	iipdefault: {
@@ -83,12 +68,22 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		if (typeof subdomains === 'string') {
 			this.options.subdomains = subdomains.split('');
 		}
-		this.iip.ImageSize[0] = this.iip.TileSize;
-		this.iip.GridSize[0] = {x: 1, y: 1};
-		this.iip.Contrast = this.options.contrast;
-		this.iip.Gamma = this.options.gamma;
-		this.iip.MinValue[0] = 0.0;
-		this.iip.MaxValue[0] = 255.0;
+		this.iipTileSize = {x: 256, y: 256};
+		this.iipImageSize = [];
+		this.iipImageSize[0] = this.iipTileSize;
+		this.iipGridSize = [];
+		this.iipGridSize[0] = {x: 1, y: 1};
+		this.iipBPP = 8;
+		this.iipMinZoom = this.options.minZoom;
+		this.iipMaxZoom = this.options.maxZoom;
+		this.iipContrast = this.options.contrast;
+		this.iipGamma = this.options.gamma;
+		this.iipCMap = this.options.cMap;
+		this.iipMinValue = [];
+		this.iipMinValue[0] = 0.0;
+		this.iipMaxValue = [];
+		this.iipMaxValue[0] = 255.0;
+		this.iipQuality = this.options.quality;
 		this.getIIPMetaData(this._url);
 	},
 
@@ -117,7 +112,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				};
 				tmp = response.split('Tile-size');
 				size = tmp[1].split(' ');
-				layer.iip.TileSize = {
+				layer.iipTileSize = {
 					x: parseInt(size[0].substring(1, size[0].length), 10),
 					y: parseInt(size[1], 10)
 				};
@@ -131,39 +126,39 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						y: Math.floor(maxsize.y / Math.pow(2, maxzoom + z))
 					};
 					gridsize = {
-						x: Math.ceil(imagesize.x / layer.iip.TileSize.x),
-						y: Math.ceil(imagesize.y / layer.iip.TileSize.y)
+						x: Math.ceil(imagesize.x / layer.iipTileSize.x),
+						y: Math.ceil(imagesize.y / layer.iipTileSize.y)
 					};
 				}
-				layer.iip.MinZoom = z - 1;
-				if (layer.iip.MinZoom > layer.options.minZoom) {
-					layer.options.minZoom = layer.iip.MinZoom;
+				layer.iipMinZoom = z - 1;
+				if (layer.iipMinZoom > layer.options.minZoom) {
+					layer.options.minZoom = layer.iipMinZoom;
 				}
-				layer.iip.MaxZoom = layer.iip.MinZoom + maxzoom;
+				layer.iipMaxZoom = layer.iipMinZoom + maxzoom;
 				if (!layer.options.maxZoom) {
-					layer.options.maxZoom = layer.iip.MaxZoom + 2;
+					layer.options.maxZoom = layer.iipMaxZoom + 2;
 				}
 				if (!layer.options.maxNativeZoom) {
-					layer.options.maxNativeZoom = layer.iip.MaxZoom;
+					layer.options.maxNativeZoom = layer.iipMaxZoom;
 				}
 				// Set grid sizes
-				for (z = 0; z <= layer.iip.MaxZoom; z++) {
-					layer.iip.ImageSize[z] = {
-						x: Math.floor(maxsize.x / Math.pow(2, layer.iip.MaxZoom - z)),
-						y: Math.floor(maxsize.y / Math.pow(2, layer.iip.MaxZoom - z))
+				for (z = 0; z <= layer.iipMaxZoom; z++) {
+					layer.iipImageSize[z] = {
+						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
+						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
 					};
-					layer.iip.GridSize[z] = {
-						x: Math.ceil(layer.iip.ImageSize[z].x / layer.iip.TileSize.x),
-						y: Math.ceil(layer.iip.ImageSize[z].y / layer.iip.TileSize.y)
+					layer.iipGridSize[z] = {
+						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
+						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
 					};
 				}
-				for (z = layer.iip.MaxZoom; z <= layer.options.maxZoom; z++) {
-					layer.iip.GridSize[z] = layer.iip.GridSize[layer.iip.MaxZoom];
+				for (z = layer.iipMaxZoom; z <= layer.options.maxZoom; z++) {
+					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
 				}
 				tmp = response.split('Bits-per-channel');
-				layer.iip.BPP = parseInt(tmp[1].substring(1, tmp[1].length), 10);
+				layer.iipBPP = parseInt(tmp[1].substring(1, tmp[1].length), 10);
 				// Only 32bit data are likely to be linearly quantized
-				layer.iip.Gamma = layer.iip.BPP >= 32 ? 2.2 : 1.0;
+				layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
 				tmp = response.split('Min-Max-sample-values:');
 				if (!tmp[1]) {
 					alert('Error: Unexpected response from server ' + this.server);
@@ -173,14 +168,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				var n = 0;
 				for (var l = 0; l < minmax.length, n < arraylen; l++) {
 					if (minmax[l] !== '') {
-						layer.iipdefault.MinValue[n] = layer.iip.MinValue[n] = parseFloat(minmax[l]);
+						layer.iipdefault.MinValue[n] = layer.iipMinValue[n] = parseFloat(minmax[l]);
 						n++;
 					}
 				}
 				var nn = 0;
 				for (var ll = l; ll < minmax.length; ll++) {
 					if (minmax[l] !== '') {
-						layer.iipdefault.MaxValue[nn] = layer.iip.MaxValue[nn] = parseFloat(minmax[l]);
+						layer.iipdefault.MaxValue[nn] = layer.iipMaxValue[nn] = parseFloat(minmax[l]);
 						nn++;
 					}
 				}
@@ -188,7 +183,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				if (layer.options.bounds) {
 					layer.options.bounds = L.latLngBounds(layer.options.bounds);
 				}
-				layer.iip.MetaReady = true;
+				layer.iipMetaReady = true;
 				layer.fire('metaload');
 			} else {
 				alert('There was a problem with the IIP metadata request.');
@@ -197,7 +192,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	addTo: function (map) {
-		if (this.iip.MetaReady) {
+		if (this.iipMetaReady) {
 			// IIP data are ready so we can go
 			map.addLayer(this);
 		}
@@ -224,7 +219,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_getTileSize: function () {
 		var zoomfac = this._getTileSizeFac();
-		return {x: this.iip.TileSize.x * zoomfac, y: this.iip.TileSize.y * zoomfac};
+		return {x: this.iipTileSize.x * zoomfac, y: this.iipTileSize.y * zoomfac};
 	},
 
 	_update: function () {
@@ -269,8 +264,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			return false; // already loaded
 		}
 		var z = this._getZoomForUrl();
-		if (tilePoint.x >= this.iip.GridSize[z].x ||
-			tilePoint.y >= this.iip.GridSize[z].y) {
+		if (tilePoint.x >= this.iipGridSize[z].x ||
+			tilePoint.y >= this.iipGridSize[z].y) {
 			return false;
 		}
 
@@ -285,7 +280,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 
 		if (options.bounds) {
-			var tileSize = this.iip.TileSize,
+			var tileSize = this.iipTileSize,
 			    nwPoint = this._vecMul(tilePoint.clone(), tileSize),
 			    sePoint = nwPoint.add(tileSize),
 			    nw = this._map.unproject(nwPoint),
@@ -313,25 +308,25 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	getTileUrl: function (tilePoint) {
 		var str = this._url;
-		if (this.iip.CMap !== this.iipdefault.CMap) {
-			str += '&CMP=' + this.iip.CMap;
+		if (this.iipCMap !== this.iipdefault.CMap) {
+			str += '&CMP=' + this.iipCMap;
 		}
-		if (this.iip.Contrast !== this.iipdefault.Contrast) {
-			str += '&CNT=' + this.iip.Contrast.toString();
+		if (this.iipContrast !== this.iipdefault.Contrast) {
+			str += '&CNT=' + this.iipContrast.toString();
 		}
-		if (this.iip.Gamma !== this.iipdefault.Gamma) {
-			str += '&GAM=' + (1.0 / this.iip.Gamma).toFixed(4);
+		if (this.iipGamma !== this.iipdefault.Gamma) {
+			str += '&GAM=' + (1.0 / this.iipGamma).toFixed(4);
 		}
-		if (this.iip.MinValue[0] !== this.iipdefault.MinValue[0] ||
-		 this.iip.MaxValue[0] !== this.iipdefault.MaxValue[0]) {
-			str += '&MINMAX=1,' + this.iip.MinValue[0].toString() + ',' +
-				this.iip.MaxValue[0].toString();
+		if (this.iipMinValue[0] !== this.iipdefault.MinValue[0] ||
+		 this.iipMaxValue[0] !== this.iipdefault.MaxValue[0]) {
+			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
+				this.iipMaxValue[0].toString();
 		}
-		if (this.iip.Quality !== this.iipdefault.Quality) {
-			str += '&QLT=' + this.iip.Quality.toString();
+		if (this.iipQuality !== this.iipdefault.Quality) {
+			str += '&QLT=' + this.iipQuality.toString();
 		}
-		return str + '&JTL=' + (tilePoint.z - this.iip.MinZoom).toString() + ',' +
-		 (tilePoint.x + this.iip.GridSize[tilePoint.z].x * tilePoint.y).toString();
+		return str + '&JTL=' + (tilePoint.z - this.iipMinZoom).toString() + ',' +
+		 (tilePoint.x + this.iipGridSize[tilePoint.z].x * tilePoint.y).toString();
 	},
 
 	_createTile: function () {

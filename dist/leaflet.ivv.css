@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		04/10/2013
+#	Last modified:		11/11/2013
 */
 
 /* Left control bar */
@@ -34,44 +34,38 @@
 	color: rgba(255,255,255,0) !important;
 	}
 
-
-.leaflet-control-iipimage-toggle {
+#leaflet-iipimage-toggle {
 	background-image: url(icon-contrast.svg);
 }
 
-.leaflet-control-iipplot-toggle {
+#leaflet-iipplot-toggle {
 	background-image: url(icon-plot.svg);
 }
 
-/* IIP image dialog */
-.leaflet-control-iipimage .leaflet-control-iipimage-dialog,
-.leaflet-control-iipimage-expanded .leaflet-control-iipimage-toggle,
-.leaflet-control-iipplot .leaflet-control-iipplot-dialog,
-.leaflet-control-iipplot-expanded .leaflet-control-iipplot-toggle {
+/* IIP dialog */
+.leaflet-control-iip .leaflet-control-iip-dialog,
+.leaflet-control-iip-expanded .leaflet-control-iip-toggle {
 	display: none;
-	}
+}
 
-.leaflet-control-iipimage-expanded .leaflet-control-iipimage-dialog,
-.leaflet-control-iipplot-expanded .leaflet-control-iipplot-dialog
-	{
+.leaflet-control-iip-expanded .leaflet-control-iip-dialog	{
 	display: block;
 	position: relative;
-	}
+}
 
-.leaflet-control-iipimage-expanded,
-.leaflet-control-iipplot-expanded {
+.leaflet-control-iip-expanded {
 	padding: 6px 10px 6px 6px;
 	color: #333;
 	background: #fff;
 }
 
 /* IIP Image dialog elements */
-.leaflet-control-iipimage-element {
+.leaflet-control-iip-element {
 	line-height: 30px;
 	vertical-align: middle;
 }
 
-.leaflet-control-iipimage-label {
+.leaflet-control-iip-label {
 	margin-right: 4px;
 }
 
@@ -136,7 +130,15 @@
   height: 24px;
 }
 
-/* Right control bar */
+/* Overlay dialog */
+.leaflet-top {
+	z-index: 2000;
+}
+
+.leaflet-control-layers-overlays {
+	line-height:26px;
+}
+/* New overlay dialog */
 .leaflet-control-newoverlay .leaflet-control-newoverlay-dialog,
 .leaflet-control-newoverlay-expanded .leaflet-control-newoverlay-toggle {
 	display: none;
@@ -152,6 +154,56 @@
   width: 100%;
   height: 13px;
   display: block;
+}
+
+.leaflet-control-newoverlay-catalogs {
+	height: 24px;
+	vertical-align: middle;
+}
+
+/* Color picker */
+.sp-replacer {
+	padding: 0;
+	vertical-align: middle;
+}
+
+.sp-preview {
+	width: 24px;
+	margin: 0px;
+}
+
+.sp-dd {
+	vertical-align: top;
+	float: right;
+	top: 0px;
+	margin-left: 0px;
+	padding: 0px;
+}
+
+.sp-container {
+z-index: 3000000000;
+}
+
+/* Trash button */
+.leaflet-control-layers-trash {
+	background-image: url(icon-trash.svg),linear-gradient(to bottom, rgba(255, 255, 255, 0),  rgba(200, 200, 200, 1));
+	background-repeat: no-repeat;
+	background-position: center center;
+	float: right;
+	width: 24px;
+	height: 24px;
+	-webkit-border-radius: 4px;
+	        border-radius: 4px;
+}
+
+/* WCS coordinates */
+.leaflet-control-wcs {
+	background-color: rgba(128, 128, 128, 0.5);
+	color: white;
+	padding: 1px;
+	-webkit-border-radius: 4px;
+	        border-radius: 4px;
+	box-shadow: 1px 1px 2px #000 inset;
 }
 
 /* Reticle */
@@ -178,3 +230,13 @@
 	        transition: opacity 0.5s linear;
 }
 
+/* Activity spinner */
+
+.leaflet-control-activity {
+	background-image: url(activity.svg);
+	background-size: 18px;
+  width: 18px;
+  height: 18px;
+	float:	left;
+	margin: 2px;
+}

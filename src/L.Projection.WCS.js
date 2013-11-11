@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/07/2013
+#	Last modified:		30/10/2013
 */
 
 L.Projection.WCS = {
@@ -23,8 +23,14 @@ L.Projection.WCS = {
 			cdp = Math.cos(dp),
 			sdp = Math.sin(dp),
 			dphi = (phiTheta.lng - projparam.natpole.lng) * deg,
-			cdphi = Math.cos(dphi);
-		return new L.LatLng(Math.asin(st * sdp + ct * cdp * cdphi) * rad,
+			cdphi = Math.cos(dphi),
+			asinarg = st * sdp + ct * cdp * cdphi;
+		if (asinarg > 1.0) {
+			asinarg = 1.0;
+		} else if (asinarg < -1.0) {
+			asinarg = -1.0;
+		}
+		return new L.LatLng(Math.asin(asinarg) * rad,
 		 projparam.celpole.lng + Math.atan2(- ct * Math.sin(dphi),
 		  st * cdp  - ct * sdp * cdphi) * rad);
 	},
@@ -41,8 +47,14 @@ L.Projection.WCS = {
 			sd = Math.sin(d),
 			dp = projparam.celpole.lat * deg,
 			cdp = Math.cos(dp),
-			sdp = Math.sin(dp);
-		return new L.LatLng(Math.asin(sd * sdp + cd * cdp * cda) * rad,
+			sdp = Math.sin(dp),
+			asinarg = sd * sdp + cd * cdp * cda;
+		if (asinarg > 1.0) {
+			asinarg = 1.0;
+		} else if (asinarg < -1.0) {
+			asinarg = -1.0;
+		}
+		return new L.LatLng(Math.asin(asinarg) * rad,
 		 projparam.natpole.lng + Math.atan2(- cd * sda,
 		    sd * cdp  - cd * sdp * cda) * rad);
 	},

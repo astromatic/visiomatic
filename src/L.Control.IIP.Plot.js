@@ -34,7 +34,7 @@ L.Draw.Line = L.Draw.Polyline.extend({
 		 distance, distanceStr, unit;
 
 		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + L.CRS.WCS.distance(currentLatLng, previousLatLng);
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
 
 		if (distance >= 1.0) {
 			unit = '&#176;';
@@ -56,14 +56,15 @@ L.Draw.Line = L.Draw.Polyline.extend({
 
 L.Control.IIP.Plot = L.Control.IIP.extend({
 	options: {
-		title: 'Image adjustment',
+		title: 'Image plots',
 		collapsed: true,
 		position: 'topleft',
 	},
 
 	initialize: function (baseLayers,  options) {
 		L.setOptions(this, options);
-		this._className = 'leaflet-control-iipplot';
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipplot';
 		this._layers = baseLayers;
 	},
 
@@ -89,14 +90,13 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 			var layer = e.layer;
 			_this._map.addLayer(layer);
 			drawline.removeHooks();
-			console.log(layer._latlngs);
 		}
 
 		);
 		drawline.addHooks();
 
-		this._layer.requestURI(this._layer._url.replace(/\&.*$/g, '') +
-			'&PFL=9:20,100-9000,2000',
+		L.IIPUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
+			'&PFL=7:20,100-9000,2000',
 			'getting IIP layer profile',
 			this._parseProfile, this);
 	},

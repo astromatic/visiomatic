@@ -18,12 +18,14 @@ L.Control.IIP = L.Control.extend({
 
 	initialize: function (baseLayers,  options) {
 		L.setOptions(this, options);
-		this._className = 'leaflet-control-iipimage';
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipimage';
 		this._layers = baseLayers;
 	},
 
 	onAdd: function (map) {
 		var className = this._className,
+			id = this._id,
 			container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
@@ -45,6 +47,7 @@ L.Control.IIP = L.Control.extend({
 
 			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
 			toggle.href = '#';
+			toggle.id = id + '-toggle';
 			toggle.title = this.options.title;
 
 			if (L.Browser.touch) {
@@ -86,6 +89,13 @@ L.Control.IIP = L.Control.extend({
     // Setup the rest of the dialog window here
 	},
 
+	_addDialogLine: function (label) {
+		var elem = L.DomUtil.create('div', this._className + '-element', this._dialog),
+		 text = L.DomUtil.create('span', this._className + '-label', elem);
+		text.innerHTML = label;
+		return elem;
+	},
+
 	_expand: function () {
 		L.DomUtil.addClass(this._container, this._className + '-expanded');
 	},
@@ -117,7 +127,7 @@ L.Control.IIP = L.Control.extend({
 			if (!layer.overlay) {
 				if (layer._premap) {
 					this._prelayer = layer;
-				} else if (this._map.hasLayer(layer) && layer.iip) {
+				} else if (this._map.hasLayer(layer) && layer.iipdefault) {
 					return layer;
 				}
 			}
@@ -128,9 +138,9 @@ L.Control.IIP = L.Control.extend({
 	_onInputChange:	function (input, pname, value) {
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			input.layer.iip[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+			input.layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			input.layer.iip[pnamearr[0]] = value;
+			input.layer[pnamearr[0]] = value;
 		}
 		input.layer.redraw();
 	}

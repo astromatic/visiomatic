@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <title>Layer 1</title>
+    <g><rect height="8" width="2.5" fill="#231F20" x="14.75"/></g>
+    <g><rect height="2.5" width="8" fill="#414042" transform="matrix(0.5,0.866,-0.866,0.5,9.8564,-5.8564) " y="4.358" x="6"/></g>
+    <g><rect height="2.5" width="8" fill="#58595B" transform="matrix(0.866,0.5,-0.5,0.866,5.7517,-1.4644) " y="8.75" x="1.609"/></g>
+    <g><rect height="2.5" width="8" fill="#6D6E71" y="14.75"/></g>
+    <g><rect height="8" width="2.5" fill="#808285" transform="matrix(0.4998,0.8661,-0.8661,0.4998,21.8598,6.145) " y="18" x="4.359"/></g>
+    <g><rect height="8" width="2.5" fill="#939598" transform="matrix(0.866,0.5,-0.5,0.866,14.5359,-1.4651) " y="22.392" x="8.752"/></g>
+    <g><rect height="8" width="2.5" fill="#A7A9AC" y="24" x="14.752"/></g>
+    <g><rect height="2.5" width="8" fill="#BCBEC0" transform="matrix(0.5001,0.866,-0.866,0.5001,33.8526,-5.8603) " y="25.141" x="18.003"/></g>
+    <g><rect height="2.5" width="8" fill="#D1D3D4" transform="matrix(0.8661,0.4998,-0.4998,0.8661,14.5287,-10.2476) " y="20.747" x="22.394"/></g>
+    <g><rect height="2.5" width="8" fill="#E6E7E8" y="14.747" x="24.001"/></g>
+    <g><rect height="8" width="2.5" fill="#E6E7E8" transform="matrix(0.5,0.866,-0.866,0.5,21.8536,-17.8577) " y="5.997" x="25.142"/></g>
+    <g><rect height="8" width="2.5" fill="#E6E7E8" transform="matrix(0.8663,0.4995,-0.4995,0.8663,5.7417,-10.2399) " y="1.606" x="20.749"/></g>
+    <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 16 16" to="360 16 16" begin="0s" dur="1s" repeatCount="indefinite"/>
+  </g>
+</svg>
+
+
