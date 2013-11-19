@@ -24,6 +24,18 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		}
 	},
 
+	onAdd: function (map) {
+		map._catalogLayerControl = this;
+		this._initLayout();
+		this._update();
+
+		map
+		    .on('layeradd', this._onLayerChange, this)
+		    .on('layerremove', this._onLayerChange, this);
+
+		return this._container;
+	},
+
 	getCatalog: function (catalog) {
 		var _this = this,
 		center = this._map.getCenter(),
@@ -61,6 +73,7 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		if (obj.layer.notReady) {
 			var activity = document.createElement('span');
 			activity.className = 'leaflet-control-activity';
+			activity.style.float = 'left';
 			label.appendChild(activity);
 		} else {
 			var input,
@@ -110,8 +123,9 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 
 		for (i = 0; i < inputsLen; i++) {
 			input = inputs[i];
-			if (!('layerId' in input))
-			  continue;
+			if (!('layerId' in input)) {
+				continue;
+			}
 			obj = this._layers[input.layerId];
 			if (input.checked && !this._map.hasLayer(obj.layer)) {
 				this._map.addLayer(obj.layer);
@@ -132,12 +146,9 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		newoverlay.setAttribute('aria-haspopup', true);
 		newoverlay.collapsed = this.options.newoverlay.collapsed;
 
-		if (!L.Browser.touch) {
-			L.DomEvent.disableClickPropagation(newoverlay);
-			L.DomEvent.on(newoverlay, 'mousewheel', L.DomEvent.stopPropagation);
-		} else {
-			L.DomEvent.on(newoverlay, 'click', L.DomEvent.stopPropagation);
-		}
+		L.DomEvent
+				.disableClickPropagation(newoverlay)
+				.disableScrollPropagation(newoverlay);
 
 		this._newoverlayDialog = L.DomUtil.create('div', newoverlay.className + '-dialog', newoverlay);
 		if (this.options.newoverlay.collapsed) {
@@ -154,9 +165,15 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 
 			if (L.Browser.touch) {
 				L.DomEvent
-			    .on(toggle, 'click', L.DomEvent.stop);
+			    .on(toggle, 'click', L.DomEvent.stop)
+					.on(toggle, 'click', this._newoverlayExpand, this);
 			}
 			L.DomEvent.on(toggle, 'click', this._newoverlayExpand, this);
+
+			//Work around for Firefox android issue https://github.com/Leaflet/Leaflet/issues/2033
+			L.DomEvent.on(newoverlay, 'click', function () {
+				setTimeout(L.bind(this._onInputClick, this), 0);
+			}, this);
 
 			this._map.on('click', this._newoverlayCollapse, this);
 			// TODO keyboard accessibility
@@ -184,7 +201,7 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		opt.text = 'Choose catalog:';
 		opt.disabled = true;
 		opt.selected = true;
-		catselect.add(opt, null); 
+		catselect.add(opt, null);
 		for (var c in catalogs) {
 			opt = document.createElement('option');
 			opt.value = catalogs[c];
@@ -196,23 +213,25 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		catcolpick.id = 'leaflet-catalog-colorpicker';
 		catcolpick.type = 'text';
 		catcolpick.value = 'yellow';
-		$(document).ready(function(){ 
+
+		$(document).ready(function () {
 			$('#' + catcolpick.id).spectrum({
-			showInput: true,
-			clickoutFiresChange: true,
-			move: function (color) {
-				catcolpick.value = color.toHexString();
-			}
-		})});
+				showInput: true,
+				clickoutFiresChange: true,
+				move: function (color) {
+					catcolpick.value = color.toHexString();
+				}
+			});
+		});
 		var catbutton = L.DomUtil.create('input', className + '-catalogs', elem);
 		catbutton.type = 'button';
 		catbutton.value = 'Go';
-		L.DomEvent.on(catbutton, 'click', function() {
-			var	index = catselect.selectedIndex-1;	// Ignore dummy 'Choose catalog' entry
-			if (index >= 0 ) {
+		L.DomEvent.on(catbutton, 'click', function () {
+			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
+			if (index >= 0) {
 				var catalog = catalogs[index];
 				catalog.color = catcolpick.value;
-				catselect.selectedIndex = 0;		
+				catselect.selectedIndex = 0;
 				this.getCatalog(catalog);
 			}
 		}, this);
@@ -280,10 +299,6 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 			str += '<div>' + catalog.properties[i] + ': ' + feature.properties.mags[i].toString() + '</div>';
 		}
 		return str;
-	},
-
-	_trash: function (layerItem) {
-	console.log(layerItem.name);
 	}
 
 });

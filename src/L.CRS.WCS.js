@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		11/11/2013
+#	Last modified:		19/11/2013
 */
 
 L.WCS = L.Class.extend({
@@ -28,15 +28,25 @@ L.WCS = L.Class.extend({
 		cdinv: [[1.0, 0.0], [0.0, 1.0]]
 	},
 
-	initialize: function (url, options) {
+	initialize: function (hdr, options) {
 		options = L.setOptions(this, options);
-		if (url) {
-			L.IIPUtils.requestURI(url + '&obj=Summary-info',
-			 'getting FITS image header',
-			 this._readWCS, this);
-		} else {
-			this._finalize();
+		if (hdr) {
+			this._readWCS(hdr);
 		}
+		switch (options.ctype.x.substr(5, 3)) {
+		case 'ZEA':
+			options.projection = L.Projection.WCS.ZEA;
+			break;
+		case 'TAN':
+			options.projection = L.Projection.WCS.TAN;
+			break;
+		default:
+			options.projection = L.Projection.WCS.TAN;
+			break;
+		}
+		this.transformation = new L.Transformation(1, -0.5, -1, options.naxis.y + 0.5);
+		options.projection.paraminit(options);
+		this.code += ':' + options.projection.code;
 	},
 
 	code: 'WCS',
@@ -63,54 +73,32 @@ L.WCS = L.Class.extend({
 		return Math.pow(2, zoom - this.options.nzoom + 1);
 	},
 
+	getSize: function (zoom) {
+		var s = this.scale(zoom);
+		return L.point(s, s);
+	},
+
 // Return base zoom level at a given resolution for a given tile size
 	zoom1: function (point, tileSize) {
 		return Math.ceil(Math.log(Math.max(point.x / tileSize.x, point.y / tileSize.y)) / Math.LN2);
 	},
 
-	_finalize: function () {
-		var options = this.options;
-		switch (options.ctype.x.substr(5, 3)) {
-		case 'ZEA':
-			options.projection = L.Projection.WCS.ZEA;
-			break;
-		case 'TAN':
-			options.projection = L.Projection.WCS.TAN;
-			break;
-		default:
-			options.projection = L.Projection.WCS.TAN;
-			break;
-		}
-		this.transformation = new L.Transformation(1, -0.5, -1, options.naxis.y + 0.5);
-		options.projection.paraminit(options);
-		this.code += ':' + options.projection.code;
-		this.ready = true;
-		this.fire('metaload');
-	},
-
-	_readWCS: function (wcs, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				var _this = wcs,
-				 hdr = httpRequest.responseText,
-				 opt = _this.options,
-				 key = _this._readFITSKey,
-				 v;
-				if ((v = key('CTYPE1', hdr))) { opt.ctype.x = v; }
-				if ((v = key('CTYPE2', hdr))) { opt.ctype.y = v; }
-				if ((v = key('NAXIS1', hdr))) { opt.naxis.x = parseInt(v, 10); }
-				if ((v = key('NAXIS2', hdr))) { opt.naxis.y = parseInt(v, 10); }
-				if ((v = key('CRPIX1', hdr))) { opt.crpix.x = parseFloat(v, 10); }
-				if ((v = key('CRPIX2', hdr))) { opt.crpix.y = parseFloat(v, 10); }
-				if ((v = key('CRVAL1', hdr))) { opt.crval.lng = parseFloat(v, 10); }
-				if ((v = key('CRVAL2', hdr))) { opt.crval.lat = parseFloat(v, 10); }
-				if ((v = key('CD1_1', hdr))) { opt.cd[0][0] = parseFloat(v, 10); }
-				if ((v = key('CD1_2', hdr))) { opt.cd[0][1] = parseFloat(v, 10); }
-				if ((v = key('CD2_1', hdr))) { opt.cd[1][0] = parseFloat(v, 10); }
-				if ((v = key('CD2_2', hdr))) { opt.cd[1][1] = parseFloat(v, 10); }
-				_this._finalize();
-			}
-		}
+	_readWCS: function (hdr) {
+		var opt = this.options,
+		 key = this._readFITSKey,
+		 v;
+		if ((v = key('CTYPE1', hdr))) { opt.ctype.x = v; }
+		if ((v = key('CTYPE2', hdr))) { opt.ctype.y = v; }
+		if ((v = key('NAXIS1', hdr))) { opt.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { opt.naxis.y = parseInt(v, 10); }
+		if ((v = key('CRPIX1', hdr))) { opt.crpix.x = parseFloat(v, 10); }
+		if ((v = key('CRPIX2', hdr))) { opt.crpix.y = parseFloat(v, 10); }
+		if ((v = key('CRVAL1', hdr))) { opt.crval.lng = parseFloat(v, 10); }
+		if ((v = key('CRVAL2', hdr))) { opt.crval.lat = parseFloat(v, 10); }
+		if ((v = key('CD1_1', hdr))) { opt.cd[0][0] = parseFloat(v, 10); }
+		if ((v = key('CD1_2', hdr))) { opt.cd[0][1] = parseFloat(v, 10); }
+		if ((v = key('CD2_1', hdr))) { opt.cd[1][0] = parseFloat(v, 10); }
+		if ((v = key('CD2_2', hdr))) { opt.cd[1][1] = parseFloat(v, 10); }
 	},
 
 	_readFITSKey: function (keyword, str) {

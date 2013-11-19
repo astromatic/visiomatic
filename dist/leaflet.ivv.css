@@ -25,21 +25,21 @@
 
 /* Left control bar */
 .leaflet-control-zoom-in {
-	background-image: url(icon-magnifyplus.svg);
+	background-image: url(images/icon-magnifyplus.svg);
 	color: rgba(255,255,255,0) !important;
 	}
 
 .leaflet-control-zoom-out {
-	background-image: url(icon-magnifyminus.svg);
+	background-image: url(images/icon-magnifyminus.svg);
 	color: rgba(255,255,255,0) !important;
 	}
 
 #leaflet-iipimage-toggle {
-	background-image: url(icon-contrast.svg);
+	background-image: url(images/icon-contrast.svg);
 }
 
 #leaflet-iipplot-toggle {
-	background-image: url(icon-plot.svg);
+	background-image: url(images/icon-plot.svg);
 }
 
 /* IIP dialog */
@@ -80,16 +80,16 @@
 }
 
 .leaflet-cmap-grey {
-	background-image: url(icon-grey.svg);
+	background-image: url(images/icon-grey.svg);
 }
 .leaflet-cmap-jet {
-	background-image: url(icon-jet.svg);
+	background-image: url(images/icon-jet.svg);
 }
 .leaflet-cmap-hot {
-	background-image: url(icon-hot.svg);
+	background-image: url(images/icon-hot.svg);
 }
 .leaflet-cmap-cold {
-	background-image: url(icon-cold.svg);
+	background-image: url(images/icon-cold.svg);
 }
 /* jQuery-UI spinner */
 .ui-spinner {
@@ -114,7 +114,7 @@
 }
 
 .ui-spinner-down .icon-minus {
-	background-image: url(icon-minus.svg);
+	background-image: url(images/icon-minus.svg);
 	margin: 2px;
 	top: 0px;
 	left: 0px;
@@ -122,7 +122,7 @@
   height: 24px;
 }
 .ui-spinner-up .icon-plus {
-	background-image: url(icon-plus.svg);
+	background-image: url(images/icon-plus.svg);
 	margin: 2px;
 	top: 0px;
 	left: 0px;
@@ -186,7 +186,7 @@ z-index: 3000000000;
 
 /* Trash button */
 .leaflet-control-layers-trash {
-	background-image: url(icon-trash.svg),linear-gradient(to bottom, rgba(255, 255, 255, 0),  rgba(200, 200, 200, 1));
+	background-image: url(images/icon-trash.svg),linear-gradient(to bottom, rgba(255, 255, 255, 0),  rgba(200, 200, 200, 1));
 	background-repeat: no-repeat;
 	background-position: center center;
 	float: right;
@@ -209,7 +209,7 @@ z-index: 3000000000;
 /* Reticle */
 
 .leaflet-reticle {
-	background-image: url(reticle.svg);
+	background-image: url(images/reticle.svg);
   width: 26px;
   height: 26px;
 }
@@ -233,10 +233,44 @@ z-index: 3000000000;
 /* Activity spinner */
 
 .leaflet-control-activity {
-	background-image: url(activity.svg);
+	background-image: url(images/activity.svg);
 	background-size: 18px;
   width: 18px;
   height: 18px;
-	float:	left;
 	margin: 2px;
+}
+
+/* Profile plot */
+
+/* Extra Map */
+.leaflet-control-extramap {
+    border:solid rgba(255, 255, 255, 0.7) 3px;
+    box-shadow: 0 1px 7px #999;
+    background: #0f0f0f;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.leaflet-control-extramap a {
+    background-color: rgba(255, 255, 255, 0.75);
+    background-position: 1px 2px;
+    background-repeat: no-repeat;
+    display: block;
+    outline: none;
+    z-index: 99999;
+}
+
+.leaflet-control-extramap a.minimized {
+    background-position: 1px -18px;
+}
+
+.leaflet-control-extramap-toggle-display {
+    background-image: url("images/toggle.png");
+    border-radius: 4px 4px 4px 4px;
+    height: 19px;
+    width: 19px;
+    position: absolute;
+    bottom: 0;
+    right: 0; 
 }

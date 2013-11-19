@@ -9,6 +9,10 @@
 #	Last modified:		11/11/2013
 */
 L.IIPUtils = {
+// Definitions for RegExp
+	REG_PDEC: '(\\d+\\.\\d*)',
+	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
+
 // Ajax call to server
 	requestURI: function (uri, purpose, action, context) {
 		var	httpRequest;
@@ -51,7 +55,7 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * L.LatLng.RAD_TO_DEG;
-	},
+	}
 
 };
 

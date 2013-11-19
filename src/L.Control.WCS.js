@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		07/10/2013
+#	Last modified:		19/11/2013
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -23,6 +23,7 @@ L.Control.WCS = L.Control.extend({
 		style.bottom = '50%';
 		style.textAlign = 'center';
 		style.verticalAlign = 'middle';
+		style.pointerEvents = 'none';
 		reticle.innerHTML = '';
 
 		// Create coordinate input/display box
@@ -69,8 +70,8 @@ L.Control.WCS = L.Control.extend({
 			h++;
 			m = 0;
 		}
-		var str = h.toString() + ':' + (m<10?'0':'') + m.toString() +
-		 ':' + (sf<10.?'0':'') + sf.toFixed(3),
+		var str = h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
 		 lat = Math.abs(latlng.lat),
 		 sgn = latlng.lat < 0.0 ? '-' : '+',
 		 d = Math.floor(lat);
@@ -85,9 +86,9 @@ L.Control.WCS = L.Control.extend({
 			h++;
 			m = 0;
 		}
-		return str + ' ' + sgn + (d<10?'0':'') + d.toString() + ':' +
-		 (m<10?'0':'') + m.toString() + ':' +
-		 (sf<10.?'0':'') + sf.toFixed(2);
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	_onInputChange: function (e) {

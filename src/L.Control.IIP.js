@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		01/09/2013
+#	Last modified:		19/11/2013
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -30,12 +30,9 @@ L.Control.IIP = L.Control.extend({
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
-		if (!L.Browser.touch) {
-			L.DomEvent.disableClickPropagation(container);
-			L.DomEvent.on(container, 'mousewheel', L.DomEvent.stopPropagation);
-		} else {
-			L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
-		}
+		L.DomEvent
+				.disableClickPropagation(container)
+				.disableScrollPropagation(container);
 
 		this._dialog = L.DomUtil.create('div', className + '-dialog', container);
 		if (this.options.collapsed) {
@@ -125,7 +122,7 @@ L.Control.IIP = L.Control.extend({
 		for (var layername in layers) {
 			var layer = layers[layername];
 			if (!layer.overlay) {
-				if (layer._premap) {
+				if (!layer._map) {
 					this._prelayer = layer;
 				} else if (this._map.hasLayer(layer) && layer.iipdefault) {
 					return layer;

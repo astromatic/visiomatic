@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		14/10/2013
+#	Last modified:		19/11/2013
 */
 
 L.Catalog = {
@@ -88,7 +88,7 @@ L.Catalog.PPMXL = L.extend({}, L.Catalog, {
 	 '-out=SDSS9,RAJ2000,DEJ2000,Bmag,Vmag,Rmag,Jmag,HMag,KMag&-out.meta=&' +
 	 '-c={ra},{dec}&-c.bd={dra},{ddec}&-sort=_r&-out.max={nmax}',
 	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['Jmag', 'Hmag', 'Kmag', 'b1mag', 'b2mag','r1mag','r2mag','imag'],
+	properties: ['Jmag', 'Hmag', 'Kmag', 'b1mag', 'b2mag', 'r1mag', 'r2mag', 'imag'],
 	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
