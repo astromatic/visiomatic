@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		26/11/2013
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -25,8 +25,8 @@ L.Control.IIP = L.Control.extend({
 
 	onAdd: function (map) {
 		var className = this._className,
-			id = this._id,
-			container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+		 id = this._id,
+		 container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
@@ -38,8 +38,8 @@ L.Control.IIP = L.Control.extend({
 		if (this.options.collapsed) {
 			if (!L.Browser.android) {
 				L.DomEvent
-				    .on(container, 'mouseover', this._expand, this)
-				    .on(container, 'mouseout', this._collapse, this);
+					.on(container, 'mouseover', this._expand, this)
+					.on(container, 'mouseout', this._collapse, this);
 			}
 
 			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
@@ -62,18 +62,18 @@ L.Control.IIP = L.Control.extend({
 			this._expand();
 		}
 
-		this._checkLayer();
+		this._checkIIP();
 
 		return	this._container;
 	},
 
-	_checkLayer: function () {
+	_checkIIP: function () {
 		var layer = this._layer = this._findActiveBaseLayer();
 		if (layer) {
 			this._initDialog();
 		} else if (this._prelayer) {
 			// Layer metadata are not ready yet: listen for 'metaload' event
-			this._prelayer.once('metaload', this._checkLayer, this);
+			this._prelayer.once('metaload', this._checkIIP, this);
 		}
 	},
 
@@ -132,14 +132,14 @@ L.Control.IIP = L.Control.extend({
 		return undefined;
 	},
 
-	_onInputChange:	function (input, pname, value) {
+	_onInputChange:	function (layer, pname, value) {
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			input.layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+			layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			input.layer[pnamearr[0]] = value;
+			layer[pnamearr[0]] = value;
 		}
-		input.layer.redraw();
+		layer.redraw();
 	}
 
 });

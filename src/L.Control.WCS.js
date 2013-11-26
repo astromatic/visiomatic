@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		26/11/2013
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -15,17 +15,6 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	onAdd: function (map) {
-		// Create central reticle
-		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
-			style = reticle.style;
-		style.position = 'absolute';
-		style.left = '50%';
-		style.bottom = '50%';
-		style.textAlign = 'center';
-		style.verticalAlign = 'middle';
-		style.pointerEvents = 'none';
-		reticle.innerHTML = '';
-
 		// Create coordinate input/display box
 		var input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs');
 		L.DomEvent.disableClickPropagation(input);

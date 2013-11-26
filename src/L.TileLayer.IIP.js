@@ -8,7 +8,7 @@
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		19/11/2013
+#	Last modified:		25/11/2013
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -20,6 +20,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		contrast: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
+		invertCMap: false,
 		quality: 90,
 		/*
 		maxNativeZoom: null,
@@ -37,12 +38,13 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	iipdefault: {
-		Contrast: 1,
-		Gamma: 1,
-		CMap: 'grey',
-		MinValue: [],
-		MaxValue: [],
-		Quality: 90
+		contrast: 1,
+		gamma: 1,
+		cMap: 'grey',
+		invertCMap: false,
+		minValue: [],
+		maxValue: [],
+		quality: 90
 	},
 
 	initialize: function (url, options) {
@@ -82,6 +84,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipContrast = this.options.contrast;
 		this.iipGamma = this.options.gamma;
 		this.iipCMap = this.options.cMap;
+		this.iipInvertCMap = this.options.invertCMap;
 		this.iipMinValue = [];
 		this.iipMinValue[0] = 0.0;
 		this.iipMaxValue = [];
@@ -175,11 +178,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				 nfloat = str.length / 2,
 				 mmn = 0;
 				for (var n = 0; n < nfloat; n++) {
-					layer.iipdefault.MinValue[n] = layer.iipMinValue[n] =
+					layer.iipdefault.minValue[n] = layer.iipMinValue[n] =
 					 parseFloat(str[mmn++]);
 				}
 				for (n = 0; n < nfloat; n++) {
-					layer.iipdefault.MaxValue[n] = layer.iipMaxValue[n] =
+					layer.iipdefault.maxValue[n] = layer.iipMaxValue[n] =
 					 parseFloat(str[mmn++]);
 				}
 
@@ -324,21 +327,24 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	getTileUrl: function (tilePoint) {
 		var str = this._url;
-		if (this.iipCMap !== this.iipdefault.CMap) {
+		if (this.iipCMap !== this.iipdefault.cMap) {
 			str += '&CMP=' + this.iipCMap;
 		}
-		if (this.iipContrast !== this.iipdefault.Contrast) {
+		if (this.iipInvertCMap !== this.iipdefault.invertCMap) {
+			str += '&INV';
+		}
+		if (this.iipContrast !== this.iipdefault.contrast) {
 			str += '&CNT=' + this.iipContrast.toString();
 		}
-		if (this.iipGamma !== this.iipdefault.Gamma) {
+		if (this.iipGamma !== this.iipdefault.gamma) {
 			str += '&GAM=' + (1.0 / this.iipGamma).toFixed(4);
 		}
-		if (this.iipMinValue[0] !== this.iipdefault.MinValue[0] ||
-		 this.iipMaxValue[0] !== this.iipdefault.MaxValue[0]) {
+		if (this.iipMinValue[0] !== this.iipdefault.minValue[0] ||
+		 this.iipMaxValue[0] !== this.iipdefault.maxValue[0]) {
 			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
 				this.iipMaxValue[0].toString();
 		}
-		if (this.iipQuality !== this.iipdefault.Quality) {
+		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
 		}
 		return str + '&JTL=' + (tilePoint.z - this.iipMinZoom).toString() + ',' +

@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		30/10/2013
+#	Last modified:		26/11/2013
 */
 
 L.Projection.WCS = {
@@ -131,7 +131,12 @@ L.Projection.WCS.ZEA = L.extend({}, L.Projection.WCS.zenithal, {
 	code: 'ZEA',
 
 	rToTheta: function (r) {
-		return 90.0 - 2.0 * Math.asin(Math.PI * r / 360.0) * L.LatLng.RAD_TO_DEG;
+		var rr = Math.PI * r / 360.0;
+		if (Math.abs(rr) < 1.0) {
+			return 90.0 - 2.0 * Math.asin(rr) * L.LatLng.RAD_TO_DEG;
+		} else {
+			return 90.0;
+		}
 	},
 
 	thetaToR: function (theta) {

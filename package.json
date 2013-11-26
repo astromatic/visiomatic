@@ -2,7 +2,7 @@
 	"name": "leaflet-ivv",
 	"version": "0.1.0",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
-	"dependencies": {"leaflet": "~0.6"},
+	"dependencies": {"leaflet": "~0.7"},
 	"devDependencies": {
 		"jshint": "~2.1.4",
 		"mocha": "~1.10.0",
@@ -11,8 +11,7 @@
 		"uglify-js": "~2.3.6",
 		"jake": "~0.5.16",
 		"jquery-browser": "~1.10",
-		"spin.js": "~1.3.2",
-		"d3.js": "~3.3.9"
+		"d3.js": "~3.3.10"
 	},
 	"main": "dist/leaflet.ivv.js",
 	"scripts": {

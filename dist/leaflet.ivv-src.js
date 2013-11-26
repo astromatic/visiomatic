@@ -89,7 +89,7 @@ L.IIPUtils = {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		30/10/2013
+#	Last modified:		26/11/2013
 */
 
 L.Projection.WCS = {
@@ -213,7 +213,12 @@ L.Projection.WCS.ZEA = L.extend({}, L.Projection.WCS.zenithal, {
 	code: 'ZEA',
 
 	rToTheta: function (r) {
-		return 90.0 - 2.0 * Math.asin(Math.PI * r / 360.0) * L.LatLng.RAD_TO_DEG;
+		var rr = Math.PI * r / 360.0;
+		if (Math.abs(rr) < 1.0) {
+			return 90.0 - 2.0 * Math.asin(rr) * L.LatLng.RAD_TO_DEG;
+		} else {
+			return 90.0;
+		}
 	},
 
 	thetaToR: function (theta) {
@@ -356,7 +361,7 @@ L.wcs = function (options) {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		26/11/2013
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -365,17 +370,6 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	onAdd: function (map) {
-		// Create central reticle
-		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
-			style = reticle.style;
-		style.position = 'absolute';
-		style.left = '50%';
-		style.bottom = '50%';
-		style.textAlign = 'center';
-		style.verticalAlign = 'middle';
-		style.pointerEvents = 'none';
-		reticle.innerHTML = '';
-
 		// Create coordinate input/display box
 		var input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs');
 		L.DomEvent.disableClickPropagation(input);
@@ -502,7 +496,7 @@ L.control.wcs = function (options) {
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		19/11/2013
+#	Last modified:		25/11/2013
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -514,6 +508,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		contrast: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
+		invertCMap: false,
 		quality: 90,
 		/*
 		maxNativeZoom: null,
@@ -531,12 +526,13 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	iipdefault: {
-		Contrast: 1,
-		Gamma: 1,
-		CMap: 'grey',
-		MinValue: [],
-		MaxValue: [],
-		Quality: 90
+		contrast: 1,
+		gamma: 1,
+		cMap: 'grey',
+		invertCMap: false,
+		minValue: [],
+		maxValue: [],
+		quality: 90
 	},
 
 	initialize: function (url, options) {
@@ -576,6 +572,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipContrast = this.options.contrast;
 		this.iipGamma = this.options.gamma;
 		this.iipCMap = this.options.cMap;
+		this.iipInvertCMap = this.options.invertCMap;
 		this.iipMinValue = [];
 		this.iipMinValue[0] = 0.0;
 		this.iipMaxValue = [];
@@ -669,11 +666,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				 nfloat = str.length / 2,
 				 mmn = 0;
 				for (var n = 0; n < nfloat; n++) {
-					layer.iipdefault.MinValue[n] = layer.iipMinValue[n] =
+					layer.iipdefault.minValue[n] = layer.iipMinValue[n] =
 					 parseFloat(str[mmn++]);
 				}
 				for (n = 0; n < nfloat; n++) {
-					layer.iipdefault.MaxValue[n] = layer.iipMaxValue[n] =
+					layer.iipdefault.maxValue[n] = layer.iipMaxValue[n] =
 					 parseFloat(str[mmn++]);
 				}
 
@@ -818,21 +815,24 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	getTileUrl: function (tilePoint) {
 		var str = this._url;
-		if (this.iipCMap !== this.iipdefault.CMap) {
+		if (this.iipCMap !== this.iipdefault.cMap) {
 			str += '&CMP=' + this.iipCMap;
 		}
-		if (this.iipContrast !== this.iipdefault.Contrast) {
+		if (this.iipInvertCMap !== this.iipdefault.invertCMap) {
+			str += '&INV';
+		}
+		if (this.iipContrast !== this.iipdefault.contrast) {
 			str += '&CNT=' + this.iipContrast.toString();
 		}
-		if (this.iipGamma !== this.iipdefault.Gamma) {
+		if (this.iipGamma !== this.iipdefault.gamma) {
 			str += '&GAM=' + (1.0 / this.iipGamma).toFixed(4);
 		}
-		if (this.iipMinValue[0] !== this.iipdefault.MinValue[0] ||
-		 this.iipMaxValue[0] !== this.iipdefault.MaxValue[0]) {
+		if (this.iipMinValue[0] !== this.iipdefault.minValue[0] ||
+		 this.iipMaxValue[0] !== this.iipdefault.maxValue[0]) {
 			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
 				this.iipMaxValue[0].toString();
 		}
-		if (this.iipQuality !== this.iipdefault.Quality) {
+		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
 		}
 		return str + '&JTL=' + (tilePoint.z - this.iipMinZoom).toString() + ',' +
@@ -880,6 +880,120 @@ L.tileLayer.iip = function (url, options) {
 
 
 /*
+# L.Catalogs contains specific catalog settings and conversion tools.
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		25/11/2013
+*/
+
+L.Catalog = {
+	nmax: 5000,	// Sets the maximum number of sources per query
+	_csvToGeoJSON: function (str) {
+		// Check to see if the delimiter is defined. If not, then default to comma.
+		var badreg = new RegExp('#|--|^$'),
+		 lines = str.split('\n'),
+		 array = [],
+		 geo = {type: 'FeatureCollection', features: []};
+
+		for (var i in lines) {
+			var line = lines[i];
+			if (badreg.test(line) === false) {
+				var feature = {
+					type: 'Feature',
+					id: '',
+					properties: {
+						mags: []
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [0.0, 0.0]
+					},
+				},
+				geometry = feature.geometry,
+				properties = feature.properties;
+
+				var cell = line.split(';');
+				feature.id = cell[0];
+				geometry.coordinates[0] = parseFloat(cell[1]);
+				geometry.coordinates[1] = parseFloat(cell[2]);
+				var mags = cell.slice(3);
+				for (var j in mags) {
+					properties.mags.push(parseFloat(mags[j]));
+				}
+				geo.features.push(feature);
+			}
+		}
+		return geo;
+	},
+
+	_popup: function (feature) {
+		var str = '<div>';
+		if (this.objuri) {
+			str += 'ID: <a href=\"' +  L.Util.template(this.objuri, L.extend({
+				ra: feature.geometry.coordinates[0].toFixed(6),
+				dec: feature.geometry.coordinates[1].toFixed(6)
+			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
+		} else {
+			str += 'ID: ' + feature.id + '</div>';
+		}
+		for	(var i in this.properties) {
+			str += '<div>' + this.properties[i] + ': ' +
+				feature.properties.mags[i].toString() + '</div>';
+		}
+		return str;
+	}
+
+};
+
+L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
+	name: '2MASS point sources',
+	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al., 2003)',
+	color: 'yellow',
+	maglim: 17.0,
+	service: 'CDS',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=II/246&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+	 '-c={ra},{dec},eq=J2000&-c.bd={dra},{ddec}&-sort=_Kmagr&-out.max={nmax}',
+	toGeoJSON: L.Catalog._csvToGeoJSON,
+	properties: ['Jmag', 'Hmag', 'Kmag'],
+	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.SDSS = L.extend({}, L.Catalog, {
+	name: 'SDSS release 9',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al., 2012)',
+	color: 'yellow',
+	maglim: 25.0,
+	service: 'CDS',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-c={ra},{dec}&-c.bd={dra},{ddec}&-sort=imag&-out.max={nmax}',
+	toGeoJSON: L.Catalog._csvToGeoJSON,
+	properties: ['umag', 'gmag', 'rmag', 'imag', 'zmag'],
+	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.PPMXL = L.extend({}, L.Catalog, {
+	name: 'PPMXL',
+	attribution: 'PPM-Extended, positions and proper motions by Roeser et al. 2008',
+	color: 'yellow',
+	maglim: 20.0,
+	service: 'CDS',
+	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RAJ2000,DEJ2000,Bmag,Vmag,Rmag,Jmag,HMag,KMag&-out.meta=&' +
+	 '-c={ra},{dec}&-c.bd={dra},{ddec}&-sort=_r&-out.max={nmax}',
+	toGeoJSON: L.Catalog._csvToGeoJSON,
+	properties: ['Jmag', 'Hmag', 'Kmag', 'b1mag', 'b2mag', 'r1mag', 'r2mag', 'imag'],
+	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+
+
+/*
 # L.Control.IIP adjusts the rendering of an IIP layer
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
@@ -888,7 +1002,7 @@ L.tileLayer.iip = function (url, options) {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		26/11/2013
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -906,8 +1020,8 @@ L.Control.IIP = L.Control.extend({
 
 	onAdd: function (map) {
 		var className = this._className,
-			id = this._id,
-			container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+		 id = this._id,
+		 container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
@@ -919,8 +1033,8 @@ L.Control.IIP = L.Control.extend({
 		if (this.options.collapsed) {
 			if (!L.Browser.android) {
 				L.DomEvent
-				    .on(container, 'mouseover', this._expand, this)
-				    .on(container, 'mouseout', this._collapse, this);
+					.on(container, 'mouseover', this._expand, this)
+					.on(container, 'mouseout', this._collapse, this);
 			}
 
 			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
@@ -943,18 +1057,18 @@ L.Control.IIP = L.Control.extend({
 			this._expand();
 		}
 
-		this._checkLayer();
+		this._checkIIP();
 
 		return	this._container;
 	},
 
-	_checkLayer: function () {
+	_checkIIP: function () {
 		var layer = this._layer = this._findActiveBaseLayer();
 		if (layer) {
 			this._initDialog();
 		} else if (this._prelayer) {
 			// Layer metadata are not ready yet: listen for 'metaload' event
-			this._prelayer.once('metaload', this._checkLayer, this);
+			this._prelayer.once('metaload', this._checkIIP, this);
 		}
 	},
 
@@ -1013,14 +1127,14 @@ L.Control.IIP = L.Control.extend({
 		return undefined;
 	},
 
-	_onInputChange:	function (input, pname, value) {
+	_onInputChange:	function (layer, pname, value) {
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			input.layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+			layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			input.layer[pnamearr[0]] = value;
+			layer[pnamearr[0]] = value;
 		}
-		input.layer.redraw();
+		layer.redraw();
 	}
 
 });
@@ -1040,20 +1154,7 @@ L.control.iip = function (baseLayers, options) {
 #	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				         Chiara Marmo - IDES/Paris-Sud
 #
-#	License:		GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
-#
-#	Last modified:		04/10/2013
+#	Last modified:		26/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -1068,7 +1169,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		position: 'topleft',
 	},
 
-	initialize: function (baseLayers,  options) {
+	initialize: function (baseLayers, options) {
 		L.setOptions(this, options);
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
@@ -1076,7 +1177,6 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 	},
 
 	_initDialog: function () {
-
 		var _this = this,
 			className = this._className,
 			dialog = this._dialog,
@@ -1086,24 +1186,36 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		// Colour lookup table (Colour maps)
 		elem = this._addDialogLine('LUT:');
+		var	invbutton =  L.DomUtil.create('input', 'leaflet-cmap-inv', elem);
+		invbutton.id = 'leaflet-invertcmap';
+		invbutton.type = 'button';
+
 		var cmapinput = L.DomUtil.create('span', className + '-cmaps', elem);
+		var cbutton = [];
 		for (var i in cmaps) {
-			var	button = document.createElement('input');
-			button.className = 'leaflet-cmap-' + cmaps[i];
-			button.type = 'button';
-			button.name = 'button';
-			button.cmap = cmaps[i];
-			button.layer = layer;
-			cmapinput.appendChild(button);
+			cbutton[i] = document.createElement('input');
+			cbutton[i].className = 'leaflet-cmap-' + cmaps[i];
+			cbutton[i].type = 'button';
+			cbutton[i].name = 'button';
+			cbutton[i].cmap = cmaps[i];
+			cmapinput.appendChild(cbutton[i]);
 			if (cmaps[i] === this.options.cmap) {
-				button.checked = 'checked';
+				cbutton[i].checked = 'checked';
 			}
 		}
 
 		$('.' + className + '-cmaps').buttonset();
 		$('.' + className + '-cmaps :button').click(function (e) {
-			_this._onInputChange(this, 'iipCMap', this.cmap);
+			_this._onInputChange(layer, 'iipCMap', this.cmap);
 		});
+		$('#leaflet-invertcmap').button();
+		L.DomEvent.on(invbutton, 'click', function () {
+			_this._onInputChange(layer, 'iipInvertCMap', !layer.iipInvertCMap);
+			var style = layer.iipInvertCMap ? 'scaleY(-1.0)' : 'none';
+			for (var i in cmaps) {
+				cbutton[i].style.transform = style;
+			}
+		}, this);
 
 		// Min and max pixel values
 		var step = ((layer.iipMaxValue[0] - layer.iipMinValue[0]) / 100.0).toPrecision(1);
@@ -1114,16 +1226,15 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		mininput.id = 'leaflet-minvalue';
 		mininput.type = 'text';
 		mininput.value = String(layer.iipMinValue[0]);
-		mininput.layer = layer;
 		$('#' + mininput.id).spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(mininput, 'iipMinValue[0]', mininput.value);
+				_this._onInputChange(layer, 'iipMinValue[0]', mininput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step
 		});
 		L.DomEvent.on(mininput, 'change', function () {
-			_this._onInputChange(mininput, 'iipMinValue[0]', mininput.value);
+			_this._onInputChange(layer, 'iipMinValue[0]', mininput.value);
 		}, this);
 
 		// Max
@@ -1132,16 +1243,15 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		maxinput.id = 'leaflet-maxvalue';
 		maxinput.type = 'text';
 		maxinput.value = String(layer.iipMaxValue[0]);
-		maxinput.layer = layer;
 		$('#' + maxinput.id).spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(maxinput, 'iipMaxValue[0]', maxinput.value);
+				_this._onInputChange(layer, 'iipMaxValue[0]', maxinput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step
 		});
 		L.DomEvent.on(maxinput, 'change', function () {
-			_this._onInputChange(maxinput, 'iipMaxValue[0]', maxinput.value);
+			_this._onInputChange(layer, 'iipMaxValue[0]', maxinput.value);
 		}, this);
 
 		// Gamma
@@ -1150,10 +1260,9 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		gaminput.id = 'leaflet-gammavalue';
 		gaminput.type = 'text';
 		gaminput.value = String(layer.iipGamma);
-		gaminput.layer = layer;
 		$('#' + gaminput.id).spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(maxinput, 'iipGamma', gaminput.value);
+				_this._onInputChange(layer, 'iipGamma', gaminput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
@@ -1161,7 +1270,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			max: 5.0,
 		});
 		L.DomEvent.on(gaminput, 'change', function () {
-			_this._onInputChange(gaminput, 'iipGamma', gaminput.value);
+			_this._onInputChange(layer, 'iipGamma', gaminput.value);
 		}, this);
 
 		// Contrast
@@ -1170,10 +1279,9 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		continput.id = 'leaflet-contrastvalue';
 		continput.type = 'text';
 		continput.value = String(layer.iipContrast);
-		continput.layer = layer;
 		$('#' + continput.id).spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(maxinput, 'iipContrast', continput.value);
+				_this._onInputChange(layer, 'iipContrast', continput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 0.05,
@@ -1181,7 +1289,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			max: 10.0,
 		});
 		L.DomEvent.on(continput, 'change', function () {
-			_this._onInputChange(continput, 'iipContrast', continput.value);
+			_this._onInputChange(layer, 'iipContrast', continput.value);
 		}, this);
 
 		// JPEG quality
@@ -1190,10 +1298,9 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		qualinput.id = 'leaflet-qualvalue';
 		qualinput.type = 'text';
 		qualinput.value = String(layer.iipQuality);
-		qualinput.layer = layer;
 		$('#' + qualinput.id).spinner({
 			stop: function (event, ui) {
-				_this._onInputChange(maxinput, 'iipQuality', qualinput.value);
+				_this._onInputChange(layer, 'iipQuality', qualinput.value);
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: 1,
@@ -1201,10 +1308,10 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			max: 100,
 		});
 		L.DomEvent.on(qualinput, 'change', function () {
-			_this._onInputChange(qualinput, 'iipQuality', qualinput.value);
+			_this._onInputChange(layer, 'iipQuality', qualinput.value);
 		}, this);
 
-	},
+	}
 
 });
 
@@ -1215,81 +1322,203 @@ L.control.iip.image = function (baseLayers, options) {
 
 
 /*
-# L.Control.IIP.Plot manages plots related to IIP layers
-# (see http://iipimage.sourceforge.net/documentation/protocol/)
+# L.Control.Layers.Overlay manages new overlays such as catalogs and plots
 #
 #	This file part of:	Leaflet-IVV
 #
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                    Chiara Marmo - IDES/Paris-Sud
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		26/11/2013
 */
 
 if (typeof require !== 'undefined') {
+	var $ = require('jquery-browser');
 	var d3 = require('d3');
 }
 
-L.Draw.Line = L.Draw.Polyline.extend({
-
-	_onClick: function (e) {
-		L.Draw.Polyline.prototype._onClick.call(this, e);
-		if (this._markers.length === 2) {
-			this._finishShape();
-		}
-	},
-
-	_getMeasurementString: function () {
-		var currentLatLng = this._currentLatLng,
-		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
-		 distance, distanceStr, unit;
-
-		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
-
-		if (distance >= 1.0) {
-			unit = '&#176;';
-		} else {
-			distance *= 60.0;
-			if (distance >= 1.0) {
-				unit = '&#39;';
-			} else {
-				distance *= 60.0;
-				unit = '&#34;';
-			}
-		}
-		distanceStr = distance.toFixed(2) + unit;
-
-		return distanceStr;
-	}
-
-});
-
-L.Control.IIP.Plot = L.Control.IIP.extend({
+L.Control.IIP.Overlay = L.Control.IIP.extend({
 	options: {
-		title: 'Image plots',
+		title: 'overlay menu',
 		collapsed: true,
 		position: 'topleft',
 	},
 
-	initialize: function (baseLayers,  options) {
+	initialize: function (baseLayers, options) {
 		L.setOptions(this, options);
 		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipplot';
+		this._id = 'leaflet-iipoverlay';
 		this._layers = baseLayers;
 	},
 
 	_initDialog: function () {
-		var className = this._className,
+		var _this = this,
+			className = this._className,
 			dialog = this._dialog,
-			layer = this._layer;
-		this._profile = L.DomUtil.create('div', className + '-profile', dialog);
-		var	profinput = document.createElement('input');
-		profinput.className = 'leaflet-profile';
-		profinput.type = 'button';
-		profinput.layer = layer;
-		this._profile.appendChild(profinput);
-		L.DomEvent.on(profinput, 'click', this.getProfile, this);
+			catalogs = [L.Catalog.TwoMASS, L.Catalog.SDSS, L.Catalog.PPMXL],
+			elem;
+
+		// CDS catalog overlay
+		elem = this._addDialogLine('CDS Catalog:');
+		var catcolpick = L.DomUtil.create('input', className + '-catalogs', elem);
+		catcolpick.id = 'leaflet-catalog-colorpicker';
+		catcolpick.type = 'text';
+		catcolpick.value = 'yellow';
+		$(document).ready(function () {
+			$('#' + catcolpick.id).spectrum({
+				showInput: true,
+				clickoutFiresChange: true,
+				move: function (color) {
+					catcolpick.value = color.toHexString();
+				}
+			});
+		});
+
+		var catselect = L.DomUtil.create('select', className + '-catalogs', elem);
+		var opt = document.createElement('option');
+		opt.value = null;
+		opt.text = 'Choose catalog:';
+		opt.disabled = true;
+		opt.selected = true;
+		catselect.add(opt, null);
+		for (var c in catalogs) {
+			opt = document.createElement('option');
+			opt.value = catalogs[c];
+			opt.text = catalogs[c].name;
+			catselect.add(opt, null);
+		}
+
+		if (!L.Browser.android && this.options.collapsed) {
+			L.DomEvent.on(catselect, 'click', function () {
+				L.DomEvent.off(this._container, 'mouseout', this._collapse, this);
+				this.collapsedOff = true;
+			}, this);
+
+			L.DomEvent.on(this._container, 'mouseover', function () {
+				if (this.collapsedOff) {
+					L.DomEvent.on(this._container, 'mouseout', this._collapse, this);
+					this.collapsedOff = false;
+				}
+			}, this);
+		}
+
+		var catbutton = L.DomUtil.create('input', className + '-catalogs', elem);
+		catbutton.type = 'button';
+		catbutton.value = 'Go';
+		L.DomEvent.on(catbutton, 'click', function () {
+			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
+			if (index >= 0) {
+				var catalog = catalogs[index];
+				catalog.color = catcolpick.value;
+				catselect.selectedIndex = 0;
+				this._getCatalog(catalog);
+			}
+		}, this);
+
+		// Profile overlay
+		elem = this._addDialogLine('Profile:');
+		var profcolpick = L.DomUtil.create('input', className + '-profile', elem);
+		profcolpick.id = 'leaflet-profile-colorpicker';
+		profcolpick.type = 'text';
+		profcolpick.value = 'magenta';
+		$(document).ready(function () {
+			$('#' + profcolpick.id).spectrum({
+				showInput: true,
+				clickoutFiresChange: true,
+				move: function (color) {
+					profcolpick.value = color.toHexString();
+				}
+			});
+		});
+
+		var profbutton = L.DomUtil.create('input', className + '-profile', elem);
+		profbutton.type = 'button';
+		profbutton.value = 'Go';
+		L.DomEvent.on(profbutton, 'click', this.getProfile, this);
+	},
+
+	_checkIIP: function () {
+		var layer = this._layer = this._findActiveBaseLayer();
+		if (layer) {
+			this._layerControl = this._map._layerControl;
+			this._initDialog();
+		} else if (this._prelayer) {
+			// Layer metadata are not ready yet: listen for 'metaload' event
+			this._prelayer.once('metaload', this._checkIIP, this);
+		}
+	},
+
+	_getCatalog: function (catalog) {
+		var _this = this,
+		center = this._map.getCenter(),
+		 bounds = this._map.getBounds(),
+		 lngfac = Math.abs(Math.cos(center.lat)) * L.LatLng.DEG_TO_RAD,
+		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
+		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
+
+		if (dlat < 0.0001) {
+			dlat = 0.0001;
+		}
+		if (lngfac > 0.0 && dlng * lngfac < 0.0001) {
+			dlng = 0.0001 / lngfac;
+		}
+
+		var templayer = new L.LayerGroup(null),
+		 layercontrol = this._layerControl;
+		templayer.notReady = true;
+		if (layercontrol) {
+			layercontrol.addOverlay(templayer, catalog.name);
+			if (layercontrol.options.collapsed) {
+				layercontrol._expand();
+			}
+		}
+		L.IIPUtils.requestURI(
+			L.Util.template(catalog.uri, L.extend({
+				ra: center.lng.toFixed(6),
+				dec: center.lat.toFixed(6),
+				dra: dlng.toFixed(4),
+				ddec: dlat.toFixed(4),
+				nmax: catalog.nmax
+			})), 'getting ' + catalog.service + ' data', function (context, httpRequest) {
+				_this._loadCatalog(catalog, templayer, context, httpRequest);
+			}, this, true);
+	},
+
+	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText,
+				 geo = catalog.toGeoJSON(response),
+				 geocatalog = L.geoJson(geo, {
+					onEachFeature: function (feature, layer) {
+						if (feature.properties && feature.properties.mags) {
+							layer.bindPopup(catalog._popup(feature));
+						}
+					},
+					pointToLayer: function (feature, latlng) {
+						return L.circleMarker(latlng, {
+							radius: feature.properties.mags[0] ?
+							 8 + catalog.maglim - feature.properties.mags[0] : 8
+						});
+					},
+					style: function (feature) {
+						return {color: catalog.color};
+					}
+				});
+				geocatalog.addTo(_this._map);
+				var layercontrol = _this._layerControl;
+				if (layercontrol) {
+					layercontrol.removeLayer(templayer);
+					layercontrol.addOverlay(geocatalog, catalog.name +
+						' (' + geo.features.length.toString() + ' entries)');
+					if (layercontrol.options.collapsed) {
+						layercontrol._collapse();
+					}
+				}
+			} else {
+				alert('There was a problem with the request to ' + catalog.service + '.');
+			}
+		}
 	},
 
 	getProfile: function (e) {
@@ -1331,7 +1560,7 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 				var popdiv = document.getElementById('leaflet-profile-plot'),
 				 style = popdiv.style;
 				popdiv.removeChild(popdiv.childNodes[0]);
-				var layercontrol = layer._map._catalogLayerControl;
+				var layercontrol = layer._map._layerControl;
 				if (layercontrol) {
 					layercontrol.addOverlay(layer, 'Image profile');
 				}
@@ -1384,130 +1613,34 @@ L.Control.IIP.Plot = L.Control.IIP.extend({
 			}
 		}
 	}
+
 });
 
-L.control.iip.plot = function (baseLayers, options) {
-	return new L.Control.IIP.Plot(baseLayers, options);
+L.control.iip.overlay = function (options) {
+	return new L.Control.IIP.Overlay(options);
 };
 
 
 
-
 /*
-# L.Catalogs contains specific catalog settings and conversion tools.
+# L.Control.Layers.IIP adds new features to the standard L.Control.Layers
 #
 #	This file part of:	Leaflet-IVV
 #
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
-*/
-
-L.Catalog = {
-	nmax: 5000,	// Sets the maximum number of sources per query
-	_csvToGeoJSON: function (str) {
-		// Check to see if the delimiter is defined. If not, then default to comma.
-		var badreg = new RegExp('#|--|^$'),
-		 lines = str.split('\n'),
-		 array = [],
-		 geo = {type: 'FeatureCollection', features: []};
-
-		for (var i in lines) {
-			var line = lines[i];
-			if (badreg.test(line) === false) {
-				var feature = {
-					type: 'Feature',
-					id: '',
-					properties: {
-						mags: []
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [0.0, 0.0]
-					},
-				},
-				geometry = feature.geometry,
-				properties = feature.properties;
-
-				var cell = line.split(';');
-				feature.id = cell[0];
-				geometry.coordinates[0] = parseFloat(cell[1]);
-				geometry.coordinates[1] = parseFloat(cell[2]);
-				var mags = cell.slice(3);
-				for (var j in mags) {
-					properties.mags.push(parseFloat(mags[j]));
-				}
-				geo.features.push(feature);
-			}
-		}
-		return geo;
-	},
-};
-
-L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
-	name: '2MASS point sources',
-	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al., 2003)',
-	color: 'yellow',
-	maglim: 17.0,
-	service: 'CDS',
-	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=II/246&' +
-	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
-	 '-c={ra},{dec},eq=J2000&-c.bd={dra},{ddec}&-sort=_Kmagr&-out.max={nmax}',
-	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['Jmag', 'Hmag', 'Kmag'],
-	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-});
-
-L.Catalog.SDSS = L.extend({}, L.Catalog, {
-	name: 'SDSS release 9',
-	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al., 2012)',
-	color: 'yellow',
-	maglim: 25.0,
-	service: 'CDS',
-	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
-	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
-	 '-c={ra},{dec}&-c.bd={dra},{ddec}&-sort=imag&-out.max={nmax}',
-	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['umag', 'gmag', 'rmag', 'imag', 'zmag'],
-	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-});
-
-L.Catalog.PPMXL = L.extend({}, L.Catalog, {
-	name: 'PPMXL',
-	attribution: 'PPM-Extended, positions and proper motions by Roeser et al. 2008',
-	color: 'yellow',
-	maglim: 20.0,
-	service: 'CDS',
-	uri: '/viz-bin/asu-tsv?&-mime=csv&-source=V/139&' +
-	 '-out=SDSS9,RAJ2000,DEJ2000,Bmag,Vmag,Rmag,Jmag,HMag,KMag&-out.meta=&' +
-	 '-c={ra},{dec}&-c.bd={dra},{ddec}&-sort=_r&-out.max={nmax}',
-	toGeoJSON: L.Catalog._csvToGeoJSON,
-	properties: ['Jmag', 'Hmag', 'Kmag', 'b1mag', 'b2mag', 'r1mag', 'r2mag', 'imag'],
-	objuri: 'http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-});
-
-
-
-/*
-# L.Control.Layers.Catalogs Manage catalog queries and display
-#
-#	This file part of:	Leaflet-IVV
-#
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified:		11/11/2013
+#	Last modified:		26/11/2013
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
 }
 
-L.Control.Layers.Catalogs = L.Control.Layers.extend({
+L.Control.Layers.IIP = L.Control.Layers.extend({
 	options: {
 		title: 'overlay menu',
-		collapsed: true,
+		collapsed: false,
 		position: 'topright',
 		newoverlay: {
 			title: 'Overlay menu',
@@ -1516,7 +1649,7 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 	},
 
 	onAdd: function (map) {
-		map._catalogLayerControl = this;
+		map._layerControl = this;
 		this._initLayout();
 		this._update();
 
@@ -1527,45 +1660,13 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		return this._container;
 	},
 
-	getCatalog: function (catalog) {
-		var _this = this,
-		center = this._map.getCenter(),
-		 bounds = this._map.getBounds(),
-		 lngfac = Math.abs(Math.cos(center.lat)) * L.LatLng.DEG_TO_RAD,
-		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
-		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
-
-		if (dlat < 0.0001) {
-			dlat = 0.0001;
-		}
-		if (lngfac > 0.0 && dlng * lngfac < 0.0001) {
-			dlng = 0.0001 / lngfac;
-		}
-
-		var templayer = new L.LayerGroup(null);
-		templayer.notReady = true;
-		_this.addOverlay(templayer, catalog.name);
-		L.IIPUtils.requestURI(
-			L.Util.template(catalog.uri, L.extend({
-				ra: center.lng.toFixed(6),
-				dec: center.lat.toFixed(6),
-				dra: dlng.toFixed(4),
-				ddec: dlat.toFixed(4),
-				nmax: catalog.nmax
-			})), 'getting ' + catalog.service + ' data', function (context, httpRequest) {
-				_this._loadCatalog(catalog, templayer, context, httpRequest);
-			}, this, true);
-	},
-
 	_addItem: function (obj) {
 		var _this = this,
-			label = document.createElement('label');
+		 item = L.DomUtil.create('div', 'leaflet-control-layers-item'),
+		 inputdiv = L.DomUtil.create('div', 'leaflet-control-layers-select', item);
 
 		if (obj.layer.notReady) {
-			var activity = document.createElement('span');
-			activity.className = 'leaflet-control-activity';
-			activity.style.float = 'left';
-			label.appendChild(activity);
+			var activity = L.DomUtil.create('div', 'leaflet-control-activity', inputdiv);
 		} else {
 			var input,
 				checked = this._map.hasLayer(obj.layer);
@@ -1580,15 +1681,14 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 			}
 			input.layerId = L.stamp(obj.layer);
 			L.DomEvent.on(input, 'click', this._onInputClick, this);
-			label.appendChild(input);
+			inputdiv.appendChild(input);
 		}
 		
-		var name = document.createElement('span');
+		var name = L.DomUtil.create('div', 'leaflet-control-layers-name', item);
 		name.innerHTML = ' ' + obj.name;
 
-		var trashbutton = document.createElement('input');
+		var trashbutton = L.DomUtil.create('input', 'leaflet-control-layers-trash', item);
 		trashbutton.type = 'button';
-		trashbutton.className = 'leaflet-control-layers-trash';
 		L.DomEvent.on(trashbutton, 'click', function () {
 			_this.removeLayer(obj.layer);
 			if (!obj.notReady) {
@@ -1596,13 +1696,10 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 			}
 		}, this);
 
-		label.appendChild(name);
-		label.appendChild(trashbutton);
-
 		var container = obj.overlay ? this._overlaysList : this._baseLayersList;
-		container.appendChild(label);
+		container.appendChild(item);
 
-		return label;
+		return item;
 	},
 
 	_onInputClick: function () {
@@ -1629,104 +1726,6 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		this._handlingClick = false;
 	},
 
-	_initLayout: function () {
-		L.Control.Layers.prototype._initLayout.call(this);
-
-		var newoverlay = this._newoverlay = L.DomUtil.create('div', 'leaflet-control-newoverlay', this._form);
-		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
-		newoverlay.setAttribute('aria-haspopup', true);
-		newoverlay.collapsed = this.options.newoverlay.collapsed;
-
-		L.DomEvent
-				.disableClickPropagation(newoverlay)
-				.disableScrollPropagation(newoverlay);
-
-		this._newoverlayDialog = L.DomUtil.create('div', newoverlay.className + '-dialog', newoverlay);
-		if (this.options.newoverlay.collapsed) {
-			if (!L.Browser.android) {
-				L.DomEvent
-				    .on(newoverlay, 'mouseover', this._newoverlayExpand, this)
-				    .on(newoverlay, 'mouseout', this._newoverlayCollapse, this);
-			}
-
-			var toggle = this._newoverlayToggle = L.DomUtil.create('a', newoverlay.className + '-toggle', newoverlay);
-			toggle.href = '#';
-			toggle.innerHTML = 'Add...';
-			toggle.title = this.options.newoverlay.title;
-
-			if (L.Browser.touch) {
-				L.DomEvent
-			    .on(toggle, 'click', L.DomEvent.stop)
-					.on(toggle, 'click', this._newoverlayExpand, this);
-			}
-			L.DomEvent.on(toggle, 'click', this._newoverlayExpand, this);
-
-			//Work around for Firefox android issue https://github.com/Leaflet/Leaflet/issues/2033
-			L.DomEvent.on(newoverlay, 'click', function () {
-				setTimeout(L.bind(this._onInputClick, this), 0);
-			}, this);
-
-			this._map.on('click', this._newoverlayCollapse, this);
-			// TODO keyboard accessibility
-		} else {
-			this._newoverlayExpand();
-		}
-
-		this._initDialog();
-	},
-
-	_initDialog: function () {
-		var _this = this,
-			overdialog = this._newoverlayDialog,
-			className = 'leaflet-control-newoverlay',
-			catalogs = [L.Catalog.TwoMASS, L.Catalog.SDSS, L.Catalog.PPMXL],
-			elem;
-
-		elem = this._addDialogLine('&nbsp', overdialog);
-
-		// CDS catalog overlay
-		elem = this._addDialogLine('Add:', overdialog);
-		var catselect = L.DomUtil.create('select', className + '-catalogs', elem);
-		var opt = document.createElement('option');
-		opt.value = null;
-		opt.text = 'Choose catalog:';
-		opt.disabled = true;
-		opt.selected = true;
-		catselect.add(opt, null);
-		for (var c in catalogs) {
-			opt = document.createElement('option');
-			opt.value = catalogs[c];
-			opt.text = catalogs[c].name;
-			catselect.add(opt, null);
-		}
-
-		var catcolpick = L.DomUtil.create('input', className + '-catalogs', elem);
-		catcolpick.id = 'leaflet-catalog-colorpicker';
-		catcolpick.type = 'text';
-		catcolpick.value = 'yellow';
-
-		$(document).ready(function () {
-			$('#' + catcolpick.id).spectrum({
-				showInput: true,
-				clickoutFiresChange: true,
-				move: function (color) {
-					catcolpick.value = color.toHexString();
-				}
-			});
-		});
-		var catbutton = L.DomUtil.create('input', className + '-catalogs', elem);
-		catbutton.type = 'button';
-		catbutton.value = 'Go';
-		L.DomEvent.on(catbutton, 'click', function () {
-			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
-			if (index >= 0) {
-				var catalog = catalogs[index];
-				catalog.color = catcolpick.value;
-				catselect.selectedIndex = 0;
-				this.getCatalog(catalog);
-			}
-		}, this);
-	},
 
 	_addDialogLine: function (label, dialog) {
 		var elem = L.DomUtil.create('div', this._className + '-element', dialog),
@@ -1735,67 +1734,10 @@ L.Control.Layers.Catalogs = L.Control.Layers.extend({
 		return elem;
 	},
 
-	_newoverlayExpand: function () {
-		L.DomUtil.addClass(this._newoverlay, 'leaflet-control-newoverlay-expanded');
-		this._newoverlay.collapsed = false;
-	},
-
-	_newoverlayCollapse: function () {
-		this._newoverlay.className = this._newoverlay.className.replace(' leaflet-control-newoverlay-expanded', '');
-		this._newoverlay.collapsed = true;
-	},
-
-	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				var response = httpRequest.responseText,
-				 geo = catalog.toGeoJSON(response),
-				 geocatalog = L.geoJson(geo, {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.mags) {
-							layer.bindPopup(_this._popup(feature, catalog));
-						}
-					},
-					pointToLayer: function (feature, latlng) {
-						return L.circleMarker(latlng, {
-							radius: feature.properties.mags[0] ?
-							 8 + catalog.maglim - feature.properties.mags[0] : 8
-						});
-					},
-					style: function (feature) {
-						return {color: catalog.color};
-					}
-				});
-				geocatalog.addTo(_this._map);
-				_this.removeLayer(templayer);
-				_this.addOverlay(geocatalog, catalog.name + ' (' + geo.features.length.toString() + ' entries)');
-			} else {
-				alert('There was a problem with the request to ' + catalog.service + '.');
-			}
-		}
-	},
-
-
-	_popup: function (feature, catalog) {
-		var str = '<div>';
-		if (catalog.objuri) {
-			str += 'ID: <a href=\"' +  L.Util.template(catalog.objuri, L.extend({
-				ra: feature.geometry.coordinates[0].toFixed(6),
-				dec: feature.geometry.coordinates[1].toFixed(6)
-			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
-		} else {
-			str += 'ID: ' + feature.id + '</div>';
-		}
-		for	(var i in catalog.properties) {
-			str += '<div>' + catalog.properties[i] + ': ' + feature.properties.mags[i].toString() + '</div>';
-		}
-		return str;
-	}
-
 });
 
-L.control.layers.catalogs = function (layers, options) {
-	return new L.Control.Layers.Catalogs(layers, options);
+L.control.layers.iip = function (layers, options) {
+	return new L.Control.Layers.IIP(layers, options);
 };
 
 

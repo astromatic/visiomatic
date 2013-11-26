@@ -35,10 +35,10 @@
 	}
 
 #leaflet-iipimage-toggle {
-	background-image: url(images/icon-contrast.svg);
+	background-image: url(images/icon-settings.svg);
 }
 
-#leaflet-iipplot-toggle {
+#leaflet-iipoverlay-toggle {
 	background-image: url(images/icon-plot.svg);
 }
 
@@ -49,7 +49,7 @@
 }
 
 .leaflet-control-iip-expanded .leaflet-control-iip-dialog	{
-	display: block;
+	display: table;
 	position: relative;
 }
 
@@ -61,12 +61,14 @@
 
 /* IIP Image dialog elements */
 .leaflet-control-iip-element {
-	line-height: 30px;
-	vertical-align: middle;
+	display: table-row;
+	padding: 8px;
 }
 
 .leaflet-control-iip-label {
-	margin-right: 4px;
+	padding-right: 4px;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .leaflet-slider-input {
@@ -77,6 +79,28 @@
 .ui-icon,.ui-button {
 	width: 26px;
 	height: 26px;
+	margin: auto;
+}
+/*
+.ui-button-text {
+	width: 22px;
+	height: 22px;
+	padding-left: 0.1em!important;
+	line-height: 26px;
+	vertical-align: middle;
+	font-size:10px;
+}
+*/
+
+.leaflet-control-iip-cmaps {
+	left: 0px;
+	right: 0px;
+	width: 100%
+}
+
+.leaflet-cmap-inv {
+	background-image: url(images/icon-contrast.svg);
+	background-repeat: no-repeat;
 }
 
 .leaflet-cmap-grey {
@@ -91,6 +115,7 @@
 .leaflet-cmap-cold {
 	background-image: url(images/icon-cold.svg);
 }
+
 /* jQuery-UI spinner */
 .ui-spinner {
 	float: right;
@@ -100,7 +125,7 @@
 
 .ui-spinner-input {
 	line-height: 20px;
-	vertical-align: top;
+/*	vertical-align: top;*/
 }
 
 .ui-spinner-down {
@@ -135,31 +160,11 @@
 	z-index: 2000;
 }
 
+/*
 .leaflet-control-layers-overlays {
 	line-height:26px;
 }
-/* New overlay dialog */
-.leaflet-control-newoverlay .leaflet-control-newoverlay-dialog,
-.leaflet-control-newoverlay-expanded .leaflet-control-newoverlay-toggle {
-	display: none;
-	}
-
-.leaflet-control-newoverlay-expanded .leaflet-control-newoverlay-dialog {
-	display: block;
-	position: relative;
-	}
-
-.leaflet-control-newoverlay-toggle {
-	text-decoration: none;
-  width: 100%;
-  height: 13px;
-  display: block;
-}
-
-.leaflet-control-newoverlay-catalogs {
-	height: 24px;
-	vertical-align: middle;
-}
+*/
 
 /* Color picker */
 .sp-replacer {
@@ -184,14 +189,52 @@
 z-index: 3000000000;
 }
 
+/* Layer list */
+.leaflet-control-layers-base {
+	display: table;
+	width: 100%;
+}
+
+.leaflet-control-layers-overlays {
+	display: table;
+	width: 100%;
+}
+
+.leaflet-control-layers-item {
+	display: table-row;
+}
+
+.leaflet-control-layers-select {
+	display: table-cell;
+	vertical-align: middle;
+	width: 1em;
+}
+
+.leaflet-control-layers-name {
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 4px;
+	padding-right: 8px;
+}
+
+/* Activity spinner */
+.leaflet-control-activity {
+	background-image: url(images/activity.svg);
+	background-size: 18px;
+  width: 18px;
+  height: 18px;
+	margin: 2px;
+}
+
 /* Trash button */
 .leaflet-control-layers-trash {
+	display: table-cell;
 	background-image: url(images/icon-trash.svg),linear-gradient(to bottom, rgba(255, 255, 255, 0),  rgba(200, 200, 200, 1));
 	background-repeat: no-repeat;
 	background-position: center center;
-	float: right;
 	width: 24px;
 	height: 24px;
+	float: right;
 	-webkit-border-radius: 4px;
 	        border-radius: 4px;
 }
@@ -212,6 +255,7 @@ z-index: 3000000000;
 	background-image: url(images/reticle.svg);
   width: 26px;
   height: 26px;
+	margin: -13px -13px -13px -13px;
 }
 
 .leaflet-dragging .leaflet-reticle {
@@ -228,16 +272,6 @@ z-index: 3000000000;
 	   -moz-transition: opacity 0.5s linear;
 	     -o-transition: opacity 0.5s linear;
 	        transition: opacity 0.5s linear;
-}
-
-/* Activity spinner */
-
-.leaflet-control-activity {
-	background-image: url(images/activity.svg);
-	background-size: 18px;
-  width: 18px;
-  height: 18px;
-	margin: 2px;
 }
 
 /* Profile plot */

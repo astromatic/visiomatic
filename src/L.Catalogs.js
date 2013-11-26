@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		25/11/2013
 */
 
 L.Catalog = {
@@ -48,6 +48,24 @@ L.Catalog = {
 		}
 		return geo;
 	},
+
+	_popup: function (feature) {
+		var str = '<div>';
+		if (this.objuri) {
+			str += 'ID: <a href=\"' +  L.Util.template(this.objuri, L.extend({
+				ra: feature.geometry.coordinates[0].toFixed(6),
+				dec: feature.geometry.coordinates[1].toFixed(6)
+			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
+		} else {
+			str += 'ID: ' + feature.id + '</div>';
+		}
+		for	(var i in this.properties) {
+			str += '<div>' + this.properties[i] + ': ' +
+				feature.properties.mags[i].toString() + '</div>';
+		}
+		return str;
+	}
+
 };
 
 L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
