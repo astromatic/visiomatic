@@ -7,7 +7,7 @@
 #	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -66,7 +66,13 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			_this._onInputChange(layer, 'iipInvertCMap', !layer.iipInvertCMap);
 			var style = layer.iipInvertCMap ? 'scaleY(-1.0)' : 'none';
 			for (var i in cmaps) {
-				cbutton[i].style.transform = style;
+				if (L.Browser.ie) {
+					cbutton[i].style.msTransform = style;
+				} else if (L.Browser.webkit) {
+					cbutton[i].style.webkitTransform = style;
+				} else {
+					cbutton[i].style.transform = style;
+				}
 			}
 		}, this);
 

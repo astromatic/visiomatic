@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -16,12 +16,8 @@ if (typeof require !== 'undefined') {
 L.Control.Layers.IIP = L.Control.Layers.extend({
 	options: {
 		title: 'overlay menu',
-		collapsed: false,
+		collapsed: true,
 		position: 'topright',
-		newoverlay: {
-			title: 'Overlay menu',
-			collapsed: false
-		}
 	},
 
 	onAdd: function (map) {

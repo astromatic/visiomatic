@@ -7,7 +7,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		28/11/2013
 */
 
 L.WCS = L.Class.extend({

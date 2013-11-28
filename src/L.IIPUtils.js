@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                    Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		11/11/2013
+#	Last modified:		28/11/2013
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -41,14 +41,13 @@ L.IIPUtils = {
 		httpRequest.send();
 	},
 
-// Distance between two world coordinates p1 and p2 in degrees
-	distance: function (p1, p2) {
-
+// Return the distance between two world coords latLng1 and latLng2 in degrees
+	distance: function (latlng1, latlng2) {
 		var d2r = L.LatLng.DEG_TO_RAD,
-		 lat1 = p1.lat * d2r,
-		 lat2 = p2.lat * d2r,
+		 lat1 = latlng1.lat * d2r,
+		 lat2 = latlng2.lat * d2r,
 		 dLat = lat2 - lat1,
-		 dLon = (p2.lng - p1.lng) * d2r,
+		 dLon = (latlng2.lng - latlng1.lng) * d2r,
 		 sin1 = Math.sin(dLat / 2),
 		 sin2 = Math.sin(dLon / 2);
 

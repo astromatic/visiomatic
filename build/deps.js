@@ -5,6 +5,7 @@ var deps = {
 			'L.Projection.WCS.js',
 			'L.CRS.WCS.js',
 			'L.Control.WCS.js',
+			'L.Control.Scale.WCS.js',
 			'L.TileLayer.IIP.js',
 			'L.Catalogs.js',
 			'L.Control.IIP.js',

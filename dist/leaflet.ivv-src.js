@@ -25,7 +25,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                    Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		11/11/2013
+#	Last modified:		28/11/2013
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -60,14 +60,13 @@ L.IIPUtils = {
 		httpRequest.send();
 	},
 
-// Distance between two world coordinates p1 and p2 in degrees
-	distance: function (p1, p2) {
-
+// Return the distance between two world coords latLng1 and latLng2 in degrees
+	distance: function (latlng1, latlng2) {
 		var d2r = L.LatLng.DEG_TO_RAD,
-		 lat1 = p1.lat * d2r,
-		 lat2 = p2.lat * d2r,
+		 lat1 = latlng1.lat * d2r,
+		 lat2 = latlng2.lat * d2r,
 		 dLat = lat2 - lat1,
-		 dLon = (p2.lng - p1.lng) * d2r,
+		 dLon = (latlng2.lng - latlng1.lng) * d2r,
 		 sin1 = Math.sin(dLat / 2),
 		 sin2 = Math.sin(dLon / 2);
 
@@ -237,7 +236,7 @@ L.Projection.WCS.ZEA = L.extend({}, L.Projection.WCS.zenithal, {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		19/11/2013
+#	Last modified:		28/11/2013
 */
 
 L.WCS = L.Class.extend({
@@ -484,6 +483,141 @@ L.Map.addInitHook(function () {
 L.control.wcs = function (options) {
     return new L.Control.WCS(options);
 };
+
+
+/*
+# L.Control.Scale.WCS adds degree and pixel units to the standard L.Control.Scale
+#
+#	This file part of:	Leaflet-IVV
+#
+#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		28/11/2013
+*/
+
+L.Control.Scale.WCS = L.Control.Scale.extend({
+	options: {
+		position: 'bottomleft',
+		maxWidth: 128,
+		metric: false,
+		imperial: false,
+		degrees: true,
+		pixels: true,
+		planetRadius: 6378137.0,
+		updateWhenIdle: false
+	},
+
+	_addScales: function (options, className, container) {
+		if (options.metric) {
+			this._mScale = L.DomUtil.create('div', className + '-line', container);
+		}
+		if (options.imperial) {
+			this._iScale = L.DomUtil.create('div', className + '-line', container);
+		}
+		if (options.degrees) {
+			this._dScale = L.DomUtil.create('div', className + '-line', container);
+		}
+		if (options.pixels) {
+			this._pScale = L.DomUtil.create('div', className + '-line', container);
+		}
+
+		this.angular = options.metric || options.imperial || options.degrees;
+	},
+
+	_update: function () {
+		var options = this.options,
+		    map = this._map;
+
+		if (options.pixels) {
+			var crs = map.options.crs;
+			if (crs.options && crs.options.nzoom) {
+				var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
+				this._updatePixels(pixelScale * options.maxWidth);
+			}
+		}
+
+		if (this.angular) {
+			var center = map.getCenter(),
+			    cosLat = Math.cos(center.lat * Math.PI / 180),
+			    dist = Math.sqrt(this._jacobian(center)) * cosLat,
+			    maxDegrees = dist * options.maxWidth;
+
+			if (options.metric) {
+				this._updateMetric(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.imperial) {
+				this._updateImperial(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.degrees) {
+				this._updateDegrees(maxDegrees);
+			}
+		}
+	},
+
+// Return the Jacobian determinant of the astrometric transformation at latLng
+	_jacobian: function (latlng) {
+		var map = this._map,
+		    p0 = map.project(latlng),
+		    latlngdx = map.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = map.unproject(p0.add([0.0, 10.0]));
+		return 0.01 * Math.abs((latlngdx.lng - latlng.lng) *
+		                        (latlngdy.lat - latlng.lat) -
+		                       (latlngdy.lng - latlng.lng) *
+		                        (latlngdx.lat - latlng.lat));
+	},
+
+	_updatePixels: function (maxPix) {
+		var scale = this._pScale;
+
+		if (maxPix > 1.0e6) {
+			var maxMPix = maxPix * 1.0e-6,
+			mPix = this._getRoundNum(maxMPix);
+			scale.style.width = this._getScaleWidth(mPix / maxMPix) + 'px';
+			scale.innerHTML = mPix + ' Mpx';
+		} else if (maxPix > 1.0e3) {
+			var maxKPix = maxPix * 1.0e-3,
+			kPix = this._getRoundNum(maxKPix);
+			scale.style.width = this._getScaleWidth(kPix / maxKPix) + 'px';
+			scale.innerHTML = kPix + ' kpx';
+		} else {
+			var pix = this._getRoundNum(maxPix);
+			scale.style.width = this._getScaleWidth(pix / maxPix) + 'px';
+			scale.innerHTML = pix + ' px';
+		}
+	},
+
+	_updateDegrees: function (maxDegrees) {
+		var maxSeconds = maxDegrees * 3600.0,
+		    scale = this._dScale;
+
+		if (maxSeconds < 1.0) {
+			var maxMas = maxSeconds * 1000.0,
+			mas = this._getRoundNum(maxMas);
+			scale.style.width = this._getScaleWidth(mas / maxMas) + 'px';
+			scale.innerHTML = mas + ' mas';
+		} else if (maxSeconds < 60.0) {
+			var seconds = this._getRoundNum(maxSeconds);
+			scale.style.width = this._getScaleWidth(seconds / maxSeconds) + 'px';
+			scale.innerHTML = seconds + ' &#34;';
+		} else if (maxSeconds < 3600.0) {
+			var maxMinutes = maxDegrees * 60.0,
+			    minutes = this._getRoundNum(maxMinutes);
+			scale.style.width = this._getScaleWidth(minutes / maxMinutes) + 'px';
+			scale.innerHTML = minutes + ' &#39;';
+		} else {
+			var degrees = this._getRoundNum(maxDegrees);
+			scale.style.width = this._getScaleWidth(degrees / maxDegrees) + 'px';
+			scale.innerHTML = degrees + ' &#176;';
+		}
+	}
+
+});
+
+L.control.scale.wcs = function (options) {
+	return new L.Control.Scale.WCS(options);
+};
+
 
 
 /*
@@ -1154,7 +1288,7 @@ L.control.iip = function (baseLayers, options) {
 #	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -1213,7 +1347,13 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			_this._onInputChange(layer, 'iipInvertCMap', !layer.iipInvertCMap);
 			var style = layer.iipInvertCMap ? 'scaleY(-1.0)' : 'none';
 			for (var i in cmaps) {
-				cbutton[i].style.transform = style;
+				if (L.Browser.ie) {
+					cbutton[i].style.msTransform = style;
+				} else if (L.Browser.webkit) {
+					cbutton[i].style.webkitTransform = style;
+				} else {
+					cbutton[i].style.transform = style;
+				}
 			}
 		}, this);
 
@@ -1329,7 +1469,7 @@ L.control.iip.image = function (baseLayers, options) {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -1388,8 +1528,9 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 			catselect.add(opt, null);
 		}
 
+		// Fix issue with collapsing dialog after selecting a catalog
 		if (!L.Browser.android && this.options.collapsed) {
-			L.DomEvent.on(catselect, 'click', function () {
+			L.DomEvent.on(catselect, 'mousedown', function () {
 				L.DomEvent.off(this._container, 'mouseout', this._collapse, this);
 				this.collapsedOff = true;
 			}, this);
@@ -1630,7 +1771,7 @@ L.control.iip.overlay = function (options) {
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -1640,12 +1781,8 @@ if (typeof require !== 'undefined') {
 L.Control.Layers.IIP = L.Control.Layers.extend({
 	options: {
 		title: 'overlay menu',
-		collapsed: false,
+		collapsed: true,
 		position: 'topright',
-		newoverlay: {
-			title: 'Overlay menu',
-			collapsed: false
-		}
 	},
 
 	onAdd: function (map) {

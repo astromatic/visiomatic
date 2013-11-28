@@ -6,7 +6,7 @@
 #	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		28/11/2013
 */
 
 if (typeof require !== 'undefined') {
@@ -65,8 +65,9 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 			catselect.add(opt, null);
 		}
 
+		// Fix issue with collapsing dialog after selecting a catalog
 		if (!L.Browser.android && this.options.collapsed) {
-			L.DomEvent.on(catselect, 'click', function () {
+			L.DomEvent.on(catselect, 'mousedown', function () {
 				L.DomEvent.off(this._container, 'mouseout', this._collapse, this);
 				this.collapsedOff = true;
 			}, this);
