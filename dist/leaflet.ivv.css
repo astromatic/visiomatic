@@ -3,9 +3,9 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud,
-#                        Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2013,2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud,
+#                             Ruven Pillay - C2RMF/CNRS
 #
 #	License:		GNU General Public License
 #
@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		26/11/2013
+#	Last modified:		13/01/2014
 */
 
 /* Left control bar */
@@ -156,10 +156,11 @@
 }
 
 /* Overlay dialog */
+/*
 .leaflet-top {
 	z-index: 2000;
 }
-
+*/
 /*
 .leaflet-control-layers-overlays {
 	line-height:26px;
@@ -184,11 +185,11 @@
 	margin-left: 0px;
 	padding: 0px;
 }
-
+/*
 .sp-container {
 z-index: 3000000000;
 }
-
+*/
 /* Layer list */
 .leaflet-control-layers-base {
 	display: table;
@@ -256,6 +257,7 @@ z-index: 3000000000;
   width: 26px;
   height: 26px;
 	margin: -13px -13px -13px -13px;
+	z-index: 3000000000;
 }
 
 .leaflet-dragging .leaflet-reticle {
@@ -275,6 +277,15 @@ z-index: 3000000000;
 }
 
 /* Profile plot */
+#leaflet-profile-plot {
+	width: 400px;
+	height: 300px;
+}
+
+.leaflet-plot-area {
+	fill: #cfc;
+	stroke: #080;
+}
 
 /* Extra Map */
 .leaflet-control-extramap {
@@ -292,7 +303,9 @@ z-index: 3000000000;
     background-repeat: no-repeat;
     display: block;
     outline: none;
+/*
     z-index: 99999;
+*/
 }
 
 .leaflet-control-extramap a.minimized {

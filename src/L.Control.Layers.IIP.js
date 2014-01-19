@@ -3,10 +3,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013,2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified: 10/01/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -18,6 +18,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		title: 'overlay menu',
 		collapsed: true,
 		position: 'topright',
+		autoZIndex: true
 	},
 
 	onAdd: function (map) {
@@ -25,9 +26,9 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._initLayout();
 		this._update();
 
-		map
-		    .on('layeradd', this._onLayerChange, this)
-		    .on('layerremove', this._onLayerChange, this);
+//		map
+//		    .on('layeradd', this._onLayerChange, this)
+//		    .on('layerremove', this._onLayerChange, this);
 
 		return this._container;
 	},
@@ -38,7 +39,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		 inputdiv = L.DomUtil.create('div', 'leaflet-control-layers-select', item);
 
 		if (obj.layer.notReady) {
-			var activity = L.DomUtil.create('div', 'leaflet-control-activity', inputdiv);
+			L.DomUtil.create('div', 'leaflet-control-activity', inputdiv);
 		} else {
 			var input,
 				checked = this._map.hasLayer(obj.layer);
@@ -74,6 +75,22 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		return item;
 	},
 
+	_onLayerChange: function (e) {
+		if (!this._handlingClick) {
+			this._update();
+		}
+
+		var overlay = this._layers[L.stamp(e.target)].overlay;
+
+		var type = overlay ?
+			(e.type === 'add' ? 'overlayadd' : 'overlayremove') :
+			(e.type === 'add' ? 'baselayerchange' : null);
+
+		if (type) {
+			this._map.fire(type, e.target);
+		}
+	},
+
 	_onInputClick: function () {
 		var i, input, obj,
 		    inputs = this._form.getElementsByTagName('input'),
@@ -88,8 +105,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 			}
 			obj = this._layers[input.layerId];
 			if (input.checked && !this._map.hasLayer(obj.layer)) {
-				this._map.addLayer(obj.layer);
-
+				obj.layer.addTo(this._map);
 			} else if (!input.checked && this._map.hasLayer(obj.layer)) {
 				this._map.removeLayer(obj.layer);
 			}

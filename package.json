@@ -10,8 +10,7 @@
 		"karma": "~0.8.6",
 		"uglify-js": "~2.3.6",
 		"jake": "~0.5.16",
-		"jquery-browser": "~1.10",
-		"d3.js": "~3.3.10"
+		"jquery-browser": "~1.10"
 	},
 	"main": "dist/leaflet.ivv.js",
 	"scripts": {

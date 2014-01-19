@@ -3,10 +3,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified: 10/01/2014
 */
 
 L.Control.Scale.WCS = L.Control.Scale.extend({
@@ -23,16 +23,16 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 	_addScales: function (options, className, container) {
 		if (options.metric) {
-			this._mScale = L.DomUtil.create('div', className + '-line', container);
+			this._mScale = L.DomUtil.create('div', className, container);
 		}
 		if (options.imperial) {
-			this._iScale = L.DomUtil.create('div', className + '-line', container);
+			this._iScale = L.DomUtil.create('div', className, container);
 		}
 		if (options.degrees) {
-			this._dScale = L.DomUtil.create('div', className + '-line', container);
+			this._dScale = L.DomUtil.create('div', className, container);
 		}
 		if (options.pixels) {
-			this._pScale = L.DomUtil.create('div', className + '-line', container);
+			this._pScale = L.DomUtil.create('div', className, container);
 		}
 
 		this.angular = options.metric || options.imperial || options.degrees;
@@ -86,17 +86,14 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		if (maxPix > 1.0e6) {
 			var maxMPix = maxPix * 1.0e-6,
 			mPix = this._getRoundNum(maxMPix);
-			scale.style.width = this._getScaleWidth(mPix / maxMPix) + 'px';
-			scale.innerHTML = mPix + ' Mpx';
+			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
 		} else if (maxPix > 1.0e3) {
 			var maxKPix = maxPix * 1.0e-3,
 			kPix = this._getRoundNum(maxKPix);
-			scale.style.width = this._getScaleWidth(kPix / maxKPix) + 'px';
-			scale.innerHTML = kPix + ' kpx';
+			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
 		} else {
 			var pix = this._getRoundNum(maxPix);
-			scale.style.width = this._getScaleWidth(pix / maxPix) + 'px';
-			scale.innerHTML = pix + ' px';
+			this._updateScale(scale, pix + ' px', pix / maxPix);
 		}
 	},
 
@@ -107,21 +104,17 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		if (maxSeconds < 1.0) {
 			var maxMas = maxSeconds * 1000.0,
 			mas = this._getRoundNum(maxMas);
-			scale.style.width = this._getScaleWidth(mas / maxMas) + 'px';
-			scale.innerHTML = mas + ' mas';
+			this._updateScale(scale, mas + ' mas', mas / maxMas);
 		} else if (maxSeconds < 60.0) {
 			var seconds = this._getRoundNum(maxSeconds);
-			scale.style.width = this._getScaleWidth(seconds / maxSeconds) + 'px';
-			scale.innerHTML = seconds + ' &#34;';
+			this._updateScale(scale, seconds + ' &#34;', seconds / maxSeconds);
 		} else if (maxSeconds < 3600.0) {
 			var maxMinutes = maxDegrees * 60.0,
 			    minutes = this._getRoundNum(maxMinutes);
-			scale.style.width = this._getScaleWidth(minutes / maxMinutes) + 'px';
-			scale.innerHTML = minutes + ' &#39;';
+			this._updateScale(scale, minutes + ' &#39;', minutes / maxMinutes);
 		} else {
 			var degrees = this._getRoundNum(maxDegrees);
-			scale.style.width = this._getScaleWidth(degrees / maxDegrees) + 'px';
-			scale.innerHTML = degrees + ' &#176;';
+			this._updateScale(scale, degrees + ' &#176;', degrees / maxDegrees);
 		}
 	}
 

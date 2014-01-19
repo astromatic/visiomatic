@@ -3,15 +3,14 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified: 19/01/2014
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
-	var d3 = require('d3');
 }
 
 L.Control.IIP.Overlay = L.Control.IIP.extend({
@@ -29,11 +28,10 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 	},
 
 	_initDialog: function () {
-		var _this = this,
-			className = this._className,
-			dialog = this._dialog,
-			catalogs = [L.Catalog.TwoMASS, L.Catalog.SDSS, L.Catalog.PPMXL],
-			elem;
+		var className = this._className,
+		    catalogs = [L.Catalog.TwoMASS, L.Catalog.SDSS, L.Catalog.PPMXL,
+		                L.Catalog.Abell],
+		    elem;
 
 		// CDS catalog overlay
 		elem = this._addDialogLine('CDS Catalog:');
@@ -115,22 +113,15 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		L.DomEvent.on(profbutton, 'click', this.getProfile, this);
 	},
 
-	_checkIIP: function () {
-		var layer = this._layer = this._findActiveBaseLayer();
-		if (layer) {
-			this._layerControl = this._map._layerControl;
-			this._initDialog();
-		} else if (this._prelayer) {
-			// Layer metadata are not ready yet: listen for 'metaload' event
-			this._prelayer.once('metaload', this._checkIIP, this);
-		}
+	_resetDialog: function () {
+	// Do nothing: no need to reset with layer changes
 	},
 
 	_getCatalog: function (catalog) {
 		var _this = this,
 		center = this._map.getCenter(),
 		 bounds = this._map.getBounds(),
-		 lngfac = Math.abs(Math.cos(center.lat)) * L.LatLng.DEG_TO_RAD,
+		 lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
 		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
 		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
 
@@ -142,7 +133,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		}
 
 		var templayer = new L.LayerGroup(null),
-		 layercontrol = this._layerControl;
+		 layercontrol = this._map._layerControl;
 		templayer.notReady = true;
 		if (layercontrol) {
 			layercontrol.addOverlay(templayer, catalog.name);
@@ -180,11 +171,11 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 						});
 					},
 					style: function (feature) {
-						return {color: catalog.color};
+						return {color: catalog.color, weight: 2};
 					}
 				});
 				geocatalog.addTo(_this._map);
-				var layercontrol = _this._layerControl;
+				var layercontrol = _this._map._layerControl;
 				if (layercontrol) {
 					layercontrol.removeLayer(templayer);
 					layercontrol.addOverlay(geocatalog, catalog.name +
@@ -201,7 +192,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 
 	getProfile: function (e) {
 		L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Click to end drawing line.';
-		var drawline = new L.Draw.Line(this._map),
+		var drawline = new L.Draw.Line(this._map, {shapeOptions: {weight: 7}}),
 		 _this = this;
 		this._map.on('draw:created', function (e) {
 			var layer = e.layer,
@@ -213,7 +204,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 			activity.className = 'leaflet-control-activity';
 			popdiv.appendChild(activity);
 			layer.bindPopup(popdiv,
-			 {minWidth: 16, maxWidth: 1024}).openPopup();
+			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
 			var zoom = _this._map.options.crs.options.nzoom - 1,
 			 point1 = _this._map.project(layer._latlngs[0], zoom),
 			 point2 = _this._map.project(layer._latlngs[1], zoom);
@@ -231,62 +222,41 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var json = JSON.parse(httpRequest.responseText),
-				 yprof = json.profile,
-				 xprof = d3.range(yprof.length),
-				 prof = d3.zip(xprof, yprof);
+				    yprof = json.profile,
+				    layercontrol = layer._map._layerControl,
+						popdiv = document.getElementById('leaflet-profile-plot');
 
-				var popdiv = document.getElementById('leaflet-profile-plot'),
-				 style = popdiv.style;
-				popdiv.removeChild(popdiv.childNodes[0]);
-				var layercontrol = layer._map._layerControl;
 				if (layercontrol) {
 					layercontrol.addOverlay(layer, 'Image profile');
 				}
-				style.left = '20%';
-				style.bottom = '20%';
-				style.width = 640;
-				style.height = 480;
-				style.backgroundColor = 'white';
+				$(document).ready(function () {
+					$.jqplot('leaflet-profile-plot', [yprof], {
+						title: 'Image profile',
+						axes: {
+							xaxis: {
+								label: 'position along line',
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								pad: 1.0
+							},
+							yaxis: {
+								label: 'pixel values',
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								pad: 1.0
+							}
+						},
+						cursor: {
+							show: true,
+							zoom: true
+						},
+						seriesDefaults: {
+							lineWidth: 2.0,
+							showMarker: false
+						}
+					});
+				});
 
-				var margin = {top: 20, right: 10, bottom: 30, left: 50},
-				 width = 640 - margin.left - margin.right,
-				 height = 480 - margin.top - margin.bottom,
-				 sx = d3.scale.linear().range([0, width]),
-				 sy = d3.scale.linear().range([height, 0]),
-				 xAxis = d3.svg.axis().scale(sx).orient('bottom'),
-				 yAxis = d3.svg.axis().scale(sy).orient('left'),
-				 line = d3.svg.line()
-					.x(function (d, i) { return sx(xprof[i]); })
-					.y(function (d) { return sy(d); }),
-				 svg = d3.select('#leaflet-profile-plot').append('svg')
-					.attr('width', width + margin.left + margin.right)
-					.attr('height', height + margin.top + margin.bottom)
-					.append('g')
-					.attr('transform',
-						'translate(' + margin.left + ',' + margin.top + ')');
-				sx.domain(d3.extent(xprof));
-				sy.domain(d3.extent(yprof));
-				svg.append('g')
-					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + height + ')')
-					.call(xAxis)
-					.append('text')
-					.text('Pixels');
+				popdiv.removeChild(popdiv.childNodes[0]);
 
-				svg.append('g')
-					.attr('class', 'y axis')
-					.call(yAxis)
-					.append('text')
-					.attr('transform', 'rotate(-90)')
-					.attr('y', 6)
-					.attr('dy', '.71em')
-					.style('text-anchor', 'end')
-					.text('Pixel value (ADU)');
-
-				svg.append('path')
-					.datum(yprof)
-					.attr('class', 'line')
-					.attr('d', line);
 				layer._popup.update();	// TODO: avoid private method
 			}
 		}

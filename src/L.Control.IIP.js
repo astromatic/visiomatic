@@ -4,10 +4,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified: 13/01/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -63,6 +63,7 @@ L.Control.IIP = L.Control.extend({
 		}
 
 		this._checkIIP();
+		this._map.on('baselayerchange', this._checkIIP, this);
 
 		return	this._container;
 	},
@@ -70,7 +71,12 @@ L.Control.IIP = L.Control.extend({
 	_checkIIP: function () {
 		var layer = this._layer = this._findActiveBaseLayer();
 		if (layer) {
-			this._initDialog();
+			if (this._reloadFlag) {
+				layer.once('load', this._resetDialog, this);
+			} else {
+				this._initDialog();
+				this._reloadFlag = true;
+			}
 		} else if (this._prelayer) {
 			// Layer metadata are not ready yet: listen for 'metaload' event
 			this._prelayer.once('metaload', this._checkIIP, this);
@@ -78,12 +84,20 @@ L.Control.IIP = L.Control.extend({
 	},
 
 	_initDialog: function () {
+/*
 		var className = this._className,
 			container = this._container,
 			dialog = this._dialog,
 			toggle = this._toggle,
 			layer = this._layer;
+		dialog.innerHTML = '';
+*/
     // Setup the rest of the dialog window here
+	},
+
+	_resetDialog: function () {
+		this._dialog.innerHTML = '';
+		this._initDialog();
 	},
 
 	_addDialogLine: function (label) {

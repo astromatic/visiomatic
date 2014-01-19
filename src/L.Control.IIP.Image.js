@@ -4,10 +4,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				         Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified:		13/01/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -32,7 +32,6 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 	_initDialog: function () {
 		var _this = this,
 			className = this._className,
-			dialog = this._dialog,
 			layer = this._layer,
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			elem;

@@ -3,10 +3,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                    Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified: 09/01/2014
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -43,7 +43,7 @@ L.IIPUtils = {
 
 // Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
-		var d2r = L.LatLng.DEG_TO_RAD,
+		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
 		 lat2 = latlng2.lat * d2r,
 		 dLat = lat2 - lat1,
@@ -53,7 +53,7 @@ L.IIPUtils = {
 
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
-		return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * L.LatLng.RAD_TO_DEG;
+		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
 	}
 
 };

@@ -3,10 +3,10 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified: 15/01/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -102,7 +102,7 @@ L.Control.WCS = L.Control.extend({
 				 result = re.exec(str);
 				if (result && result.length >= 3) {
 					_this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
-					_this._wcsinput.value = result[0];
+					_this._onDrag();
 				} else {
 					alert(str + ': Unknown location');
 				}

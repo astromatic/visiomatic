@@ -4,101 +4,93 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		28/11/2013
+#	Last modified: 13/01/2014
 */
 
-L.WCS = L.Class.extend({
-	includes: L.Mixin.Events,
+L.CRS.WCS = L.extend({}, L.CRS, {
+	code: 'WCS',
 
 	options: {
-		projection: L.Projection.WCS.TAN,
 		ctype: {x: 'RA--TAN', y: 'DEC--TAN'},
-		naxis: L.point(256, 256, true),
+		naxis: [256, 256],
 		nzoom: 9,
-		crpix: L.point(129, 129),
-		crval: L.latLng(0.0, 0.0),		// (\delta_0, \phi_0)
+		crpix: [129, 129],
+		crval: [0.0, 0.0],							// (\delta_0, \phi_0)
 		cd: [[1.0, 0.0], [0.0, 1.0]],
-		natpole: L.latLng(90.0, 180.0),	// (\theta_p, \phi_p)
-		tileSize: L.point(256, 256),
-		celpole: L.latLng(0.0, 0.0),	// (\delta_p, \alpha_p)
-		natfid: L.latLng(0.0, 90.0),	// (\theta_0, \phi_0)
-		cdinv: [[1.0, 0.0], [0.0, 1.0]]
+		natpole: [90.0, 180.0],					// (\theta_p, \phi_p)
+		tileSize: [256, 256],
 	},
 
 	initialize: function (hdr, options) {
 		options = L.setOptions(this, options);
+
+		this.tileSize = L.point(options.tileSize);
+		this.nzoom = options.nzoom;
+		this.projection = options.projection;
+		this.ctype = options.ctype;
+		this.naxis = L.point(options.naxis, true);
+
+		this.projparam = new this.paraminit(options);
 		if (hdr) {
 			this._readWCS(hdr);
 		}
-		switch (options.ctype.x.substr(5, 3)) {
+
+		switch (this.ctype.x.substr(5, 3)) {
 		case 'ZEA':
-			options.projection = L.Projection.WCS.ZEA;
+			this.projection = new L.Projection.WCS.ZEA();
 			break;
 		case 'TAN':
-			options.projection = L.Projection.WCS.TAN;
+			this.projection = new L.Projection.WCS.TAN();
 			break;
 		default:
-			options.projection = L.Projection.WCS.TAN;
+			this.projection = new L.Projection.WCS.TAN();
 			break;
 		}
-		this.transformation = new L.Transformation(1, -0.5, -1, options.naxis.y + 0.5);
-		options.projection.paraminit(options);
-		this.code += ':' + options.projection.code;
+		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
+		this.projection.paraminit(this.projparam);
+		this.code += ':' + this.projection.code;
 	},
 
-	code: 'WCS',
-
-	projection: L.Projection.WCS,
-
-	latLngToPoint: function (latlng, zoom) { // (LatLng, Number) -> Point
-		var projectedPoint = this.options.projection.project(latlng, this.options),
-		    scale = this.scale(zoom);
-		return this.transformation._transform(projectedPoint, scale);
+	paraminit: function (options) {
+		this.crpix = L.point(options.crpix);
+		this.crval = L.latLng(options.crval);
+		this.cd = [[options.cd[0][0], options.cd[0][1]],
+		           [options.cd[1][0], options.cd[1][1]]];
+		this.natpole = L.latLng(options.natpole);
+		this.celpole = L.latLng(options.celpole);
+		this.natfid = L.latLng(options.natfid);
 	},
 
-	pointToLatLng: function (point, zoom) { // (Point, Number[, Boolean]) -> LatLng
+	// converts pixel coords to geo coords
+	pointToLatLng: function (point, zoom) {
 		var scale = this.scale(zoom),
-				untransformedPoint = this.transformation.untransform(point, scale);
-		return this.options.projection.unproject(untransformedPoint, this.options);
-	},
-
-	project: function (latlng) {
-		return this.options.projection.project(latlng, this.options);
+		    untransformedPoint = this.transformation.untransform(point, scale);
+		return this.projection.unproject(untransformedPoint);
 	},
 
 	scale: function (zoom) {
-		return Math.pow(2, zoom - this.options.nzoom + 1);
-	},
-
-	getSize: function (zoom) {
-		var s = this.scale(zoom);
-		return L.point(s, s);
-	},
-
-// Return base zoom level at a given resolution for a given tile size
-	zoom1: function (point, tileSize) {
-		return Math.ceil(Math.log(Math.max(point.x / tileSize.x, point.y / tileSize.y)) / Math.LN2);
+		return Math.pow(2, zoom - this.nzoom + 1);
 	},
 
 	_readWCS: function (hdr) {
-		var opt = this.options,
-		 key = this._readFITSKey,
-		 v;
-		if ((v = key('CTYPE1', hdr))) { opt.ctype.x = v; }
-		if ((v = key('CTYPE2', hdr))) { opt.ctype.y = v; }
-		if ((v = key('NAXIS1', hdr))) { opt.naxis.x = parseInt(v, 10); }
-		if ((v = key('NAXIS2', hdr))) { opt.naxis.y = parseInt(v, 10); }
-		if ((v = key('CRPIX1', hdr))) { opt.crpix.x = parseFloat(v, 10); }
-		if ((v = key('CRPIX2', hdr))) { opt.crpix.y = parseFloat(v, 10); }
-		if ((v = key('CRVAL1', hdr))) { opt.crval.lng = parseFloat(v, 10); }
-		if ((v = key('CRVAL2', hdr))) { opt.crval.lat = parseFloat(v, 10); }
-		if ((v = key('CD1_1', hdr))) { opt.cd[0][0] = parseFloat(v, 10); }
-		if ((v = key('CD1_2', hdr))) { opt.cd[0][1] = parseFloat(v, 10); }
-		if ((v = key('CD2_1', hdr))) { opt.cd[1][0] = parseFloat(v, 10); }
-		if ((v = key('CD2_2', hdr))) { opt.cd[1][1] = parseFloat(v, 10); }
+		var key = this._readFITSKey,
+		    projparam = this.projparam,
+		    v;
+		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
+		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
+		if ((v = key('NAXIS1', hdr))) { this.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { this.naxis.y = parseInt(v, 10); }
+		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
+		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
+		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
+		if ((v = key('CRVAL2', hdr))) { projparam.crval.lat = parseFloat(v, 10); }
+		if ((v = key('CD1_1', hdr))) { projparam.cd[0][0] = parseFloat(v, 10); }
+		if ((v = key('CD1_2', hdr))) { projparam.cd[0][1] = parseFloat(v, 10); }
+		if ((v = key('CD2_1', hdr))) { projparam.cd[1][0] = parseFloat(v, 10); }
+		if ((v = key('CD2_2', hdr))) { projparam.cd[1][1] = parseFloat(v, 10); }
 	},
 
 	_readFITSKey: function (keyword, str) {
@@ -118,6 +110,8 @@ L.WCS = L.Class.extend({
 
 });
 
-L.wcs = function (options) {
-	return new L.WCS(options);
+L.CRS.WCS = L.Class.extend(L.CRS.WCS);
+
+L.CRS.wcs = function (options) {
+	return new L.CRS.WCS(options);
 };

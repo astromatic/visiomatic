@@ -5,11 +5,11 @@
 #
 #	This file part of:	Leaflet-IVV
 #
-#	Copyright:		(C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud,
-#                        Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud,
+#                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		19/11/2013
+#	Last modified: 19/01/2014
 
 Original code Copyright (c) 2012, Norkart AS
 All rights reserved.
@@ -43,7 +43,11 @@ L.Control.ExtraMap = L.Control.extend({
 		zoomAnimation: false,
 		autoToggleDisplay: false,
 		width: 150,
-		height: 150
+		height: 150,
+		aimingRectOptions: {color: '#ff7800', weight: 1, clickable: false,
+		                    renderer: L.Canvas.instance},
+		shadowRectOptions: {color: '#000000', weight: 1, clickable: false,
+		                    opacity: 0, fillOpacity: 0}
 	},
 	
 	hideText: 'Hide map',
@@ -52,6 +56,10 @@ L.Control.ExtraMap = L.Control.extend({
 	//layer is the map layer to be shown in the extramap
 	initialize: function (layer, options) {
 		L.Util.setOptions(this, options);
+		//Make sure the aiming rects are non-clickable even if the user tries
+		// to set them clickable (most likely by forgetting to specify them false)
+		this.options.aimingRectOptions.clickable = false;
+		this.options.shadowRectOptions.clickable = false;
 		this._layer = layer;
 	},
 	
@@ -82,8 +90,8 @@ L.Control.ExtraMap = L.Control.extend({
 		this._layer.addTo(this._extraMap);
 
 		//These bools are used to prevent infinite loops of the two maps notifying each other that they've moved.
-		this._mainMapMoving = false;
-		this._extraMapMoving = false;
+//		this._mainMapMoving = false;
+//		this._extraMapMoving = false;
 
 		//Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
 		this._userToggledDisplay = false;
@@ -94,21 +102,22 @@ L.Control.ExtraMap = L.Control.extend({
 		}
 
 		this._layer.once('metaload', function () {
-			var bounds = this._mainMap.getPixelBounds(),
-			 latlngs = this._getMapLatLngBounds(this._mainMap);
-			this._aimingRect = L.polygon(latlngs,
-			 {color: '#ff7800', weight: 1, clickable: false}).addTo(this._extraMap);
-			this._shadowRect = L.polygon(latlngs,
-			 {color: '#B15300', weight: 1, clickable: false, opacity: 0,
-			 fillOpacity: 0})
-				.addTo(this._extraMap);
-			this._mainMap.on('moveend', this._onMainMapMoved, this);
-			this._mainMap.on('move', this._onMainMapMoving, this);
-			this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
-			this._extraMap.on('move', this._onExtraMapMoving, this);
-			this._extraMap.on('moveend', this._onExtraMapMoved, this);
-			this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
-			this._setDisplay(this._decideMinimized());
+			this._mainMap.whenReady(L.Util.bind(function () {
+				this._extraMap.whenReady(L.Util.bind(function () {
+					var latlngs = this._getMapLatLngBounds(this._mainMap);
+					this._aimingRect = L.polygon(latlngs,
+					 this.options.aimingRectOptions).addTo(this._extraMap);
+					this._shadowRect = L.polygon(latlngs,
+					 this.options.shadowRectOptions).addTo(this._extraMap);
+					this._mainMap.on('moveend', this._onMainMapMoved, this);
+					this._mainMap.on('move', this._onMainMapMoving, this);
+					this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
+					this._extraMap.on('move', this._onExtraMapMoving, this);
+					this._extraMap.on('moveend', this._onExtraMapMoved, this);
+					this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+					this._setDisplay(this._decideMinimized());
+				}, this));
+			}, this));
 		}, this);
 
 		return this._container;
@@ -233,7 +242,7 @@ L.Control.ExtraMap = L.Control.extend({
 	_onExtraMapMoving: function (e) {
 		if (!this._mainMapMoving && this._lastAimingRectPosition) {
 			this._shadowRect.setLatLngs(this._lastAimingRectPosition);
-			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
+			this._shadowRect.setStyle({opacity: 0, fillOpacity: 0.0});
 		}
 	},
 
@@ -252,7 +261,34 @@ L.Control.ExtraMap = L.Control.extend({
 			if (fromMaintoExtra) {
 				return this._mainMap.getZoom() + this.options.zoomLevelOffset;
 			} else {
-				return this._extraMap.getZoom() - this.options.zoomLevelOffset;
+				var currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom();
+				var proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
+				var toRet;
+                                
+				if (currentDiff > this.options.zoomLevelOffset &&
+				    this._mainMap.getZoom() < (this._extraMap.getMinZoom() -
+					                             this.options.zoomLevelOffset)) {
+					//This means the miniMap is zoomed out to the minimum zoom level and can't zoom any more.
+					if (this._extraMap.getZoom() > this._lastExtraMapZoom) {
+						// This means the user is trying to zoom in by using the minimap,
+						// zoom the main map.
+						toRet = this._mainMap.getZoom() + 1;
+						// Also we cheat and zoom the minimap out again to keep it
+						// visually consistent.
+						this._extraMap.setZoom(this._extraMap.getZoom() - 1);
+					} else {
+						//Either the user is trying to zoom out past the mini map's min
+						// zoom or has just panned using it, we can't tell the difference.
+						// Therefore, we ignore it!
+						toRet = this._mainMap.getZoom();
+					}
+				} else {
+					// This is what happens in the majority of cases, and always if you
+					// configure the min levels + offset in a sane fashion.
+					toRet = proposedZoom;
+				}
+				this._lastExtraMapZoom = this._extraMap.getZoom();
+				return toRet;
 			}
 		} else {
 			if (fromMaintoExtra) {
