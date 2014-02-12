@@ -1,17 +1,52 @@
 /*
 # L.Control.Layers.Overlay manages new overlays such as catalogs and plots
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 19/01/2014
+#	Last modified: 10/02/2014
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
 }
+
+L.Draw.Line = L.Draw.Polyline.extend({
+
+	_onClick: function (e) {
+		L.Draw.Polyline.prototype._onClick.call(this, e);
+		if (this._markers.length === 2) {
+			this._finishShape();
+		}
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	}
+
+});
 
 L.Control.IIP.Overlay = L.Control.IIP.extend({
 	options: {

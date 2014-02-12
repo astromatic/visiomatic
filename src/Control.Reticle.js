@@ -1,12 +1,12 @@
 /*
 # L.Control.Reticle adds a reticle at the center of the map container
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		26/11/2013
+#	Last modified:		10/02/2014
 */
 L.Control.Reticle = L.Control.extend({
 	options: {

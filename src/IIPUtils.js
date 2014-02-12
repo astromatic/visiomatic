@@ -1,12 +1,12 @@
 /*
 # L.IIPUtils contains general utility methods
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                         Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                    Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 09/01/2014
+#	Last modified: 10/02/2014
 */
 L.IIPUtils = {
 // Definitions for RegExp

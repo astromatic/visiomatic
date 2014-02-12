@@ -1,12 +1,12 @@
 /*
-Leaflet-IVV building, testing and linting scripts.
+VisiOmatic building, testing and linting scripts.
 
 To use, install Node, then run the following commands in the project root:
 
 npm install -g jake
 npm install
 
-To check the code for errors and build Leaflet-IVV from source, run "jake".
+To check the code for errors and build VisiOmatic from source, run "jake".
 To run the tests, run "jake test".
 
 For a custom build, open build/build.html in the browser and follow the instructions.
@@ -14,10 +14,10 @@ For a custom build, open build/build.html in the browser and follow the instruct
 
 var build = require('./build/build.js');
 
-desc('Check Leaflet-IVV source for errors with JSHint');
+desc('Check VisiOmatic source for errors with JSHint');
 task('lint', build.lint);
 
-desc('Combine and compress Leaflet-IVV source files');
+desc('Combine and compress VisiOmatic source files');
 task('build', ['lint'], build.build);
 
 desc('Run tests');

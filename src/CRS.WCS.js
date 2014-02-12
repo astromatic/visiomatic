@@ -2,19 +2,19 @@
 # L.WCS emulates the FITS WCS (World Coordinate System) popular among
 # the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
 	code: 'WCS',
 
 	options: {
-		ctype: {x: 'RA--TAN', y: 'DEC--TAN'},
+		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		nzoom: 9,
 		crpix: [129, 129],
@@ -46,7 +46,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			this.projection = new L.Projection.WCS.TAN();
 			break;
 		default:
-			this.projection = new L.Projection.WCS.TAN();
+			this.projection = new L.Projection.WCS.PIX();
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
@@ -55,8 +55,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	paraminit: function (options) {
-		this.crpix = L.point(options.crpix);
 		this.crval = L.latLng(options.crval);
+		this.crpix = L.point(options.crpix);
 		this.cd = [[options.cd[0][0], options.cd[0][1]],
 		           [options.cd[1][0], options.cd[1][1]]];
 		this.natpole = L.latLng(options.natpole);

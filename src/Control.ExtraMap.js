@@ -3,13 +3,11 @@
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
+#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
-#
-#	Last modified: 19/01/2014
+#	Last modified: 11/02/2014
 
 Original code Copyright (c) 2012, Norkart AS
 All rights reserved.

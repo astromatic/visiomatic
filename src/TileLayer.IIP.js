@@ -2,17 +2,18 @@
 # L.TileLayer.IIP adds support for IIP layers to Leaflet
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud,
+#                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		13/01/2014
+#	Last modified:		10/02/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
+		title: '',
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
@@ -83,7 +84,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipMaxValue = [];
 		this.iipMaxValue[0] = 255.0;
 		this.iipQuality = this.options.quality;
+
+		this._title = options.title.length > 0 ? options.title :
+		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getIIPMetaData(this._url);
+		return this;
 	},
 
 	getIIPMetaData: function (url) {
@@ -170,7 +175,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				}
 				layer.wcs = new L.CRS.WCS(response, {
 					nzoom: layer.iipMaxZoom + 1,
-					tileSize: layer.iipTileSize
+					tileSize: layer.iipTileSize,
+					// Center on image if WCS is in pixels
+					crval: L.latLng((maxsize.y + 1.0) / 2.0, (maxsize.x + 1.0) / 2.0)
 				});
 				layer.iipMetaReady = true;
 				layer.fire('metaload');
@@ -205,7 +212,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			center = map.getCenter();
 			zoom = map.getZoom();
 		} else {
-			center = this.wcs.projparam.crval;
+			center = map.options.center ? map.options.center : this.wcs.projparam.crval;
 			zoom = 1;
 		}
 		map._prevcrs = map.options.crs = this.wcs;

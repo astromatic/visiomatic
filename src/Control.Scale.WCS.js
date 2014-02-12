@@ -1,12 +1,12 @@
 /*
 # L.Control.Scale.WCS adds degree and pixel units to the standard L.Control.Scale
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.Control.Scale.WCS = L.Control.Scale.extend({
@@ -17,6 +17,9 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		imperial: false,
 		degrees: true,
 		pixels: true,
+		custom: false,
+		customScale: 1.0,
+		customUnits: '',
 		planetRadius: 6378137.0,
 		updateWhenIdle: false
 	},
@@ -34,20 +37,27 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		if (options.pixels) {
 			this._pScale = L.DomUtil.create('div', className, container);
 		}
+		if (options.custom) {
+			this._cScale = L.DomUtil.create('div', className, container);
+		}
 
 		this.angular = options.metric || options.imperial || options.degrees;
 	},
 
 	_update: function () {
 		var options = this.options,
-		    map = this._map;
+		    map = this._map,
+		    crs = map.options.crs;
 
-		if (options.pixels) {
-			var crs = map.options.crs;
-			if (crs.options && crs.options.nzoom) {
-				var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
-				this._updatePixels(pixelScale * options.maxWidth);
-			}
+		if (options.pixels && crs.options && crs.options.nzoom) {
+			var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
+			this._updatePixels(pixelScale * options.maxWidth);
+		}
+
+		if (options.custom && crs.options && crs.options.nzoom) {
+			var customScale = Math.pow(2.0,
+			      crs.options.nzoom - 1 - map.getZoom()) * options.customScale;
+			this._updateCustom(customScale * options.maxWidth, options.customUnits);
 		}
 
 		if (this.angular) {
@@ -78,6 +88,27 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		                        (latlngdy.lat - latlng.lat) -
 		                       (latlngdy.lng - latlng.lng) *
 		                        (latlngdx.lat - latlng.lat));
+	},
+
+	_updateCustom: function (maxCust, units) {
+		var scale = this._cScale;
+
+		if (maxCust > 1.0e9) {
+			var maxGCust = maxCust * 1.0e-9,
+			gCust = this._getRoundNum(maxGCust);
+			this._updateScale(scale, gCust + ' G' + units, gCust / maxGCust);
+		} else if (maxCust > 1.0e6) {
+			var maxMCust = maxCust * 1.0e-6,
+			mCust = this._getRoundNum(maxMCust);
+			this._updateScale(scale, mCust + ' M' + units, mCust / maxMCust);
+		} else if (maxCust > 1.0e3) {
+			var maxKCust = maxCust * 1.0e-3,
+			kCust = this._getRoundNum(maxKCust);
+			this._updateScale(scale, kCust + ' k' + units, kCust / maxKCust);
+		} else {
+			var cust = this._getRoundNum(maxCust);
+			this._updateScale(scale, cust + ' ' + units, cust / maxCust);
+		}
 	},
 
 	_updatePixels: function (maxPix) {

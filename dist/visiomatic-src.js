@@ -1,5 +1,5 @@
 /*
-#	Copyright:    (C) 2013 Emmanuel Bertin - IAP/CNRS/UPMC
+#	Copyright:    (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
@@ -18,14 +18,130 @@
 */
 
 /*
+# FileTree parses directory trees serverside.
+# Adapted from the jQuery File Tree Plugin (original copyright notice reproduced
+# below).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 11/02/2014
+// Originally authored by Cory S.N. LaViska
+// A Beautiful Site (http://abeautifulsite.net/)
+// 24 March 2008
+//
+// Usage: $('.fileTreeDemo').fileTree( options, callback )
+//
+// Options:  root           - root folder to display; default = /
+//           script         - location of the serverside AJAX file to use; default = jqueryFileTree.php
+//           folderEvent    - event to trigger expand/collapse; default = click
+//           expandSpeed    - default = 500 (ms); use -1 for no animation
+//           collapseSpeed  - default = 500 (ms); use -1 for no animation
+//           expandEasing   - easing function to use on expand (optional)
+//           collapseEasing - easing function to use on collapse (optional)
+//           multiFolder    - whether or not to limit the browser to one subfolder at a time
+//           loadMessage    - Message to display while initial tree loads (can be HTML)
+//
+// TERMS OF USE
+// 
+// This plugin is dual-licensed under the GNU General Public License and the MIT License and
+// is copyright 2008 A Beautiful Site, LLC. 
+//
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery-browser');
+}
+
+$.extend($.fn, {
+	fileTree: function (options, file) {
+		// Default options
+		if (options.root === undefined) {options.root = '/'; }
+		if (options.script === undefined) {options.script			= '/files/filetree'; }
+		if (options.folderEvent === undefined) {options.folderEvent = 'click'; }
+		if (options.expandSpeed === undefined) {options.expandSpeed = 500; }
+		if (options.collapseSpeed === undefined) {options.collapseSpeed = 500; }
+		if (options.expandEasing === undefined) {options.expandEasing = null; }
+		if (options.collapseEasing === undefined) {options.collapseEasing = null; }
+		if (options.multiFolder === undefined) {options.multiFolder = true; }
+		if (options.loadMessage === undefined) {options.loadMessage	= 'Loading...'; }
+
+		$(this).each(function () {
+
+			function showTree(element, dir) {
+				$(element).addClass('wait');
+				$('.filetree.start').remove();
+				$.post(options.script, { dir: dir }, function (data) {
+					$(element).find('.start').html('');
+					$(element).removeClass('wait').append(data);
+					if (options.root === dir) {
+						$(element).find('UL:hidden').show();
+					} else {
+						$(element).find('UL:hidden').slideDown({
+							duration: options.expandSpeed,
+							easing: options.expandEasing
+						});
+					}
+					bindTree(element);
+				});
+			}
+
+			function bindTree(element) {
+				$(element).find('LI A').on(options.folderEvent, function () {
+					if ($(this).parent().hasClass('directory')) {
+						if ($(this).parent().hasClass('collapsed')) {
+							// Expand
+							if (!options.multiFolder) {
+								$(this).parent().parent().find('UL').slideUp({
+									duration: options.collapseSpeed,
+									easing: options.collapseEasing
+								});
+								$(this).parent().parent().find('LI.directory')
+								  .removeClass('expanded')
+								  .addClass('collapsed');
+							}
+							$(this).parent().find('UL').remove(); // cleanup
+							showTree($(this).parent(), encodeURI($(this).attr('rel').match(/.*\//)));
+							$(this).parent().removeClass('collapsed').addClass('expanded');
+						} else {
+							// Collapse
+							$(this).parent().find('UL').slideUp({
+								duration: options.collapseSpeed,
+								easing: options.collapseEasing
+							});
+							$(this).parent().removeClass('expanded').addClass('collapsed');
+						}
+					} else {
+						file($(this).attr('rel'));
+					}
+					return false;
+				});
+				// Prevent A from triggering the # on non-click events
+				if (options.folderEvent.toLowerCase !== 'click') {
+					$(element).find('LI A').on('click', function () {return false; });
+				}
+			}
+			// Loading message
+			$(this).html('<ul class="filetree start"><li class="wait">' + options.loadMessage + '<li></ul>');
+			// Get the initial file list
+			showTree($(this), encodeURI(options.root));
+		});
+	}
+});
+
+
+
+/*
 # L.IIPUtils contains general utility methods
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                         Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                    Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 09/01/2014
+#	Last modified: 10/02/2014
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -83,12 +199,12 @@ L.IIPUtils = {
 # L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
 # (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.Projection.WCS = L.Class.extend({
@@ -169,6 +285,27 @@ L.Projection.WCS = L.Class.extend({
 	}
 });
 
+L.Projection.WCS.PIX = L.Projection.WCS.extend({
+	code: 'PIX',
+
+	paraminit: function (projparam) {
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.natfid = new L.LatLng(0.0, 90.0);
+		projparam.celpole = projparam.crval;
+	},
+
+	project: function (latlng) {
+		return new L.Point(latlng.lng, latlng.lat);
+	},
+
+	unproject: function (point) {
+		return new L.LatLng(point.y, point.x);
+	},
+
+	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5])
+});
+
 L.Projection.WCS.zenithal = L.Projection.WCS.extend({
 
 	paraminit: function (projparam) {
@@ -239,19 +376,19 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 # L.WCS emulates the FITS WCS (World Coordinate System) popular among
 # the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
 	code: 'WCS',
 
 	options: {
-		ctype: {x: 'RA--TAN', y: 'DEC--TAN'},
+		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		nzoom: 9,
 		crpix: [129, 129],
@@ -283,7 +420,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			this.projection = new L.Projection.WCS.TAN();
 			break;
 		default:
-			this.projection = new L.Projection.WCS.TAN();
+			this.projection = new L.Projection.WCS.PIX();
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
@@ -292,8 +429,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	paraminit: function (options) {
-		this.crpix = L.point(options.crpix);
 		this.crval = L.latLng(options.crval);
+		this.crpix = L.point(options.crpix);
 		this.cd = [[options.cd[0][0], options.cd[0][1]],
 		           [options.cd[1][0], options.cd[1][1]]];
 		this.natpole = L.latLng(options.natpole);
@@ -355,281 +492,21 @@ L.CRS.wcs = function (options) {
 
 
 /*
-# L.Control.WCS Manage coordinate display and input
-#
-#	This file part of:	Leaflet-IVV
-#
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 15/01/2014
-*/
-L.Control.WCS = L.Control.extend({
-	options: {
-		position: 'bottomleft',
-		units: 'HMS'
-	},
-
-	onAdd: function (map) {
-		// Create coordinate input/display box
-		var input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs');
-		L.DomEvent.disableClickPropagation(input);
-		input.type = 'text';
-		// Speech recognition on WebKit engine
-		if ('webkitSpeechRecognition' in window) {
-			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
-		}
-
-		map.on('drag', this._onDrag, this);
-		L.DomEvent.on(input, 'change', this._onInputChange, this);
-
-		return this._wcsinput;
-	},
-
-	onRemove: function (map) {
-		map.off('drag', this._onDrag);
-	},
-
-	_onDrag: function (e) {
-		var latlng = this._map.getCenter();
-		if (this.options.units === 'HMS') {
-			this._wcsinput.value = this._latLngToHMSDMS(latlng);
-		} else {
-			this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
-		}
-	},
-
-	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
-	_latLngToHMSDMS : function (latlng) {
-		var lng = (latlng.lng + 360.0) / 360.0;
-		lng = (lng - Math.floor(lng)) * 24.0;
-		var h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		var str = h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-		 lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat < 0.0 ? '-' : '+',
-		 d = Math.floor(lat);
-		mf = (lat - d) * 60.0;
-		m = Math.floor(mf);
-		sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-		 (m < 10 ? '0' : '') + m.toString() + ':' +
-		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
-	},
-
-	_onInputChange: function (e) {
-		var re = /^(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
-		 str = this._wcsinput.value,
-		 result = re.exec(str);
-		if (result && result.length >= 3) {
-		// If in degrees, pan directly
-			this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
-		} else {
-		// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURI('/cgi-bin/nph-sesame/-oI?' + str,
-			 'getting coordinates for ' + str, this._getCoordinates, this, true);
-		}
-	},
-
-	_getCoordinates: function (_this, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				var re = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
-				 str = httpRequest.responseText,
-				 result = re.exec(str);
-				if (result && result.length >= 3) {
-					_this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
-					_this._onDrag();
-				} else {
-					alert(str + ': Unknown location');
-				}
-			} else {
-				alert('There was a problem with the request to the Sesame service at CDS');
-			}
-		}
-	}
-
-
-});
-
-L.Map.mergeOptions({
-    positionControl: false
-});
-
-L.Map.addInitHook(function () {
-    if (this.options.positionControl) {
-        this.positionControl = new L.Control.MousePosition();
-        this.addControl(this.positionControl);
-    }
-});
-
-L.control.wcs = function (options) {
-    return new L.Control.WCS(options);
-};
-
-
-/*
-# L.Control.Scale.WCS adds degree and pixel units to the standard L.Control.Scale
-#
-#	This file part of:	Leaflet-IVV
-#
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 10/01/2014
-*/
-
-L.Control.Scale.WCS = L.Control.Scale.extend({
-	options: {
-		position: 'bottomleft',
-		maxWidth: 128,
-		metric: false,
-		imperial: false,
-		degrees: true,
-		pixels: true,
-		planetRadius: 6378137.0,
-		updateWhenIdle: false
-	},
-
-	_addScales: function (options, className, container) {
-		if (options.metric) {
-			this._mScale = L.DomUtil.create('div', className, container);
-		}
-		if (options.imperial) {
-			this._iScale = L.DomUtil.create('div', className, container);
-		}
-		if (options.degrees) {
-			this._dScale = L.DomUtil.create('div', className, container);
-		}
-		if (options.pixels) {
-			this._pScale = L.DomUtil.create('div', className, container);
-		}
-
-		this.angular = options.metric || options.imperial || options.degrees;
-	},
-
-	_update: function () {
-		var options = this.options,
-		    map = this._map;
-
-		if (options.pixels) {
-			var crs = map.options.crs;
-			if (crs.options && crs.options.nzoom) {
-				var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
-				this._updatePixels(pixelScale * options.maxWidth);
-			}
-		}
-
-		if (this.angular) {
-			var center = map.getCenter(),
-			    cosLat = Math.cos(center.lat * Math.PI / 180),
-			    dist = Math.sqrt(this._jacobian(center)) * cosLat,
-			    maxDegrees = dist * options.maxWidth;
-
-			if (options.metric) {
-				this._updateMetric(maxDegrees * Math.PI / 180.0 * options.planetRadius);
-			}
-			if (options.imperial) {
-				this._updateImperial(maxDegrees * Math.PI / 180.0 * options.planetRadius);
-			}
-			if (options.degrees) {
-				this._updateDegrees(maxDegrees);
-			}
-		}
-	},
-
-// Return the Jacobian determinant of the astrometric transformation at latLng
-	_jacobian: function (latlng) {
-		var map = this._map,
-		    p0 = map.project(latlng),
-		    latlngdx = map.unproject(p0.add([10.0, 0.0])),
-		    latlngdy = map.unproject(p0.add([0.0, 10.0]));
-		return 0.01 * Math.abs((latlngdx.lng - latlng.lng) *
-		                        (latlngdy.lat - latlng.lat) -
-		                       (latlngdy.lng - latlng.lng) *
-		                        (latlngdx.lat - latlng.lat));
-	},
-
-	_updatePixels: function (maxPix) {
-		var scale = this._pScale;
-
-		if (maxPix > 1.0e6) {
-			var maxMPix = maxPix * 1.0e-6,
-			mPix = this._getRoundNum(maxMPix);
-			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
-		} else if (maxPix > 1.0e3) {
-			var maxKPix = maxPix * 1.0e-3,
-			kPix = this._getRoundNum(maxKPix);
-			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
-		} else {
-			var pix = this._getRoundNum(maxPix);
-			this._updateScale(scale, pix + ' px', pix / maxPix);
-		}
-	},
-
-	_updateDegrees: function (maxDegrees) {
-		var maxSeconds = maxDegrees * 3600.0,
-		    scale = this._dScale;
-
-		if (maxSeconds < 1.0) {
-			var maxMas = maxSeconds * 1000.0,
-			mas = this._getRoundNum(maxMas);
-			this._updateScale(scale, mas + ' mas', mas / maxMas);
-		} else if (maxSeconds < 60.0) {
-			var seconds = this._getRoundNum(maxSeconds);
-			this._updateScale(scale, seconds + ' &#34;', seconds / maxSeconds);
-		} else if (maxSeconds < 3600.0) {
-			var maxMinutes = maxDegrees * 60.0,
-			    minutes = this._getRoundNum(maxMinutes);
-			this._updateScale(scale, minutes + ' &#39;', minutes / maxMinutes);
-		} else {
-			var degrees = this._getRoundNum(maxDegrees);
-			this._updateScale(scale, degrees + ' &#176;', degrees / maxDegrees);
-		}
-	}
-
-});
-
-L.control.scale.wcs = function (options) {
-	return new L.Control.Scale.WCS(options);
-};
-
-
-
-/*
 # L.TileLayer.IIP adds support for IIP layers to Leaflet
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud,
+#                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		13/01/2014
+#	Last modified:		10/02/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
+		title: '',
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
@@ -700,7 +577,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipMaxValue = [];
 		this.iipMaxValue[0] = 255.0;
 		this.iipQuality = this.options.quality;
+
+		this._title = options.title.length > 0 ? options.title :
+		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getIIPMetaData(this._url);
+		return this;
 	},
 
 	getIIPMetaData: function (url) {
@@ -787,7 +668,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				}
 				layer.wcs = new L.CRS.WCS(response, {
 					nzoom: layer.iipMaxZoom + 1,
-					tileSize: layer.iipTileSize
+					tileSize: layer.iipTileSize,
+					// Center on image if WCS is in pixels
+					crval: L.latLng((maxsize.y + 1.0) / 2.0, (maxsize.x + 1.0) / 2.0)
 				});
 				layer.iipMetaReady = true;
 				layer.fire('metaload');
@@ -822,7 +705,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			center = map.getCenter();
 			zoom = map.getZoom();
 		} else {
-			center = this.wcs.projparam.crval;
+			center = map.options.center ? map.options.center : this.wcs.projparam.crval;
 			zoom = 1;
 		}
 		map._prevcrs = map.options.crs = this.wcs;
@@ -998,12 +881,12 @@ L.tileLayer.iip = function (url, options) {
 /*
 # L.Catalogs contains specific catalog settings and conversion tools.
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 19/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.Catalog = {
@@ -1136,15 +1019,354 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 
 
 /*
+# L.Control.WCS Manage coordinate display and input
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 10/02/2014
+*/
+L.Control.WCS = L.Control.extend({
+	options: {
+		position: 'bottomleft',
+		units: 'HMS'
+	},
+
+	onAdd: function (map) {
+		// Create coordinate input/display box
+		var input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs');
+		L.DomEvent.disableClickPropagation(input);
+		input.type = 'text';
+		// Speech recognition on WebKit engine
+		if ('webkitSpeechRecognition' in window) {
+			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
+		}
+
+		map.on('drag', this._onDrag, this);
+		L.DomEvent.on(input, 'change', this._onInputChange, this);
+
+		return this._wcsinput;
+	},
+
+	onRemove: function (map) {
+		map.off('drag', this._onDrag);
+	},
+
+	_onDrag: function (e) {
+		var latlng = this._map.getCenter();
+		switch (this.options.units) {
+		case 'HMS':
+			this._wcsinput.value = this._latLngToHMSDMS(latlng);
+			break;
+		case 'deg':
+			this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+			break;
+		default:
+			this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+			break;
+		}
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	_latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+	},
+
+	_onInputChange: function (e) {
+		var re = /^(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
+		 str = this._wcsinput.value,
+		 result = re.exec(str);
+		if (result && result.length >= 3) {
+		// If in degrees, pan directly
+			this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
+		} else {
+		// If not, ask Sesame@CDS!
+			L.IIPUtils.requestURI('/cgi-bin/nph-sesame/-oI?' + str,
+			 'getting coordinates for ' + str, this._getCoordinates, this, true);
+		}
+	},
+
+	_getCoordinates: function (_this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var re = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
+				 str = httpRequest.responseText,
+				 result = re.exec(str);
+				if (result && result.length >= 3) {
+					_this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
+					_this._onDrag();
+				} else {
+					alert(str + ': Unknown location');
+				}
+			} else {
+				alert('There was a problem with the request to the Sesame service at CDS');
+			}
+		}
+	}
+});
+
+L.Map.mergeOptions({
+    positionControl: false
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.positionControl) {
+        this.positionControl = new L.Control.MousePosition();
+        this.addControl(this.positionControl);
+    }
+});
+
+L.control.wcs = function (options) {
+    return new L.Control.WCS(options);
+};
+
+
+/*
+# L.Control.Scale.WCS adds degree and pixel units to the standard L.Control.Scale
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 10/02/2014
+*/
+
+L.Control.Scale.WCS = L.Control.Scale.extend({
+	options: {
+		position: 'bottomleft',
+		maxWidth: 128,
+		metric: false,
+		imperial: false,
+		degrees: true,
+		pixels: true,
+		custom: false,
+		customScale: 1.0,
+		customUnits: '',
+		planetRadius: 6378137.0,
+		updateWhenIdle: false
+	},
+
+	_addScales: function (options, className, container) {
+		if (options.metric) {
+			this._mScale = L.DomUtil.create('div', className, container);
+		}
+		if (options.imperial) {
+			this._iScale = L.DomUtil.create('div', className, container);
+		}
+		if (options.degrees) {
+			this._dScale = L.DomUtil.create('div', className, container);
+		}
+		if (options.pixels) {
+			this._pScale = L.DomUtil.create('div', className, container);
+		}
+		if (options.custom) {
+			this._cScale = L.DomUtil.create('div', className, container);
+		}
+
+		this.angular = options.metric || options.imperial || options.degrees;
+	},
+
+	_update: function () {
+		var options = this.options,
+		    map = this._map,
+		    crs = map.options.crs;
+
+		if (options.pixels && crs.options && crs.options.nzoom) {
+			var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
+			this._updatePixels(pixelScale * options.maxWidth);
+		}
+
+		if (options.custom && crs.options && crs.options.nzoom) {
+			var customScale = Math.pow(2.0,
+			      crs.options.nzoom - 1 - map.getZoom()) * options.customScale;
+			this._updateCustom(customScale * options.maxWidth, options.customUnits);
+		}
+
+		if (this.angular) {
+			var center = map.getCenter(),
+			    cosLat = Math.cos(center.lat * Math.PI / 180),
+			    dist = Math.sqrt(this._jacobian(center)) * cosLat,
+			    maxDegrees = dist * options.maxWidth;
+
+			if (options.metric) {
+				this._updateMetric(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.imperial) {
+				this._updateImperial(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.degrees) {
+				this._updateDegrees(maxDegrees);
+			}
+		}
+	},
+
+// Return the Jacobian determinant of the astrometric transformation at latLng
+	_jacobian: function (latlng) {
+		var map = this._map,
+		    p0 = map.project(latlng),
+		    latlngdx = map.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = map.unproject(p0.add([0.0, 10.0]));
+		return 0.01 * Math.abs((latlngdx.lng - latlng.lng) *
+		                        (latlngdy.lat - latlng.lat) -
+		                       (latlngdy.lng - latlng.lng) *
+		                        (latlngdx.lat - latlng.lat));
+	},
+
+	_updateCustom: function (maxCust, units) {
+		var scale = this._cScale;
+
+		if (maxCust > 1.0e9) {
+			var maxGCust = maxCust * 1.0e-9,
+			gCust = this._getRoundNum(maxGCust);
+			this._updateScale(scale, gCust + ' G' + units, gCust / maxGCust);
+		} else if (maxCust > 1.0e6) {
+			var maxMCust = maxCust * 1.0e-6,
+			mCust = this._getRoundNum(maxMCust);
+			this._updateScale(scale, mCust + ' M' + units, mCust / maxMCust);
+		} else if (maxCust > 1.0e3) {
+			var maxKCust = maxCust * 1.0e-3,
+			kCust = this._getRoundNum(maxKCust);
+			this._updateScale(scale, kCust + ' k' + units, kCust / maxKCust);
+		} else {
+			var cust = this._getRoundNum(maxCust);
+			this._updateScale(scale, cust + ' ' + units, cust / maxCust);
+		}
+	},
+
+	_updatePixels: function (maxPix) {
+		var scale = this._pScale;
+
+		if (maxPix > 1.0e6) {
+			var maxMPix = maxPix * 1.0e-6,
+			mPix = this._getRoundNum(maxMPix);
+			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
+		} else if (maxPix > 1.0e3) {
+			var maxKPix = maxPix * 1.0e-3,
+			kPix = this._getRoundNum(maxKPix);
+			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
+		} else {
+			var pix = this._getRoundNum(maxPix);
+			this._updateScale(scale, pix + ' px', pix / maxPix);
+		}
+	},
+
+	_updateDegrees: function (maxDegrees) {
+		var maxSeconds = maxDegrees * 3600.0,
+		    scale = this._dScale;
+
+		if (maxSeconds < 1.0) {
+			var maxMas = maxSeconds * 1000.0,
+			mas = this._getRoundNum(maxMas);
+			this._updateScale(scale, mas + ' mas', mas / maxMas);
+		} else if (maxSeconds < 60.0) {
+			var seconds = this._getRoundNum(maxSeconds);
+			this._updateScale(scale, seconds + ' &#34;', seconds / maxSeconds);
+		} else if (maxSeconds < 3600.0) {
+			var maxMinutes = maxDegrees * 60.0,
+			    minutes = this._getRoundNum(maxMinutes);
+			this._updateScale(scale, minutes + ' &#39;', minutes / maxMinutes);
+		} else {
+			var degrees = this._getRoundNum(maxDegrees);
+			this._updateScale(scale, degrees + ' &#176;', degrees / maxDegrees);
+		}
+	}
+
+});
+
+L.control.scale.wcs = function (options) {
+	return new L.Control.Scale.WCS(options);
+};
+
+
+
+/*
+# L.Control.Reticle adds a reticle at the center of the map container
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		10/02/2014
+*/
+L.Control.Reticle = L.Control.extend({
+	options: {
+		position: 'bottomleft'
+	},
+
+	onAdd: function (map) {
+		// Create central reticle
+		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
+			style = reticle.style;
+		style.position = 'absolute';
+		style.left = '50%';
+		style.bottom = '50%';
+		style.textAlign = 'center';
+		style.verticalAlign = 'middle';
+		style.pointerEvents = 'none';
+		reticle.innerHTML = '';
+
+		var container = this._container = L.DomUtil.create('div', 'leaflet-dummy');
+
+		return container;
+	},
+
+	onRemove: function (map) {
+		this._reticle.parentNode.removeChild(this._reticle);
+	}
+
+});
+
+L.control.reticle = function (options) {
+    return new L.Control.Reticle(options);
+};
+
+
+/*
 # L.Control.IIP adjusts the rendering of an IIP layer
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/01/2014
+#	Last modified: 10/02/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -1305,12 +1527,12 @@ L.control.iip = function (baseLayers, options) {
 # L.Control.IIP.image adjusts the rendering of an IIP layer
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				                 Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		13/01/2014
+#	Last modified:		10/02/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -1485,17 +1707,52 @@ L.control.iip.image = function (baseLayers, options) {
 /*
 # L.Control.Layers.Overlay manages new overlays such as catalogs and plots
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 19/01/2014
+#	Last modified: 10/02/2014
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
 }
+
+L.Draw.Line = L.Draw.Polyline.extend({
+
+	_onClick: function (e) {
+		L.Draw.Polyline.prototype._onClick.call(this, e);
+		if (this._markers.length === 2) {
+			this._finishShape();
+		}
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	}
+
+});
 
 L.Control.IIP.Overlay = L.Control.IIP.extend({
 	options: {
@@ -1757,10 +2014,10 @@ L.control.iip.overlay = function (options) {
 /*
 # L.Control.Layers.IIP adds new features to the standard L.Control.Layers
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013,2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified: 10/01/2014
 */
@@ -1774,7 +2031,10 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		title: 'overlay menu',
 		collapsed: true,
 		position: 'topright',
-		autoZIndex: true
+		autoZIndex: true,
+		fileMenu: false,
+		fileURL: '/fcgi-bin/iipsrv.fcgi?FIF=',
+		fileRoot: '/raid/iip/',
 	},
 
 	onAdd: function (map) {
@@ -1787,6 +2047,69 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 //		    .on('layerremove', this._onLayerChange, this);
 
 		return this._container;
+	},
+
+	_initLayout: function () {
+		var className = 'leaflet-control-layers',
+		    container = this._container = L.DomUtil.create('div', className);
+
+		// makes this work on IE touch devices by stopping it from firing a mouseout event when the touch is released
+		container.setAttribute('aria-haspopup', true);
+
+		if (!L.Browser.touch) {
+			L.DomEvent
+				.disableClickPropagation(container)
+				.disableScrollPropagation(container);
+		} else {
+			L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
+		}
+
+		var form = this._form = L.DomUtil.create('form', className + '-list');
+
+		if (this.options.collapsed) {
+			if (!L.Browser.android) {
+				L.DomEvent.on(container, {
+					mouseover: this._expand,
+				    mouseout: this._collapse
+				}, this);
+			}
+
+			var link = this._layersLink = L.DomUtil.create('a', className + '-toggle', container);
+			link.href = '#';
+			link.title = 'Layers';
+
+			if (L.Browser.touch) {
+				L.DomEvent
+				    .on(link, 'click', L.DomEvent.stop)
+				    .on(link, 'click', this._expand, this);
+			} else {
+				L.DomEvent.on(link, 'focus', this._expand, this);
+			}
+
+			// work around for Firefox Android issue https://github.com/Leaflet/Leaflet/issues/2033
+			L.DomEvent.on(form, 'click', function () {
+				setTimeout(L.bind(this._onInputClick, this), 0);
+			}, this);
+
+			this._map.on('click', this._collapse, this);
+			// TODO keyboard accessibility
+		} else {
+			this._expand();
+		}
+
+		this._baseLayersList = L.DomUtil.create('div', className + '-base', form);
+
+		if (this.options.fileMenu) {
+			var addbutton = L.DomUtil.create('input', className + '-add', form);
+			addbutton.type = 'button';
+			addbutton.value = 'Add...';
+			L.DomEvent.on(addbutton, 'click', this._openFileMenu, this);
+		}
+
+		this._separator = L.DomUtil.create('div', className + '-separator', form);
+		this._overlaysList = L.DomUtil.create('div', className + '-overlays', form);
+
+		container.appendChild(form);
 	},
 
 	_addItem: function (obj) {
@@ -1878,12 +2201,266 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		return elem;
 	},
 
+	_openFileMenu: function () {
+		var _this = this,
+		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
+		                 this._map._controlContainer);
+		L.DomEvent
+				.disableClickPropagation(fileMenu)
+				.disableScrollPropagation(fileMenu);
+		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
+		                 fileMenu);
+		fileTree.id = 'leaflet-filetree';
+		$(document).ready(function () {
+			$('#leaflet-filetree').fileTree({
+				root: _this.options.fileRoot,
+				script: 'visiomatic/dist/filetree.php'
+			},
+			function (file) {
+				var layercontrol = _this._map._layerControl,
+				    templayer;
+				if (layercontrol) {
+					templayer = new L.LayerGroup(null);
+
+					templayer.notReady = true;
+					layercontrol.addBaseLayer(templayer, this._title);
+					if (layercontrol.options.collapsed) {
+						layercontrol._expand();
+					}
+				}
+				var layer = L.tileLayer.iip(_this.options.fileURL + file).addTo(_this._map);
+				if (layercontrol) {
+					if (layer.iipMetaReady) {
+						layercontrol.removeLayer(templayer);
+						layercontrol.addBaseLayer(layer, layer._title);
+						if (layercontrol.options.collapsed) {
+							layercontrol._collapse();
+						}
+					} else {
+						layer.once('metaload', function () {
+							layercontrol.removeLayer(templayer);
+							layercontrol.addBaseLayer(layer, layer._title);
+							if (layercontrol.options.collapsed) {
+								layercontrol._collapse();
+							}
+						});
+					}
+				}
+				L.DomUtil.remove(fileMenu);
+			});
+		});
+	}
+
 });
 
-L.control.layers.iip = function (layers, options) {
-	return new L.Control.Layers.IIP(layers, options);
+L.control.layers.iip = function (baselayers, overlays, options) {
+	return new L.Control.Layers.IIP(baselayers, overlays, options);
 };
 
+
+
+/*
+# L.Control.FullScreen adds a full screen toggle button to the map.
+# Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed jake errors)
+# (original copyright notice reproduced below).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud,
+#                             Ruven Pillay - C2RMF/CNRS
+#
+#	Last modified: 10/02/2014
+
+original code Copyright (c) 2013, Bruno Bergot
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+if (typeof require !== 'undefined') {
+	var jQuery = require('jquery-browser');
+}
+
+
+(function () {
+
+	L.Control.FullScreen = L.Control.extend({
+		options: {
+			position: 'topleft',
+			title: 'Full Screen',
+			forceSeparateButton: false
+		},
+	
+		onAdd: function (map) {
+			var className = 'leaflet-control-zoom-fullscreen', container;
+		
+			if (map.zoomControl && !this.options.forceSeparateButton) {
+				container = map.zoomControl._container;
+			} else {
+				container = L.DomUtil.create('div', 'leaflet-bar');
+			}
+		
+			this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
+
+			return container;
+		},
+	
+		_createButton: function (title, className, container, fn, context) {
+			var link = L.DomUtil.create('a', className, container);
+			link.href = '#';
+			link.title = title;
+
+			L.DomEvent
+				.addListener(link, 'click', L.DomEvent.stopPropagation)
+				.addListener(link, 'click', L.DomEvent.preventDefault)
+				.addListener(link, 'click', fn, context);
+
+			L.DomEvent
+				.addListener(container, fullScreenApi.fullScreenEventName, L.DomEvent.stopPropagation)
+				.addListener(container, fullScreenApi.fullScreenEventName, L.DomEvent.preventDefault)
+				.addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+
+			L.DomEvent
+				.addListener(document, fullScreenApi.fullScreenEventName, L.DomEvent.stopPropagation)
+				.addListener(document, fullScreenApi.fullScreenEventName, L.DomEvent.preventDefault)
+				.addListener(document, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+
+			return link;
+		},
+
+		toogleFullScreen: function () {
+			this._exitFired = false;
+			var container = this._container;
+			if (this._isFullscreen) {
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.cancelFullScreen(container);
+				} else {
+					L.DomUtil.removeClass(container, 'leaflet-pseudo-fullscreen');
+				}
+				this.invalidateSize();
+				this.fire('exitFullscreen');
+				this._exitFired = true;
+				this._isFullscreen = false;
+			} else {
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.requestFullScreen(container);
+				} else {
+					L.DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
+				}
+				this.invalidateSize();
+				this.fire('enterFullscreen');
+				this._isFullscreen = true;
+			}
+		},
+	
+		_handleEscKey: function () {
+			if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
+				this.fire('exitFullscreen');
+				this._exitFired = true;
+				this._isFullscreen = false;
+			}
+		}
+	});
+
+	L.Map.addInitHook(function () {
+		if (this.options.fullscreenControl) {
+			this.fullscreenControl = L.control.fullscreen(this.options.fullscreenControlOptions);
+			this.addControl(this.fullscreenControl);
+		}
+	});
+
+	L.control.fullscreen = function (options) {
+		return new L.Control.FullScreen(options);
+	};
+
+/* 
+Native FullScreen JavaScript API
+-------------
+Assumes Mozilla naming conventions instead of W3C for now
+
+source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+
+*/
+
+	var fullScreenApi = {
+			supportsFullScreen: false,
+			isFullScreen: function () { return false; },
+			requestFullScreen: function () {},
+			cancelFullScreen: function () {},
+			fullScreenEventName: '',
+			prefix: ''
+		},
+		browserPrefixes = 'webkit moz o ms khtml'.split(' ');
+	
+	// check for native support
+	if (typeof document.exitFullscreen !== 'undefined') {
+		fullScreenApi.supportsFullScreen = true;
+	} else {
+		// check for fullscreen support by vendor prefix
+		for (var i = 0, il = browserPrefixes.length; i < il; i++) {
+			fullScreenApi.prefix = browserPrefixes[i];
+			if (typeof document[fullScreenApi.prefix + 'CancelFullScreen'] !== 'undefined') {
+				fullScreenApi.supportsFullScreen = true;
+				break;
+			}
+		}
+	}
+	
+	// update methods to do something useful
+	if (fullScreenApi.supportsFullScreen) {
+		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
+		fullScreenApi.isFullScreen = function () {
+			switch (this.prefix) {
+			case '':
+				return document.fullScreen;
+			case 'webkit':
+				return document.webkitIsFullScreen;
+			default:
+				return document[this.prefix + 'FullScreen'];
+			}
+		};
+		fullScreenApi.requestFullScreen = function (el) {
+			return (this.prefix === '') ? el.requestFullscreen() : el[this.prefix + 'RequestFullScreen']();
+		};
+		fullScreenApi.cancelFullScreen = function (el) {
+			return (this.prefix === '') ? document.exitFullscreen() : document[this.prefix + 'CancelFullScreen']();
+		};
+	}
+
+	// jQuery plugin
+	if (typeof jQuery !== 'undefined') {
+		jQuery.fn.requestFullScreen = function () {
+			return this.each(function () {
+				var el = jQuery(this);
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.requestFullScreen(el);
+				}
+			});
+		};
+	}
+
+	// export api
+	window.fullScreenApi = fullScreenApi;
+})();
 
 
 /*
@@ -1891,13 +2468,11 @@ L.control.layers.iip = function (layers, options) {
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
+#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
-#
-#	Last modified: 19/01/2014
+#	Last modified: 11/02/2014
 
 Original code Copyright (c) 2012, Norkart AS
 All rights reserved.

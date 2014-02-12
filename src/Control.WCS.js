@@ -1,12 +1,12 @@
 /*
 # L.Control.WCS Manage coordinate display and input
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/01/2014
+#	Last modified: 10/02/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -36,10 +36,16 @@ L.Control.WCS = L.Control.extend({
 
 	_onDrag: function (e) {
 		var latlng = this._map.getCenter();
-		if (this.options.units === 'HMS') {
+		switch (this.options.units) {
+		case 'HMS':
 			this._wcsinput.value = this._latLngToHMSDMS(latlng);
-		} else {
+			break;
+		case 'deg':
 			this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+			break;
+		default:
+			this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+			break;
 		}
 	},
 
@@ -111,8 +117,6 @@ L.Control.WCS = L.Control.extend({
 			}
 		}
 	}
-
-
 });
 
 L.Map.mergeOptions({

@@ -2,12 +2,12 @@
 # L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
 # (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2014
+#	Last modified: 10/02/2014
 */
 
 L.Projection.WCS = L.Class.extend({
@@ -86,6 +86,27 @@ L.Projection.WCS = L.Class.extend({
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
 	}
+});
+
+L.Projection.WCS.PIX = L.Projection.WCS.extend({
+	code: 'PIX',
+
+	paraminit: function (projparam) {
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.natfid = new L.LatLng(0.0, 90.0);
+		projparam.celpole = projparam.crval;
+	},
+
+	project: function (latlng) {
+		return new L.Point(latlng.lng, latlng.lat);
+	},
+
+	unproject: function (point) {
+		return new L.LatLng(point.y, point.x);
+	},
+
+	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5])
 });
 
 L.Projection.WCS.zenithal = L.Projection.WCS.extend({

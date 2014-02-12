@@ -2,12 +2,12 @@
 # L.Control.IIP adjusts the rendering of an IIP layer
 # (see http://iipimage.sourceforge.net/documentation/protocol/)
 #
-#	This file part of:	Leaflet-IVV
+#	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/01/2014
+#	Last modified: 10/02/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
