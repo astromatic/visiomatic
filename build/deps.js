@@ -1,18 +1,18 @@
 var deps = {
 	Core: {
 		src: [
-			'L.IIPUtils.js',
-			'L.Projection.WCS.js',
-			'L.CRS.WCS.js',
-			'L.Control.WCS.js',
-			'L.Control.Scale.WCS.js',
-			'L.TileLayer.IIP.js',
-			'L.Catalogs.js',
-			'L.Control.IIP.js',
-			'L.Control.IIP.Image.js',
-			'L.Control.IIP.Overlay.js',
-			'L.Control.Layers.IIP.js',
-			'L.Control.ExtraMap.js'
+			'IIPUtils.js',
+			'Projection.WCS.js',
+			'CRS.WCS.js',
+			'Control.WCS.js',
+			'Control.Scale.WCS.js',
+			'TileLayer.IIP.js',
+			'Catalogs.js',
+			'Control.IIP.js',
+			'Control.IIP.Image.js',
+			'Control.IIP.Overlay.js',
+			'Control.Layers.IIP.js',
+			'Control.ExtraMap.js'
 		],
 		desc: 'The core of the library.'
 	}

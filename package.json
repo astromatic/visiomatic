@@ -1,5 +1,5 @@
 {
-	"name": "leaflet-ivv",
+	"name": "visiomatic",
 	"version": "0.1.0",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
 	"dependencies": {"leaflet": "~0.7"},
@@ -20,7 +20,7 @@
 	"license" : "GPL",
 	"repository": {
 		"type": "svn",
-		"url": "https://astromatic.net/privsvn/software/leafview"
+		"url": "https://astromatic.net/privsvn/software/visiomatic"
 	},
   "contributors": [
 	"Emmanuel Bertin <bertin@iap.fr> (http://www.astromatic.net/team/emmanuel)",

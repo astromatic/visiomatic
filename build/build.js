@@ -122,7 +122,7 @@ exports.build = function (compsBase32, buildName) {
 			// newSrc = copy + intro + combineFiles(files) + outro,
 			// Removed intro and outro to make jQuery support easier
 	    newSrc = copy + combineFiles(files),
-	    pathPart = 'dist/leaflet.ivv' + (buildName ? '-' + buildName : ''),
+	    pathPart = 'dist/visiomatic' + (buildName ? '-' + buildName : ''),
 	    srcPath = pathPart + '-src.js',
 
 	    oldSrc = loadSilently(srcPath),
