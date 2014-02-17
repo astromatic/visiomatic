@@ -40,7 +40,7 @@ $.extend($.fn, {
 	fileTree: function (options, file) {
 		// Default options
 		if (options.root === undefined) {options.root = '/'; }
-		if (options.script === undefined) {options.script			= '/files/filetree'; }
+		if (options.script === undefined) {options.script			= 'dist/filetree.php'; }
 		if (options.folderEvent === undefined) {options.folderEvent = 'click'; }
 		if (options.expandSpeed === undefined) {options.expandSpeed = 500; }
 		if (options.collapseSpeed === undefined) {options.collapseSpeed = 500; }

@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 15/02/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -29,8 +29,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 		this.tileSize = L.point(options.tileSize);
 		this.nzoom = options.nzoom;
-		this.projection = options.projection;
-		this.ctype = options.ctype;
+		this.ctype = {x: options.ctype.x, y: options.ctype.y};
 		this.naxis = L.point(options.naxis, true);
 
 		this.projparam = new this.paraminit(options);
@@ -41,12 +40,15 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		switch (this.ctype.x.substr(5, 3)) {
 		case 'ZEA':
 			this.projection = new L.Projection.WCS.ZEA();
+			this.pixelFlag = false;
 			break;
 		case 'TAN':
 			this.projection = new L.Projection.WCS.TAN();
+			this.pixelFlag = false;
 			break;
 		default:
 			this.projection = new L.Projection.WCS.PIX();
+			this.pixelFlag = true;
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);

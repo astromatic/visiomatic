@@ -6,7 +6,7 @@
 #
 #	This file part of:	VisiOmatic
 #	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud,
+#                        Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified: 11/02/2014
 
@@ -27,26 +27,33 @@
 // Output a list of files for jQuery File Tree
 //
 */
-$dir = urldecode($_POST['dir']);
+
+require './settings.php';
+
+// Remove any .. for security reasons.
+$dir = preg_replace('/\.\.\/?/', '', urldecode($_POST['dir']));
+$fulldir = $filetree_rootdir . '/' . $dir;
 $fitsregexp = '/.*\.fits?$/';
-$ptifdir = '/raid/iip/';
-if( file_exists($dir) ) {
-	$files = scandir($dir);
+
+if (file_exists($fulldir)) {
+	$files = scandir($fulldir);
 	natcasesort($files);
-	if( count($files) > 2 ) { // The 2 accounts for . and .. 
+	if (count($files) > 2) { // The 2 accounts for . and .. 
 		echo "<ul class=\"filetree\" style=\"display: none;\">";
 		// All dirs
-		foreach( $files as $file ) {
-			if( file_exists($dir . $file) && $file != '.' && $file != '..' && is_dir($dir . $file) ) {
+		foreach ($files as $file) {
+			if(file_exists($fulldir . $file) && $file != '.' && $file != '..' && is_dir($fulldir . $file)) {
 				echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities($dir . $file) . "/\">" . htmlentities($file) . "</a></li>";
 			}
 		}
 		// All files
-		foreach( $files as $file ) {
-			if( file_exists($dir . $file) && $file != '.' && $file != '..' && !is_dir($dir . $file) && preg_match($fitsregexp, $file)) {
+		foreach ($files as $file) {
+			if(file_exists($fulldir . $file) && $file != '.' && $file != '..' && !is_dir($fulldir . $file) && preg_match($fitsregexp, $file)) {
 				$ext = preg_replace('/^.*\./', '', $file);
-				$tifexists = $ptifdir . preg_replace('/\//', '_', $file);
-				echo "<li class=\"file ext_fits\"><a href=\"#\" rel=\"" . htmlentities($dir . $file) . "\">" . htmlentities($file) . "</a></li>";
+				$fitsname = $fulldir . $file;
+				$ptifname = $ptif_dir . '/' . preg_replace('/\.fits?$/', '.ptif', preg_replace('/\//', '_', $file));
+				$fileclass = (file_exists($ptifname) && filemtime($ptifname) > filemtime($fitsname)) ? 'fits_ptif' : 'fits_noptif';
+				echo "<li class=\"file " . $fileclass . "\"><a href=\"#\" rel=\"" . htmlentities($dir . $file) . "\"><span class=\"filename\">" . htmlentities($file) . "</span><span class=\"filesize\">&nbsp;" . floor(filesize($fitsname) / (1024*1024)) . "MB</span></a></li>";
 			}
 		}
 		echo "</ul>";	

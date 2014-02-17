@@ -59,7 +59,7 @@ $.extend($.fn, {
 	fileTree: function (options, file) {
 		// Default options
 		if (options.root === undefined) {options.root = '/'; }
-		if (options.script === undefined) {options.script			= '/files/filetree'; }
+		if (options.script === undefined) {options.script			= 'dist/filetree.php'; }
 		if (options.folderEvent === undefined) {options.folderEvent = 'click'; }
 		if (options.expandSpeed === undefined) {options.expandSpeed = 500; }
 		if (options.collapseSpeed === undefined) {options.collapseSpeed = 500; }
@@ -381,7 +381,7 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 15/02/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -403,8 +403,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 		this.tileSize = L.point(options.tileSize);
 		this.nzoom = options.nzoom;
-		this.projection = options.projection;
-		this.ctype = options.ctype;
+		this.ctype = {x: options.ctype.x, y: options.ctype.y};
 		this.naxis = L.point(options.naxis, true);
 
 		this.projparam = new this.paraminit(options);
@@ -415,12 +414,15 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		switch (this.ctype.x.substr(5, 3)) {
 		case 'ZEA':
 			this.projection = new L.Projection.WCS.ZEA();
+			this.pixelFlag = false;
 			break;
 		case 'TAN':
 			this.projection = new L.Projection.WCS.TAN();
+			this.pixelFlag = false;
 			break;
 		default:
 			this.projection = new L.Projection.WCS.PIX();
+			this.pixelFlag = true;
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
@@ -700,15 +702,32 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	_addToMap: function (map) {
-		var center, zoom;
-		if (map._prevcrs && this.wcs !== map.options.crs && map._loaded) {
-			center = map.getCenter();
-			zoom = map.getZoom();
-		} else {
-			center = map.options.center ? map.options.center : this.wcs.projparam.crval;
+		var center,
+		    zoom,
+		    newcrs = this.wcs,
+				curcrs = map.options.crs,
+				prevcrs = map._prevcrs;
+
+		if (map._loaded) {
+			curcrs._prevLatLng = map.getCenter();
+			curcrs._prevZoom = map.getZoom();
+		}
+		// Go to previous layers' coordinates if applicable
+		if (prevcrs && newcrs !== curcrs && map._loaded &&
+		    newcrs.pixelFlag === curcrs.pixelFlag) {
+			center = curcrs._prevLatLng;
+			zoom = curcrs._prevZoom;
+		// Else go back to previous recorded position for the new layer
+		} else if (newcrs._prevLatLng) {
+			center = newcrs._prevLatLng;
+			zoom = newcrs._prevZoom;
+		}
+		else {
+			center = map.options.center ? map.options.center : newcrs.projparam.crval;
 			zoom = 1;
 		}
-		map._prevcrs = map.options.crs = this.wcs;
+
+		map._prevcrs = map.options.crs = newcrs;
 		map.setView(center, zoom, {reset: true, animate: false});
 		L.TileLayer.prototype.addTo.call(this, map);
 	},
@@ -1026,7 +1045,7 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 15/02/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -1056,16 +1075,20 @@ L.Control.WCS = L.Control.extend({
 
 	_onDrag: function (e) {
 		var latlng = this._map.getCenter();
-		switch (this.options.units) {
-		case 'HMS':
-			this._wcsinput.value = this._latLngToHMSDMS(latlng);
-			break;
-		case 'deg':
-			this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
-			break;
-		default:
-			this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
-			break;
+		if (this._map.options.crs && this._map.options.crs.pixelFlag) {
+			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
+		} else {
+			switch (this.options.units) {
+			case 'HMS':
+				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				break;
+			case 'deg':
+				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+				break;
+			default:
+				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+				break;
+			}
 		}
 	},
 
@@ -1366,7 +1389,7 @@ L.control.reticle = function (options) {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 17/02/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -1421,24 +1444,24 @@ L.Control.IIP = L.Control.extend({
 			this._expand();
 		}
 
-		this._checkIIP();
-		this._map.on('baselayerchange', this._checkIIP, this);
+//		this._checkIIP();
+		this._map.on('layeradd', this._checkIIP, this);
 
 		return	this._container;
 	},
 
-	_checkIIP: function () {
-		var layer = this._layer = this._findActiveBaseLayer();
-		if (layer) {
-			if (this._reloadFlag) {
-				layer.once('load', this._resetDialog, this);
-			} else {
-				this._initDialog();
-				this._reloadFlag = true;
-			}
-		} else if (this._prelayer) {
-			// Layer metadata are not ready yet: listen for 'metaload' event
-			this._prelayer.once('metaload', this._checkIIP, this);
+	_checkIIP: function (e) {
+		var layer = this._layer = e.layer;
+
+		// Exit if not an IIP layer
+		if (!layer || !layer.iipdefault) {
+			return;
+		}
+		if (this._reloadFlag) {
+			layer.once('load', this._resetDialog, this);
+		} else {
+			this._initDialog();
+			this._reloadFlag = true;
 		}
 	},
 
@@ -2019,7 +2042,7 @@ L.control.iip.overlay = function (options) {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/01/2014
+#	Last modified: 17/02/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -2034,7 +2057,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		autoZIndex: true,
 		fileMenu: false,
 		fileURL: '/fcgi-bin/iipsrv.fcgi?FIF=',
-		fileRoot: '/raid/iip/',
+		fileRoot: '',
 	},
 
 	onAdd: function (map) {
@@ -2100,7 +2123,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._baseLayersList = L.DomUtil.create('div', className + '-base', form);
 
 		if (this.options.fileMenu) {
-			var addbutton = L.DomUtil.create('input', className + '-add', form);
+			var addbutton = this._addButton = L.DomUtil.create('input', className + '-add', form);
 			addbutton.type = 'button';
 			addbutton.value = 'Add...';
 			L.DomEvent.on(addbutton, 'click', this._openFileMenu, this);
@@ -2154,22 +2177,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		return item;
 	},
 
-	_onLayerChange: function (e) {
-		if (!this._handlingClick) {
-			this._update();
-		}
-
-		var overlay = this._layers[L.stamp(e.target)].overlay;
-
-		var type = overlay ?
-			(e.type === 'add' ? 'overlayadd' : 'overlayremove') :
-			(e.type === 'add' ? 'baselayerchange' : null);
-
-		if (type) {
-			this._map.fire(type, e.target);
-		}
-	},
-
 	_onInputClick: function () {
 		var i, input, obj,
 		    inputs = this._form.getElementsByTagName('input'),
@@ -2193,7 +2200,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._handlingClick = false;
 	},
 
-
 	_addDialogLine: function (label, dialog) {
 		var elem = L.DomUtil.create('div', this._className + '-element', dialog),
 		 text = L.DomUtil.create('span', this._className + '-label', elem);
@@ -2205,18 +2211,24 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		var _this = this,
 		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
 		                 this._map._controlContainer);
+		this._addButton.disabled = true;
 		L.DomEvent
 				.disableClickPropagation(fileMenu)
 				.disableScrollPropagation(fileMenu);
+
+		var handle = L.DomUtil.create('div', 'leaflet-control-handle',
+		           fileMenu);
+
+		$('.leaflet-control-filemenu').draggable({ handle: '.leaflet-control-handle' }).resizable();
 		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
 		                 fileMenu);
 		fileTree.id = 'leaflet-filetree';
 		$(document).ready(function () {
 			$('#leaflet-filetree').fileTree({
 				root: _this.options.fileRoot,
-				script: 'visiomatic/dist/filetree.php'
+				script: 'visiomatic/dist/filetree.php',
 			},
-			function (file) {
+			function (fitsname) {
 				var layercontrol = _this._map._layerControl,
 				    templayer;
 				if (layercontrol) {
@@ -2228,29 +2240,39 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 						layercontrol._expand();
 					}
 				}
-				var layer = L.tileLayer.iip(_this.options.fileURL + file).addTo(_this._map);
-				if (layercontrol) {
+				$.post('visiomatic/dist/processfits.php', {
+					fitsname: fitsname
+				}, function (ptifname) {
+					console.log(ptifname);
+					ptifname = ptifname.trim();
+					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname);
 					if (layer.iipMetaReady) {
-						layercontrol.removeLayer(templayer);
-						layercontrol.addBaseLayer(layer, layer._title);
-						if (layercontrol.options.collapsed) {
-							layercontrol._collapse();
-						}
+						_this._updateBaseLayer(templayer, layer);
 					} else {
 						layer.once('metaload', function () {
-							layercontrol.removeLayer(templayer);
-							layercontrol.addBaseLayer(layer, layer._title);
-							if (layercontrol.options.collapsed) {
-								layercontrol._collapse();
-							}
+							_this._updateBaseLayer(templayer, layer);
 						});
 					}
-				}
+				});
 				L.DomUtil.remove(fileMenu);
+				_this._addButton.disabled = false;
 			});
 		});
-	}
+	},
 
+	_updateBaseLayer: function (templayer, layer) {
+		var map = this._map,
+		    layercontrol = map._layerControl;
+		layercontrol.removeLayer(templayer);
+		map.eachLayer(map.removeLayer);
+		layer.addTo(map);
+		layercontrol.addBaseLayer(layer, layer._title);
+//							layercontrol.addBaseLayer(layer, fitsname.match(/^.*\/?(.*)\..*$/)[1]);
+		map.fire('baselayerchange');
+		if (layercontrol.options.collapsed) {
+			layercontrol._collapse();
+		}
+	}
 });
 
 L.control.layers.iip = function (baselayers, overlays, options) {

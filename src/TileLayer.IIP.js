@@ -207,15 +207,32 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	_addToMap: function (map) {
-		var center, zoom;
-		if (map._prevcrs && this.wcs !== map.options.crs && map._loaded) {
-			center = map.getCenter();
-			zoom = map.getZoom();
-		} else {
-			center = map.options.center ? map.options.center : this.wcs.projparam.crval;
+		var center,
+		    zoom,
+		    newcrs = this.wcs,
+				curcrs = map.options.crs,
+				prevcrs = map._prevcrs;
+
+		if (map._loaded) {
+			curcrs._prevLatLng = map.getCenter();
+			curcrs._prevZoom = map.getZoom();
+		}
+		// Go to previous layers' coordinates if applicable
+		if (prevcrs && newcrs !== curcrs && map._loaded &&
+		    newcrs.pixelFlag === curcrs.pixelFlag) {
+			center = curcrs._prevLatLng;
+			zoom = curcrs._prevZoom;
+		// Else go back to previous recorded position for the new layer
+		} else if (newcrs._prevLatLng) {
+			center = newcrs._prevLatLng;
+			zoom = newcrs._prevZoom;
+		}
+		else {
+			center = map.options.center ? map.options.center : newcrs.projparam.crval;
 			zoom = 1;
 		}
-		map._prevcrs = map.options.crs = this.wcs;
+
+		map._prevcrs = map.options.crs = newcrs;
 		map.setView(center, zoom, {reset: true, animate: false});
 		L.TileLayer.prototype.addTo.call(this, map);
 	},

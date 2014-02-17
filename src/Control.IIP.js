@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 17/02/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -62,24 +62,24 @@ L.Control.IIP = L.Control.extend({
 			this._expand();
 		}
 
-		this._checkIIP();
-		this._map.on('baselayerchange', this._checkIIP, this);
+//		this._checkIIP();
+		this._map.on('layeradd', this._checkIIP, this);
 
 		return	this._container;
 	},
 
-	_checkIIP: function () {
-		var layer = this._layer = this._findActiveBaseLayer();
-		if (layer) {
-			if (this._reloadFlag) {
-				layer.once('load', this._resetDialog, this);
-			} else {
-				this._initDialog();
-				this._reloadFlag = true;
-			}
-		} else if (this._prelayer) {
-			// Layer metadata are not ready yet: listen for 'metaload' event
-			this._prelayer.once('metaload', this._checkIIP, this);
+	_checkIIP: function (e) {
+		var layer = this._layer = e.layer;
+
+		// Exit if not an IIP layer
+		if (!layer || !layer.iipdefault) {
+			return;
+		}
+		if (this._reloadFlag) {
+			layer.once('load', this._resetDialog, this);
+		} else {
+			this._initDialog();
+			this._reloadFlag = true;
 		}
 	},
 

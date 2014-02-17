@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/01/2014
+#	Last modified: 17/02/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -21,7 +21,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		autoZIndex: true,
 		fileMenu: false,
 		fileURL: '/fcgi-bin/iipsrv.fcgi?FIF=',
-		fileRoot: '/raid/iip/',
+		fileRoot: '',
 	},
 
 	onAdd: function (map) {
@@ -87,7 +87,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._baseLayersList = L.DomUtil.create('div', className + '-base', form);
 
 		if (this.options.fileMenu) {
-			var addbutton = L.DomUtil.create('input', className + '-add', form);
+			var addbutton = this._addButton = L.DomUtil.create('input', className + '-add', form);
 			addbutton.type = 'button';
 			addbutton.value = 'Add...';
 			L.DomEvent.on(addbutton, 'click', this._openFileMenu, this);
@@ -141,22 +141,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		return item;
 	},
 
-	_onLayerChange: function (e) {
-		if (!this._handlingClick) {
-			this._update();
-		}
-
-		var overlay = this._layers[L.stamp(e.target)].overlay;
-
-		var type = overlay ?
-			(e.type === 'add' ? 'overlayadd' : 'overlayremove') :
-			(e.type === 'add' ? 'baselayerchange' : null);
-
-		if (type) {
-			this._map.fire(type, e.target);
-		}
-	},
-
 	_onInputClick: function () {
 		var i, input, obj,
 		    inputs = this._form.getElementsByTagName('input'),
@@ -180,7 +164,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._handlingClick = false;
 	},
 
-
 	_addDialogLine: function (label, dialog) {
 		var elem = L.DomUtil.create('div', this._className + '-element', dialog),
 		 text = L.DomUtil.create('span', this._className + '-label', elem);
@@ -192,18 +175,24 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		var _this = this,
 		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
 		                 this._map._controlContainer);
+		this._addButton.disabled = true;
 		L.DomEvent
 				.disableClickPropagation(fileMenu)
 				.disableScrollPropagation(fileMenu);
+
+		var handle = L.DomUtil.create('div', 'leaflet-control-handle',
+		           fileMenu);
+
+		$('.leaflet-control-filemenu').draggable({ handle: '.leaflet-control-handle' }).resizable();
 		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
 		                 fileMenu);
 		fileTree.id = 'leaflet-filetree';
 		$(document).ready(function () {
 			$('#leaflet-filetree').fileTree({
 				root: _this.options.fileRoot,
-				script: 'visiomatic/dist/filetree.php'
+				script: 'visiomatic/dist/filetree.php',
 			},
-			function (file) {
+			function (fitsname) {
 				var layercontrol = _this._map._layerControl,
 				    templayer;
 				if (layercontrol) {
@@ -215,29 +204,39 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 						layercontrol._expand();
 					}
 				}
-				var layer = L.tileLayer.iip(_this.options.fileURL + file).addTo(_this._map);
-				if (layercontrol) {
+				$.post('visiomatic/dist/processfits.php', {
+					fitsname: fitsname
+				}, function (ptifname) {
+					console.log(ptifname);
+					ptifname = ptifname.trim();
+					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname);
 					if (layer.iipMetaReady) {
-						layercontrol.removeLayer(templayer);
-						layercontrol.addBaseLayer(layer, layer._title);
-						if (layercontrol.options.collapsed) {
-							layercontrol._collapse();
-						}
+						_this._updateBaseLayer(templayer, layer);
 					} else {
 						layer.once('metaload', function () {
-							layercontrol.removeLayer(templayer);
-							layercontrol.addBaseLayer(layer, layer._title);
-							if (layercontrol.options.collapsed) {
-								layercontrol._collapse();
-							}
+							_this._updateBaseLayer(templayer, layer);
 						});
 					}
-				}
+				});
 				L.DomUtil.remove(fileMenu);
+				_this._addButton.disabled = false;
 			});
 		});
-	}
+	},
 
+	_updateBaseLayer: function (templayer, layer) {
+		var map = this._map,
+		    layercontrol = map._layerControl;
+		layercontrol.removeLayer(templayer);
+		map.eachLayer(map.removeLayer);
+		layer.addTo(map);
+		layercontrol.addBaseLayer(layer, layer._title);
+//							layercontrol.addBaseLayer(layer, fitsname.match(/^.*\/?(.*)\..*$/)[1]);
+		map.fire('baselayerchange');
+		if (layercontrol.options.collapsed) {
+			layercontrol._collapse();
+		}
+	}
 });
 
 L.control.layers.iip = function (baselayers, overlays, options) {

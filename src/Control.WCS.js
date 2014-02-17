@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 15/02/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -36,16 +36,20 @@ L.Control.WCS = L.Control.extend({
 
 	_onDrag: function (e) {
 		var latlng = this._map.getCenter();
-		switch (this.options.units) {
-		case 'HMS':
-			this._wcsinput.value = this._latLngToHMSDMS(latlng);
-			break;
-		case 'deg':
-			this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
-			break;
-		default:
-			this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
-			break;
+		if (this._map.options.crs && this._map.options.crs.pixelFlag) {
+			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
+		} else {
+			switch (this.options.units) {
+			case 'HMS':
+				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				break;
+			case 'deg':
+				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+				break;
+			default:
+				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+				break;
+			}
 		}
 	},
 
