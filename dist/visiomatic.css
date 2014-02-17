@@ -408,7 +408,8 @@ UL.filetree A:hover {
 	background: url(images/file.png) left top no-repeat;
 }
 .filetree LI.wait {
-	background: url(images/spinner.gif) left top no-repeat;
+	background: url(images/activity.svg) left top no-repeat;
+	background-size: 16px;
 }
 .filetree LI.fits_ptif {
 	background: url(images/picture.png) left top no-repeat;

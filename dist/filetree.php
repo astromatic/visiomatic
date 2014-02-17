@@ -8,7 +8,7 @@
 #	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                        Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 11/02/2014
+#	Last modified: 17/02/2014
 
 //
 // jQuery File Tree PHP Connector
@@ -51,7 +51,7 @@ if (file_exists($fulldir)) {
 			if(file_exists($fulldir . $file) && $file != '.' && $file != '..' && !is_dir($fulldir . $file) && preg_match($fitsregexp, $file)) {
 				$ext = preg_replace('/^.*\./', '', $file);
 				$fitsname = $fulldir . $file;
-				$ptifname = $ptif_dir . '/' . preg_replace('/\.fits?$/', '.ptif', preg_replace('/\//', '_', $file));
+				$ptifname = $ptif_dir . '/' . preg_replace('/\.fits?$/', '.ptif', preg_replace('/\//', '_', $dir . $file));
 				$fileclass = (file_exists($ptifname) && filemtime($ptifname) > filemtime($fitsname)) ? 'fits_ptif' : 'fits_noptif';
 				echo "<li class=\"file " . $fileclass . "\"><a href=\"#\" rel=\"" . htmlentities($dir . $file) . "\"><span class=\"filename\">" . htmlentities($file) . "</span><span class=\"filesize\">&nbsp;" . floor(filesize($fitsname) / (1024*1024)) . "MB</span></a></li>";
 			}

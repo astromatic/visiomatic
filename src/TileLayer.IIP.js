@@ -8,7 +8,7 @@
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		10/02/2014
+#	Last modified:		17/02/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -158,7 +158,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				// Pre-computed Min and max pixel values
 				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
 				 '\\s*(.*)');
-				var str = matches[1].split(/ \s* /),
+				var str = matches[1].split(/\s+/),
 				    nfloat = (str.length / 2),
 				    mmn = 0;
 				for (var n = 0; n < nfloat; n++) {
@@ -169,7 +169,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					layer.iipdefault.maxValue[n] = layer.iipMaxValue[n] =
 					 parseFloat(str[mmn++]);
 				}
-
 				if (layer.options.bounds) {
 					layer.options.bounds = L.latLngBounds(layer.options.bounds);
 				}

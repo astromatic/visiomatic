@@ -12,13 +12,15 @@ require './settings.php';
 
 $fitsname = urldecode($_POST['fitsname']);
 $ptifname = preg_replace('/\.fits?$/', '.ptif', preg_replace('/\//', '_', $fitsname));
+$ptiflog = preg_replace('/\.fits?$/', '.log', preg_replace('/\//', '_', $fitsname));
 
 $fitsname =  $filetree_rootdir . '/' . $fitsname;
 $ptifname =  $ptif_dir . '/' . $ptifname;
+$ptiflog =  $ptif_dir . '/' . $ptiflog;
 
 // Compute new TIFF file if TIFF file does not exists or if FITS is more recent
 if (!file_exists($ptifname) or filemtime($ptifname) < filemtime($fitsname)) {
-  $output = shell_exec($stiff_exec . ' ' . $stiff_opts . ' -OUTFILE_NAME ' . $ptifname . ' ' . $fitsname . ' 2>&1');
+  $output = shell_exec($stiff_exec . ' ' . $stiff_opts . ' -OUTFILE_NAME ' . $ptifname . ' ' . $fitsname . ' >&' . $ptiflog);
 }
 
 printf($ptifname);

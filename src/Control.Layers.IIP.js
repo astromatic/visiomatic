@@ -22,6 +22,8 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		fileMenu: false,
 		fileURL: '/fcgi-bin/iipsrv.fcgi?FIF=',
 		fileRoot: '',
+		fileTreeScript: 'visiomatic/dist/filetree.php',
+		fileProcessScript: 'visiomatic/dist/processfits.php'
 	},
 
 	onAdd: function (map) {
@@ -190,26 +192,26 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		$(document).ready(function () {
 			$('#leaflet-filetree').fileTree({
 				root: _this.options.fileRoot,
-				script: 'visiomatic/dist/filetree.php',
+				script: _this.options.fileTreeScript
 			},
 			function (fitsname) {
 				var layercontrol = _this._map._layerControl,
+				    redname = fitsname.replace(/(^.*\/|\..*$)/g, ''),
 				    templayer;
 				if (layercontrol) {
 					templayer = new L.LayerGroup(null);
 
 					templayer.notReady = true;
-					layercontrol.addBaseLayer(templayer, this._title);
+					layercontrol.addBaseLayer(templayer, 'converting ' + redname + '...');
 					if (layercontrol.options.collapsed) {
 						layercontrol._expand();
 					}
 				}
-				$.post('visiomatic/dist/processfits.php', {
+				$.post(_this.options.fileProcessScript, {
 					fitsname: fitsname
 				}, function (ptifname) {
-					console.log(ptifname);
 					ptifname = ptifname.trim();
-					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname);
+					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname, {title: redname});
 					if (layer.iipMetaReady) {
 						_this._updateBaseLayer(templayer, layer);
 					} else {
@@ -231,7 +233,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		map.eachLayer(map.removeLayer);
 		layer.addTo(map);
 		layercontrol.addBaseLayer(layer, layer._title);
-//							layercontrol.addBaseLayer(layer, fitsname.match(/^.*\/?(.*)\..*$/)[1]);
 		map.fire('baselayerchange');
 		if (layercontrol.options.collapsed) {
 			layercontrol._collapse();
