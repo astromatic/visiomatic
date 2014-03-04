@@ -2041,7 +2041,7 @@ L.control.iip.overlay = function (options) {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 17/02/2014
+#	Last modified: 04/03/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -2212,18 +2212,32 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		var _this = this,
 		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
 		                 this._map._controlContainer);
+		fileMenu.title = 'Open file';
 		this._addButton.disabled = true;
 		L.DomEvent
 				.disableClickPropagation(fileMenu)
 				.disableScrollPropagation(fileMenu);
 
-		var handle = L.DomUtil.create('div', 'leaflet-control-handle',
-		           fileMenu);
-
-		$('.leaflet-control-filemenu').draggable({ handle: '.leaflet-control-handle' }).resizable();
+		$('.leaflet-control-filemenu').dialog({
+			appendTo: 'body',
+			close: function (event, ui) {
+				L.DomUtil.remove(fileMenu);
+				_this._addButton.disabled = false;
+			},
+			show: {
+				effect: 'clip',
+				duration: 250
+			},
+			hide: {
+				effect: 'clip',
+				duration: 250
+			},
+			height: 200
+		});
 		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
 		                 fileMenu);
 		fileTree.id = 'leaflet-filetree';
+
 		$(document).ready(function () {
 			$('#leaflet-filetree').fileTree({
 				root: _this.options.fileRoot,
@@ -2255,8 +2269,6 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 						});
 					}
 				});
-				L.DomUtil.remove(fileMenu);
-				_this._addButton.disabled = false;
 			});
 		});
 	},

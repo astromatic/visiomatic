@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		17/02/2014
+#	Last modified:		04/03/2014
 
 Extra-Map section adapted from 
 */
@@ -79,8 +79,6 @@ Extra-Map section adapted from
 }
 
 .ui-icon,.ui-button {
-	width: 26px;
-	height: 26px;
 	margin: auto;
 }
 /*
@@ -345,30 +343,6 @@ z-index: 3000000000;
 }
 
 /* File Menu */
-.leaflet-control-filemenu {
-	position: absolute;
-	left: 30%;
-	top:  30%;
-	width: 20%;
-	height: 30%;
-	overflow: hidden;
-	z-index: 99999;
-	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-	background: #fff;
-	border-radius: 5px;
-	padding: 8px 8px 48px 8px;
-}
-
-.leaflet-control-filemenu .leaflet-control-handle {
-	height: 12px;
-	margin-bottom: 8px;
-	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-	border-radius: 5px;
-}
-.leaflet-control-filetree {
-	overflow: auto;
-	height: 100%;
-}
 
 /* File Tree */
 UL.filetree {
@@ -384,7 +358,7 @@ UL.filetree LI {
 	padding: 0px;
 	padding-left: 20px;
 	margin: 0px;
-	white-space: nowrap;
+/*	white-space: nowrap;*/
 }
 
 UL.filetree A {
