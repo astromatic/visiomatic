@@ -1,13 +1,13 @@
 /*
 # CSS definitions
 #
-#	This file part of:	VisiOmatic
+#	This file part of: VisiOmatic
 #
-#	Copyright:		(C) 2013,2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:         (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                   Chiara Marmo - IDES/Paris-Sud,
+#                                   Ruven Pillay - C2RMF/CNRS
 #
-#	License:		GNU General Public License
+#	License:           GNU General Public License
 #
 #	This code is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		04/03/2014
+#	Last modified:     07/03/2014
 
-Extra-Map section adapted from 
+# Extra-Map section adapted from L.Control.MiniMap by Norkart
+# (see Control.ExtraMap.js).
 */
 
 /* Left control bar */
@@ -143,8 +144,8 @@ Extra-Map section adapted from
 	margin: 2px;
 	top: 0px;
 	left: 0px;
-  width: 24px;
-  height: 24px;
+	width: 24px;
+	height: 24px;
 }
 .ui-spinner-up .icon-plus {
 	background-image: url(images/icon-plus.svg);
@@ -222,8 +223,8 @@ z-index: 3000000000;
 .leaflet-control-activity {
 	background-image: url(images/activity.svg);
 	background-size: 18px;
-  width: 18px;
-  height: 18px;
+	width: 18px;
+	height: 18px;
 	margin: 2px;
 }
 
@@ -402,5 +403,47 @@ UL.filetree A:hover {
 	float: right;
 	color: #999;
 	background: inherit;
+}
+
+/* Attribution */
+
+.leaflet-control-attribution {
+	background: transparent !important;
+	color: white;
+	margin-bottom: 5px !important;
+	margin-right: 5px !important;
+	line-height: 200%;
+}
+
+.leaflet-control-attribution-logo:hover {
+	opacity: 1.0;
+	filter:alpha(opacity=100);
+	text-decoration: none !important;
+}
+
+.leaflet-control-attribution-logo {
+	opacity: 0.7;
+	filter:alpha(opacity=70);
+	width: 2em;
+	height: 2em;
+	float: left;
+	vertical-align: middle;
+	margin-left: 0.5em;
+}
+
+#logo-visiomatic {
+	background: url(images/visiomatic.png) no-repeat;
+	background-size: 2.2em;
+	background-position: center;
+}
+
+#logo-iipimage {
+	background: url(images/iip.png) no-repeat;
+	background-size: 2.5em;
+	background-position: center;
+}
+
+#logo-leaflet {
+	background: url(images/leaflet.svg) no-repeat;
 }
 

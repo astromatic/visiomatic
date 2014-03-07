@@ -16,6 +16,7 @@ var deps = {
 			'Control.Layers.IIP.js',
 			'Control.FullScreen.js',
 			'Control.ExtraMap.js',
+			'Control.Attribution.Logos.js'
 		],
 		desc: 'The core of the library.'
 	}
