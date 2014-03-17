@@ -20,13 +20,23 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this code. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:     07/03/2014
+#	Last modified:     17/03/2014
 
 # Extra-Map section adapted from L.Control.MiniMap by Norkart
 # (see Control.ExtraMap.js).
 */
 
 /* Left control bar */
+.leaflet-bar a {
+	width: 32px!important;
+	height: 32px!important;
+}
+
+.leaflet-bar a:hover {
+	width: 32px;
+	height: 32px;
+}
+
 .leaflet-control-zoom-in {
 	background-image: url(images/icon-magnifyplus.svg);
 	color: rgba(255,255,255,0) !important;
@@ -57,7 +67,7 @@
 }
 
 .leaflet-control-iip-expanded {
-	padding: 6px 10px 6px 6px;
+	padding: 6px 6px 6px 6px;
 	color: #333;
 	background: #fff;
 }
@@ -74,29 +84,18 @@
 	vertical-align: middle;
 }
 
-.leaflet-slider-input {
-	width: 40px;
-	margin-right: 4px;
+.ui-buttonset .ui-button {
+	margin-right: -0.1em;
 }
 
 .ui-icon,.ui-button {
-	margin: auto;
+	width: 32px!important;
+	height: 32px!important;
 }
-/*
-.ui-button-text {
-	width: 22px;
-	height: 22px;
-	padding-left: 0.1em!important;
-	line-height: 26px;
-	vertical-align: middle;
-	font-size:10px;
-}
-*/
 
 .leaflet-control-iip-cmaps {
 	left: 0px;
 	right: 0px;
-	width: 100%
 }
 
 .leaflet-cmap-inv {
@@ -119,24 +118,31 @@
 
 /* jQuery-UI spinner */
 .ui-spinner {
+/*
 	float: right;
-	height: 24px;
-	width: 150px;
+	width: 100%;
+*/
+	height: 30px;
+	font-size: 1.2em;
 }
 
 .ui-spinner-input {
-	line-height: 20px;
-/*	vertical-align: top;*/
+	width: 12em;
 }
 
 .ui-spinner-down {
-	right: 28px;
+	width: 31px!important;
+	right: 34px;
 	top: 0px;
 	cursor: pointer;
+	border-radius: 4px 0px 0px 4px!important;
 }
+
 .ui-spinner-up {
+	width: 33px!important;
 	right: 0px;
 	cursor: pointer;
+	border-radius: 0px 4px 4px 0px!important;
 }
 
 .ui-spinner-down .icon-minus {
@@ -144,16 +150,16 @@
 	margin: 2px;
 	top: 0px;
 	left: 0px;
-	width: 24px;
-	height: 24px;
+	width: 32px;
+	height: 32px;
 }
 .ui-spinner-up .icon-plus {
 	background-image: url(images/icon-plus.svg);
 	margin: 2px;
 	top: 0px;
 	left: 0px;
-	width: 24px;
-	height: 24px;
+	width: 32px;
+	height: 32px;
 }
 
 /* Overlay dialog */
@@ -168,6 +174,23 @@
 }
 */
 
+#logo-cds {
+	background: url(images/cds.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center;
+	display: inline-block;
+}
+
+.leaflet-control-iip-catalogs {
+	height: 34px;
+	vertical-align: top;
+}
+
+.leaflet-control-iip-profile {
+	height: 34px;
+	vertical-align: top;
+}
+
 /* Color picker */
 .sp-replacer {
 	padding: 0;
@@ -175,7 +198,8 @@
 }
 
 .sp-preview {
-	width: 24px;
+	width: 30px;
+	height: 30px;
 	margin: 0px;
 }
 
@@ -186,11 +210,11 @@
 	margin-left: 0px;
 	padding: 0px;
 }
-/*
+
 .sp-container {
 z-index: 3000000000;
 }
-*/
+
 /* Layer list */
 .leaflet-control-layers-base {
 	display: table;
@@ -249,6 +273,8 @@ z-index: 3000000000;
 	-webkit-border-radius: 4px;
 	        border-radius: 4px;
 	box-shadow: 1px 1px 2px #000 inset;
+	font-size: 1.2em;
+	width: 13em;
 }
 
 /* Reticle */
@@ -326,14 +352,34 @@ z-index: 3000000000;
 
 /* Full Screen adapted from Control.FullScreen by Bruno Bergot
    (see copyright notice in Control.FullScreen.js */
-.leaflet-control-zoom-fullscreen {
+a.leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-fullscreen.svg);
 }
+
+:fullscreen .leaflet-control-zoom-fullscreen {
+	background-image: url(images/icon-windowed.svg)!important;
+}
+
+:-moz-full-screen .leaflet-control-zoom-fullscreen {
+	background-image: url(images/icon-windowed.svg)!important;
+}
+
+:-webkit-full-screen .leaflet-control-zoom-fullscreen {
+	background-image: url(images/icon-windowed.svg)!important;
+}
+
+:-ms-fullscreen .leaflet-control-zoom-fullscreen {
+	background-image: url(images/icon-windowed.svg)!important;
+}
+
+/*
 .leaflet-container:-webkit-full-screen {
 	width: 100% !important;
 	height: 100% !important;
 	z-index: 99999;
 }
+*/
+
 .leaflet-pseudo-fullscreen {
 	position: fixed !important;
 	width: 100% !important;
@@ -408,11 +454,18 @@ UL.filetree A:hover {
 /* Attribution */
 
 .leaflet-control-attribution {
-	background: transparent !important;
+	background: rgba(100,100,100,0.5) !important;
 	color: white;
+	-webkit-border-radius: 4px;
+	        border-radius: 4px;
+	box-shadow: 1px 1px 2px #000 inset;
 	margin-bottom: 5px !important;
-	margin-right: 5px !important;
+	margin-right: 10px !important;
 	line-height: 200%;
+}
+
+.leaflet-control-attribution a {
+	color: white;
 }
 
 .leaflet-control-attribution-logo:hover {
@@ -433,13 +486,13 @@ UL.filetree A:hover {
 
 #logo-visiomatic {
 	background: url(images/visiomatic.png) no-repeat;
-	background-size: 2.2em;
+	background-size: 2.1em;
 	background-position: center;
 }
 
 #logo-iipimage {
 	background: url(images/iip.png) no-repeat;
-	background-size: 2.5em;
+	background-size: 2.4em;
 	background-position: center;
 }
 

@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 16/03/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -69,7 +69,8 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		    elem;
 
 		// CDS catalog overlay
-		elem = this._addDialogLine('CDS Catalog:');
+		elem = this._addDialogLine('<a id="logo-cds" ' +
+		 'href="http://cds.u-strasbg.fr">&nbsp;</a> catalog:');
 		var catcolpick = L.DomUtil.create('input', className + '-catalogs', elem);
 		catcolpick.id = 'leaflet-catalog-colorpicker';
 		catcolpick.type = 'text';
@@ -86,14 +87,12 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 
 		var catselect = L.DomUtil.create('select', className + '-catalogs', elem);
 		var opt = document.createElement('option');
-		opt.value = null;
 		opt.text = 'Choose catalog:';
 		opt.disabled = true;
 		opt.selected = true;
 		catselect.add(opt, null);
 		for (var c in catalogs) {
 			opt = document.createElement('option');
-			opt.value = catalogs[c];
 			opt.text = catalogs[c].name;
 			catselect.add(opt, null);
 		}

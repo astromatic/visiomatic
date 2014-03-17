@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/02/2014
+#	Last modified: 16/03/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -24,7 +24,7 @@ L.Control.WCS = L.Control.extend({
 			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
 		}
 
-		map.on('drag', this._onDrag, this);
+		map.on('drag zoomend', this._onDrag, this);
 		L.DomEvent.on(input, 'change', this._onInputChange, this);
 
 		return this._wcsinput;
@@ -91,7 +91,7 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	_onInputChange: function (e) {
-		var re = /^(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
+		var re = /^(\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
 		 str = this._wcsinput.value,
 		 result = re.exec(str);
 		if (result && result.length >= 3) {
