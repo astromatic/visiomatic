@@ -3,24 +3,11 @@
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright:         (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                   Chiara Marmo - IDES/Paris-Sud,
-#                                   Ruven Pillay - C2RMF/CNRS
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud,
+#                     Ruven Pillay - C2RMF/CNRS
 #
-#	License:           GNU General Public License
-#
-#	This code is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#	This code is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this code. If not, see <http://www.gnu.org/licenses/>.
-#
-#	Last modified:     17/03/2014
+#	Last modified: 21/03/2014
 
 # Extra-Map section adapted from L.Control.MiniMap by Norkart
 # (see Control.ExtraMap.js).
@@ -70,6 +57,7 @@
 	padding: 6px 6px 6px 6px;
 	color: #333;
 	background: #fff;
+	z-index:10;
 }
 
 /* IIP Image dialog elements */
@@ -317,12 +305,15 @@ z-index: 3000000000;
 /* Extra Map adapted from Control.MiniMap by Norkart
    (see copyright notice in Control.ExtraMap.js */
 .leaflet-control-extramap {
-	border:solid rgba(255, 255, 255, 0.7) 3px;
+	border:solid rgba(255, 255, 255, 0.7) 2px;
+/*
 	box-shadow: 0 1px 7px #999;
+*/
 	background: #0f0f0f;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
+	z-index: 0;
 }
 
 .leaflet-control-extramap a {
@@ -347,7 +338,8 @@ z-index: 3000000000;
 	width: 19px;
 	position: absolute;
 	bottom: 0;
-	right: 0; 
+	right: 0;
+	z-index: 2000;
 }
 
 /* Full Screen adapted from Control.FullScreen by Bruno Bergot

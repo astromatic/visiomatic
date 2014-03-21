@@ -1,20 +1,28 @@
 /*
-#	Copyright:    (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC
-#                        Chiara Marmo - IDES/Paris-Sud,
-#                        Ruven Pillay - C2RMF/CNRS
-#
-#	License:		GNU General Public License
-#
-#	This Leaflet plug-in is free software: you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation, either version 3 of the License, or
-# 	(at your option) any later version.
-#	This plug-in is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#	GNU General Public License for more details.
-#	You should have received a copy of the GNU General Public License
-#	along with this plug-in. If not, see <http://www.gnu.org/licenses/>.
+Copyright:    (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+                       Chiara Marmo - IDES/Paris-Sud,
+                       Ruven Pillay - C2RMF/CNRS
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
@@ -972,7 +980,7 @@ L.Catalog = {
 };
 
 L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
-	name: '2MASS point sources',
+	name: '2MASS',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al., 2003)',
 	color: 'red',
 	maglim: 17.0,
@@ -1388,7 +1396,7 @@ L.control.reticle = function (options) {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 17/02/2014
+#	Last modified: 21/03/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -1450,12 +1458,13 @@ L.Control.IIP = L.Control.extend({
 	},
 
 	_checkIIP: function (e) {
-		var layer = this._layer = e.layer;
+		var layer = e.layer;
 
 		// Exit if not an IIP layer
 		if (!layer || !layer.iipdefault) {
 			return;
 		}
+		this._layer = layer;
 		if (this._reloadFlag) {
 			layer.once('load', this._resetDialog, this);
 		} else {
@@ -1687,47 +1696,12 @@ L.control.iip.image = function (baseLayers, options) {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 16/03/2014
+#	Last modified: 21/03/2014
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
 }
-
-L.Draw.Line = L.Draw.Polyline.extend({
-
-	_onClick: function (e) {
-		L.Draw.Polyline.prototype._onClick.call(this, e);
-		if (this._markers.length === 2) {
-			this._finishShape();
-		}
-	},
-
-	_getMeasurementString: function () {
-		var currentLatLng = this._currentLatLng,
-		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
-		 distance, distanceStr, unit;
-
-		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
-
-		if (distance >= 1.0) {
-			unit = '&#176;';
-		} else {
-			distance *= 60.0;
-			if (distance >= 1.0) {
-				unit = '&#39;';
-			} else {
-				distance *= 60.0;
-				unit = '&#34;';
-			}
-		}
-		distanceStr = distance.toFixed(2) + unit;
-
-		return distanceStr;
-	}
-
-});
 
 L.Control.IIP.Overlay = L.Control.IIP.extend({
 	options: {
@@ -1825,7 +1799,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		var profbutton = L.DomUtil.create('input', className + '-profile', elem);
 		profbutton.type = 'button';
 		profbutton.value = 'Go';
-		L.DomEvent.on(profbutton, 'click', this.getProfile, this);
+		L.DomEvent.on(profbutton, 'click', this._profileClick, this);
 	},
 
 	_resetDialog: function () {
@@ -1834,11 +1808,11 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 
 	_getCatalog: function (catalog) {
 		var _this = this,
-		center = this._map.getCenter(),
-		 bounds = this._map.getBounds(),
-		 lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
-		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
-		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
+		    center = this._map.getCenter(),
+		    bounds = this._map.getBounds(),
+		    lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
+		    dlng = Math.abs(bounds.getWest() - bounds.getEast()),
+		    dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
 
 		if (dlat < 0.0001) {
 			dlat = 0.0001;
@@ -1905,32 +1879,67 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		}
 	},
 
-	getProfile: function (e) {
-		L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Click to end drawing line.';
-		var drawline = new L.Draw.Line(this._map, {shapeOptions: {weight: 7}}),
-		 _this = this;
-		this._map.on('draw:created', function (e) {
-			var layer = e.layer,
-			 popdiv = document.createElement('div');
-			layer.addTo(_this._map);
-			drawline.removeHooks();
+	_profileClick: function (e) {
+		var map = this._map,
+		    point = map.getCenter(),
+		    line = this._profileLine;
+
+		if (!line) {
+			line = this._profileLine = L.polyline([point, point]);
+			line.addTo(map);
+			map.on('drag', this._updateLine, this);
+		} else {
+			map.off('drag', this._updateLine, this);
+			this._profileLine = undefined;
+
+			var popdiv = document.createElement('div'),
+			    activity = document.createElement('div');
 			popdiv.id = 'leaflet-profile-plot';
-			var activity = document.createElement('div');
 			activity.className = 'leaflet-control-activity';
 			popdiv.appendChild(activity);
-			layer.bindPopup(popdiv,
+			line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-			var zoom = _this._map.options.crs.options.nzoom - 1,
-			 point1 = _this._map.project(layer._latlngs[0], zoom),
-			 point2 = _this._map.project(layer._latlngs[1], zoom);
-			L.IIPUtils.requestURI(_this._layer._url.replace(/\&.*$/g, '') +
+			var zoom = map.options.crs.options.nzoom - 1,
+			    path = line.getLatLngs(),
+			    point1 = map.project(path[0], zoom),
+			    point2 = map.project(path[1], zoom);
+
+			L.IIPUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
 			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
 			 point2.y.toFixed(0),
 			'getting IIP layer profile',
-			_this._plotProfile, layer);
-		});
-		drawline.addHooks();
+			this._plotProfile, line);
+		}
+	},
+
+	_updateLine: function (e) {
+		this._profileLine.spliceLatLngs(1, 1, this._map.getCenter());
+		this._profileLine.redraw();
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
 	},
 
 	_plotProfile: function (layer, httpRequest) {

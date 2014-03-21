@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 17/02/2014
+#	Last modified: 21/03/2014
 */
 L.Control.IIP = L.Control.extend({
 	options: {
@@ -69,12 +69,13 @@ L.Control.IIP = L.Control.extend({
 	},
 
 	_checkIIP: function (e) {
-		var layer = this._layer = e.layer;
+		var layer = e.layer;
 
 		// Exit if not an IIP layer
 		if (!layer || !layer.iipdefault) {
 			return;
 		}
+		this._layer = layer;
 		if (this._reloadFlag) {
 			layer.once('load', this._resetDialog, this);
 		} else {

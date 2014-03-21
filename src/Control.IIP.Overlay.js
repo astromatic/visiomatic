@@ -6,47 +6,12 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 16/03/2014
+#	Last modified: 21/03/2014
 */
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');
 }
-
-L.Draw.Line = L.Draw.Polyline.extend({
-
-	_onClick: function (e) {
-		L.Draw.Polyline.prototype._onClick.call(this, e);
-		if (this._markers.length === 2) {
-			this._finishShape();
-		}
-	},
-
-	_getMeasurementString: function () {
-		var currentLatLng = this._currentLatLng,
-		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
-		 distance, distanceStr, unit;
-
-		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
-
-		if (distance >= 1.0) {
-			unit = '&#176;';
-		} else {
-			distance *= 60.0;
-			if (distance >= 1.0) {
-				unit = '&#39;';
-			} else {
-				distance *= 60.0;
-				unit = '&#34;';
-			}
-		}
-		distanceStr = distance.toFixed(2) + unit;
-
-		return distanceStr;
-	}
-
-});
 
 L.Control.IIP.Overlay = L.Control.IIP.extend({
 	options: {
@@ -144,7 +109,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		var profbutton = L.DomUtil.create('input', className + '-profile', elem);
 		profbutton.type = 'button';
 		profbutton.value = 'Go';
-		L.DomEvent.on(profbutton, 'click', this.getProfile, this);
+		L.DomEvent.on(profbutton, 'click', this._profileClick, this);
 	},
 
 	_resetDialog: function () {
@@ -153,11 +118,11 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 
 	_getCatalog: function (catalog) {
 		var _this = this,
-		center = this._map.getCenter(),
-		 bounds = this._map.getBounds(),
-		 lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
-		 dlng = Math.abs(bounds.getWest() - bounds.getEast()),
-		 dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
+		    center = this._map.getCenter(),
+		    bounds = this._map.getBounds(),
+		    lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
+		    dlng = Math.abs(bounds.getWest() - bounds.getEast()),
+		    dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
 
 		if (dlat < 0.0001) {
 			dlat = 0.0001;
@@ -224,32 +189,67 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		}
 	},
 
-	getProfile: function (e) {
-		L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Click to end drawing line.';
-		var drawline = new L.Draw.Line(this._map, {shapeOptions: {weight: 7}}),
-		 _this = this;
-		this._map.on('draw:created', function (e) {
-			var layer = e.layer,
-			 popdiv = document.createElement('div');
-			layer.addTo(_this._map);
-			drawline.removeHooks();
+	_profileClick: function (e) {
+		var map = this._map,
+		    point = map.getCenter(),
+		    line = this._profileLine;
+
+		if (!line) {
+			line = this._profileLine = L.polyline([point, point]);
+			line.addTo(map);
+			map.on('drag', this._updateLine, this);
+		} else {
+			map.off('drag', this._updateLine, this);
+			this._profileLine = undefined;
+
+			var popdiv = document.createElement('div'),
+			    activity = document.createElement('div');
 			popdiv.id = 'leaflet-profile-plot';
-			var activity = document.createElement('div');
 			activity.className = 'leaflet-control-activity';
 			popdiv.appendChild(activity);
-			layer.bindPopup(popdiv,
+			line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-			var zoom = _this._map.options.crs.options.nzoom - 1,
-			 point1 = _this._map.project(layer._latlngs[0], zoom),
-			 point2 = _this._map.project(layer._latlngs[1], zoom);
-			L.IIPUtils.requestURI(_this._layer._url.replace(/\&.*$/g, '') +
+			var zoom = map.options.crs.options.nzoom - 1,
+			    path = line.getLatLngs(),
+			    point1 = map.project(path[0], zoom),
+			    point2 = map.project(path[1], zoom);
+
+			L.IIPUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
 			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
 			 point2.y.toFixed(0),
 			'getting IIP layer profile',
-			_this._plotProfile, layer);
-		});
-		drawline.addHooks();
+			this._plotProfile, line);
+		}
+	},
+
+	_updateLine: function (e) {
+		this._profileLine.spliceLatLngs(1, 1, this._map.getCenter());
+		this._profileLine.redraw();
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
 	},
 
 	_plotProfile: function (layer, httpRequest) {

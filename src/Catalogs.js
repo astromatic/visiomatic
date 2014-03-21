@@ -74,7 +74,7 @@ L.Catalog = {
 };
 
 L.Catalog.TwoMASS = L.extend({}, L.Catalog, {
-	name: '2MASS point sources',
+	name: '2MASS',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al., 2003)',
 	color: 'red',
 	maglim: 17.0,
