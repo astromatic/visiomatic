@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 04/03/2014
+#	Last modified: 22/03/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -127,6 +127,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		
 		var name = L.DomUtil.create('div', 'leaflet-control-layers-name', item);
 		name.innerHTML = ' ' + obj.name;
+		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
 
 		var trashbutton = L.DomUtil.create('input', 'leaflet-control-layers-trash', item);
 		trashbutton.type = 'button';

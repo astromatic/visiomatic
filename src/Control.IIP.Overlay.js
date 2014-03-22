@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 21/03/2014
+#	Last modified: 22/03/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -106,10 +106,30 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 			});
 		});
 
-		var profbutton = L.DomUtil.create('input', className + '-profile', elem);
-		profbutton.type = 'button';
-		profbutton.value = 'Go';
-		L.DomEvent.on(profbutton, 'click', this._profileClick, this);
+		var profbutton1 = L.DomUtil.create('input', className + '-profile-start', elem);
+		profbutton1.type = 'button';
+		profbutton1.value = 'Start';
+		L.DomEvent.on(profbutton1, 'click', function () {
+			if (this._profileLine) {
+				this._profileLine.spliceLatLngs(0, 1, this._map.getCenter());
+				this._profileLine.redraw();
+			} else {
+				var map = this._map,
+				 point = map.getCenter(),
+				 line = this._profileLine = L.polyline([point, point], {
+					color: profcolpick.value,
+					weight: 7,
+					opacity: 0.5
+				});
+				line.nameColor = profcolpick.value;
+				line.addTo(map);
+				map.on('drag', this._updateLine, this);
+			}
+		}, this);
+		var profbutton2 = L.DomUtil.create('input', className + '-profile-end', elem);
+		profbutton2.type = 'button';
+		profbutton2.value = 'End';
+		L.DomEvent.on(profbutton2, 'click', this._profileEnd, this);
 	},
 
 	_resetDialog: function () {
@@ -173,6 +193,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 						return {color: catalog.color, weight: 2};
 					}
 				});
+				geocatalog.nameColor = catalog.color;
 				geocatalog.addTo(_this._map);
 				var layercontrol = _this._map._layerControl;
 				if (layercontrol) {
@@ -189,43 +210,63 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		}
 	},
 
-	_profileClick: function (e) {
+	_updateLine: function (e) {
+		var map = this._map,
+		 latLng = map.getCenter(),
+		 maxzoom = map.options.crs.options.nzoom - 1,
+		 line = this._profileLine,
+		 path = line.getLatLngs(),
+		 point1 = map.project(path[0], maxzoom),
+		 point2 = map.project(map.getCenter(), maxzoom);
+		if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
+			point2.y = point1.y;
+		} else {
+			point2.x = point1.x;
+		}
+
+		this._profileLine.spliceLatLngs(1, 1, map.unproject(point2, maxzoom));
+		this._profileLine.redraw();
+	},
+
+	_profileEnd: function (e) {
 		var map = this._map,
 		    point = map.getCenter(),
 		    line = this._profileLine;
 
-		if (!line) {
-			line = this._profileLine = L.polyline([point, point]);
-			line.addTo(map);
-			map.on('drag', this._updateLine, this);
-		} else {
-			map.off('drag', this._updateLine, this);
-			this._profileLine = undefined;
+		map.off('drag', this._updateLine, this);
+		this._profileLine = undefined;
 
-			var popdiv = document.createElement('div'),
-			    activity = document.createElement('div');
-			popdiv.id = 'leaflet-profile-plot';
-			activity.className = 'leaflet-control-activity';
-			popdiv.appendChild(activity);
-			line.bindPopup(popdiv,
+		var popdiv = document.createElement('div'),
+		    activity = document.createElement('div');
+
+		popdiv.id = 'leaflet-profile-plot';
+		activity.className = 'leaflet-control-activity';
+		popdiv.appendChild(activity);
+		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-			var zoom = map.options.crs.options.nzoom - 1,
-			    path = line.getLatLngs(),
-			    point1 = map.project(path[0], zoom),
-			    point2 = map.project(path[1], zoom);
+		var zoom = map.options.crs.options.nzoom - 1,
+			  path = line.getLatLngs(),
+			  point1 = map.project(path[0], zoom),
+			  point2 = map.project(path[1], zoom),
+				x, y;
 
-			L.IIPUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
+		if (point2.x < point1.x) {
+			x = point2.x;
+			point2.x = point1.x;
+			point1.x = x;
+		}
+		if (point2.y < point1.y) {
+			y = point2.y;
+			point2.y = point1.y;
+			point1.y = y;
+		}
+
+		L.IIPUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
 			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
 			 point2.y.toFixed(0),
 			'getting IIP layer profile',
 			this._plotProfile, line);
-		}
-	},
-
-	_updateLine: function (e) {
-		this._profileLine.spliceLatLngs(1, 1, this._map.getCenter());
-		this._profileLine.redraw();
 	},
 
 	_getMeasurementString: function () {
