@@ -389,7 +389,7 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/02/2014
+#	Last modified: 12/06/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -459,6 +459,21 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		return Math.pow(2, zoom - this.nzoom + 1);
 	},
 
+	// return the pixel scale in degrees
+	pixelScale: function (zoom, latlng) {
+		var p0 = this.projection.project(latlng),
+		    latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = this.projection.unproject(p0.add([0.0, 10.0]));
+
+		return 0.1 * Math.sqrt(Math.abs((
+		                       latlngdx.lng - latlng.lng) *
+		                       (latlngdy.lat - latlng.lat) -
+		                       (latlngdy.lng - latlng.lng) *
+		                       (latlngdx.lat - latlng.lat))) *
+		                       Math.cos(latlng.lat * Math.PI / 180.0) /
+		                       this.scale(zoom);
+	},
+
 	_readWCS: function (hdr) {
 		var key = this._readFITSKey,
 		    projparam = this.projparam,
@@ -511,7 +526,7 @@ L.CRS.wcs = function (options) {
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		17/02/2014
+#	Last modified:		14/05/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -724,6 +739,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		    newcrs.pixelFlag === curcrs.pixelFlag) {
 			center = curcrs._prevLatLng;
 			zoom = curcrs._prevZoom;
+			var prevpixscale = prevcrs.pixelScale(zoom, center),
+			    newpixscale = newcrs.pixelScale(zoom, center);
+			if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
+				zoom += Math.round(Math.LOG2E *
+				  Math.log(newpixscale / prevpixscale));
+			}
 		// Else go back to previous recorded position for the new layer
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
@@ -858,6 +879,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		 this.iipMaxValue[0] !== this.iipdefault.maxValue[0]) {
 			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
 				this.iipMaxValue[0].toString();
+		}
+		if (this.iipMinValue[1] !== this.iipdefault.minValue[1] ||
+		 this.iipMaxValue[1] !== this.iipdefault.maxValue[1]) {
+			str += '&MINMAX=2,' + this.iipMinValue[1].toString() + ',' +
+				this.iipMaxValue[1].toString();
+		}
+		if (this.iipMinValue[2] !== this.iipdefault.minValue[2] ||
+		 this.iipMaxValue[2] !== this.iipdefault.maxValue[2]) {
+			str += '&MINMAX=3,' + this.iipMinValue[2].toString() + ',' +
+				this.iipMaxValue[2].toString();
 		}
 		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
@@ -1071,6 +1102,9 @@ L.Control.WCS = L.Control.extend({
 		}
 
 		map.on('drag zoomend', this._onDrag, this);
+		L.DomEvent.on(input, 'focus', function () {
+			this.setSelectionRange(0, this.value.length);
+		}, input);
 		L.DomEvent.on(input, 'change', this._onInputChange, this);
 
 		return this._wcsinput;
@@ -1563,7 +1597,7 @@ L.control.iip = function (baseLayers, options) {
 #	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                 Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		16/03/2014
+#	Last modified:		12/06/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -1580,6 +1614,13 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 	initialize: function (baseLayers, options) {
 		L.setOptions(this, options);
+		// Fix precision issue in jQuery spinner
+		$.widget('ui.spinner', $.ui.spinner, {
+			_precision: function () {
+				return Math.max(0,
+				                Math.ceil(-Math.log(this.options.step) * Math.LOG10E));
+			}
+		});
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
 		this._layers = baseLayers;
@@ -1632,7 +1673,8 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		}, this);
 
 		// Min and max pixel values
-		var step = ((layer.iipMaxValue[0] - layer.iipMinValue[0]) / 100.0).toPrecision(1);
+		var step = parseFloat(((layer.iipMaxValue[0] - layer.iipMinValue[0]) * 0.01)
+		                      .toPrecision(1));
 
 		// Min
 		this._addNumericalInput(layer, 'Min:', 'iipMinValue[0]',
@@ -1666,11 +1708,15 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		input.size = 5;
 		$('#' + input.id).spinner({
 			start: function (event, ui) {
-				$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				if (L.Browser.mobile) {
+					$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				}
 			},
 			stop: function (event, ui) {
 				_this._onInputChange(layer, attr, input.value);
-				$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				if (L.Browser.mobile) {
+					$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				}
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step,

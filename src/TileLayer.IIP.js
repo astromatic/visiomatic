@@ -8,7 +8,7 @@
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		17/02/2014
+#	Last modified:		14/05/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -221,6 +221,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		    newcrs.pixelFlag === curcrs.pixelFlag) {
 			center = curcrs._prevLatLng;
 			zoom = curcrs._prevZoom;
+			var prevpixscale = prevcrs.pixelScale(zoom, center),
+			    newpixscale = newcrs.pixelScale(zoom, center);
+			if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
+				zoom += Math.round(Math.LOG2E *
+				  Math.log(newpixscale / prevpixscale));
+			}
 		// Else go back to previous recorded position for the new layer
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
@@ -355,6 +361,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		 this.iipMaxValue[0] !== this.iipdefault.maxValue[0]) {
 			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
 				this.iipMaxValue[0].toString();
+		}
+		if (this.iipMinValue[1] !== this.iipdefault.minValue[1] ||
+		 this.iipMaxValue[1] !== this.iipdefault.maxValue[1]) {
+			str += '&MINMAX=2,' + this.iipMinValue[1].toString() + ',' +
+				this.iipMaxValue[1].toString();
+		}
+		if (this.iipMinValue[2] !== this.iipdefault.minValue[2] ||
+		 this.iipMaxValue[2] !== this.iipdefault.maxValue[2]) {
+			str += '&MINMAX=3,' + this.iipMinValue[2].toString() + ',' +
+				this.iipMaxValue[2].toString();
 		}
 		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();

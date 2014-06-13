@@ -25,6 +25,9 @@ L.Control.WCS = L.Control.extend({
 		}
 
 		map.on('drag zoomend', this._onDrag, this);
+		L.DomEvent.on(input, 'focus', function () {
+			this.setSelectionRange(0, this.value.length);
+		}, input);
 		L.DomEvent.on(input, 'change', this._onInputChange, this);
 
 		return this._wcsinput;

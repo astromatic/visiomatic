@@ -7,7 +7,7 @@
 #	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                 Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		16/03/2014
+#	Last modified:		12/06/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -24,6 +24,13 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 	initialize: function (baseLayers, options) {
 		L.setOptions(this, options);
+		// Fix precision issue in jQuery spinner
+		$.widget('ui.spinner', $.ui.spinner, {
+			_precision: function () {
+				return Math.max(0,
+				                Math.ceil(-Math.log(this.options.step) * Math.LOG10E));
+			}
+		});
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
 		this._layers = baseLayers;
@@ -76,7 +83,8 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		}, this);
 
 		// Min and max pixel values
-		var step = ((layer.iipMaxValue[0] - layer.iipMinValue[0]) / 100.0).toPrecision(1);
+		var step = parseFloat(((layer.iipMaxValue[0] - layer.iipMinValue[0]) * 0.01)
+		                      .toPrecision(1));
 
 		// Min
 		this._addNumericalInput(layer, 'Min:', 'iipMinValue[0]',
@@ -110,11 +118,15 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		input.size = 5;
 		$('#' + input.id).spinner({
 			start: function (event, ui) {
-				$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				if (L.Browser.mobile) {
+					$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				}
 			},
 			stop: function (event, ui) {
 				_this._onInputChange(layer, attr, input.value);
-				$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				if (L.Browser.mobile) {
+					$('#' + input.id).blur();	// Avoid keyboard popup on touch devices
+				}
 			},
 			icons: { down: 'icon-minus', up: 'icon-plus' },
 			step: step,

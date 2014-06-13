@@ -7,7 +7,7 @@
 #                     Chiara Marmo - IDES/Paris-Sud,
 #                     Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 21/03/2014
+#	Last modified: 26/03/2014
 
 # Extra-Map section adapted from L.Control.MiniMap by Norkart
 # (see Control.ExtraMap.js).
@@ -492,3 +492,10 @@ UL.filetree A:hover {
 	background: url(images/leaflet.svg) no-repeat;
 }
 
+/* jQuery windows */
+.ui-dialog-titlebar-close {
+	width: 24px!important;
+	height: 24px!important;
+	overflow:hidden;
+	top: 40%!important;
+}

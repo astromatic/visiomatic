@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/02/2014
+#	Last modified: 12/06/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -75,6 +75,21 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	scale: function (zoom) {
 		return Math.pow(2, zoom - this.nzoom + 1);
+	},
+
+	// return the pixel scale in degrees
+	pixelScale: function (zoom, latlng) {
+		var p0 = this.projection.project(latlng),
+		    latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = this.projection.unproject(p0.add([0.0, 10.0]));
+
+		return 0.1 * Math.sqrt(Math.abs((
+		                       latlngdx.lng - latlng.lng) *
+		                       (latlngdy.lat - latlng.lat) -
+		                       (latlngdy.lng - latlng.lng) *
+		                       (latlngdx.lat - latlng.lat))) *
+		                       Math.cos(latlng.lat * Math.PI / 180.0) /
+		                       this.scale(zoom);
 	},
 
 	_readWCS: function (hdr) {
