@@ -13,7 +13,7 @@ VisiOmatic works essentially as a large [Leaflet] plug-in, providing subproperti
 ----------
 
 #####`L.TileLayer.IIP`
-`L.TileLayer.IIP` manages layers with image data from an IIPimage tile server.
+`L.TileLayer.IIP` manages tile layers with image data queried from an IIPimage tile server.
 
 ######Creation
 
@@ -42,13 +42,13 @@ Method | Returns | Description
 --------
 
 #### `L.CRS.WCS`
-`L.CRS.WCS` is a new class that extends the original `L.CRS` object to support celestial projections described by the [FITS WCS] standard.
+`L.CRS.WCS` is a new class that extends the original `L.CRS` object to support celestial projections described by the [FITS WCS] standard. Currently only the `PIXEL` (Cartesian), `TAN` and `ZEA` projections are supported.
  
 ######Creation
 
 Factory | Description
 --------|------------
-`L.CRS.wcs(options)` | Instantiate a CRS WCS object given (optionally) an options object
+`L.CRS.wcs(<String> hdr, options)` | Instantiate a CRS WCS object given a FITS header and optionally an options object
 
 ###### Options
 
@@ -71,7 +71,25 @@ Method | Returns | Description
 
 ------------
 
-TBC
+#### `L.Control.IIP`
+`L.Control.IIP`  extends the `L.Control` class to manage controls more specifically related to IIP layers, including synchronization of control parameters with to the currently active IIP layer. It is not meant to be used directly, but rather through the `L.Control.IIP.Image` and `L.Control.IIP.Overlay` subproperties.
+ 
+######Creation
+
+Factory | Description
+--------|------------
+`L.control.iip.image(<`[Layer Config]`> baseLayers, options)` | Instantiate an image control object given a configuration of base layers and optionally an options object
+`L.control.iip.overlay(<`[Layer Config]`> baseLayers, options)` | Instantiate an overlay control object given a configuration of base layers and optionally an options object
+
+###### Options
+
+Option | Type | Default | Description
+-------|------|---------|------------
+`title`| String | `'Image adjustment'` | Title for the image control "window"
+`collapsed`| Boolean | `true` | If true, the image control window is collapsed unless getting focus
+`position`| String | `topleft` | Position of the control window in the map
+`cmap`| String | `'grey'` | Default colormap for active layers (only for `L.control.iip.image()`)
+
 
 [Leaflet]: http://leafletjs.com
 [IIPImage]: http://iipimage.sourceforge.net
@@ -79,3 +97,4 @@ TBC
 [tilelayer-options]: http://leafletjs.com/reference.html#tilelayer-options
 [LatLng]: http://leafletjs.com/reference.html#latlng
 [Point]: http://leafletjs.com/reference.html#point
+[Layer Config]: http://leafletjs.com/reference.html#control-layers-config
