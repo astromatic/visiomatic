@@ -212,12 +212,12 @@ L.IIPUtils = {
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 09/09/2014
 */
 
 L.Projection.WCS = L.Class.extend({
 
-	bounds: L.bounds([0.0, -90.0], [360.0, 90.0]),
+	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5]),
 
 	// (phi,theta) [rad] -> RA, Dec [deg] for zenithal projections.
 	_phiThetaToRADec: function (phiTheta) {
@@ -301,17 +301,16 @@ L.Projection.WCS.PIX = L.Projection.WCS.extend({
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.natfid = new L.LatLng(0.0, 90.0);
 		projparam.celpole = projparam.crval;
+		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
 	},
 
 	project: function (latlng) {
-		return new L.Point(latlng.lng, latlng.lat);
+		return L.point(latlng.lng, latlng.lat);
 	},
 
 	unproject: function (point) {
-		return new L.LatLng(point.y, point.x);
-	},
-
-	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5])
+		return L.latLng(point.y, point.x);
+	}
 });
 
 L.Projection.WCS.zenithal = L.Projection.WCS.extend({
@@ -389,7 +388,7 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/06/2014
+#	Last modified: 09/09/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -413,7 +412,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		this.nzoom = options.nzoom;
 		this.ctype = {x: options.ctype.x, y: options.ctype.y};
 		this.naxis = L.point(options.naxis, true);
-
 		this.projparam = new this.paraminit(options);
 		if (hdr) {
 			this._readWCS(hdr);
@@ -423,14 +421,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		case 'ZEA':
 			this.projection = new L.Projection.WCS.ZEA();
 			this.pixelFlag = false;
+			this.infinite = true;
 			break;
 		case 'TAN':
 			this.projection = new L.Projection.WCS.TAN();
 			this.pixelFlag = false;
+			this.infinite = true;
 			break;
 		default:
 			this.projection = new L.Projection.WCS.PIX();
 			this.pixelFlag = true;
+			this.infinite = false;
+			this.wrapLng = [0.5, this.naxis.x - 0.5];
+			this.wrapLat = [this.naxis.y - 0.5, 0.5];
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
@@ -439,6 +442,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	paraminit: function (options) {
+		this.naxis = L.point(options.naxis);
 		this.crval = L.latLng(options.crval);
 		this.crpix = L.point(options.crpix);
 		this.cd = [[options.cd[0][0], options.cd[0][1]],
@@ -446,13 +450,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		this.natpole = L.latLng(options.natpole);
 		this.celpole = L.latLng(options.celpole);
 		this.natfid = L.latLng(options.natfid);
-	},
-
-	// converts pixel coords to geo coords
-	pointToLatLng: function (point, zoom) {
-		var scale = this.scale(zoom),
-		    untransformedPoint = this.transformation.untransform(point, scale);
-		return this.projection.unproject(untransformedPoint);
 	},
 
 	scale: function (zoom) {
@@ -480,8 +477,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		    v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
 		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
-		if ((v = key('NAXIS1', hdr))) { this.naxis.x = parseInt(v, 10); }
-		if ((v = key('NAXIS2', hdr))) { this.naxis.y = parseInt(v, 10); }
+		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = this.naxis.y = parseInt(v, 10); }
 		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
 		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
 		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
@@ -526,7 +523,7 @@ L.CRS.wcs = function (options) {
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		14/05/2014
+#	Last modified:		09/09/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -535,6 +532,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
+		noWrap: true,
 		contrast: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
@@ -642,7 +640,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				// Find the lowest and highest zoom levels
 				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
 				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-				layer.iipMinZoom = 0;
 				if (layer.iipMinZoom > layer.options.minZoom) {
 					layer.options.minZoom = layer.iipMinZoom;
 				}
@@ -752,7 +749,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 		else {
 			center = map.options.center ? map.options.center : newcrs.projparam.crval;
-			zoom = 1;
+			zoom = this.iipMinZoom;
 		}
 
 		map._prevcrs = map.options.crs = newcrs;
@@ -764,7 +761,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		var map = this._map,
 		    crs = map.options.crs;
 
-		if (crs.infinite) { return; }
+		if (crs.infinite || this.options.noWrap) { return; }
 
 		var tileSize = this._getTileSize();
 
@@ -793,22 +790,27 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_getTileSize: function () {
 		var zoomfac = this._getTileSizeFac();
-		return {x: this.iipTileSize.x * zoomfac, y: this.iipTileSize.y * zoomfac};
+		return L.point(this.iipTileSize.x * zoomfac, this.iipTileSize.y * zoomfac);
 	},
 
 	_isValidTile: function (coords) {
-		var z = this._getZoomForUrl();
-		if (coords.x < 0 || coords.x >= this.iipGridSize[z].x ||
-			coords.y < 0 || coords.y >= this.iipGridSize[z].y) {
-			return false;
-		}
 		var crs = this._map.options.crs;
 
 		if (!crs.infinite) {
 			// don't load tile if it's out of bounds and not wrapped
 			var bounds = this._tileNumBounds;
+
 			if ((!crs.wrapLng && (coords.x < bounds.min.x || coords.x > bounds.max.x)) ||
 			    (!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
+		}
+
+		// don't load tile if it's out of the tile grid
+		var z = this._getZoomForUrl(),
+		    wcoords = coords.clone();
+		this._wrapCoords(wcoords);
+		if (wcoords.x < 0 || wcoords.x >= this.iipGridSize[z].x ||
+			wcoords.y < 0 || wcoords.y >= this.iipGridSize[z].y) {
+			return false;
 		}
 
 		if (!this.options.bounds) { return true; }
@@ -816,6 +818,30 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		// don't load tile if it doesn't intersect the bounds in options
 		var tileBounds = this._tileCoordsToBounds(coords);
 		return L.latLngBounds(this.options.bounds).intersects(tileBounds);
+	},
+
+	// get the global tile coordinates range for the current zoom
+	_getTileNumBounds: function () {
+		var bounds = this._map.getPixelWorldBounds(),
+			tileSize = this._getTileSize();
+
+		return bounds ? L.bounds(
+			this._vecDiv(bounds.min.clone(), tileSize).floor(),
+			this._vecDiv(bounds.max.clone(), tileSize).ceil().subtract([1, 1])) : null;
+	},
+
+	// converts tile coordinates to its geographical bounds
+	_tileCoordsToBounds: function (coords) {
+
+		var map = this._map,
+		    tileSize = this._getTileSize(),
+
+		    nwPoint = this._vecMul(coords.clone(), tileSize),
+		    sePoint = nwPoint.add(tileSize),
+		    nw = map.wrapLatLng(map.unproject(nwPoint, coords.z)),
+		    se = map.wrapLatLng(map.unproject(sePoint, coords.z));
+
+		return new L.LatLngBounds(nw, se);
 	},
 
 	_update: function () {
@@ -826,14 +852,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			bounds = map.getPixelBounds(),
 			zoom = map.getZoom(),
 		  tileSize = this._getTileSize();
-
 		if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
+			this._clearBgBuffer();
 			return;
 		}
 
+		// tile coordinates range for the current view
 		var tileBounds = L.bounds(
-			this._vecDiv(bounds.min.clone(), tileSize)._floor(),
-			this._vecDiv(bounds.max.clone(), tileSize)._floor()
+			this._vecDiv(bounds.min.clone(), tileSize).floor(),
+			this._vecDiv(bounds.max.clone(), tileSize).floor()
 		);
 
 		this._addTiles(tileBounds);
@@ -893,7 +920,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
 		}
-		return str + '&JTL=' + (z - this.iipMinZoom).toString() + ',' +
+		return str + '&JTL=' + z.toString() + ',' +
 		 (coords.x + this.iipGridSize[z].x * coords.y).toString();
 	},
 

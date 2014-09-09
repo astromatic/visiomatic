@@ -8,7 +8,7 @@
 #                        Chiara Marmo - IDES/Paris-Sud,
 #                        Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		14/05/2014
+#	Last modified:		09/09/2014
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
