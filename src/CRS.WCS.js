@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/06/2014
+#	Last modified: 09/09/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -31,7 +31,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		this.nzoom = options.nzoom;
 		this.ctype = {x: options.ctype.x, y: options.ctype.y};
 		this.naxis = L.point(options.naxis, true);
-
 		this.projparam = new this.paraminit(options);
 		if (hdr) {
 			this._readWCS(hdr);
@@ -41,14 +40,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		case 'ZEA':
 			this.projection = new L.Projection.WCS.ZEA();
 			this.pixelFlag = false;
+			this.infinite = true;
 			break;
 		case 'TAN':
 			this.projection = new L.Projection.WCS.TAN();
 			this.pixelFlag = false;
+			this.infinite = true;
 			break;
 		default:
 			this.projection = new L.Projection.WCS.PIX();
 			this.pixelFlag = true;
+			this.infinite = false;
+			this.wrapLng = [0.5, this.naxis.x - 0.5];
+			this.wrapLat = [this.naxis.y - 0.5, 0.5];
 			break;
 		}
 		this.transformation = new L.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
@@ -57,6 +61,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	paraminit: function (options) {
+		this.naxis = L.point(options.naxis);
 		this.crval = L.latLng(options.crval);
 		this.crpix = L.point(options.crpix);
 		this.cd = [[options.cd[0][0], options.cd[0][1]],
@@ -64,13 +69,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		this.natpole = L.latLng(options.natpole);
 		this.celpole = L.latLng(options.celpole);
 		this.natfid = L.latLng(options.natfid);
-	},
-
-	// converts pixel coords to geo coords
-	pointToLatLng: function (point, zoom) {
-		var scale = this.scale(zoom),
-		    untransformedPoint = this.transformation.untransform(point, scale);
-		return this.projection.unproject(untransformedPoint);
 	},
 
 	scale: function (zoom) {
@@ -98,8 +96,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		    v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
 		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
-		if ((v = key('NAXIS1', hdr))) { this.naxis.x = parseInt(v, 10); }
-		if ((v = key('NAXIS2', hdr))) { this.naxis.y = parseInt(v, 10); }
+		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = this.naxis.y = parseInt(v, 10); }
 		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
 		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
 		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }

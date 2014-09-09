@@ -7,12 +7,12 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 09/09/2014
 */
 
 L.Projection.WCS = L.Class.extend({
 
-	bounds: L.bounds([0.0, -90.0], [360.0, 90.0]),
+	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5]),
 
 	// (phi,theta) [rad] -> RA, Dec [deg] for zenithal projections.
 	_phiThetaToRADec: function (phiTheta) {
@@ -96,17 +96,16 @@ L.Projection.WCS.PIX = L.Projection.WCS.extend({
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.natfid = new L.LatLng(0.0, 90.0);
 		projparam.celpole = projparam.crval;
+		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
 	},
 
 	project: function (latlng) {
-		return new L.Point(latlng.lng, latlng.lat);
+		return L.point(latlng.lng, latlng.lat);
 	},
 
 	unproject: function (point) {
-		return new L.LatLng(point.y, point.x);
-	},
-
-	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5])
+		return L.latLng(point.y, point.x);
+	}
 });
 
 L.Projection.WCS.zenithal = L.Projection.WCS.extend({

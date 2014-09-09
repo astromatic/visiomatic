@@ -17,6 +17,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
+		noWrap: true,
 		contrast: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
@@ -124,7 +125,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				// Find the lowest and highest zoom levels
 				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
 				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-				layer.iipMinZoom = 0;
 				if (layer.iipMinZoom > layer.options.minZoom) {
 					layer.options.minZoom = layer.iipMinZoom;
 				}
@@ -234,7 +234,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 		else {
 			center = map.options.center ? map.options.center : newcrs.projparam.crval;
-			zoom = 1;
+			zoom = this.iipMinZoom;
 		}
 
 		map._prevcrs = map.options.crs = newcrs;
@@ -246,7 +246,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		var map = this._map,
 		    crs = map.options.crs;
 
-		if (crs.infinite) { return; }
+		if (crs.infinite || this.options.noWrap) { return; }
 
 		var tileSize = this._getTileSize();
 
@@ -275,22 +275,27 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_getTileSize: function () {
 		var zoomfac = this._getTileSizeFac();
-		return {x: this.iipTileSize.x * zoomfac, y: this.iipTileSize.y * zoomfac};
+		return L.point(this.iipTileSize.x * zoomfac, this.iipTileSize.y * zoomfac);
 	},
 
 	_isValidTile: function (coords) {
-		var z = this._getZoomForUrl();
-		if (coords.x < 0 || coords.x >= this.iipGridSize[z].x ||
-			coords.y < 0 || coords.y >= this.iipGridSize[z].y) {
-			return false;
-		}
 		var crs = this._map.options.crs;
 
 		if (!crs.infinite) {
 			// don't load tile if it's out of bounds and not wrapped
 			var bounds = this._tileNumBounds;
+
 			if ((!crs.wrapLng && (coords.x < bounds.min.x || coords.x > bounds.max.x)) ||
 			    (!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
+		}
+
+		// don't load tile if it's out of the tile grid
+		var z = this._getZoomForUrl(),
+		    wcoords = coords.clone();
+		this._wrapCoords(wcoords);
+		if (wcoords.x < 0 || wcoords.x >= this.iipGridSize[z].x ||
+			wcoords.y < 0 || wcoords.y >= this.iipGridSize[z].y) {
+			return false;
 		}
 
 		if (!this.options.bounds) { return true; }
@@ -298,6 +303,30 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		// don't load tile if it doesn't intersect the bounds in options
 		var tileBounds = this._tileCoordsToBounds(coords);
 		return L.latLngBounds(this.options.bounds).intersects(tileBounds);
+	},
+
+	// get the global tile coordinates range for the current zoom
+	_getTileNumBounds: function () {
+		var bounds = this._map.getPixelWorldBounds(),
+			tileSize = this._getTileSize();
+
+		return bounds ? L.bounds(
+			this._vecDiv(bounds.min.clone(), tileSize).floor(),
+			this._vecDiv(bounds.max.clone(), tileSize).ceil().subtract([1, 1])) : null;
+	},
+
+	// converts tile coordinates to its geographical bounds
+	_tileCoordsToBounds: function (coords) {
+
+		var map = this._map,
+		    tileSize = this._getTileSize(),
+
+		    nwPoint = this._vecMul(coords.clone(), tileSize),
+		    sePoint = nwPoint.add(tileSize),
+		    nw = map.wrapLatLng(map.unproject(nwPoint, coords.z)),
+		    se = map.wrapLatLng(map.unproject(sePoint, coords.z));
+
+		return new L.LatLngBounds(nw, se);
 	},
 
 	_update: function () {
@@ -308,14 +337,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			bounds = map.getPixelBounds(),
 			zoom = map.getZoom(),
 		  tileSize = this._getTileSize();
-
 		if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
+			this._clearBgBuffer();
 			return;
 		}
 
+		// tile coordinates range for the current view
 		var tileBounds = L.bounds(
-			this._vecDiv(bounds.min.clone(), tileSize)._floor(),
-			this._vecDiv(bounds.max.clone(), tileSize)._floor()
+			this._vecDiv(bounds.min.clone(), tileSize).floor(),
+			this._vecDiv(bounds.max.clone(), tileSize).floor()
 		);
 
 		this._addTiles(tileBounds);
@@ -375,7 +405,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
 		}
-		return str + '&JTL=' + (z - this.iipMinZoom).toString() + ',' +
+		return str + '&JTL=' + z.toString() + ',' +
 		 (coords.x + this.iipGridSize[z].x * coords.y).toString();
 	},
 
