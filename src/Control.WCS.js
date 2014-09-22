@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 16/03/2014
+#	Last modified: 22/09/2014
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -102,7 +102,7 @@ L.Control.WCS = L.Control.extend({
 			this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
 		} else {
 		// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURI('/cgi-bin/nph-sesame/-oI?' + str,
+			L.IIPUtils.requestURI('/cgi-bin/nph-sesame/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, true);
 		}
 	},
