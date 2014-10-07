@@ -1,6 +1,6 @@
 {
 	"name": "visiomatic",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
 	"dependencies": {"leaflet": "~0.7"},
 	"devDependencies": {

@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 22/03/2014
+#	Last modified: 07/10/2014
 */
 
 if (typeof require !== 'undefined') {
@@ -138,12 +138,19 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 
 	_getCatalog: function (catalog) {
 		var _this = this,
-		    center = this._map.getCenter(),
-		    bounds = this._map.getBounds(),
+		    map = this._map,
+		    center = map.getCenter(),
+		    b = map.getPixelBounds(),
+		    z = map.getZoom(),
 		    lngfac = Math.abs(Math.cos(center.lat)) * Math.PI / 180.0,
-		    dlng = Math.abs(bounds.getWest() - bounds.getEast()),
-		    dlat = Math.abs(bounds.getNorth() - bounds.getSouth());
-
+		    c = [map.unproject(b.min, z),
+				     map.unproject(L.point(b.min.x, b.max.y), z),
+				     map.unproject(b.max, z),
+				     map.unproject(L.point(b.max.x, b.min.y), z)],
+		    dlng = Math.max(c[0].lng, c[1].lng, c[2].lng, c[3].lng) -
+		       Math.min(c[0].lng, c[1].lng, c[2].lng, c[3].lng),
+		    dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
+		       Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
 		if (dlat < 0.0001) {
 			dlat = 0.0001;
 		}
@@ -152,7 +159,7 @@ L.Control.IIP.Overlay = L.Control.IIP.extend({
 		}
 
 		var templayer = new L.LayerGroup(null),
-		 layercontrol = this._map._layerControl;
+		 layercontrol = map._layerControl;
 		templayer.notReady = true;
 		if (layercontrol) {
 			layercontrol.addOverlay(templayer, catalog.name);

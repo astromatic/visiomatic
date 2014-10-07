@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                     Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 09/09/2014
+#	Last modified: 05/10/2014
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -18,10 +18,16 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		naxis: [256, 256],
 		nzoom: 9,
 		crpix: [129, 129],
-		crval: [0.0, 0.0],							// (\delta_0, \phi_0)
+		crval: [0.0, 0.0],										// (\delta_0, \alpha_0)
+//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
 		cd: [[1.0, 0.0], [0.0, 1.0]],
-		natpole: [90.0, 180.0],					// (\theta_p, \phi_p)
+		natrval: [90.0, 0.0],										// (\theta_0. \phi_0)
+		natpole: [90.0, 999.0],								// (\theta_p, \phi_p)
 		tileSize: [256, 256],
+		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
 	initialize: function (hdr, options) {
@@ -47,6 +53,11 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
+		case 'COE':
+			this.projection = new L.Projection.WCS.COE();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
 		default:
 			this.projection = new L.Projection.WCS.PIX();
 			this.pixelFlag = true;
@@ -63,12 +74,15 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	paraminit: function (options) {
 		this.naxis = L.point(options.naxis);
 		this.crval = L.latLng(options.crval);
+		this.cpole = L.latLng(options.crval);
 		this.crpix = L.point(options.crpix);
 		this.cd = [[options.cd[0][0], options.cd[0][1]],
 		           [options.cd[1][0], options.cd[1][1]]];
+		this.natrval = L.latLng(options.natrval);
 		this.natpole = L.latLng(options.natpole);
-		this.celpole = L.latLng(options.celpole);
-		this.natfid = L.latLng(options.natfid);
+		this.pv = [];
+		this.pv[0] = options.pv[0].slice();
+		this.pv[1] = options.pv[1].slice();
 	},
 
 	scale: function (zoom) {
@@ -102,10 +116,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
 		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
 		if ((v = key('CRVAL2', hdr))) { projparam.crval.lat = parseFloat(v, 10); }
+		if ((v = key('LONPOLE', hdr))) { projparam.natpole.lng = parseFloat(v, 10); }
+		if ((v = key('LATPOLE', hdr))) { projparam.natpol.lat = parseFloat(v, 10); }
 		if ((v = key('CD1_1', hdr))) { projparam.cd[0][0] = parseFloat(v, 10); }
 		if ((v = key('CD1_2', hdr))) { projparam.cd[0][1] = parseFloat(v, 10); }
 		if ((v = key('CD2_1', hdr))) { projparam.cd[1][0] = parseFloat(v, 10); }
 		if ((v = key('CD2_2', hdr))) { projparam.cd[1][1] = parseFloat(v, 10); }
+		for (var d = 0; d < 2; d++) {
+			for (var j = 0; j < 20; j++) {
+				if ((v = key('PV' + (d + 1) + '_' + j, hdr))) {
+					projparam.pv[d][j] = parseFloat(v, 10);
+				}
+			}
+		}
 	},
 
 	_readFITSKey: function (keyword, str) {
