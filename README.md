@@ -60,7 +60,7 @@ Method | Returns | Description
 --------
 
 #### `L.CRS.WCS`
-`L.CRS.WCS` is a new class that extends the original `L.CRS` object to support celestial projections described by the [FITS WCS] standard. Currently only the `PIXEL` (Cartesian), `TAN` and `ZEA` projections are supported.
+`L.CRS.WCS` is a new class that extends the original `L.CRS` object to support celestial projections described by the [FITS WCS] standard. Currently only the `PIXEL` (Cartesian), `COE`, `TAN` and `ZEA` projections are supported.
  
 ######Usage example
 ```
