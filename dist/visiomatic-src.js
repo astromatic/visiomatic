@@ -672,11 +672,11 @@ L.CRS.wcs = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud,
-#                        Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                             Chiara Marmo - IDES/Paris-Sud,
+#                                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		09/09/2014
+#	Last modified:		24/01/2015
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -1086,9 +1086,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			if (L.Browser.ie) {
 				tile.style.msInterpolationMode = 'nearest-neighbor';
 			} else if (L.Browser.chrome) {
-				tile.style.imageRendering = '-webkit-optimize-speed';
-			} else {
+				tile.style.imageRendering = 'pixelated';
+			} else if (L.Browser.gecko) {
 				tile.style.imageRendering = '-moz-crisp-edges';
+			} else {
+				tile.style.imageRendering = '-webkit-optimize-contrast';
 			}
 			tile.style.width = tileSize.x + 'px';
 			tile.style.height = tileSize.y + 'px';
