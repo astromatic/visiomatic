@@ -20,7 +20,7 @@
 	"license" : "GPL",
 	"repository": {
 		"type": "svn",
-		"url": "https://astromatic.net/privsvn/software/leafview"
+		"url": "https://github.com/astromatic/visiomatic"
 	},
   "contributors": [
 	"Emmanuel Bertin <bertin@iap.fr> (http://www.astromatic.net/team/emmanuel)",
