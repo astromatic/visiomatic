@@ -3,15 +3,16 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 20/10/2015
 */
 
 L.Control.Scale.WCS = L.Control.Scale.extend({
 	options: {
 		position: 'bottomleft',
+		title: 'Scale',
 		maxWidth: 128,
 		metric: false,
 		imperial: false,
@@ -27,18 +28,23 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 	_addScales: function (options, className, container) {
 		if (options.metric) {
 			this._mScale = L.DomUtil.create('div', className, container);
+			this._mScale.title = options.metricTitle ? options.metricTitle : options.title;
 		}
 		if (options.imperial) {
 			this._iScale = L.DomUtil.create('div', className, container);
+			this._iScale.title = options.imperialTitle ? options.imperialTitle : options.title;
 		}
 		if (options.degrees) {
 			this._dScale = L.DomUtil.create('div', className, container);
+			this._dScale.title = options.degreesTitle ? options.degreesTitle : options.title;
 		}
 		if (options.pixels) {
 			this._pScale = L.DomUtil.create('div', className, container);
+			this._pScale.title = options.pixelsTitle ? options.pixelsTitle : options.title;
 		}
 		if (options.custom) {
 			this._cScale = L.DomUtil.create('div', className, container);
+			this._cScale.title = options.customTitle ? options.customTitle : options.title;
 		}
 
 		this.angular = options.metric || options.imperial || options.degrees;

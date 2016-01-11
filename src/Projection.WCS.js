@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 07/10/2014
+#	Last modified: 14/11/2015
 */
 
 L.Projection.WCS = L.Class.extend({
@@ -16,7 +16,8 @@ L.Projection.WCS = L.Class.extend({
 
 	// LatLng [deg] -> Point
 	project: function (latlng) {
-		var phiTheta = this._raDecToPhiTheta(latlng);
+		var phiTheta = this._raDecToPhiTheta(this.celsysflag ?
+			this.eqToCelsys(latlng) : latlng);
 		phiTheta.lat = this._thetaToR(phiTheta.lat);
 		return this._redToPix(this._phiRToRed(phiTheta));
 	},
@@ -26,7 +27,10 @@ L.Projection.WCS = L.Class.extend({
 		var  phiTheta = this._redToPhiR(this._pixToRed(point));
 		phiTheta.lat = this._rToTheta(phiTheta.lat);
 		var latlng = this._phiThetaToRADec(phiTheta);
-		return latlng;
+		if (latlng.lng < -180.0) {
+			latlng.lng += 360.0;
+		}
+		return this.celsysflag ? this.celsysToEq(latlng) : latlng;
 	},
 
 	// Set up native pole
@@ -170,7 +174,7 @@ L.Projection.WCS = L.Class.extend({
 L.Projection.WCS.PIX = L.Projection.WCS.extend({
 	code: 'PIX',
 
-	paraminit: function (projparam) {
+	_paramInit: function (projparam) {
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.cpole = projparam.crval;
@@ -188,7 +192,7 @@ L.Projection.WCS.PIX = L.Projection.WCS.extend({
 
 L.Projection.WCS.zenithal = L.Projection.WCS.extend({
 
-	paraminit: function (projparam) {
+	_paramInit: function (projparam) {
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.natrval = L.latLng(90.0, 0.0);
@@ -240,9 +244,63 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 
 });
 
+L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
+
+	_paramInit: function (projparam) {
+		var	deg = Math.PI / 180.0;
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.lambda = projparam.pv[1][1];
+		if (projparam.lambda === 0.0) { projparam.lambda = 1.0; }
+		projparam.natrval = L.latLng(0.0, 0.0);
+		projparam.natpole = this._natpole();
+		projparam.cpole = this._cpole();
+	},
+
+	_rToTheta: function (r) {
+		return r;
+	},
+
+	_thetaToR: function (theta) {
+		return theta;
+	}
+
+});
+
+L.Projection.WCS.CAR = L.Projection.WCS.cylindrical.extend({
+
+	// (x, y) ["deg"] -> \phi, r [deg] for CAR projections.
+	_redToPhiR: function (red) {
+		return L.latLng(red.y, red.x);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for CAR projections.
+	_phiRToRed: function (phiR) {
+		return L.point(phiR.lng, phiR.lat);
+	}
+});
+
+L.Projection.WCS.CEA = L.Projection.WCS.cylindrical.extend({
+
+	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
+	_redToPhiR: function (red) {
+		var deg = Math.PI / 180.0,
+				slat = red.y * this.projparam.lambda * deg;
+		return L.latLng(slat > -1.0 ?
+		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
+	_phiRToRed: function (phiR) {
+		var deg = Math.PI / 180.0;
+		return L.point(phiR.lng,
+		               Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
+	}
+});
+
 L.Projection.WCS.conical = L.Projection.WCS.extend({
 
-	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.
+	// (x, y) ["deg"] -> \phi, r [deg] for conical projections.
 	_redToPhiR: function (red) {
 		var deg = Math.PI / 180.0,
 		    projparam = this.projparam,
@@ -251,7 +309,7 @@ L.Projection.WCS.conical = L.Projection.WCS.extend({
 		return L.latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
 	},
 
-	// \phi, r [deg] -> (x, y) ["deg"] for zenithal projections.
+	// \phi, r [deg] -> (x, y) ["deg"] for conical projections.
 	_phiRToRed: function (phiR) {
 		var	deg = Math.PI / 180.0,
 		     p = this.projparam.c * phiR.lng * deg;
@@ -261,7 +319,7 @@ L.Projection.WCS.conical = L.Projection.WCS.extend({
 
 L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 
-	paraminit: function (projparam) {
+	_paramInit: function (projparam) {
 		var	deg = Math.PI / 180.0;
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);

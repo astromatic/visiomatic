@@ -3,15 +3,15 @@
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud,
-#                     Ruven Pillay - C2RMF/CNRS
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud,
+#                          Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 26/03/2014
+#	Last modified: 24/11/2015
 
-# Extra-Map section adapted from L.Control.MiniMap by Norkart
-# (see Control.ExtraMap.js).
-*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%% Basic Leaflet Controls %%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /* Left control bar */
 .leaflet-bar a {
@@ -27,22 +27,37 @@
 .leaflet-control-zoom-in {
 	background-image: url(images/icon-magnifyplus.svg);
 	color: rgba(255,255,255,0) !important;
+	text-shadow: none;
 	}
 
 .leaflet-control-zoom-out {
 	background-image: url(images/icon-magnifyminus.svg);
 	color: rgba(255,255,255,0) !important;
+	text-shadow: none;
 	}
 
-#leaflet-iipimage-toggle {
-	background-image: url(images/icon-settings.svg);
+.leaflet-left .leaflet-control {
+	margin-left: 5px;
+	border: none;
 }
 
-#leaflet-iipoverlay-toggle {
-	background-image: url(images/icon-plot.svg);
+.leaflet-top.leaflet-left {
+	z-index: 2000;	/* Make sure it comes on top of other controls areas */
 }
 
-/* IIP dialog */
+a {
+	outline: 0;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+.leaflet-control-iip-dialog {
+	position: absolute;
+	margin: 10px;
+}
+
 .leaflet-control-iip .leaflet-control-iip-dialog,
 .leaflet-control-iip-expanded .leaflet-control-iip-toggle {
 	display: none;
@@ -60,10 +75,12 @@
 	z-index:10;
 }
 
-/* IIP Image dialog elements */
-.leaflet-control-iip-element {
+/*------------------------------- Dialog line -------------------------------*/
+
+.leaflet-control-iip-line {
 	display: table-row;
 	padding: 8px;
+	height: 32px;
 }
 
 .leaflet-control-iip-label {
@@ -72,167 +89,296 @@
 	vertical-align: middle;
 }
 
-.ui-buttonset .ui-button {
-	margin-right: -0.1em;
+.leaflet-control-iip-element {
+	display: table-cell;
+	vertical-align: top;
+	height:32px;
 }
 
-.ui-icon,.ui-button {
-	width: 32px!important;
-	height: 32px!important;
+.leaflet-num-input {
+	width: 120px;
+	height: 24px;
 }
 
-.leaflet-control-iip-cmaps {
-	left: 0px;
-	right: 0px;
-}
+/*------------------------------ Simple button ------------------------------*/
 
-.leaflet-cmap-inv {
-	background-image: url(images/icon-contrast.svg);
+.leaflet-control-iip-button {
 	background-repeat: no-repeat;
-}
-
-.leaflet-cmap-grey {
-	background-image: url(images/icon-grey.svg);
-}
-.leaflet-cmap-jet {
-	background-image: url(images/icon-jet.svg);
-}
-.leaflet-cmap-hot {
-	background-image: url(images/icon-hot.svg);
-}
-.leaflet-cmap-cold {
-	background-image: url(images/icon-cold.svg);
-}
-
-/* jQuery-UI spinner */
-.ui-spinner {
-/*
-	float: right;
-	width: 100%;
-*/
-	height: 30px;
-	font-size: 1.2em;
-}
-
-.ui-spinner-input {
-	width: 12em;
-}
-
-.ui-spinner-down {
-	width: 31px!important;
-	right: 34px;
-	top: 0px;
-	cursor: pointer;
-	border-radius: 4px 0px 0px 4px!important;
-}
-
-.ui-spinner-up {
-	width: 33px!important;
-	right: 0px;
-	cursor: pointer;
-	border-radius: 0px 4px 4px 0px!important;
-}
-
-.ui-spinner-down .icon-minus {
-	background-image: url(images/icon-minus.svg);
-	margin: 2px;
-	top: 0px;
-	left: 0px;
-	width: 32px;
-	height: 32px;
-}
-.ui-spinner-up .icon-plus {
-	background-image: url(images/icon-plus.svg);
-	margin: 2px;
-	top: 0px;
-	left: 0px;
-	width: 32px;
-	height: 32px;
-}
-
-/* Overlay dialog */
-/*
-.leaflet-top {
-	z-index: 2000;
-}
-*/
-/*
-.leaflet-control-layers-overlays {
-	line-height:26px;
-}
-*/
-
-#logo-cds {
-	background: url(images/cds.png) no-repeat;
-	background-size: 2.4em;
 	background-position: center;
 	display: inline-block;
-}
-
-.leaflet-control-iip-catalogs {
-	height: 34px;
-	vertical-align: top;
-}
-
-.leaflet-control-iip-profile {
-	height: 34px;
-	vertical-align: top;
-}
-
-/* Color picker */
-.sp-replacer {
-	padding: 0;
-	vertical-align: middle;
-}
-
-.sp-preview {
-	width: 30px;
-	height: 30px;
-	margin: 0px;
-}
-
-.sp-dd {
-	vertical-align: top;
-	float: right;
-	top: 0px;
-	margin-left: 0px;
+	cursor: pointer;
 	padding: 0px;
+	margin: 2px 0px 2px 2px;
+	width:32px;
+	height: 31px;
+	vertical-align: bottom;
+	text-align: center;
+	line-height: 27px;
+	color: #505050;
+	font-size: 14px;
+	font-family: Trebuchet, Arial, sans-serif;
+	font-weight: bold;
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px #a0a0a0;
 }
 
-.sp-container {
-z-index: 3000000000;
+.leaflet-control-iip-button:hover {
+	background-color: #F4F4F4;
+	border-width: 1px;
+	border-color: black;
 }
 
-/* Layer list */
-.leaflet-control-layers-base {
-	display: table;
+.leaflet-control-iip-button:active  {
+	background-color: #eee;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+}
+
+/*------------------------------- Radio button ------------------------------*/
+
+.leaflet-control-iip-radios {
+    margin: 2px 0px -2px 0px;
+}
+
+input.leaflet-control-iip-radio {
+    display: none;
+}
+
+label.leaflet-control-iip-radio {
+	background-color: #FFFFFF;
+	background-repeat: no-repeat;
+	background-position: center;
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	padding: 0px;
+	width:32px;
+	height:31px;
+	color: #505050;
+	font-size: 12px;
+	font-family: Trebuchet, Arial, sans-serif;
+	font-weight: bold;
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px #a0a0a0;
+}
+
+.leaflet-control-iip-radio:hover {
+	background-color: #F4F4F4;
+	border-width: 1px;
+	border-color: black;
+}
+
+input.leaflet-control-iip-radio:checked + label {
+	background-color: #eee;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+}
+
+/*------------------------------- Select menu -------------------------------*/
+
+div.leaflet-control-iip-select {
+	padding-left: 32px;
+}
+
+select.leaflet-control-iip-select {
+	height: 32px;
+	vertical-align: top;
+	margin: 2px 0px 2px 2px;
+	padding: 4px 0px;
+	border-width: 0px 2px 0px 0px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 0px 4px 4px 0px;
 	width: 100%;
 }
 
-.leaflet-control-layers-overlays {
-	display: table;
-	width: 100%;
+.leaflet-control-iip-select:hover {
+	background-color: #F4F4F4;
 }
 
-.leaflet-control-layers-item {
+/*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
+
+.leaflet-spinbox {
+	position: relative;
+	margin: 2px 0px;
+}
+.leaflet-spinbox-input {
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 100%;
+	width: 100%;
+	height: 32px;
+	padding: 2px 6px 2px 6px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 4px;
+	box-sizing : border-box;
+	border-width: 0px;
+	-moz-appearance: textfield;
+	-webkit-appearance: texfield;
+}
+.leaflet-spinbox-down {
+	position: absolute;
+	right: 30px;
+	top: 1px;
+	display: inline-block;
+	width: 29px;
+	height: 29px;
+	background-color: #FFFFFF;
+	background-image: url(images/icon-minus.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	border-radius: 0px;
+	cursor: pointer;
+}
+.leaflet-spinbox-up {
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	display: inline-block;
+	width: 29px;
+	height: 29px;
+	background-color: #FFFFFF;
+	background-image: url(images/icon-plus.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	border-radius: 0px 4px 4px 0px;
+	cursor: pointer;
+}
+.leaflet-spinbox-input:hover,.leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
+	background-color: #F4F4F4;
+}
+
+/*----------------- Flip switch widget (original proto.io) ------------------*/
+
+.leaflet-flipswitch {
+	position: relative;
+	margin: 2px 0px;
+	width: 100%;
+	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+input.leaflet-flipswitch {
+	display: none;
+}
+label.leaflet-flipswitch {
+	display: block;
+	overflow: hidden;
+	cursor: pointer;
+	border: 0px;
+	border-radius: 4px;
+}
+.leaflet-flipswitch-inner {
+	display: block;
+	width: 200%;
+	margin-left: -100%;
+	transition: margin 0.2s ease-in 0s;
+}
+.leaflet-flipswitch-inner:before, .leaflet-flipswitch-inner:after {
+	display: block;
+	float: left;
+	width: 50%;
+	height: 32px;
+	padding: 0;
+	line-height: 32px;
+	font-size: 14px;
+	color: white;
+	font-family: Trebuchet, Arial, sans-serif;
+	font-weight: bold;
+	box-sizing: border-box;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+}
+.leaflet-flipswitch-inner:before {
+	content: "ON";
+	padding-left: 15px;
+	background-color: #d00000;
+	color: #FFFFFF;
+}
+.leaflet-flipswitch-inner:after {
+	content: "OFF";
+	padding-right: 12px;
+	color: #505050;
+	text-align: right;
+}
+.leaflet-flipswitch-button {
+	display: block;
+	margin: 2px;
+	background: #FFFFFF;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0%;
+	right: 50%;
+	border: 0;
+	border-radius: 4px;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	transition: all 0.2s ease-in 0s;
+	transition: background none;
+}
+.leaflet-flipswitch-button:hover {
+	background: #F4F4F4;
+}
+input.leaflet-flipswitch:checked + label .leaflet-flipswitch-inner {
+	margin-left: 0;
+}
+input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
+	left: 50%;
+	right: 0%;
+}
+
+/*------------------------------ Color picker -------------------------------*/
+
+.sp-replacer {
+	float: left;
+	padding: 0px;
+	margin: 2px 0px;
+	border-width: 0px;
+	border-radius: 4px 0px 0px 4px;
+}
+.sp-preview {
+	padding: 0px;
+	border-width: 0px;
+	margin: 0px;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+}
+.sp-preview-inner {
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 4px 0px 0px 4px;
+}
+.sp-dd {
+	display: none;	/* hide spectrum arrow */
+}
+
+/*------------------------------ Layer list -------------------------------*/
+
+.leaflet-control-iip-layerlist {
+	display: table;
+	width: 100%;
+	margin-top: 10px;
+}
+
+.leaflet-control-iip-layer {
 	display: table-row;
+	border-radius: 4px;
+	box-shadow: 1px 1px 2px #a0a0a0;
 }
 
-.leaflet-control-layers-select {
+.leaflet-control-iip-layerswitch {
 	display: table-cell;
 	vertical-align: middle;
 	width: 1em;
 }
 
-.leaflet-control-layers-name {
+.leaflet-control-iip-layername {
 	display: table-cell;
 	vertical-align: middle;
 	padding-left: 4px;
 	padding-right: 8px;
 }
 
-/* Activity spinner */
-.leaflet-control-activity {
+
+/*------------------------------ Activity spinner ---------------------------*/
+
+.leaflet-control-iip-activity {
 	background-image: url(images/activity.svg);
 	background-size: 18px;
 	width: 18px;
@@ -240,32 +386,447 @@ z-index: 3000000000;
 	margin: 2px;
 }
 
-/* Trash button */
-.leaflet-control-layers-trash {
+/*-------------------------------- Trash button -----------------------------*/
+
+.leaflet-control-iip-trash {
 	display: table-cell;
-	background-image: url(images/icon-trash.svg),linear-gradient(to bottom, rgba(255, 255, 255, 0),  rgba(200, 200, 200, 1));
+	background-image: url(images/icon-trash.svg);
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 24px;
-	height: 24px;
-	float: right;
-	-webkit-border-radius: 4px;
-	        border-radius: 4px;
+	width: 27px;
+  border: 1px solid #a0a0a0 !important;
+	border-radius: 0px 4px 4px 0px;
+	cursor: pointer;
 }
 
-/* WCS coordinates */
-.leaflet-control-wcs {
-	background-color: rgba(128, 128, 128, 0.5);
-	color: white;
+.leaflet-control-iip-trash:hover {
+	background-color: #F4F4F4;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Channel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipchannel-toggle {
+	background-image: url(images/icon-equalizer2.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sidebar.channel {
+	width: 296px;
+}
+.sidebar-left.channel ~ .leaflet-left {
+	left: 310px;
+}
+
+/*--------------------------------- Mixing mode -----------------------------*/
+
+input#leaflet-control-iip-radio-mono + label {
+	background-image: url(images/icon-palette.svg);
+	border-radius: 4px 0px 0px 4px;
+}
+
+input#leaflet-control-iip-radio-color + label {
+	margin: 0px 0px 0px 2px;
+	background-image: url(images/icon-stack.svg);
+	border-radius: 0px 4px 4px 0px;
+}
+
+/*---------------------------------- Color map ------------------------------*/
+
+input.leaflet-cmap {
+    display: none;
+}
+
+label.leaflet-cmap {
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	width:32px;
+	height:32px;
+	box-shadow: 1px 1px 2px #a0a0a0;
+}
+
+.leaflet-cmap:hover {
+	background-color: #F4F4F4;
+	border-width: 1px;
+	border-color: black;
+}
+
+input.leaflet-cmap:checked + label {
+	box-shadow: 1px 1px 2px black inset;
+}
+
+/*
+input.leaflet-cmap.invert + label {
+	transform: scaleY(-1.0);
+	-ms-transform: scaleY(-1.0);
+	-webkit-transform: scaleY(-1.0);
+}
+*/
+
+input#leaflet-cmap-grey + label {
+	background-image: url(images/icon-grey.svg);
+	border-radius: 4px 0px 0px 4px;
+}
+input#leaflet-cmap-jet + label {
+	background-image: url(images/icon-jet.svg);
+}
+input#leaflet-cmap-cold + label {
+	background-image: url(images/icon-cold.svg);
+}
+input#leaflet-cmap-hot + label {
+	background-image: url(images/icon-hot.svg);
+	border-radius: 0px 4px 4px 0px;
+}
+
+/*-------------------------------- Channel list -----------------------------*/
+
+.leaflet-control-iip-chanlist {
+	display: table;
+	width: 100%;
+	margin-top: 10px;
+}
+
+.leaflet-control-iip-channel {
+	height: 28px;
+	display: table-row;
+	box-shadow: -1px -1px 2px #a0a0a0 inset;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.leaflet-control-iip-chancolor {
+	display: table-cell;
+	vertical-align: middle;
+	width: 27px;
+	box-shadow: 0px -1px 2px #a0a0a0 inset;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-iip-chanlabel {
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 4px;
+	padding-right: 8px;
+
+}
+
+.leaflet-control-iip-chanlabel:hover {
+	background-color: #F4F4F4;
+}
+
+
+#logo-cds {
+	background: url(images/cds.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center;
+	display: inline-block;
+	width: 32px;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Image %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipimage-toggle {
+	background-image: url(images/icon-contrast.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sidebar.image {
+	width: 220px;
+}
+.sidebar-left.image ~ .leaflet-left {
+	left: 234px;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Catalog %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipcatalog-toggle {
+	background-image: url(images/icon-make-group.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sidebar.catalog {
+	width: 280px;
+}
+.sidebar-left.catalog ~ .leaflet-left {
+	left: 294px;
+}
+
+#leaflet-control-iip-button-catalog {
+	width: 32px;
+	padding: 2px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#leaflet-control-iip-button-catalog:after {
+	content: 'GO';
+	color: #505050;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipregion-toggle {
+	background-image: url(images/icon-location.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sidebar.region {
+	width: 280px;
+}
+.sidebar-left.region ~ .leaflet-left {
+	left: 294px;
+}
+
+#leaflet-control-iip-button-region {
+	width: 32px;
+	padding: 2px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#leaflet-control-iip-button-region:after {
+	content: 'GO';
+	color: #505050;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Profile %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipprofile-toggle {
+	background-image: url(images/icon-plot.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.sidebar.profile {
+	width: 250px;
+}
+.sidebar-left.profile ~ .leaflet-left {
+	left: 264px;
+}
+
+#leaflet-control-iip-button-start {
+	width: 48px;
+	padding: 2px;
+	font-size: 12px;
+	border-radius: 0px;
+}
+
+#leaflet-control-iip-button-start:after {
+	content: 'START';
+	color: #505050;
+}
+
+#leaflet-control-iip-button-end {
+	width: 48px;
+	padding: 2px;
+	font-size: 12px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#leaflet-control-iip-button-end:after {
+	content: 'END';
+	color: #505050;
+}
+
+#leaflet-control-iip-button-spectrum {
+	width: 32px;
+	padding: 2px;
+	font-size: 12px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#leaflet-control-iip-button-spectrum:after {
+	content: 'GO';
+	color: #505050;
+}
+
+/*---------------------------------- Plots ----------------------------------*/
+#leaflet-profile-plot {
+	width: 400px;
+	height: 300px;
+}
+
+#leaflet-spectrum-plot {
+	width: 400px;
+	height: 400px;
+}
+
+.jqplot-highlighter-tooltip, .jqplot-canvasOverlay-tooltip {
+	z-index: 2000;
+	background: rgba(255,255,255,0.75);
+	margin-bottom: 4px;
+}
+
+table.jqplot-table-legend, table.jqplot-cursor-legend {
+	z-index: 2000;
+	background-color: rgba(255,255,255,0.75);
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Doc %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipdoc-toggle {
+	background-image: url(images/icon-info.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 36px;
+}
+
+.sidebar.doc {
+	width: 530px;
+}
+
+.sidebar-left.doc ~ .leaflet-left {
+	left: 544px;
+}
+
+.sidebar-tabs ul:last-child > li {
+	height: 36px;
+}
+
+.jqplot-target {
+	overflow: hidden;
+}
+
+#leaflet-iipdoc .leaflet-control-iip-dialog {
+	position: static;
+	margin: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#leaflet-iipdoc .leaflet-control-iip-framebox {
+	position: absolute;
+	top: 32px;
+	bottom: 36px;
+	left: 0px;
+	right: 0px;
+}
+
+iframe.leaflet-control-iip-doc {
+	width: 100%;
+	height: 100%;
+	border: 0px;
+
+}
+
+#leaflet-iipdoc .leaflet-control-iip-box {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 36px;
+	box-sizing: border-box;
+	padding: 2px 8px 2px 8px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+}
+
+#leaflet-control-iip-button-home {
+	background-image: url(images/icon-home.svg);
+	color: yellow;
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	margin: 0px 0px 0px 2px;
+	padding: 2px;
+	border-radius: 4px 0px 0px 4px;
+}
+
+#leaflet-control-iip-button-back {
+	background-image: url(images/icon-left.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	margin: 0px 0px 0px 2px;
+	padding: 2px;
+	border-radius: 0px;
+}
+
+#leaflet-control-iip-button-forward {
+	background-image: url(images/icon-right.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	margin: 0px 0px 0px 2px;
+	padding: 2px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#leaflet-control-iip-button-pdf {
+	background-image: url(images/icon-pdf.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	margin: 0px 0px 0px 2px;
+	padding: 2px;
+	border-radius: 4px 4px 4px 4px;
+	position: absolute;
+	right: 3px;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.WCS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+.leaflet-control-wcs-dialog {
+	display: table;
+	background-color: #ffffff;
+	color: #505050;
 	padding: 1px;
-	-webkit-border-radius: 4px;
-	        border-radius: 4px;
-	box-shadow: 1px 1px 2px #000 inset;
+	border-radius: 4px;
 	font-size: 1.2em;
+}
+
+.leaflet-control-wcs-select {
+	display: table-cell;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	padding-left: 2px;
+	padding-right: 2px;
+	background-color: #d0d0d0;
+	border: none;
+	text-shadow: none !important;
+}
+
+.leaflet-control-wcs-input {
+	display: table-cell;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: #ffffff;
+	padding-left: 10px;
+	border: none;
+	color: #505050;
 	width: 13em;
 }
 
-/* Reticle */
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Scale.WCS %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	margin-bottom: 10px;
+	text-shadow: none;
+}
+
+.leaflet-control-scale-line {
+	border: 0px;
+	background-color: rgba(255,255,255,0.66);
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Reticle %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-reticle {
 	background-image: url(images/reticle.svg);
@@ -291,59 +852,92 @@ z-index: 3000000000;
 	        transition: opacity 0.5s linear;
 }
 
-/* Profile plot */
-#leaflet-profile-plot {
-	width: 400px;
-	height: 300px;
+/* Graticule */
+.leaflet-grid-label .gridlabel-vert {
+    margin-left: 8px;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
-.leaflet-plot-area {
-	fill: #cfc;
-	stroke: #080;
+.leaflet-grid-label .gridlabel-vert,
+.leaflet-grid-label .gridlabel-horiz {
+    padding-left:2px;
+    text-shadow: -2px 0 #FFFFFF, 0 2px #FFFFFF, 2px 0 #FFFFFF, 0 -2px #FFFFFF;
 }
 
-/* Extra Map adapted from Control.MiniMap by Norkart
-   (see copyright notice in Control.ExtraMap.js */
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.ExtraMap %%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/* Adapted from Control.MiniMap by Norkart
+(see copyright notice in Control.ExtraMap.js */
+
 .leaflet-control-extramap {
-	border:solid rgba(255, 255, 255, 0.7) 2px;
-/*
-	box-shadow: 0 1px 7px #999;
-*/
+	border: solid #FFFFFF 2px;
+	box-shadow: 1px 1px 2px #a0a0a0;
 	background: #0f0f0f;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	border-radius: 8px;
+	border-radius: 4px;
 	z-index: 0;
+	transition: all 500ms;
 }
 
 .leaflet-control-extramap a {
-	background-color: rgba(255, 255, 255, 0.75);
-	background-position: 1px 2px;
-	background-repeat: no-repeat;
-	display: block;
-	outline: none;
 /*
-	z-index: 99999;
+	background-color: #FFFFFF;
+	background-position: 1px 2px;
 */
+	background-repeat: no-repeat;
+	z-index: 99999;
 }
 
-.leaflet-control-extramap a.minimized {
-	background-position: 1px -18px;
-}
-
-.leaflet-control-extramap-toggle-display {
-	background-image: url("images/toggle.png");
-	border-radius: 4px 4px 4px 4px;
-	height: 19px;
-	width: 19px;
+.leaflet-control-extramap a {
+	background-size: cover;
 	position: absolute;
-	bottom: 0;
-	right: 0;
-	z-index: 2000;
+	border-radius: 0px;
+}
+.leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized,
+.leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topleft
+.leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-bottomleft,
+.leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topright {
+	background-image: url("images/icon-map.svg");
+	background-color: #FFFFFF;
+}
+.leaflet-control-extramap:hover .leaflet-control-extramap-toggle-display {
+	background-image: url("images/icon-shrink.svg");
 }
 
-/* Full Screen adapted from Control.FullScreen by Bruno Bergot
-   (see copyright notice in Control.FullScreen.js */
+.leaflet-control-minimap-toggle-display-bottomright {
+	bottom: 0;
+	right: 0; 
+}
+
+.leaflet-control-extramap-toggle-display-topleft{
+	top: 0;
+	left: 0; 
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.leaflet-control-extramap-toggle-display-bottomleft{
+	bottom: 0;
+	left: 0; 
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+.leaflet-control-extramap-toggle-display-topright{
+	top: 0;
+	right: 0; 
+	-webkit-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.FullScreen %%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/* Adapted from Control.FullScreen by Bruno Bergot
+   (see copyright notice in Control.FullScreen.js
+*/
 a.leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-fullscreen.svg);
 }
@@ -351,26 +945,15 @@ a.leaflet-control-zoom-fullscreen {
 :fullscreen .leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-windowed.svg)!important;
 }
-
 :-moz-full-screen .leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-windowed.svg)!important;
 }
-
 :-webkit-full-screen .leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-windowed.svg)!important;
 }
-
 :-ms-fullscreen .leaflet-control-zoom-fullscreen {
 	background-image: url(images/icon-windowed.svg)!important;
 }
-
-/*
-.leaflet-container:-webkit-full-screen {
-	width: 100% !important;
-	height: 100% !important;
-	z-index: 99999;
-}
-*/
 
 .leaflet-pseudo-fullscreen {
 	position: fixed !important;
@@ -378,12 +961,13 @@ a.leaflet-control-zoom-fullscreen {
 	height: 100% !important;
 	top: 0px !important;
 	left: 0px !important;
-	z-index: 99999;
+	z-index: 999;
 }
 
-/* File Menu */
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FileTree %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/* File Tree */
 UL.filetree {
 	font-family: Verdana, sans-serif;
 	font-size: 11px;
@@ -443,14 +1027,23 @@ UL.filetree A:hover {
 	background: inherit;
 }
 
-/* Attribution */
+/* jQuery windows */
+.ui-dialog-titlebar-close {
+	width: 24px !important;
+	height: 24px !important;
+	overflow: hidden;
+	top: 40% !important;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%% Control.Attribution.Logos %%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-attribution {
 	background: rgba(100,100,100,0.5) !important;
 	color: white;
-	-webkit-border-radius: 4px;
-	        border-radius: 4px;
-	box-shadow: 1px 1px 2px #000 inset;
+	border-radius: 4px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
 	margin-bottom: 5px !important;
 	margin-right: 10px !important;
 	line-height: 200%;
@@ -492,10 +1085,203 @@ UL.filetree A:hover {
 	background: url(images/leaflet.svg) no-repeat;
 }
 
-/* jQuery windows */
-.ui-dialog-titlebar-close {
-	width: 24px!important;
-	height: 24px!important;
-	overflow:hidden;
-	top: 40%!important;
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Sidebar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/* Adapted from the plugin by Tobias Bieniek
+   (see copyright notice in Control.Sidebar.js
+*/
+
+a.leaflet-control-zoom-sidebar {
+	background-image: url(images/icon-backward2.svg);
 }
+a.leaflet-control-zoom-sidebar.collapsed {
+	background-image: url(images/icon-menu.svg);
+}
+
+.sidebar {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 330px;
+	overflow: hidden;
+	z-index: 2000;
+	top: 10px;
+	bottom: 10px;
+	transition: width 500ms;
+	cursor: default;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	border-radius: 4px;
+}
+
+/*
+.sidebar.leaflet-touch {
+	box-shadow: none;
+	border: 2px solid rgba(0, 0, 0, 0.2);
+}
+*/
+
+.sidebar-left {
+	left: 10px;
+}
+
+.sidebar-right {
+	right: 10px;
+}
+
+.sidebar-left ~ .sidebar-map {
+	margin-left: 0px;
+}
+.sidebar-right ~ .sidebar-map {
+	margin-right: 40px;
+}
+
+.sidebar.collapsed {
+	width: 0px;
+	transition: width 500ms;
+}
+.sidebar.closed {
+	width: 32px;
+	transition: width 500ms;
+}
+
+.sidebar-left.collapsed ~ .leaflet-left {
+	left: 4px;
+}
+.sidebar-left.closed ~ .leaflet-left {
+	left: 46px;
+}
+
+.sidebar-left ~ .leaflet-left {
+	transition: left 500ms;
+	left: 344px;
+}
+
+.sidebar-tabs {
+	top: 0px;
+	bottom: 0px;
+	height: 100%;
+	background-color: #fff;
+	box-shadow: 1px 1px 2px #a0a0a0;
+	z-index: 1000;
+}
+
+.sidebar-left .sidebar-tabs {
+	left: 0px;
+}
+.sidebar-right .sidebar-tabs {
+	right: 0px; }
+
+.sidebar-tabs, .sidebar-tabs > ul {
+	position: absolute;
+	width: 32px;
+	margin: 0px;
+	padding: 0px;
+}
+.sidebar-tabs > li, .sidebar-tabs > ul > li {
+	width: 100%;
+	height: 32px;
+	color: #333;
+	font-size: 12pt;
+	overflow: hidden;
+	transition: all 80ms;
+}
+.sidebar-tabs > li:hover, .sidebar-tabs > ul > li:hover {
+	color: #000;
+	background-color: #eee;
+}
+.sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
+	color: #fff;
+	background-color: #d0d0d0;
+}
+.sidebar-tabs > li.disabled, .sidebar-tabs > ul > li.disabled {
+	color: rgba(51, 51, 51, 0.4);
+}
+.sidebar-tabs > li.disabled:hover, .sidebar-tabs > ul > li.disabled:hover {
+	background: transparent;
+}
+.sidebar-tabs > li.disabled > a, .sidebar-tabs > ul > li.disabled > a {
+cursor: default;
+}
+.sidebar-tabs > li > a, .sidebar-tabs > ul > li > a {
+	display: inline-table;
+	width: 100%;
+	height: 100%;
+	line-height: 32px;
+	color: inherit;
+	text-decoration: none;
+	text-align: center;
+}
+.sidebar-tabs > ul + ul {
+	bottom: 0;
+}
+
+.sidebar-content {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	background-color: rgba(255, 255, 255, 0.95);
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.sidebar-left .sidebar-content {
+	left: 32px;
+	right: 0px;
+}
+.sidebar-right .sidebar-content {
+	left: 0px;
+	right: 32px;
+}
+.sidebar.closed > .sidebar-content {
+	overflow-y: hidden;
+}
+
+.sidebar-pane {
+	display: none;
+	left: 0px;
+	right: 0px;
+	box-sizing: border-box;
+	padding: 0px 0px;
+}
+.sidebar-pane.active {
+	display: block;
+}
+
+.sidebar-header {
+	margin: 0px;
+	height: 32px;
+	padding: 0px 36px 0px 4px;
+	line-height: 32px;
+	font-size: 16px;
+	color: #505050;
+	text-align: center;
+	text-shadow: none;
+	background-color: #d0d0d0;
+}
+.sidebar-right .sidebar-header {
+	padding-left: 40px;
+}
+
+.sidebar-close {
+	position: absolute;
+	top: 0px;
+	width: 32px;
+	height: 31px;
+	display: block;
+	outline: none;
+	text-align: center;
+	cursor: pointer;
+	background-image: url(images/icon-backward.svg);
+	background-color: rgba(255, 255, 255, 0.75);
+	background-repeat: no-repeat;
+	background-position: center;
+	box-shadow: 1px 1px 2px #a0a0a0;
+}
+
+.sidebar-left .sidebar-close {
+	right: 0px;
+}
+.sidebar-right .sidebar-close {
+	left: 0px;
+}
+

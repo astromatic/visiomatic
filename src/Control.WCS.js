@@ -3,34 +3,71 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 22/09/2014
+#	Last modified: 05/11/2015
 */
 L.Control.WCS = L.Control.extend({
 	options: {
 		position: 'bottomleft',
-		units: 'HMS'
+		title: 'Center coordinates. Click to change',
+		coordinates: [{
+			label: 'RA, Dec',
+			units: 'HMS',
+			nativeCelsys: false
+		}]
 	},
 
 	onAdd: function (map) {
 		// Create coordinate input/display box
-		var input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs');
+		var _this = this,
+			  dialog = this._wcsdialog =  L.DomUtil.create('div', 'leaflet-control-wcs-dialog'),
+			  coordSelect = L.DomUtil.create('select', 'leaflet-control-wcs-select', dialog),
+			  choose = document.createElement('option'),
+		    coords = this.options.coordinates,
+			  opt = [],
+			  coordIndex;
+
+		L.DomEvent.disableClickPropagation(coordSelect);
+		this._currentCoord = 0;
+		coordSelect.id = 'leaflet-coord-select';
+		coordSelect.title = 'Switch coordinate system';
+		for (var c in coords) {
+			opt[c] = document.createElement('option');
+			opt[c].text = coords[c].label;
+			coordIndex = parseInt(c, 10);
+			opt[c].value = coordIndex;
+			if (coordIndex === 0) {
+				opt[c].selected = true;
+			}
+			coordSelect.add(opt[c], null);
+		}
+
+		L.DomEvent.on(coordSelect, 'change', function (e) {
+			_this._currentCoord = coordSelect.value;
+			_this._onDrag();
+		});
+
+		var	input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs-input', dialog);
+
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
+		input.title = this.options.title;
 		// Speech recognition on WebKit engine
 		if ('webkitSpeechRecognition' in window) {
 			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
 		}
 
-		map.on('drag zoomend', this._onDrag, this);
+		map.on('move zoomend', this._onDrag, this);
 		L.DomEvent.on(input, 'focus', function () {
 			this.setSelectionRange(0, this.value.length);
 		}, input);
-		L.DomEvent.on(input, 'change', this._onInputChange, this);
+		L.DomEvent.on(input, 'change', function () {
+			this.panTo(this._wcsinput.value);
+		}, this);
 
-		return this._wcsinput;
+		return this._wcsdialog;
 	},
 
 	onRemove: function (map) {
@@ -38,11 +75,19 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	_onDrag: function (e) {
-		var latlng = this._map.getCenter();
-		if (this._map.options.crs && this._map.options.crs.pixelFlag) {
+		var latlng = this._map.getCenter(),
+		    wcs = this._map.options.crs,
+				coord = this.options.coordinates[this._currentCoord];
+
+		if (wcs.pixelFlag) {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
 		} else {
-			switch (this.options.units) {
+			if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+				latlng = wcs.celsysToEq(latlng);
+			} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+				latlng = wcs.eqToCelsys(latlng);
+			}
+			switch (coord.units) {
 			case 'HMS':
 				this._wcsinput.value = this._latLngToHMSDMS(latlng);
 				break;
@@ -93,28 +138,38 @@ L.Control.WCS = L.Control.extend({
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
-	_onInputChange: function (e) {
-		var re = /^(\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
-		 str = this._wcsinput.value,
-		 result = re.exec(str);
-		if (result && result.length >= 3) {
-		// If in degrees, pan directly
-			this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
+	panTo: function (str) {
+		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
+				result = re.exec(str),
+				wcs = this._map.options.crs,
+				coord = this.options.coordinates[this._currentCoord],
+				latlng = wcs.parseCoords(str);
+		if (latlng) {
+			if (wcs.pixelFlag) {
+				this._map.panTo(latlng);
+			} else {
+				if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+					latlng = wcs.eqToCelsys(latlng);
+				} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+					latlng = wcs.celsysToEq(latlng);
+				}
+				this._map.panTo(latlng);
+			}
 		} else {
-		// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURI('/cgi-bin/nph-sesame/-oI/A?' + str,
-			 'getting coordinates for ' + str, this._getCoordinates, this, true);
+			// If not, ask Sesame@CDS!
+			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
 
 	_getCoordinates: function (_this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var re = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g,
-				 str = httpRequest.responseText,
-				 result = re.exec(str);
-				if (result && result.length >= 3) {
-					_this._map.panTo({lat: Number(result[2]), lng: Number(result[1])});
+				var str = httpRequest.responseText,
+					latlng = _this._map.options.crs.parseCoords(str, true);
+
+				if (latlng) {
+					_this._map.panTo(latlng);
 					_this._onDrag();
 				} else {
 					alert(str + ': Unknown location');

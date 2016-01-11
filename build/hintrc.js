@@ -7,7 +7,7 @@ exports.config = {
 	"strict": false,
 
 	// code style
-	"bitwise": true,
+	"bitwise": false,
 	"camelcase": true,
 	"curly": true,
 	"eqeqeq": true,

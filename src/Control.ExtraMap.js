@@ -4,12 +4,12 @@
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 11/02/2014
+#	Last modified: 03/12/2015
 
-Original code Copyright (c) 2012, Norkart AS
+Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
@@ -35,61 +35,70 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 L.Control.ExtraMap = L.Control.extend({
 	options: {
 		position: 'bottomright',
+		title: 'Navigation mini-map. Grab to navigate',
 		toggleDisplay: true,
-		zoomLevelOffset: -5,
 		zoomLevelFixed: false,
+		zoomLevelOffset: -5,
 		zoomAnimation: false,
 		autoToggleDisplay: false,
 		width: 150,
 		height: 150,
-		aimingRectOptions: {color: '#ff7800', weight: 1, clickable: false,
-		                    renderer: L.Canvas.instance},
-		shadowRectOptions: {color: '#000000', weight: 1, clickable: false,
-		                    opacity: 0, fillOpacity: 0}
+		collapsedWidth: 24,
+		collapsedHeight: 24,
+		aimingRectOptions: {
+			color:  '#FF7800',
+			weight: 1,
+			clickable: false
+		},
+		shadowRectOptions: {
+			color: '#FDC82F',
+			weight: 1,
+			clickable: false,
+			opacity: 0,
+			fillOpacity: 0
+		},
+		strings: {hideText: 'Hide map', showText: 'Show map'}
 	},
-	
-	hideText: 'Hide map',
-	showText: 'Show map',
-	
-	//layer is the map layer to be shown in the extramap
+
+	// Layer is the map layer to be shown in the minimap
 	initialize: function (layer, options) {
 		L.Util.setOptions(this, options);
-		//Make sure the aiming rects are non-clickable even if the user tries
-		// to set them clickable (most likely by forgetting to specify them false)
+		// Make sure the aiming rects are non-clickable even if the user tries to set
+		// them clickable (most likely by forgetting to specify them false)
 		this.options.aimingRectOptions.clickable = false;
 		this.options.shadowRectOptions.clickable = false;
 		this._layer = layer;
 	},
-	
+
 	onAdd: function (map) {
 
 		this._mainMap = map;
 
-		//Creating the container and stopping events from spilling through to the main map.
+		// Creating the container and stopping events from spilling through to the main map.
 		this._container = L.DomUtil.create('div', 'leaflet-control-extramap');
 		this._container.style.width = this.options.width + 'px';
 		this._container.style.height = this.options.height + 'px';
+		this._container.title = this.options.title;
 		L.DomEvent.disableClickPropagation(this._container);
 		L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
 
-
-		this._extraMap = new L.Map(this._container,
-		{
+		this._extraMap = new L.Map(this._container, {
 			attributionControl: false,
 			zoomControl: false,
 			zoomAnimation: this.options.zoomAnimation,
 			autoToggleDisplay: this.options.autoToggleDisplay,
-			touchZoom: !this.options.zoomLevelFixed,
-			scrollWheelZoom: !this.options.zoomLevelFixed,
-			doubleClickZoom: !this.options.zoomLevelFixed,
-			boxZoom: !this.options.zoomLevelFixed,
+			touchZoom: !this._isZoomLevelFixed(),
+			scrollWheelZoom: !this._isZoomLevelFixed(),
+			doubleClickZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed(),
 		});
 
 		this._layer.addTo(this._extraMap);
-
-		//These bools are used to prevent infinite loops of the two maps notifying each other that they've moved.
-//		this._mainMapMoving = false;
-//		this._extraMapMoving = false;
+	
+		// These bools are used to prevent infinite loops of the two maps notifying
+		// each other that they've moved.
+		// this._mainMapMoving = false;
+		// this._extraMapMoving = false;
 
 		//Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
 		this._userToggledDisplay = false;
@@ -102,11 +111,10 @@ L.Control.ExtraMap = L.Control.extend({
 		this._layer.once('metaload', function () {
 			this._mainMap.whenReady(L.Util.bind(function () {
 				this._extraMap.whenReady(L.Util.bind(function () {
-					var latlngs = this._getMapLatLngBounds(this._mainMap);
-					this._aimingRect = L.polygon(latlngs,
-					 this.options.aimingRectOptions).addTo(this._extraMap);
-					this._shadowRect = L.polygon(latlngs,
-					 this.options.shadowRectOptions).addTo(this._extraMap);
+					this._aimingRect = L.rectangle(this._mainMap.getBounds(),
+					  this.options.aimingRectOptions).addTo(this._extraMap);
+					this._shadowRect = L.rectangle(this._mainMap.getBounds(),
+					  this.options.shadowRectOptions).addTo(this._extraMap);
 					this._mainMap.on('moveend', this._onMainMapMoved, this);
 					this._mainMap.on('move', this._onMainMapMoving, this);
 					this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
@@ -134,21 +142,23 @@ L.Control.ExtraMap = L.Control.extend({
 		this._extraMap.removeLayer(this._layer);
 	},
 
-	_getMapLatLngBounds: function (map) {
-		var bounds = map.getPixelBounds(),
-		 bmin = bounds.min,
-		 bmax = bounds.max;
-		return [map.unproject([bmin.x, bmin.y]), map.unproject([bmax.x, bmin.y]),
-		 map.unproject([bmax.x, bmax.y]), map.unproject([bmin.x, bmax.y])];
+	changeLayer: function (layer) {
+		this._extraMap.removeLayer(this._layer);
+		this._layer = layer;
+		this._extraMap.addLayer(this._layer);
 	},
 
-
 	_addToggleButton: function () {
-		this._toggleDisplayButton = this.options.toggleDisplay ?
-			this._createButton('', this.hideText,
-			 'leaflet-control-extramap-toggle-display', this._container,
-			 this._toggleDisplayButtonClicked, this)
-		: undefined;
+		this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
+			'', this.options.strings.hideText, (
+				'leaflet-control-extramap-toggle-display ' +
+			  'leaflet-control-extramap-toggle-display-' + this.options.position
+			),
+			this._container, this._toggleDisplayButtonClicked, this
+		) : undefined;
+
+		this._toggleDisplayButton.style.width = this.options.collapsedWidth + 'px';
+		this._toggleDisplayButton.style.height = this.options.collapsedHeight + 'px';
 	},
 
 	_createButton: function (html, title, className, container, fn, context) {
@@ -173,11 +183,10 @@ L.Control.ExtraMap = L.Control.extend({
 		this._userToggledDisplay = true;
 		if (!this._minimized) {
 			this._minimize();
-			this._toggleDisplayButton.title = this.showText;
-		}
-		else {
+			this._toggleDisplayButton.title = this.options.strings.showText;
+		} else {
 			this._restore();
-			this._toggleDisplayButton.title = this.hideText;
+			this._toggleDisplayButton.title = this.options.strings.hideText;
 		}
 	},
 
@@ -185,21 +194,19 @@ L.Control.ExtraMap = L.Control.extend({
 		if (minimize !== this._minimized) {
 			if (!this._minimized) {
 				this._minimize();
-			}
-			else {
+			} else {
 				this._restore();
 			}
 		}
 	},
 
 	_minimize: function () {
-		// hide the extramap
+		// hide the minimap
 		if (this.options.toggleDisplay) {
-			this._container.style.width = '19px';
-			this._container.style.height = '19px';
-			this._toggleDisplayButton.className += ' minimized';
-		}
-		else {
+			this._container.style.width = this.options.collapsedWidth + 'px';
+			this._container.style.height = this.options.collapsedHeight + 'px';
+			this._toggleDisplayButton.className += (' minimized-' + this.options.position);
+		} else {
 			this._container.style.display = 'none';
 		}
 		this._minimized = true;
@@ -210,9 +217,8 @@ L.Control.ExtraMap = L.Control.extend({
 			this._container.style.width = this.options.width + 'px';
 			this._container.style.height = this.options.height + 'px';
 			this._toggleDisplayButton.className = this._toggleDisplayButton.className
-					.replace(/(?:^|\s)minimized(?!\S)/g, '');
-		}
-		else {
+				.replace('minimized-'  + this.options.position, '');
+		} else {
 			this._container.style.display = 'block';
 		}
 		this._minimized = false;
@@ -226,21 +232,27 @@ L.Control.ExtraMap = L.Control.extend({
 		} else {
 			this._extraMapMoving = false;
 		}
-		this._aimingRect.setLatLngs(this._getMapLatLngBounds(this._mainMap));
+		this._aimingRect.setBounds(this._mainMap.getBounds());
 	},
 
 	_onMainMapMoving: function (e) {
-		this._aimingRect.setLatLngs(this._getMapLatLngBounds(this._mainMap));
+		this._aimingRect.setBounds(this._mainMap.getBounds());
 	},
 
 	_onExtraMapMoveStarted: function (e) {
-		this._lastAimingRectPosition = this._aimingRect.getLatLngs();
+		var lastAimingRect = this._aimingRect.getBounds();
+		var sw = this._extraMap.latLngToContainerPoint(lastAimingRect.getSouthWest());
+		var ne = this._extraMap.latLngToContainerPoint(lastAimingRect.getNorthEast());
+		this._lastAimingRectPosition = {sw: sw, ne: ne};
 	},
 
 	_onExtraMapMoving: function (e) {
 		if (!this._mainMapMoving && this._lastAimingRectPosition) {
-			this._shadowRect.setLatLngs(this._lastAimingRectPosition);
-			this._shadowRect.setStyle({opacity: 0, fillOpacity: 0.0});
+			this._shadowRect.setBounds(new L.LatLngBounds(
+				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
+				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
+			));
+			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
 		}
 	},
 
@@ -254,30 +266,32 @@ L.Control.ExtraMap = L.Control.extend({
 		}
 	},
 
+	_isZoomLevelFixed: function () {
+		var zoomLevelFixed = this.options.zoomLevelFixed;
+		return this._isDefined(zoomLevelFixed) && this._isInteger(zoomLevelFixed);
+	},
+
 	_decideZoom: function (fromMaintoExtra) {
-		if (!this.options.zoomLevelFixed) {
+		if (!this._isZoomLevelFixed()) {
 			if (fromMaintoExtra) {
 				return this._mainMap.getZoom() + this.options.zoomLevelOffset;
 			} else {
 				var currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom();
 				var proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
 				var toRet;
-                                
+
 				if (currentDiff > this.options.zoomLevelOffset &&
-				    this._mainMap.getZoom() < (this._extraMap.getMinZoom() -
-					                             this.options.zoomLevelOffset)) {
-					//This means the miniMap is zoomed out to the minimum zoom level and can't zoom any more.
+				  this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
+					// This means the extraMap is zoomed out to the minimum zoom level and
+					// can't zoom any more.
 					if (this._extraMap.getZoom() > this._lastExtraMapZoom) {
-						// This means the user is trying to zoom in by using the minimap,
-						// zoom the main map.
+						// This means the user is trying to zoom in by using the minimap, zoom the main map.
 						toRet = this._mainMap.getZoom() + 1;
-						// Also we cheat and zoom the minimap out again to keep it
-						// visually consistent.
+						// Also we cheat and zoom the minimap out again to keep it visually consistent.
 						this._extraMap.setZoom(this._extraMap.getZoom() - 1);
 					} else {
-						//Either the user is trying to zoom out past the mini map's min
-						// zoom or has just panned using it, we can't tell the difference.
-						// Therefore, we ignore it!
+						// Either the user is trying to zoom out past the minimap's min zoom or
+						// has just panned using it, we can't tell the difference. Therefore, we ignore it!
 						toRet = this._mainMap.getZoom();
 					}
 				} else {
@@ -310,19 +324,27 @@ L.Control.ExtraMap = L.Control.extend({
 		}
 
 		return this._minimized;
-	}
-});
+	},
 
+	_isInteger: function (value) {
+		return typeof value === 'number';
+	},
+
+	_isDefined: function (value) {
+		return typeof value !== 'undefined';
+	},
+});
+	
 L.Map.mergeOptions({
 	extraMapControl: false
 });
-
+	
 L.Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
 		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
 	}
 });
-
-L.control.extramap = function (options) {
-	return new L.Control.ExtraMap(options);
+	
+L.control.extraMap = function (layer, options) {
+	return new L.Control.ExtraMap(layer, options);
 };

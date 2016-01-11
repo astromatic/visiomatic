@@ -3,7 +3,7 @@ var fs = require('fs'),
     UglifyJS = require('uglify-js'),
     deps = require('./deps.js').deps,
     hintrc = require('./hintrc.js').config,
-		$ = require('jquery-browser');
+		$ = require('jquery');
 
 function lintFiles(files) {
 

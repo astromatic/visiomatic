@@ -5,9 +5,8 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2013-2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud.
 #
 #	Last modified: 10/02/2014
 
@@ -45,7 +44,7 @@ if (typeof require !== 'undefined') {
 	L.Control.FullScreen = L.Control.extend({
 		options: {
 			position: 'topleft',
-			title: 'Full Screen',
+			title: 'Toggle full screen mode',
 			forceSeparateButton: false
 		},
 	

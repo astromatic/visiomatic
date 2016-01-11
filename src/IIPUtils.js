@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                    Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 10/02/2014
+#	Last modified: 04/12/2015
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -14,7 +14,7 @@ L.IIPUtils = {
 	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
 
 // Ajax call to server
-	requestURI: function (uri, purpose, action, context) {
+	requestURL: function (url, purpose, action, context, timeout) {
 		var	httpRequest;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
@@ -34,11 +34,42 @@ L.IIPUtils = {
 			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
 			return false;
 		}
-		httpRequest.open('GET', uri);
+		if (timeout) {
+			httpRequest.timeout = timeout * 1000;	// seconds -> milliseconds
+			httpRequest.ontimeout = function () {
+				alert('Time out while ' + purpose);
+			};
+		}
+		httpRequest.open('GET', url);
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
 		httpRequest.send();
+	},
+
+	// Return a dictionary of name/value pairs from a URL string, from
+	// http://stevenbenner.com/2010/03/javascript-regex-trick-parse-a-query-string-into-an-object/
+	parseURL: function (url) {
+		var dict = {};
+		url.replace(
+			new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
+			function ($0, $1, $2, $3) { dict[$1] = $3; }
+		);
+		return dict;
+	},
+
+	// Return the domain of a given URL (from http://stackoverflow.com/a/28054735)
+	checkDomain: function (url) {
+		if (url.indexOf('//') === 0) {
+			url = location.protocol + url;
+		}
+		return url.toLowerCase().replace(/([a-z])?:\/\//, '$1').split('/')[0];
+	},
+
+	// Check if a given URL is external (from http://stackoverflow.com/a/28054735)
+	isExternal: function (url) {
+		return ((url.indexOf(':') > -1 || url.indexOf('//') > -1) &&
+			this.checkDomain(location.href) !== this.checkDomain(url));
 	},
 
 // Return the distance between two world coords latLng1 and latLng2 in degrees
