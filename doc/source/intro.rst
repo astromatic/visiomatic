@@ -3,7 +3,7 @@ Introduction
 ============
 
 The purpose of this manual is to help administrators and data scientists setting
-up and operating VisiOmatic|_ and |IIPImage-astro|_ together.
+up and operating |VisiOmatic|_ and |IIPImage-astro|_ together.
 
 This manual is divided in four main sections. The first section gives a technical 
 overview of |IIPImage| and |VisiOmatic|, and their capabilities. The second
