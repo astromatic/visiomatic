@@ -1,8 +1,8 @@
 {
 	"name": "visiomatic",
-	"version": "1.0.2",
+	"version": "2.0.0",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
-	"dependencies": {"leaflet": "~0.7"},
+	"dependencies": {"leaflet": "~1.0"},
 	"devDependencies": {
 		"jshint": "~2.1.4",
 		"mocha": "~1.10.0",
@@ -10,16 +10,16 @@
 		"karma": "~0.8.6",
 		"uglify-js": "~2.3.6",
 		"jake": "~0.5.16",
-		"jquery-browser": "~1.10"
+		"jquery": "~2.1.4"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
 		"test": "jake test",
 		"prepublish": "jake"
 	},
-	"license" : "GPL",
+	"license" : "BSD-2-Clause",
 	"repository": {
-		"type": "svn",
+		"type": "git",
 		"url": "https://github.com/astromatic/visiomatic"
 	},
   "contributors": [

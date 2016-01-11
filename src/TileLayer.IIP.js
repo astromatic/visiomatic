@@ -5,24 +5,35 @@
 #	This file part of:	VisiOmatic
 #
 #	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                             Chiara Marmo - IDES/Paris-Sud,
-#                                             Ruven Pillay - C2RMF/CNRS
+#                             Chiara Marmo - IDES/Paris-Sud,
+#                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		24/01/2015
+#	Last modified:		07/12/2015
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
 		title: '',
+		crs: null,
+		nativeCelsys: false,
+		center: false,
+		fov: false,
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
 		noWrap: true,
 		contrast: 1.0,
+		colorSat: 1.0,
 		gamma: 1.0,
 		cMap: 'grey',
 		invertCMap: false,
-		quality: 90
+		quality: 90,
+		mixingMode: 'color',
+		channelColors: [],
+		channelLabels: [],
+		channelUnits: [],
+		minMaxValues: [],
+		defaultChannel: 0
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -39,6 +50,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		*/
 	},
 
+	// Default IIPImage rendering parameters
 	iipdefault: {
 		contrast: 1,
 		gamma: 1,
@@ -50,6 +62,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	initialize: function (url, options) {
+
+		this._url = url.replace(/\&.*$/g, '');
+
 		options = L.setOptions(this, options);
 
 		// detecting retina displays, adjusting tileSize and zoom levels
@@ -62,8 +77,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			options.maxZoom--;
 		}
 
-		this._url = url.replace(/\&.*$/g, '');
-
 		if (typeof options.subdomains === 'string') {
 			options.subdomains = options.subdomains.split('');
 		}
@@ -74,26 +87,39 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipGridSize = [];
 		this.iipGridSize[0] = {x: 1, y: 1};
 		this.iipBPP = 8;
-		this.iipMinZoom = this.options.minZoom;
-		this.iipMaxZoom = this.options.maxZoom;
-		this.iipContrast = this.options.contrast;
-		this.iipGamma = this.options.gamma;
-		this.iipCMap = this.options.cMap;
-		this.iipInvertCMap = this.options.invertCMap;
+		this.iipMode = options.mixingMode;		// Image rendering mode: 'mono' or 'color'
+		this.iipChannel = 0;
+		this.iipNChannel = 1;
+		this.iipMinZoom = options.minZoom;
+		this.iipMaxZoom = options.maxZoom;
+		this.iipContrast = options.contrast;
+		this.iipColorSat = options.colorSat;
+		this.iipGamma = options.gamma;
+		this.iipCMap = options.cMap;
+		this.iipInvertCMap = options.invertCMap;
 		this.iipMinValue = [];
 		this.iipMinValue[0] = 0.0;
 		this.iipMaxValue = [];
 		this.iipMaxValue[0] = 255.0;
-		this.iipQuality = this.options.quality;
+		this.iipMix = [[]];
+		this.iipRGB = [];
+		this.iipChannelLabels = [];
+		this.iipChannelUnits = [];
+		this.iipQuality = options.quality;
 
 		this._title = options.title.length > 0 ? options.title :
 		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getIIPMetaData(this._url);
+
+		// for https://github.com/Leaflet/Leaflet/issues/137
+		if (!L.Browser.android) {
+			this.on('tileunload', this._onTileRemove);
+		}
 		return this;
 	},
 
 	getIIPMetaData: function (url) {
-		L.IIPUtils.requestURI(url +
+		L.IIPUtils.requestURL(url +
 			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
 			'&obj=resolution-number&obj=bits-per-channel' +
 			'&obj=min-max-sample-values&obj=subject',
@@ -110,6 +136,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					alert('Error: Unexpected response from IIP server ' +
 					 layer._url.replace(/\?.*$/g, ''));
 				}
+				var options = layer.options,
+				    iipdefault = layer.iipdefault;
 
 				matches = layer._readIIPKey(response, 'Max-size', '(\\d+)\\s+(\\d+)');
 				var maxsize = {
@@ -122,16 +150,18 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					y: parseInt(matches[2], 10)
 				};
 
+				options.tileSize = layer.iipTileSize.x;
+
 				// Find the lowest and highest zoom levels
 				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
 				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-				if (layer.iipMinZoom > layer.options.minZoom) {
-					layer.options.minZoom = layer.iipMinZoom;
+				if (layer.iipMinZoom > options.minZoom) {
+					options.minZoom = layer.iipMinZoom;
 				}
-				if (!layer.options.maxZoom) {
-					layer.options.maxZoom = layer.iipMaxZoom + 6;
+				if (!options.maxZoom) {
+					options.maxZoom = layer.iipMaxZoom + 6;
 				}
-				layer.options.maxNativeZoom = layer.iipMaxZoom;
+				options.maxNativeZoom = layer.iipMaxZoom;
 
 				// Set grid sizes
 				for (var z = 0; z <= layer.iipMaxZoom; z++) {
@@ -145,7 +175,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					};
 				}
 				// (Virtual) grid sizes for extra zooming
-				for (z = layer.iipMaxZoom; z <= layer.options.maxZoom; z++) {
+				for (z = layer.iipMaxZoom; z <= options.maxZoom; z++) {
 					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
 				}
 
@@ -153,30 +183,98 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				matches = layer._readIIPKey(response, 'Bits-per-channel', '(\\d+)');
 				layer.iipBPP = parseInt(matches[1], 10);
 				// Only 32bit data are likely to be linearly quantized
-				layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
+				if (layer.iipGamma === layer.iipdefault.gamma) {
+					layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
+				}
 
-				// Pre-computed Min and max pixel values
+				// Pre-computed min and max pixel values, as well as number of channels
 				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
 				 '\\s*(.*)');
 				var str = matches[1].split(/\s+/),
-				    nfloat = (str.length / 2),
-				    mmn = 0;
-				for (var n = 0; n < nfloat; n++) {
-					layer.iipdefault.minValue[n] = layer.iipMinValue[n] =
-					 parseFloat(str[mmn++]);
+				    nchannel = layer.iipNChannel = (str.length / 2),
+				    mmc = 0;
+				for (var c = 0; c < nchannel; c++) {
+					iipdefault.minValue[c] = parseFloat(str[mmc++]);
+					iipdefault.maxValue[c] = parseFloat(str[mmc++]);
 				}
-				for (n = 0; n < nfloat; n++) {
-					layer.iipdefault.maxValue[n] = layer.iipMaxValue[n] =
-					 parseFloat(str[mmn++]);
+
+				// Override min and max pixel values based on user provided options
+				var minmax = options.minMaxValues;
+				if (minmax.length) {
+					for (c = 0; c < nchannel; c++) {
+						if (minmax[c] !== undefined && minmax[c].length) {
+							layer.iipMinValue[c] = minmax[c][0];
+							layer.iipMaxValue[c] = minmax[c][1];
+						} else {
+							layer.iipMinValue[c] = iipdefault.minValue[c];
+							layer.iipMaxValue[c] = iipdefault.maxValue[c];
+						}
+					}
+				} else {
+					for (c = 0; c < nchannel; c++) {
+						layer.iipMinValue[c] = iipdefault.minValue[c];
+						layer.iipMaxValue[c] = iipdefault.maxValue[c];
+					}
 				}
-				if (layer.options.bounds) {
-					layer.options.bounds = L.latLngBounds(layer.options.bounds);
+
+				// Initialize mixing matrix to unity
+				var m,
+				    mix = layer.iipMix,
+						omix = options.channelColors,
+						rgb = layer.iipRGB;
+
+				for (c = 0; c < nchannel; c++) {
+					mix[c] = [];
+					var	col = 3;
+					if (omix.length && omix[c] && omix[c].length === 3) {
+						// Copy RGB triplet
+						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
+					} else {
+						rgb[c] = L.rgb(0.0, 0.0, 0.0);
+					}
+					if (omix.length === 0) {
+						rgb[c] = 1.0;
+					}
+					// Compute the current row of the mixing matrix
+					layer.rgbToMix(c);
 				}
-				layer.wcs = new L.CRS.WCS(response, {
+
+				// Default channel
+				layer.iipChannel = options.defaultChannel;
+
+				// Channel labels
+				var inlabels = options.channelLabels,
+				    ninlabel = inlabels.length,
+				    labels = layer.iipChannelLabels,
+				    inunits = options.channelUnits,
+				    ninunits = inunits.length,
+				    units = layer.iipChannelUnits;
+
+				// Copy those labels that have been provided 
+				for (c = 0; c < ninlabel; c++) {
+					labels[c] = inlabels[c];
+				}
+				// Fill out labels that are not provided with a default string 
+				for (c = ninlabel; c < nchannel; c++) {
+					labels[c] = 'Channel #' + (c + 1).toString();
+				}
+
+				// Copy those units that have been provided 
+				for (c = 0; c < ninunits; c++) {
+					units[c] = inunits[c];
+				}
+				// Fill out units that are not provided with a default string 
+				for (c = ninunits; c < nchannel; c++) {
+					units[c] = 'ADUs';
+				}
+
+				if (options.bounds) {
+					options.bounds = L.latLngBounds(options.bounds);
+				}
+				layer.wcs = options.crs ? options.crs : new L.CRS.WCS(response, {
+					nativeCelsys: layer.options.nativeCelsys,
 					nzoom: layer.iipMaxZoom + 1,
-					tileSize: layer.iipTileSize,
-					// Center on image if WCS is in pixels
-					crval: L.latLng((maxsize.y + 1.0) / 2.0, (maxsize.x + 1.0) / 2.0)
+					tileSize: layer.iipTileSize
 				});
 				layer.iipMetaReady = true;
 				layer.fire('metaload');
@@ -184,6 +282,47 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				alert('There was a problem with the IIP metadata request.');
 			}
 		}
+	},
+
+	// Convert an RGB colour and saturation settings to mixing matrix elements
+	rgbToMix: function (chan, rgb) {
+		if (rgb) {
+			this.iipRGB[chan] = rgb.clone();
+		} else {
+			rgb = this.iipRGB[chan];
+		}
+
+		var	cr = this._gammaCorr(rgb.r),
+			  cg = this._gammaCorr(rgb.g),
+				cb = this._gammaCorr(rgb.b),
+			  lum = (cr + cg + cb) / 3.0,
+			  alpha = this.iipColorSat / 3.0;
+
+		this.iipMix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
+		this.iipMix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
+		this.iipMix[chan][2] = lum + alpha * (2.0 * cb - cr - cg);
+
+		return;
+	},
+
+	// Current channel index defines mixing matrix elements in "mono" mode
+	updateMono: function () {
+		this.iipMode = 'mono';
+	},
+
+	// RGB colours and saturation settings define mixing matrix elements in "color" mode
+	updateMix: function () {
+		var nchannel = this.iipNChannel;
+
+		this.iipMode = 'color';
+		for (var c = 0; c < nchannel; c++) {
+			this.rgbToMix(c, this.iipRGB[c]);
+		}
+	},
+
+	// Apply gamma correction
+	_gammaCorr: function (val) {
+		return val > 0.0 ? Math.pow(val, this.iipGamma) : 0.0;
 	},
 
 	_readIIPKey: function (str, keyword, regexp) {
@@ -206,16 +345,18 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	_addToMap: function (map) {
-		var center,
-		    zoom,
+		var zoom,
 		    newcrs = this.wcs,
 				curcrs = map.options.crs,
-				prevcrs = map._prevcrs;
+				prevcrs = map._prevcrs,
+				// Default center coordinates
+				center = map.options.center ? map.options.center : newcrs.projparam.crval;
 
 		if (map._loaded) {
 			curcrs._prevLatLng = map.getCenter();
 			curcrs._prevZoom = map.getZoom();
 		}
+
 		// Go to previous layers' coordinates if applicable
 		if (prevcrs && newcrs !== curcrs && map._loaded &&
 		    newcrs.pixelFlag === curcrs.pixelFlag) {
@@ -233,49 +374,59 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			zoom = newcrs._prevZoom;
 		}
 		else {
-			center = map.options.center ? map.options.center : newcrs.projparam.crval;
-			zoom = this.iipMinZoom;
+			// Default center coordinates and zoom
+			if (this.options.center) {
+				var	latlng = newcrs.parseCoords(this.options.center);
+
+				if (latlng) {
+					if (this.options.fov) {
+						zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
+					}
+					map.setView(latlng, zoom, {reset: true, animate: false});
+				} else {
+					// If not, ask Sesame@CDS!
+					L.IIPUtils.requestURL(
+						'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' +
+						  this.options.center,
+						'getting coordinates for ' + this.options.center,
+						function (_this, httpRequest) {
+							if (httpRequest.readyState === 4) {
+								if (httpRequest.status === 200) {
+									var str = httpRequest.responseText,
+										latlng = newcrs.parseCoords(str, true);
+
+									if (latlng) {
+										if (_this.options.fov) {
+											zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
+										}
+										map.setView(latlng, zoom, {reset: true, animate: false});
+									} else {
+										map.setView(center, zoom, {reset: true, animate: false});
+										alert(str + ': Unknown location');
+									}
+								} else {
+									map.setView(center, zoom, {reset: true, animate: false});
+									alert('There was a problem with the request to the Sesame service at CDS');
+								}
+							}
+						}, this, 10
+					);
+				}
+			} else {
+				map.setView(center, zoom, {reset: true, animate: false});
+			}
 		}
 
 		map._prevcrs = map.options.crs = newcrs;
-		map.setView(center, zoom, {reset: true, animate: false});
 		L.TileLayer.prototype.addTo.call(this, map);
-	},
-
-	_resetWrap: function () {
-		var map = this._map,
-		    crs = map.options.crs;
-
-		if (crs.infinite || this.options.noWrap) { return; }
-
-		var tileSize = this._getTileSize();
-
-		if (crs.wrapLng) {
-			this._wrapLng = [
-				Math.floor(map.project([0, crs.wrapLng[0]]).x / tileSize.x),
-				Math.ceil(map.project([0, crs.wrapLng[1]]).x / tileSize.x)
-			];
-		}
-
-		if (crs.wrapLat) {
-			this._wrapLat = [
-				Math.floor(map.project([crs.wrapLat[0], 0]).y / tileSize.y),
-				Math.ceil(map.project([crs.wrapLat[1], 0]).y / tileSize.y)
-			];
-		}
 	},
 
 	_getTileSizeFac: function () {
 		var	map = this._map,
-			zoom = map.getZoom(),
+			zoom = this._tileZoom,
 			zoomN = this.options.maxNativeZoom;
 		return (zoomN && zoom > zoomN) ?
 				Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN)) : 1;
-	},
-
-	_getTileSize: function () {
-		var zoomfac = this._getTileSizeFac();
-		return L.point(this.iipTileSize.x * zoomfac, this.iipTileSize.y * zoomfac);
 	},
 
 	_isValidTile: function (coords) {
@@ -283,8 +434,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		if (!crs.infinite) {
 			// don't load tile if it's out of bounds and not wrapped
-			var bounds = this._tileNumBounds;
-
+			var bounds = this._globalTileRange;
 			if ((!crs.wrapLng && (coords.x < bounds.min.x || coords.x > bounds.max.x)) ||
 			    (!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
 		}
@@ -305,71 +455,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		return L.latLngBounds(this.options.bounds).intersects(tileBounds);
 	},
 
-	// get the global tile coordinates range for the current zoom
-	_getTileNumBounds: function () {
-		var bounds = this._map.getPixelWorldBounds(),
-			tileSize = this._getTileSize();
+	createTile: function (coords, done) {
+		var	tile = L.TileLayer.prototype.createTile.call(this, coords, done);
 
-		return bounds ? L.bounds(
-			this._vecDiv(bounds.min.clone(), tileSize).floor(),
-			this._vecDiv(bounds.max.clone(), tileSize).ceil().subtract([1, 1])) : null;
-	},
+		tile.coords = coords;
 
-	// converts tile coordinates to its geographical bounds
-	_tileCoordsToBounds: function (coords) {
-
-		var map = this._map,
-		    tileSize = this._getTileSize(),
-
-		    nwPoint = this._vecMul(coords.clone(), tileSize),
-		    sePoint = nwPoint.add(tileSize),
-		    nw = map.wrapLatLng(map.unproject(nwPoint, coords.z)),
-		    se = map.wrapLatLng(map.unproject(sePoint, coords.z));
-
-		return new L.LatLngBounds(nw, se);
-	},
-
-	_update: function () {
-
-		if (!this._map) { return; }
-
-		var map = this._map,
-			bounds = map.getPixelBounds(),
-			zoom = map.getZoom(),
-		  tileSize = this._getTileSize();
-		if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
-			this._clearBgBuffer();
-			return;
-		}
-
-		// tile coordinates range for the current view
-		var tileBounds = L.bounds(
-			this._vecDiv(bounds.min.clone(), tileSize).floor(),
-			this._vecDiv(bounds.max.clone(), tileSize).floor()
-		);
-
-		this._addTiles(tileBounds);
-
-		if (this.options.unloadInvisibleTiles) {
-			this._removeOtherTiles(tileBounds);
-		}
-	},
-
-	_vecDiv: function (coords, vec) {
-		coords.x /= vec.x;
-		coords.y /= vec.y;
-		return coords;
-	},
-
-	_vecMul: function (coords, vec) {
-		coords.x *= vec.x;
-		coords.y *= vec.y;
-		return coords;
-	},
-
-	_getTilePos: function (coords) {
-		return this._vecMul(coords.clone(),
-		 this._getTileSize()).subtract(this._map.getPixelOrigin());
+		return tile;
 	},
 
 	getTileUrl: function (coords) {
@@ -387,21 +478,44 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		if (this.iipGamma !== this.iipdefault.gamma) {
 			str += '&GAM=' + (1.0 / this.iipGamma).toFixed(4);
 		}
-		if (this.iipMinValue[0] !== this.iipdefault.minValue[0] ||
-		 this.iipMaxValue[0] !== this.iipdefault.maxValue[0]) {
-			str += '&MINMAX=1,' + this.iipMinValue[0].toString() + ',' +
-				this.iipMaxValue[0].toString();
+		for (var c = 0; c < this.iipNChannel; c++) {
+			if (this.iipMinValue[c] !== this.iipdefault.minValue[c] ||
+			   this.iipMaxValue[c] !== this.iipdefault.maxValue[c]) {
+				str += '&MINMAX=' + (c + 1).toString() + ':' +
+				   this.iipMinValue[c].toString() + ',' + this.iipMaxValue[c].toString();
+			}
 		}
-		if (this.iipMinValue[1] !== this.iipdefault.minValue[1] ||
-		 this.iipMaxValue[1] !== this.iipdefault.maxValue[1]) {
-			str += '&MINMAX=2,' + this.iipMinValue[1].toString() + ',' +
-				this.iipMaxValue[1].toString();
+
+		var nchannel = this.iipNChannel,
+		    mix = this.iipMix,
+		    m, n;
+
+		str += '&CTW=';
+
+		if (this.iipMode === 'color') {
+			for (n = 0; n < 3; n++) {
+				if (n) { str += ';'; }
+				str += mix[0][n].toString();
+				for (m = 1; m < nchannel; m++) {
+					if (mix[m][n] !== undefined) {
+						str += ',' + mix[m][n].toString();
+					}
+				}
+			}
+		} else {
+			var	cc = this.iipChannel;
+
+			if (cc >= nchannel) { cc = 0; }
+			if (cc < nchannel) { nchannel = cc + 1; }
+			for (n = 0; n < 3; n++) {
+				if (n) { str += ';'; }
+				str += (cc === 0 ? '1' : '0');
+				for (m = 1; m < nchannel; m++) {
+					str += ',' + (cc === m ? '1' : '0');
+				}
+			}
 		}
-		if (this.iipMinValue[2] !== this.iipdefault.minValue[2] ||
-		 this.iipMaxValue[2] !== this.iipdefault.maxValue[2]) {
-			str += '&MINMAX=3,' + this.iipMinValue[2].toString() + ',' +
-				this.iipMaxValue[2].toString();
-		}
+
 		if (this.iipQuality !== this.iipdefault.quality) {
 			str += '&QLT=' + this.iipQuality.toString();
 		}
@@ -411,10 +525,10 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_initTile: function (tile) {
 		L.DomUtil.addClass(tile, 'leaflet-tile');
+		var	tileSizeFac = this._getTileSizeFac();
 
 		// Force pixels to be visible at high zoom factos whenever possible
-		if (this._getTileSizeFac() > 1) {
-			var tileSize = this._getTileSize();
+		if (tileSizeFac > 1) {
 			if (L.Browser.ie) {
 				tile.style.msInterpolationMode = 'nearest-neighbor';
 			} else if (L.Browser.chrome) {
@@ -424,9 +538,36 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			} else {
 				tile.style.imageRendering = '-webkit-optimize-contrast';
 			}
-			tile.style.width = tileSize.x + 'px';
-			tile.style.height = tileSize.y + 'px';
 		}
+
+		// Compute tile size (IIP tile size can be less at image borders)
+		var	coords = tile.coords,
+			  z = coords.z;
+		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
+		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
+			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
+			  sizeY = coords.y + 1 === this.iipGridSize[z].y ?
+			    this.iipImageSize[z].y % this.iipTileSize.y : this.iipTileSize.y;
+
+		if (sizeX === 0) {
+			sizeX = this.iipTileSize.x;
+		}
+		if (sizeY === 0) {
+			sizeY = this.iipTileSize.y;
+		}
+
+		sizeX *= tileSizeFac;
+		sizeY *= tileSizeFac;
+/*
+		// Add an extra 1/2 pixel as an ugly fix to the tile gap pb in some browsers
+		if (L.Browser.chrome || L.Browser.safari) {
+			sizeX += 0.5;
+			sizeY += 0.5;
+		}
+*/
+		tile.style.width = sizeX  + 'px';
+		tile.style.height = sizeY + 'px';
+
 		tile.onselectstart = L.Util.falseFn;
 		tile.onmousemove = L.Util.falseFn;
 
@@ -437,7 +578,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// without this hack, tiles disappear after zoom on Chrome for Android
 		// https://github.com/Leaflet/Leaflet/issues/2078
-		if (L.Browser.mobileWebkit3d) {
+		if (L.Browser.android && !L.Browser.android23) {
 			tile.style.WebkitBackfaceVisibility = 'hidden';
 		}
 	}
