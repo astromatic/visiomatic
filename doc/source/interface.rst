@@ -92,11 +92,13 @@ Channel Mixing |equalizer2|
 The Channel Mixing panel has two modes, which can be selected using the radio buttons located at the top of the dialog: the Single Channel (monochromatic) mode, and the Multi-Channel (color composite) mixing mode.
 
 In Single Channel mode, one can:
+
 * Select an image channel for display
 * Select a color map among a selection of four
 * Set the minimum and maximum channel levels
 
 In Multi-Channel mode, one can:
+
 * Select an image channel to be included in the color mix
 * Set the color this channel contributes to the mix
 * Set the minimum and maximum channel levels
@@ -112,12 +114,13 @@ Image Preferences |contrast|
 ----------------------------
 
 The Image Preference dialog gives access to global image display settings:
+
 * Color map inversion (negative mode)
 * Contrast (scaling factor)
 * Color saturation (0 for black&white, >1 for exaggerating colors)
 * Gamma correction (2.2 for linear output on a properly calibrated monitor, higher values for brightening dark regions, lower values for darkening)
 * JPEG quality percentage. The lower the quality percentage, the more
-compressed the image and the more artifacts in the rendering.
+  compressed the image and the more artifacts in the rendering.
 
 .. #figure:: figures/Advanced_Menu_Image.jpg
    :alt: Image Preferences
@@ -213,4 +216,3 @@ Finally, a download button (PDF Symbol |pdf|) located at the bottom right of the
    Snapshot of the Documentation panel
 
 .. include:: refs.rst
-
