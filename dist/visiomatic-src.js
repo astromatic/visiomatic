@@ -1758,14 +1758,14 @@ L.ellipse = function (latlng, options) {
 
 
 /*
-# L.Catalogs contains specific catalog settings and conversion tools.
+# L.Catalog contains specific catalog settings and conversion tools.
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/12/2015
+#	Last modified: 12/01/2016
 */
 
 L.Catalog = {
@@ -1908,6 +1908,81 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 	properties: ['m<sub>10</sub>', 'Richness', 'D<sub>class</sub>'],
 	units: ['', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+L.Catalog.NVSS = L.extend({}, L.Catalog, {
+	name: 'NVSS',
+	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
+	color: 'magenta',
+	maglim: 30.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
+	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['S<sub>1.4GHz</sub>', 'Major axis', 'Minor axis', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.FIRST = L.extend({}, L.Catalog, {
+	name: 'FIRST',
+	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
+	color: 'blue',
+	maglim: 30.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
+	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['F<sub>peak</sub>(1.4GHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.AllWISE = L.extend({}, L.Catalog, {
+	name: 'AllWISE',
+	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
+	color: 'red',
+	maglim: 18.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
+	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['W1<sub>mag</sub> (3.4µm)', 'W2<sub>mag</sub> (4.6µm)',
+	  'W3<sub>mag</sub> (12µm)', 'W4<sub>mag</sub> (22µm)'],
+	units: ['', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
+	name: 'GALEX AIS',
+	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
+	color: 'magenta',
+	maglim: 21.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
+	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['FUV<sub>AB</sub>', 'NUV<sub>AB</sub>'],
+	units: ['', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'
 });
 
 
