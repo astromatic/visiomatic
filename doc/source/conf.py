@@ -147,6 +147,10 @@ html_title = "<project> v<release>"
 html_static_path = ['theme']
 html_style = 'css/custom.css'
 
+# Trick for having ReadTheDocs read the theme overrides
+def setup(app):
+    app.add_stylesheet("css/custom.css")
+
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
