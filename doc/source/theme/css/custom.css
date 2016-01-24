@@ -1,4 +1,8 @@
-@import url("theme.css");
+/* Extend page width size limit */
+.wy-nav-content {
+max-width: 1600px;
+}
+
 /* Override responsive image scaling */
 img {
 	width: auto!important;
