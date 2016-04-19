@@ -834,11 +834,11 @@ L.IIPUtils = {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright:		(C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                             Chiara Marmo - IDES/Paris-Sud,
 #                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		07/12/2015
+#	Last modified:		19/04/2016
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -1063,7 +1063,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						rgb[c] = L.rgb(0.0, 0.0, 0.0);
 					}
 					if (omix.length === 0) {
-						rgb[c] = 1.0;
+						rgb[c] = L.rgb(1.0, 1.0, 1.0);
 					}
 					// Compute the current row of the mixing matrix
 					layer.rgbToMix(c);
