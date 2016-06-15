@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 09/12/2015
+#	Last modified: 15/06/2016
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -288,7 +288,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	// Read WCS information from a FITS header
 	_readWCS: function (hdr) {
-		var key = this._readFITSKey,
+		var key = L.IIPUtils.readFITSKey,
 		    projparam = this.projparam,
 		    v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
@@ -311,22 +311,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 					projparam.pv[d][j] = parseFloat(v, 10);
 				}
 			}
-		}
-	},
-
-	// Read content of a FITS header keyword
-	_readFITSKey: function (keyword, str) {
-		var key = keyword.trim().toUpperCase().substr(0, 8),
-			nspace = 8 - key.length,
-			keyreg = new RegExp(key + '\\ {' + nspace.toString() +
-			 '}=\\ *(?:\'(\\S*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
-			match = keyreg.exec(str);
-		if (!match) {
-			return null;
-		} else if (match[1]) {
-			return match[1];
-		} else {
-			return match[2];
 		}
 	},
 

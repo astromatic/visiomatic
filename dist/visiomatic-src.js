@@ -679,7 +679,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	// Read WCS information from a FITS header
 	_readWCS: function (hdr) {
-		var key = this._readFITSKey,
+		var key = L.IIPUtils.readFITSKey,
 		    projparam = this.projparam,
 		    v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
@@ -705,22 +705,6 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		}
 	},
 
-	// Read content of a FITS header keyword
-	_readFITSKey: function (keyword, str) {
-		var key = keyword.trim().toUpperCase().substr(0, 8),
-			nspace = 8 - key.length,
-			keyreg = new RegExp(key + '\\ {' + nspace.toString() +
-			 '}=\\ *(?:\'(\\S*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
-			match = keyreg.exec(str);
-		if (!match) {
-			return null;
-		} else if (match[1]) {
-			return match[1];
-		} else {
-			return match[2];
-		}
-	},
-
 	_deltaLng: function (latLng, latLng0) {
 		var	dlng = latLng.lng - latLng0.lng;
 
@@ -740,10 +724,10 @@ L.CRS.wcs = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 04/12/2015
+#	Last modified: 15/06/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -809,6 +793,22 @@ L.IIPUtils = {
 			this.checkDomain(location.href) !== this.checkDomain(url));
 	},
 
+	// Read content of a FITS header keyword
+	readFITSKey: function (keyword, str) {
+		var key = keyword.trim().toUpperCase().substr(0, 8),
+			nspace = 8 - key.length,
+			keyreg = new RegExp(key + (nspace > 0 ? '\\ {' + nspace.toString() + '}' : '') +
+			 '=\\ *(?:\'((?:\\ *[^\'\\ ]+)*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
+			match = keyreg.exec(str);
+		if (!match) {
+			return null;
+		} else if (match[1]) {
+			return match[1];
+		} else {
+			return match[2];
+		}
+	},
+
 // Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
@@ -838,7 +838,7 @@ L.IIPUtils = {
 #                             Chiara Marmo - IDES/Paris-Sud,
 #                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		19/04/2016
+#	Last modified:		15/06/2016
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -1078,15 +1078,20 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				    labels = layer.iipChannelLabels,
 				    inunits = options.channelUnits,
 				    ninunits = inunits.length,
-				    units = layer.iipChannelUnits;
+				    units = layer.iipChannelUnits,
+						key = L.IIPUtils.readFITSKey,
+						numstr, value;
 
-				// Copy those labels that have been provided 
-				for (c = 0; c < ninlabel; c++) {
-					labels[c] = inlabels[c];
-				}
-				// Fill out labels that are not provided with a default string 
-				for (c = ninlabel; c < nchannel; c++) {
-					labels[c] = 'Channel #' + (c + 1).toString();
+				for (c = 0; c < nchannel; c++) {
+					if (c < ninlabel) {
+						labels[c] = inlabels[c];
+					} else {
+						numstr = (c + 1).toString();
+						value = key('CHAN' +
+						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
+						  response);
+						labels[c] = value ? value : 'Channel #' + numstr;
+					}
 				}
 
 				// Copy those units that have been provided 

@@ -8,7 +8,7 @@
 #                             Chiara Marmo - IDES/Paris-Sud,
 #                             Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified:		19/04/2016
+#	Last modified:		15/06/2016
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -248,15 +248,20 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				    labels = layer.iipChannelLabels,
 				    inunits = options.channelUnits,
 				    ninunits = inunits.length,
-				    units = layer.iipChannelUnits;
+				    units = layer.iipChannelUnits,
+						key = L.IIPUtils.readFITSKey,
+						numstr, value;
 
-				// Copy those labels that have been provided 
-				for (c = 0; c < ninlabel; c++) {
-					labels[c] = inlabels[c];
-				}
-				// Fill out labels that are not provided with a default string 
-				for (c = ninlabel; c < nchannel; c++) {
-					labels[c] = 'Channel #' + (c + 1).toString();
+				for (c = 0; c < nchannel; c++) {
+					if (c < ninlabel) {
+						labels[c] = inlabels[c];
+					} else {
+						numstr = (c + 1).toString();
+						value = key('CHAN' +
+						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
+						  response);
+						labels[c] = value ? value : 'Channel #' + numstr;
+					}
 				}
 
 				// Copy those units that have been provided 

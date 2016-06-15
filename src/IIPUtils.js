@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 04/12/2015
+#	Last modified: 15/06/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -70,6 +70,22 @@ L.IIPUtils = {
 	isExternal: function (url) {
 		return ((url.indexOf(':') > -1 || url.indexOf('//') > -1) &&
 			this.checkDomain(location.href) !== this.checkDomain(url));
+	},
+
+	// Read content of a FITS header keyword
+	readFITSKey: function (keyword, str) {
+		var key = keyword.trim().toUpperCase().substr(0, 8),
+			nspace = 8 - key.length,
+			keyreg = new RegExp(key + (nspace > 0 ? '\\ {' + nspace.toString() + '}' : '') +
+			 '=\\ *(?:\'((?:\\ *[^\'\\ ]+)*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
+			match = keyreg.exec(str);
+		if (!match) {
+			return null;
+		} else if (match[1]) {
+			return match[1];
+		} else {
+			return match[2];
+		}
 	},
 
 // Return the distance between two world coords latLng1 and latLng2 in degrees
