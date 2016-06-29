@@ -395,10 +395,10 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 09/12/2015
+#	Last modified: 15/06/2016
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -888,6 +888,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		invertCMap: false,
 		minValue: [],
 		maxValue: [],
+		channelColors: [
+			[''],
+			['#FFFFFF'],
+			['#0000FF', '#FFFF00'],
+			['#00FF00', '#00FF00', '#FF0000'],
+			['#0000FF', '#00FF00', '#FFFF00', '#FF0000'],
+			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000']
+		],
 		quality: 90
 	},
 
@@ -1047,11 +1055,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					}
 				}
 
-				// Initialize mixing matrix to unity
+				// Initialize mixing matrix depending on arguments and the number of channels
 				var m,
 				    mix = layer.iipMix,
 						omix = options.channelColors,
-						rgb = layer.iipRGB;
+						rgb = layer.iipRGB,
+						nmaxchannel = iipdefault.channelColors.length - 1;
+
+				if (nmaxchannel > nchannel) {
+					nmaxchannel = nchannel;
+				}
 
 				for (c = 0; c < nchannel; c++) {
 					mix[c] = [];
@@ -1062,8 +1075,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					} else {
 						rgb[c] = L.rgb(0.0, 0.0, 0.0);
 					}
-					if (omix.length === 0) {
-						rgb[c] = L.rgb(1.0, 1.0, 1.0);
+					if (omix.length === 0 && c < nmaxchannel) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][c]);
 					}
 					// Compute the current row of the mixing matrix
 					layer.rgbToMix(c);
