@@ -834,11 +834,9 @@ L.IIPUtils = {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		15/06/2016
+#	Last modified:		18/07/2016
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -893,7 +891,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			['#FFFFFF'],
 			['#0000FF', '#FFFF00'],
 			['#00FF00', '#00FF00', '#FF0000'],
-			['#0000FF', '#00FF00', '#FFFF00', '#FF0000'],
+			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
 			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000']
 		],
 		quality: 90
@@ -1197,16 +1195,20 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		    newcrs = this.wcs,
 				curcrs = map.options.crs,
 				prevcrs = map._prevcrs,
+				maploadedflag = map._loaded,
 				// Default center coordinates
 				center = map.options.center ? map.options.center : newcrs.projparam.crval;
 
-		if (map._loaded) {
+		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
 			curcrs._prevZoom = map.getZoom();
 		}
 
+		map._prevcrs = map.options.crs = newcrs;
+		L.TileLayer.prototype.addTo.call(this, map);
+
 		// Go to previous layers' coordinates if applicable
-		if (prevcrs && newcrs !== curcrs && map._loaded &&
+		if (prevcrs && newcrs !== curcrs && maploadedflag &&
 		    newcrs.pixelFlag === curcrs.pixelFlag) {
 			center = curcrs._prevLatLng;
 			zoom = curcrs._prevZoom;
@@ -1220,8 +1222,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
-		}
-		else {
+		} else {
 			// Default center coordinates and zoom
 			if (this.options.center) {
 				var	latlng = newcrs.parseCoords(this.options.center);
@@ -1264,9 +1265,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				map.setView(center, zoom, {reset: true, animate: false});
 			}
 		}
-
-		map._prevcrs = map.options.crs = newcrs;
-		L.TileLayer.prototype.addTo.call(this, map);
 	},
 
 	_getTileSizeFac: function () {
