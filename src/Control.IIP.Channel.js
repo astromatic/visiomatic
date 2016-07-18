@@ -4,10 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC and GEOPS/Paris-Sud
 #
-#	Last modified:		24/11/2015
+#	Last modified:		18/07/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -147,6 +146,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			layer.iipChannel,
 			function () {
 				layer.iipChannel =  parseInt(this._chanSelect.selectedIndex - 1, 10);
+				this._updateChannel(layer, layer.iipChannel);
 				layer.redraw();
 			},
 			'Select image channel'
@@ -174,6 +174,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
  
 	_initColorDialog: function (layer, box) {
 		// Multiple Channels with mixing matrix
+
 		var _this = this,
 			className = this._className,
 			line = this._addDialogLine('Channel:', box),
