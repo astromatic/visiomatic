@@ -1,6 +1,6 @@
 {
 	"name": "visiomatic",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
 	"dependencies": {"leaflet": "~1.0"},
 	"devDependencies": {
@@ -23,9 +23,9 @@
 		"url": "https://github.com/astromatic/visiomatic"
 	},
   "contributors": [
-	"Emmanuel Bertin <bertin@iap.fr> (http://www.astromatic.net/team/emmanuel)",
-	"Chiara Marmo <chiara.marmo@u-psud.fr> (http://planeto.geol.u-psud.fr/Chiara-Marmo.html?lang=en)",
-	"Ruven Pillay <ruven@c2rmf.cnrs.fr> (http://iipimage.sourceforge.net/contact)"
+	"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
+	"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
+	"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
 	],
 	"keywords": ["wcs", "astronomy"]
 }
