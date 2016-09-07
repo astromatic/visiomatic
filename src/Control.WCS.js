@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/11/2015
+#	Last modified: 07/09/2016
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -16,7 +16,9 @@ L.Control.WCS = L.Control.extend({
 			label: 'RA, Dec',
 			units: 'HMS',
 			nativeCelsys: false
-		}]
+		}],
+		centerQueryKey: 'center',
+		fovQueryKey: 'fov'
 	},
 
 	onAdd: function (map) {
@@ -25,7 +27,7 @@ L.Control.WCS = L.Control.extend({
 			  dialog = this._wcsdialog =  L.DomUtil.create('div', 'leaflet-control-wcs-dialog'),
 			  coordSelect = L.DomUtil.create('select', 'leaflet-control-wcs-select', dialog),
 			  choose = document.createElement('option'),
-		    coords = this.options.coordinates,
+			  coords = this.options.coordinates,
 			  opt = [],
 			  coordIndex;
 
@@ -54,6 +56,7 @@ L.Control.WCS = L.Control.extend({
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
 		input.title = this.options.title;
+
 		// Speech recognition on WebKit engine
 		if ('webkitSpeechRecognition' in window) {
 			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
@@ -65,6 +68,21 @@ L.Control.WCS = L.Control.extend({
 		}, input);
 		L.DomEvent.on(input, 'change', function () {
 			this.panTo(this._wcsinput.value);
+		}, this);
+
+		var	clipboardbutton = L.DomUtil.create('div', 'leaflet-control-wcs-clipboard', dialog);
+		clipboardbutton.title = 'Copy to clipboard';
+		L.DomEvent.on(clipboardbutton, 'click', function () {
+			var stateObj = {},
+				url = location.href,
+				wcs = this._map.options.crs,
+				latlng = map.getCenter();
+			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
+			  this._latLngToHMSDMS(latlng));
+			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
+			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
+			history.pushState(stateObj, '', url);
+			L.IIPUtils.copyToClipboard(url);
 		}, this);
 
 		return this._wcsdialog;
@@ -117,7 +135,7 @@ L.Control.WCS = L.Control.extend({
 			h++;
 			m = 0;
 		}
-		var str = h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
 		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
 		 lat = Math.abs(latlng.lat),
 		 sgn = latlng.lat < 0.0 ? '-' : '+',

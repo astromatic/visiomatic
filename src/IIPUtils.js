@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/06/2016
+#	Last modified: 05/09/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -58,6 +58,15 @@ L.IIPUtils = {
 		return dict;
 	},
 
+	// Return a URL with an updated keyword/value queryString(from http://stackoverflow.com/a/5999118)
+	updateURL: function (url, keyword, value) {
+		var re = new RegExp('([?&])' + keyword + '=.*?(&|$)', 'i'),
+			separator = url.indexOf('?') !== -1 ? '&' : '?';
+
+		return url.match(re) ? url.replace(re, '$1' + keyword + '=' + value + '$2') :
+		  url + separator + keyword + '=' + value;
+	},
+
 	// Return the domain of a given URL (from http://stackoverflow.com/a/28054735)
 	checkDomain: function (url) {
 		if (url.indexOf('//') === 0) {
@@ -70,6 +79,26 @@ L.IIPUtils = {
 	isExternal: function (url) {
 		return ((url.indexOf(':') > -1 || url.indexOf('//') > -1) &&
 			this.checkDomain(location.href) !== this.checkDomain(url));
+	},
+
+	// Copy string to clipboard (from http://stackoverflow.com/a/33928558)
+	// Chrome 43+, Firefox 42+, Edge and Safari 10+ supported
+	copyToClipboard: function (text) {
+		if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+			var textarea = document.createElement('textarea');
+			textarea.textContent = text;
+			textarea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+			document.body.appendChild(textarea);
+			textarea.select();
+			try {
+				return document.execCommand('copy');  // Security exception may be thrown by some browsers.
+			} catch (ex) {
+				console.warn('Copy to clipboard failed.', ex);
+				return false;
+			} finally {
+				document.body.removeChild(textarea);
+			}
+		}
 	},
 
 	// Read content of a FITS header keyword

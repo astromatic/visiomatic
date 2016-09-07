@@ -29,6 +29,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		mixingMode: 'color',
 		channelColors: [],
 		channelLabels: [],
+		channelLabelMatch: '.*',
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0
@@ -60,9 +61,10 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			[''],
 			['#FFFFFF'],
 			['#0000FF', '#FFFF00'],
-			['#00FF00', '#00FF00', '#FF0000'],
+			['#0000FF', '#00FF00', '#FF0000'],
 			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000']
+			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000'],
+			['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FFA000', '#FF0000']
 		],
 		quality: 90
 	},
@@ -223,33 +225,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					}
 				}
 
-				// Initialize mixing matrix depending on arguments and the number of channels
-				var m,
-				    mix = layer.iipMix,
-						omix = options.channelColors,
-						rgb = layer.iipRGB,
-						nmaxchannel = iipdefault.channelColors.length - 1;
-
-				if (nmaxchannel > nchannel) {
-					nmaxchannel = nchannel;
-				}
-
-				for (c = 0; c < nchannel; c++) {
-					mix[c] = [];
-					var	col = 3;
-					if (omix.length && omix[c] && omix[c].length === 3) {
-						// Copy RGB triplet
-						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
-					} else {
-						rgb[c] = L.rgb(0.0, 0.0, 0.0);
-					}
-					if (omix.length === 0 && c < nmaxchannel) {
-						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][c]);
-					}
-					// Compute the current row of the mixing matrix
-					layer.rgbToMix(c);
-				}
-
 				// Default channel
 				layer.iipChannel = options.defaultChannel;
 
@@ -282,6 +257,42 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				// Fill out units that are not provided with a default string 
 				for (c = ninunits; c < nchannel; c++) {
 					units[c] = 'ADUs';
+				}
+
+				// Initialize mixing matrix depending on arguments and the number of channels
+				var cc = 0,
+				    mix = layer.iipMix,
+						omix = options.channelColors,
+						rgb = layer.iipRGB,
+						re = new RegExp(options.channelLabelMatch),
+						nmaxchannel = 0,
+						channelflag = [];
+
+				nmaxchannel = 0;
+				for (c = 0; c < nchannel; c++) {
+					channelflag[c] = re.test(labels[c]);
+					if (channelflag[c]) {
+						nmaxchannel++;
+					}
+				}
+				if (nmaxchannel >= iipdefault.channelColors.length) {
+					nmaxchannel = iipdefault.channelColors.length - 1;
+				}
+
+				for (c = 0; c < nchannel; c++) {
+					mix[c] = [];
+					var	col = 3;
+					if (omix.length && omix[c] && omix[c].length === 3) {
+						// Copy RGB triplet
+						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
+					} else {
+						rgb[c] = L.rgb(0.0, 0.0, 0.0);
+					}
+					if (omix.length === 0 && channelflag[c] && cc < nmaxchannel) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][cc++]);
+					}
+					// Compute the current row of the mixing matrix
+					layer.rgbToMix(c);
 				}
 
 				if (options.bounds) {

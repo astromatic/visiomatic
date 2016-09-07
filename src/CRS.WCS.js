@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/06/2016
+#	Last modified: 05/09/2016
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -190,6 +190,15 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		if (fov < scale) { fov = scale; }
 		scale *= Math.sqrt(size.x * size.x + size.y * size.y);
 		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
+	},
+
+	// return the FoV in degrees that corresponds to the given zoom level
+	zoomToFov: function (map, zoom, latlng) {
+		var size = map.getSize(),
+			scale = this.rawPixelScale(latlng) *
+			  Math.sqrt(size.x * size.x + size.y * size.y),
+			zscale = this.scale(zoom);
+		return  zscale > 0.0 ? scale / zscale : scale;
 	},
 
 	distance: function (latlng1, latlng2) {

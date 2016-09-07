@@ -3,11 +3,11 @@
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud,
-#                          Ruven Pillay - C2RMF/CNRS
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud,
+#                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 24/11/2015
+#	Last modified: 07/09/2016
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%% Basic Leaflet Controls %%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -180,6 +180,7 @@ div.leaflet-control-iip-select {
 
 select.leaflet-control-iip-select {
 	height: 32px;
+	background-color: #F4F4F4;
 	vertical-align: top;
 	margin: 2px 0px 2px 2px;
 	padding: 4px 0px;
@@ -190,7 +191,7 @@ select.leaflet-control-iip-select {
 }
 
 .leaflet-control-iip-select:hover {
-	background-color: #F4F4F4;
+	background-color: #E4E4E4;
 }
 
 /*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
@@ -199,12 +200,14 @@ select.leaflet-control-iip-select {
 	position: relative;
 	margin: 2px 0px;
 }
+
 .leaflet-spinbox-input {
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 100%;
 	width: 100%;
 	height: 32px;
+	background-color: #F4F4F4;
 	padding: 2px 6px 2px 6px;
 	box-shadow: 1px 1px 2px #a0a0a0 inset;
 	border-radius: 4px;
@@ -213,6 +216,11 @@ select.leaflet-control-iip-select {
 	-moz-appearance: textfield;
 	-webkit-appearance: texfield;
 }
+
+.leaflet-spinbox-input:hover,.leaflet-spinbox-input:focus {
+	background-color: #E4E4E4;
+}
+
 .leaflet-spinbox-down {
 	position: absolute;
 	right: 30px;
@@ -228,6 +236,7 @@ select.leaflet-control-iip-select {
 	border-radius: 0px;
 	cursor: pointer;
 }
+
 .leaflet-spinbox-up {
 	position: absolute;
 	right: 1px;
@@ -243,7 +252,8 @@ select.leaflet-control-iip-select {
 	border-radius: 0px 4px 4px 0px;
 	cursor: pointer;
 }
-.leaflet-spinbox-input:hover,.leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
+
+.leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
 	background-color: #F4F4F4;
 }
 
@@ -449,7 +459,7 @@ label.leaflet-cmap {
 }
 
 .leaflet-cmap:hover {
-	background-color: #F4F4F4;
+	box-shadow: 0px 0px 2px black inset;
 	border-width: 1px;
 	border-color: black;
 }
@@ -781,32 +791,64 @@ iframe.leaflet-control-iip-doc {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-wcs-dialog {
-	display: table;
 	background-color: #ffffff;
 	color: #505050;
-	padding: 1px;
 	border-radius: 4px;
 	font-size: 1.2em;
 }
 
 .leaflet-control-wcs-select {
-	display: table-cell;
-	box-shadow: 1px 1px 2px #a0a0a0;
-	padding-left: 2px;
-	padding-right: 2px;
-	background-color: #d0d0d0;
-	border: none;
-	text-shadow: none !important;
+	height: 32px;
+	background-color: #F4F4F4;
+	vertical-align: top;
+	margin: 0px;
+	padding: 4px 0px;
+	border-width: 0px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 4px 0px 0px 4px;
 }
 
+.leaflet-control-wcs-select:hover,.leaflet-control-wcs-select:focus {
+	background-color: #E4E4E4;
+}
+
+
 .leaflet-control-wcs-input {
-	display: table-cell;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 100%;
+	height: 32px;
+	background-color: #F4F4F4;
+	padding: 2px 36px 2px 6px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 0px 4px 4px 0px;
+	box-sizing : border-box;
+	border-width: 0px;
+	-moz-appearance: textfield;
+	-webkit-appearance: texfield;
+}
+
+.leaflet-control-wcs-input:hover {
+	background-color: #E4E4E4;
+}
+.leaflet-control-wcs-clipboard {
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	display: inline-block;
+	width: 29px;
+	height: 29px;
+	background-color: #FFFFFF;
+	background-image: url(images/icon-clipboard.svg);
+	background-repeat: no-repeat;
+	background-position: center;
 	box-shadow: 1px 1px 2px #a0a0a0;
-	background-color: #ffffff;
-	padding-left: 10px;
-	border: none;
-	color: #505050;
-	width: 13em;
+	border-radius: 0px 4px 4px 0px;
+	cursor: pointer;
+}
+
+.leaflet-control-wcs-clipboard:hover {
+	background-color: #F4F4F4;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
