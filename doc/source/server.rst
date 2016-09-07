@@ -62,7 +62,7 @@ Installing |iipsrv|
 
   .. code-block:: console
 
-    $ sh autogen
+    $ sh autogen.sh
     $ ./configure
 
   * Although the command above should work in most cases, the configure script offers many customization options (see ``./configure --help``), including the possibility to change the paths where include and library files are located. For instance for managing manual installations of the TIFF library:
