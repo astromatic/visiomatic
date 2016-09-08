@@ -24,8 +24,9 @@ L.Control.WCS = L.Control.extend({
 	onAdd: function (map) {
 		// Create coordinate input/display box
 		var _this = this,
-			  dialog = this._wcsdialog =  L.DomUtil.create('div', 'leaflet-control-wcs-dialog'),
-			  coordSelect = L.DomUtil.create('select', 'leaflet-control-wcs-select', dialog),
+			  className = 'leaflet-control-wcs',
+			  dialog = this._wcsdialog =  L.DomUtil.create('div', className + '-dialog'),
+			  coordSelect = L.DomUtil.create('select', className + '-select', dialog),
 			  choose = document.createElement('option'),
 			  coords = this.options.coordinates,
 			  opt = [],
@@ -51,7 +52,7 @@ L.Control.WCS = L.Control.extend({
 			_this._onDrag();
 		});
 
-		var	input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs-input', dialog);
+		var	input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
 
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
@@ -70,13 +71,14 @@ L.Control.WCS = L.Control.extend({
 			this.panTo(this._wcsinput.value);
 		}, this);
 
-		var	clipboardbutton = L.DomUtil.create('div', 'leaflet-control-wcs-clipboard', dialog);
+		var	clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
 		clipboardbutton.title = 'Copy to clipboard';
 		L.DomEvent.on(clipboardbutton, 'click', function () {
 			var stateObj = {},
 				url = location.href,
 				wcs = this._map.options.crs,
 				latlng = map.getCenter();
+			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
 			  this._latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,

@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/09/2016
+#	Last modified: 08/09/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -99,6 +99,15 @@ L.IIPUtils = {
 				document.body.removeChild(textarea);
 			}
 		}
+	},
+
+	// Add a short (<400ms) "flash" animation to an element
+	flashElement: function (elem) {
+		L.DomUtil.addClass(elem, 'leaflet-control-flash');
+		setTimeout(function () {
+			L.DomUtil.removeClass(elem, 'leaflet-control-flash');
+		}, 400);
+
 	},
 
 	// Read content of a FITS header keyword

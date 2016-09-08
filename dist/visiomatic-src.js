@@ -736,7 +736,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/09/2016
+#	Last modified: 08/09/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -829,6 +829,15 @@ L.IIPUtils = {
 				document.body.removeChild(textarea);
 			}
 		}
+	},
+
+	// Add a short (<400ms) "flash" animation to an element
+	flashElement: function (elem) {
+		L.DomUtil.addClass(elem, 'leaflet-control-flash');
+		setTimeout(function () {
+			L.DomUtil.removeClass(elem, 'leaflet-control-flash');
+		}, 400);
+
 	},
 
 	// Read content of a FITS header keyword
@@ -2563,10 +2572,10 @@ L.Map.addInitHook(function () {
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                             Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 03/12/2015
+#	Last modified: 08/09/2016
 
 Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
@@ -2605,7 +2614,7 @@ L.Control.ExtraMap = L.Control.extend({
 		collapsedWidth: 24,
 		collapsedHeight: 24,
 		aimingRectOptions: {
-			color:  '#FF7800',
+			color:  '#FFFFFF',
 			weight: 1,
 			clickable: false
 		},
@@ -3118,10 +3127,10 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/11/2015
+#	Last modified: 08/09/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3447,6 +3456,7 @@ L.Control.IIP = L.Control.extend({
 			});
 
 		spinbox.on('change', function () {
+			L.IIPUtils.flashElement(spinbox._input);
 			this._onInputChange(layer, attr, spinbox.value(), func);
 		}, this);
 
@@ -5772,8 +5782,9 @@ L.Control.WCS = L.Control.extend({
 	onAdd: function (map) {
 		// Create coordinate input/display box
 		var _this = this,
-			  dialog = this._wcsdialog =  L.DomUtil.create('div', 'leaflet-control-wcs-dialog'),
-			  coordSelect = L.DomUtil.create('select', 'leaflet-control-wcs-select', dialog),
+			  className = 'leaflet-control-wcs',
+			  dialog = this._wcsdialog =  L.DomUtil.create('div', className + '-dialog'),
+			  coordSelect = L.DomUtil.create('select', className + '-select', dialog),
 			  choose = document.createElement('option'),
 			  coords = this.options.coordinates,
 			  opt = [],
@@ -5799,7 +5810,7 @@ L.Control.WCS = L.Control.extend({
 			_this._onDrag();
 		});
 
-		var	input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs-input', dialog);
+		var	input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
 
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
@@ -5818,13 +5829,14 @@ L.Control.WCS = L.Control.extend({
 			this.panTo(this._wcsinput.value);
 		}, this);
 
-		var	clipboardbutton = L.DomUtil.create('div', 'leaflet-control-wcs-clipboard', dialog);
+		var	clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
 		clipboardbutton.title = 'Copy to clipboard';
 		L.DomEvent.on(clipboardbutton, 'click', function () {
 			var stateObj = {},
 				url = location.href,
 				wcs = this._map.options.crs,
 				latlng = map.getCenter();
+			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
 			  this._latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,

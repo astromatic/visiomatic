@@ -7,7 +7,22 @@
 #                                Chiara Marmo - IDES/Paris-Sud,
 #                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 07/09/2016
+#	Last modified: 08/09/2016
+*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Global effects %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+@keyframes flash {
+	0%   {background-color: #F4F4F4;}
+	10%   {background-color: #505050;}
+	100% {background-color: #F4F4F4;}
+}
+
+.leaflet-control-flash {
+	animation: flash 200ms ease-in-out 0s;
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%% Basic Leaflet Controls %%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -176,18 +191,23 @@ input.leaflet-control-iip-radio:checked + label {
 
 div.leaflet-control-iip-select {
 	padding-left: 32px;
+	margin-right: 2px;
 }
 
 select.leaflet-control-iip-select {
 	height: 32px;
 	background-color: #F4F4F4;
 	vertical-align: top;
-	margin: 2px 0px 2px 2px;
+	margin: 2px;
 	padding: 4px 0px;
-	border-width: 0px 2px 0px 0px;
+	border-width: 0px;
 	box-shadow: 1px 1px 2px #a0a0a0 inset;
-	border-radius: 0px 4px 4px 0px;
+	border-radius: 0px;
 	width: 100%;
+}
+
+.leaflet-control-iip-element:last-child select.leaflet-control-iip-select {
+	border-radius: 0px 4px 4px 0px;
 }
 
 .leaflet-control-iip-select:hover {
@@ -833,7 +853,7 @@ iframe.leaflet-control-iip-doc {
 }
 .leaflet-control-wcs-clipboard {
 	position: absolute;
-	right: 1px;
+	right: 2px;
 	top: 1px;
 	display: inline-block;
 	width: 29px;
@@ -940,10 +960,16 @@ iframe.leaflet-control-iip-doc {
 .leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topleft
 .leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-bottomleft,
 .leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topright {
+	opacity: 1.0;
 	background-image: url("images/icon-map.svg");
 	background-color: #FFFFFF;
 }
 .leaflet-control-extramap:hover .leaflet-control-extramap-toggle-display {
+	opacity: 1.0;
+}
+
+.leaflet-control-extramap-toggle-display {
+	opacity: 0.33;
 	background-image: url("images/icon-shrink.svg");
 }
 
@@ -972,7 +998,6 @@ iframe.leaflet-control-iip-doc {
 	-webkit-transform: rotate(270deg);
 	transform: rotate(270deg);
 }
-
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.FullScreen %%%%%%%%%%%%%%%%%%%%%%%%%%%*/

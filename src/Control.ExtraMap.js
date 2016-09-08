@@ -4,10 +4,10 @@
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                             Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 03/12/2015
+#	Last modified: 08/09/2016
 
 Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
@@ -46,7 +46,7 @@ L.Control.ExtraMap = L.Control.extend({
 		collapsedWidth: 24,
 		collapsedHeight: 24,
 		aimingRectOptions: {
-			color:  '#FF7800',
+			color:  '#FFFFFF',
 			weight: 1,
 			clickable: false
 		},

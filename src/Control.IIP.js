@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/11/2015
+#	Last modified: 08/09/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -333,6 +333,7 @@ L.Control.IIP = L.Control.extend({
 			});
 
 		spinbox.on('change', function () {
+			L.IIPUtils.flashElement(spinbox._input);
 			this._onInputChange(layer, attr, spinbox.value(), func);
 		}, this);
 
