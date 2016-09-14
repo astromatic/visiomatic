@@ -226,3 +226,18 @@ L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'
 });
 
+L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
+	name: 'Gaia DR1',
+	attribution: 'First Gaia Data Release (2016)',
+	color: 'green',
+	maglim: 20.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
+	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+

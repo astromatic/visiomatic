@@ -16,6 +16,7 @@ if (typeof require !== 'undefined') {
 L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 	defaultCatalogs: [
+		L.Catalog.GAIA_DR1,
 		L.Catalog['2MASS'],
 		L.Catalog.SDSS,
 		L.Catalog.PPMXL,
