@@ -32,7 +32,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelLabelMatch: '.*',
 		channelUnits: [],
 		minMaxValues: [],
-		defaultChannel: 0
+		defaultChannel: 0,
+		credentials: false
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -250,11 +251,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					}
 				}
 
-				// Copy those units that have been provided 
+				// Copy those units that have been provided
 				for (c = 0; c < ninunits; c++) {
 					units[c] = inunits[c];
 				}
-				// Fill out units that are not provided with a default string 
+				// Fill out units that are not provided with a default string
 				for (c = ninunits; c < nchannel; c++) {
 					units[c] = 'ADUs';
 				}

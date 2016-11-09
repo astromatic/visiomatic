@@ -41,7 +41,13 @@ L.IIPUtils = {
 			};
 		}
 		httpRequest.open('GET', url);
-//		httpRequest.withCredentials = true;
+
+		// Send Credrentials
+		if ((context) && (context.options.credentials)) {
+			httpRequest.withCredentials = true;
+
+		}
+
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
