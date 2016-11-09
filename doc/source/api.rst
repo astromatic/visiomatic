@@ -142,19 +142,23 @@ regular ``TileLayer`` plus
     - Strings
     - ``'color'``
     - Channel mixing mode. Valid modes are ``'mono'`` (single-channel) and ``'color'`` 
-  * - ``ChannelColors``
+  * - ``channelColors``
     - Array of |L.RGB|_ color triplets
     - ``[rgb(0.0,0.0,1.0), rgb(0.0,1.0,0.0), rgb(1.0,0.0,0.0), rgb(0.0,0.0,0.0), ...]``
     - RGB contribution of each channel to the mixing matrix
-  * - ``ChannelLabels``
+  * - ``channelLabels``
     - Array of strings
     - ``['Channel #1', 'Channel #2', ...]``
     - Channel labels
-  * - ``ChannelUnits``
+  * - ``channelLabelMatch``
+    - String
+    - ``'.*'``
+    - Regular expression matching the labels of channels that are given a color by default
+  * - ``channelUnits``
     - Array of strings
     - ``['ADUs','ADUs',...]``
     - Channel units
-  * - ``MinMaxValues``
+  * - ``minMaxValues``
     - Array of [Float,Float]
     - Extracted from the data header if available; ``[[0.0,255.0], [0.0,255.0], ...]`` otherwise
     - Pairs of lower,higher clipping limits for every channel
@@ -283,6 +287,9 @@ Public methods
   * - ``fovToZoom`` ( <|L.Map|_> ``map``, <Float> ``fov``, <|L.LatLng|_> ``latLng`` )
     - Float
     - Return the zoom level that corresponds to the specified Field-of-View in degrees
+  * - ``zoomToFov`` ( <|L.Map|_> ``map``, <Float> ``zoom``, <|L.LatLng|_> ``latLng`` )
+    - Float
+    - Return the Field-of-View in degrees that corresponds to the specified zoom level
   * - ``celsysToEq`` ( <|L.LatLng|_> ``latLng`` )
     - |L.LatLng|_
     - Convert native celestial coordinates to equatorial coordinates
@@ -426,7 +433,7 @@ Creation
 Catalogs
 ^^^^^^^^
 
-Catalog objects describe the catalogs that can be accessed through a
+Catalog objects describe the catalogs that can be queried through a
 pull-down menu in the interface. They have the following properties (there are
 no default values):
 
@@ -479,6 +486,8 @@ no default values):
     - String
     - ``L.Catalog.vizierURL + '/VizieR-5?-source=II/246&`` ``-c={ra},{dec},eq=J2000&-c.rs=0.01'``
     - URL template for querying individual sources (e.g., when clicking the source ID in the popup source dialog)
+
+Pre-defined catalogs include |2MASS|_, |SDSS|_, |PPMXL|_, |Abell|_, |NVSS|_, |FIRST|_, |AllWISE|_, |GALEX_AIS|_ and |GAIA_DR1|_, all accessible through |Vizier|_ queries.
 
 Options
 ^^^^^^^
@@ -872,6 +881,14 @@ The constructor supports
     - Array of coordinates_
     - ``[{ label: 'RA, Dec', units: 'HMS', nativeCelsys: false }]``
     - Set of coordinates_ settings (see below)
+  * - ``centerQueryKey``
+    - String
+    - ``'center'``
+    - Name of the URL `query string <http://en.wikipedia.org/wiki/Query_string>`_ field that should contain the current center of the map when pressing the ''Copy to Clipboard'' button
+  * - ``fovQueryKey``
+    - String
+    - ``'fov'``
+    - Name of the URL query string field that should contain the current Field-of-View of the map when pressing the ''Copy to Clipboard'' button
 
 .. _coordinates:
 
@@ -1289,4 +1306,68 @@ Arguments
   * - ``url``
     - String
     - URL to be parsed
+
+``L.IIPUtils.copyToClipboard()``
+--------------------------------
+
+|L.IIPUtils.copyToClipboard()| copies the given string to clipboard.
+
+Usage
+^^^^^
+
+``L.IIPUtils.copyToClipboard`` ( <String> ``text``)
+
+Usage example
+^^^^^^^^^^^^^
+
+.. code-block:: javascript
+
+  flag = L.IIPUtils.copyToClipboard('http://myurl');
+
+Arguments
+^^^^^^^^^
+
+.. tabularcolumns:: |p{0.104\linewidth}|p{0.364\linewidth}|p{0.454\linewidth}|
+
+.. list-table::
+  :header-rows: 1
+
+  * - Name
+    - Type
+    - Description
+  * - ``text``
+    - String
+    - String to be copied to clipboard
+
+``L.IIPUtils.flashElement()``
+--------------------------------
+
+|L.IIPUtils.flashElement()| temporily highlights a DOM element using a short (<400ms) "flashing" animation.
+
+Usage
+^^^^^
+
+``L.IIPUtils.flashElement`` ( <|Element|_> ``elem``)
+
+Usage example
+^^^^^^^^^^^^^
+
+.. code-block:: javascript
+
+  flag = L.IIPUtils.flashElement(myInput);
+
+Arguments
+^^^^^^^^^
+
+.. tabularcolumns:: |p{0.104\linewidth}|p{0.364\linewidth}|p{0.454\linewidth}|
+
+.. list-table::
+  :header-rows: 1
+
+  * - Name
+    - Type
+    - Description
+  * - ``elem``
+    - |Element|_
+    - Element to highlight
 

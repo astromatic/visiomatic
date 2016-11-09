@@ -18,6 +18,26 @@
 .. |Sesame| replace:: `Sesame`
 .. _Sesame: http://cds.u-strasbg.fr/cgi-bin/Sesame
 
+.. |2MASS| replace:: ``'2MASS'``
+.. _2MASS: http://cdsarc.u-strasbg.fr/viz-bin/Cat?II/246
+.. |SDSS| replace:: ``'SDSS'``
+.. _SDSS: http://cdsarc.u-strasbg.fr/viz-bin/Cat?V/139
+.. |PPMXL| replace:: ``'PPMXL'``
+.. _PPMXL: http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/317
+.. |Abell| replace:: ``'Abell'``
+.. _Abell: http://cdsarc.u-strasbg.fr/viz-bin/Cat?VII/110A
+.. |NVSS| replace:: ``'NVSS'``
+.. _NVSS: http://cdsarc.u-strasbg.fr/viz-bin/Cat?VIII/65
+.. |FIRST| replace:: ``'FIRST'``
+.. _FIRST: http://cdsarc.u-strasbg.fr/viz-bin/Cat?VIII/92
+.. |AllWISE| replace:: ``'AllWISE'``
+.. _AllWISE: http://cdsarc.u-strasbg.fr/viz-bin/Cat?II/328
+.. |GALEX_AIS| replace:: ``'GALEX_AIS'``
+.. _GALEX_AIS: http://cdsarc.u-strasbg.fr/viz-bin/Cat?II/312
+.. |GAIA_DR1| replace:: ``'GAIA_DR1'``
+.. _GAIA_DR1: http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/337
+
+
 
 .. |lsws| replace:: :program:`lsws`
 .. |LibTIFF| replace:: :program:`LibTIFF`
@@ -69,6 +89,8 @@
 .. |L.IIPUtils.parseURL()| replace:: ``L.IIPUtils.parseURL()``
 .. |L.IIPUtils.checkDomain()| replace:: ``L.IIPUtils.checkDomain()``
 .. |L.IIPUtils.isExternal()| replace:: ``L.IIPUtils.isExternal()``
+.. |L.IIPUtils.copyToClipboard()| replace:: ``L.IIPUtils.copyToClipboard()``
+.. |L.IIPUtils.flashElement()| replace:: ``L.IIPUtils.flashElement()``
 
 .. |L.LatLng| replace:: ``L.LatLng``
 .. _L.LatLng: http://leafletjs.com/reference.html#latlng

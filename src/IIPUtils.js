@@ -41,7 +41,7 @@ L.IIPUtils = {
 			};
 		}
 		httpRequest.open('GET', url);
-		httpRequest.withCredentials = true;
+//		httpRequest.withCredentials = true;
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};

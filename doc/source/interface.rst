@@ -194,8 +194,6 @@ The profile option extracts series of pixel values along lines of constant galac
 
 The spectrum option, as its name implied extracts pixel data along the channel axis at a given position. The position is selected by dragging the map to the desired coordinate and clicking on the "Go" button. A circle marker appears with the color that was selected using the color picker (purple by default). After some calculation, a window pops out with the "spectrum" of pixel values at the selected coordinate. Note that the ordering of pixel values follows that of the channels in the data cube.
 
-.. caution:: The absolute flux calibration is valid within the limits described in Section :ref:`3 <Section-MapMaking>`.
-
 .. #figure:: figures/Advanced_Menu_Profile_Spectrum.jpg
    :alt: Profile Overlays - Spectrum
    :align: center
