@@ -955,6 +955,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	initialize: function (url, options) {
+		this.type = 'tilelayer';
 		this._url = url.replace(/\&.*$/g, '');
 
 		options = L.setOptions(this, options);
