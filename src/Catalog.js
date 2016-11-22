@@ -69,8 +69,11 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ' +
-			       this.units[i] + '</TD></TR>';
+			       '<TD>' + feature.properties.items[i].toString() + ' ';
+	        if (this.units[i]){
+	        	str += this.units[i];
+	        }
+	        str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -241,3 +244,24 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
+L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
+	name: 'Y3A1',
+	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
+	color: 'blue',
+	maglim: 27.0,
+	service: 'ScienceServer',
+	regionType: 'box',
+	authenticate: 'csrftoken',
+	url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
+	'?mime=csv' +
+	'&product=27' + // Esse aqui tem que sair
+	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
+	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
+	'&coordinate={lng},{lat}' +
+	'&bounding={dlng},{dlat}' +
+	'&maglim={maglim}' +
+	'&limit={nmax}',
+	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+	units: [],
+	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});

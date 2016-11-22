@@ -48,6 +48,11 @@ L.IIPUtils = {
 
 		}
 
+		// if request catalog need authenticate
+		if ((context) && (context.options.authenticate === 'csrftoken')) {
+			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
+		}
+
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
@@ -146,6 +151,22 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
+	getCookie: function (cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) === 0) {
+	            return c.substring(name.length,c.length);
+	        }
+	    }
+	    return "";
 	}
 
 };

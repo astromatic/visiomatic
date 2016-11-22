@@ -778,6 +778,11 @@ L.IIPUtils = {
 
 		}
 
+		// if request catalog need authenticate
+		if ((context) && (context.options.authenticate === 'csrftoken')) {
+			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
+		}
+
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
@@ -876,6 +881,22 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
+	getCookie: function (cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) === 0) {
+	            return c.substring(name.length,c.length);
+	        }
+	    }
+	    return "";
 	}
 
 };
@@ -1877,6 +1898,7 @@ L.Catalog = {
 				properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
+
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
@@ -1910,8 +1932,11 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ' +
-			       this.units[i] + '</TD></TR>';
+			       '<TD>' + feature.properties.items[i].toString() + ' ';
+	        if (this.units[i]){
+	        	str += this.units[i];
+	        }
+	        str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -1925,7 +1950,7 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
 
 };
 
@@ -2082,6 +2107,27 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
+L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
+	name: 'Y3A1',
+	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
+	color: 'blue',
+	maglim: 27.0,
+	service: 'ScienceServer',
+	regionType: 'box',
+	authenticate: 'csrftoken',
+	url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
+	'?mime=csv' +
+	'&product=27' + // Esse aqui tem que sair
+	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
+	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
+	'&coordinate={lng},{lat}' +
+	'&bounding={dlng},{dlat}' +
+	'&maglim={maglim}' +
+	'&limit={nmax}',
+	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+	units: [],
+	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
 
 
 /*
@@ -3661,7 +3707,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30	// seconds
+		timeOut: 30,	// seconds,
+		authenticate: false // string define a method used to authenticate
 	},
 
 	initialize: function (catalogs, options) {
@@ -3738,6 +3785,10 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		templayer.notReady = true;
 		this.addLayer(templayer, catalog.name);
 
+		if (catalog.authenticate) {
+			this.options.authenticate = catalog.authenticate;
+		}
+
 		// Compute the search cone
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
@@ -3795,7 +3846,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
 					dlat: dlat.toFixed(4),
-					nmax: catalog.nmax + 1
+					nmax: catalog.nmax + 1,
+					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
 				function (context, httpRequest) {
