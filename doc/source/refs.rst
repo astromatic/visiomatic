@@ -84,6 +84,8 @@
 .. |L.Control.Reticle| replace:: ``L.Control.Reticle``
 .. |L.Control.ExtraMap| replace:: ``L.Control.ExtraMap``
 .. |L.RGB| replace:: ``L.RGB``
+.. |L.Ellipse| replace:: ``L.Ellipse``
+.. |L.EllipseMarker| replace:: ``L.EllipseMarker``
 .. |L.IIPUtils| replace:: ``L.IIPUtils``
 .. |L.IIPUtils.requestURL()| replace:: ``L.IIPUtils.requestURL()``
 .. |L.IIPUtils.parseURL()| replace:: ``L.IIPUtils.parseURL()``
@@ -120,6 +122,9 @@
 .. _control-scale-options: http://leafletjs.com/reference.html#control-scale-options
 .. |path-options| replace:: ``path-options``
 .. _path-options: http://leafletjs.com/reference.html#path-options
+.. |L.Path| replace:: ``L.Path``
+.. _L.Path: http://leafletjs.com/reference.html#path
+
 
 .. |contrast| image:: figures/icon-contrast.*
   :width: 14pt
