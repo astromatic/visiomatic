@@ -1206,15 +1206,15 @@ Both constructors support
   * - ``majAxis``
     - Float
     - ``'10'``
-    - Ellipse major axis in degrees (``L.Ellipse``) or in pixels (``L.ellipseMarker``)
+    - Ellipse major axis in degrees (``L.Ellipse``) or in pixels (``L.EllipseMarker``)
   * - ``minAxis``
     - Float
     - ``'10'``
-    - Ellipse minor axis in degrees (``L.Ellipse``) or in pixels (``L.ellipseMarker``)
+    - Ellipse minor axis in degrees (``L.Ellipse``) or in pixels (``L.EllipseMarker``)
   * - ``posAngle``
     - Float
     - ``'0'``
-    - Ellipse position angle in degrees East-of-North (``L.Ellipse``) or CCW from x-axis (``L.ellipseMarker``)
+    - Ellipse position angle in degrees East-of-North (``L.Ellipse``) or CCW from x-axis (``L.EllipseMarker``)
 
 
 Utility functions
