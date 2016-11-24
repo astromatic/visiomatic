@@ -14,7 +14,7 @@
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"test": "jake test",
+		"test": "echo \"no test yet\" && exit 0",
 		"prepublish": "jake"
 	},
 	"license" : "BSD-2-Clause",

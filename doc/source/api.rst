@@ -4,6 +4,8 @@
 
 The |VisiOmatic| client provides the following sub-properties to the original Leaflet "classes" with new or overloaded methods:
 
+.. tabularcolumns:: |p{0.314\linewidth}|p{0.630\linewidth}|
+
 .. list-table::
   :header-rows: 1
 
@@ -39,8 +41,16 @@ The |VisiOmatic| client provides the following sub-properties to the original Le
     - Secondary map synchronized to the main map
   * - |L.RGB|_
     - Class for managing R,G,B color triplets that describe color pixels
+  * - |L.Ellipse|_/|L.EllipseMarker|_
+    - Class for drawing ellipse overlays in world/pixel coordinates on a map
+
+.. raw:: latex
+
+    \ \\ \ \\
 
 |VisiOmatic| also provides set of utility functions, grouped in the ``L.IIPUtils`` object:
+
+.. tabularcolumns:: |p{0.314\linewidth}|p{0.630\linewidth}|
 
 .. list-table::
   :header-rows: 1
@@ -55,6 +65,10 @@ The |VisiOmatic| client provides the following sub-properties to the original Le
     - Return the domain of the given URL
   * - |L.IIPUtils.isExternal()|_
     - Check if the given URL is from an external domain
+
+.. raw:: latex
+
+    \newpage
 
 Classes
 =======
@@ -855,7 +869,7 @@ Creation
 
 ``L.control.wcs`` ( <|control-options|_> ``options?`` )
 
-  instantiates a WCS  control object.
+  instantiates a WCS control object.
 
 Options
 ^^^^^^^
@@ -1146,7 +1160,62 @@ Creation
 ``L.rgb`` ( <Float> ``r``, <Float> ``g``, <Float> ``b`` )
 instantiates an RGB object with the given red, green and blue components.
 
-.. include:: refs.rst
+``L.Ellipse``
+-------------
+``L.EllipseMarker``
+-------------------
+
+|L.Ellipse|_ and |L.EllipseMarker|_ are new classes for drawing ellipse overlays on a map, with parameters defined in world and pixel coordinates, respectively.
+
+Usage example
+
+.. code-block:: javascript
+
+    var path = L.ellipse(latLng, {
+      majAxis: 0.0210, minAxis: 0.0045, posAngle: -30.0
+    }).addTo(map);
+
+.. code-block:: javascript
+
+    var path = L.ellipseMarker(latLng, {
+      majAxis: 10.0, minAxis: 3.0, posAngle: 24.0
+    }).addTo(map);
+
+Creation
+^^^^^^^^
+
+``L.ellipse`` ( <|L.LatLng|_> ``latLng``, <|path-options|_> ``options?`` )
+instantiates an ellipse object centered on position ``latLng``.
+
+``L.ellipseMarker`` ( <|L.LatLng|_> ``latLng``, <|path-options|_> ``options?`` )
+instantiates an ellipse marker object centered on position ``latLng``.
+
+Both constructors support
+`all options <http://leafletjs.com/reference.html#path-options>`_ from other
+|L.Path|_ classes plus
+    
+.. tabularcolumns:: |p{0.124\linewidth}|p{0.074\linewidth}|p{0.074\linewidth}|p{0.624\linewidth}|
+
+.. list-table::
+  :header-rows: 1
+
+  * - Option
+    - Type
+    - Default
+    - Description
+  * - ``majAxis``
+    - Float
+    - ``'10'``
+    - Ellipse major axis in degrees (``L.Ellipse``) or in pixels (``L.EllipseMarker``)
+  * - ``minAxis``
+    - Float
+    - ``'10'``
+    - Ellipse minor axis in degrees (``L.Ellipse``) or in pixels (``L.EllipseMarker``)
+  * - ``posAngle``
+    - Float
+    - ``'0'``
+    - Ellipse position angle in degrees East-of-North (``L.Ellipse``) or CCW from x-axis (``L.EllipseMarker``)
+
 
 Utility functions
 =================
@@ -1223,7 +1292,7 @@ Usage example
 .. code-block:: javascript
 
   args = L.IIPUtils.parseURL(
-    'http://myviewer.org/?channel=2&mode=mono
+    'http://myviewer.org/?channel=2&mode=mono'
   );
   console.log(args['channel'], args['mode']);
 
@@ -1370,4 +1439,6 @@ Arguments
   * - ``elem``
     - |Element|_
     - Element to highlight
+
+.. include:: refs.rst
 
