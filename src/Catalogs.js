@@ -29,7 +29,7 @@ L.Catalog = {
 					geometry: {
 						type: 'Point',
 						coordinates: [0.0, 0.0]
-					},
+					}
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;

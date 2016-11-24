@@ -786,6 +786,7 @@ L.IIPUtils = {
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
+
 		httpRequest.send();
 	},
 
@@ -868,7 +869,7 @@ L.IIPUtils = {
 		}
 	},
 
-// Return the distance between two world coords latLng1 and latLng2 in degrees
+	// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
@@ -1892,7 +1893,7 @@ L.Catalog = {
 					geometry: {
 						type: 'Point',
 						coordinates: [0.0, 0.0]
-					},
+					}
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;
@@ -1950,7 +1951,7 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
 
 };
 
@@ -2106,29 +2107,6 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
-
-L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
-	name: 'Y3A1',
-	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
-	color: 'blue',
-	maglim: 27.0,
-	service: 'ScienceServer',
-	regionType: 'box',
-	authenticate: 'csrftoken',
-	url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
-	'?mime=csv' +
-	'&product=27' + // Esse aqui tem que sair
-	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
-	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
-	'&coordinate={lng},{lat}' +
-	'&bounding={dlng},{dlat}' +
-	'&maglim={maglim}' +
-	'&limit={nmax}',
-	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
-	units: [],
-	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-});
-
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -2727,7 +2705,7 @@ L.Control.ExtraMap = L.Control.extend({
 			touchZoom: !this._isZoomLevelFixed(),
 			scrollWheelZoom: !this._isZoomLevelFixed(),
 			doubleClickZoom: !this._isZoomLevelFixed(),
-			boxZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed()
 		});
 
 		this._layer.addTo(this._extraMap);
@@ -2969,7 +2947,7 @@ L.Control.ExtraMap = L.Control.extend({
 
 	_isDefined: function (value) {
 		return typeof value !== 'undefined';
-	},
+	}
 });
 
 L.Map.mergeOptions({
@@ -3787,6 +3765,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 		if (catalog.authenticate) {
 			this.options.authenticate = catalog.authenticate;
+		} else {
+			this.options.authenticate = false;
 		}
 
 		// Compute the search cone
