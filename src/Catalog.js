@@ -70,10 +70,10 @@ L.Catalog = {
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
 			       '<TD>' + feature.properties.items[i].toString() + ' ';
-		if (this.units[i]) {
-			str += this.units[i];
-		}
-		str += '</TD></TR>';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
