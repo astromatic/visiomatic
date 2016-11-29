@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 24/11/2015
+#	Last modified: 29/11/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -29,7 +29,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30	// seconds
+		timeOut: 30,	// seconds
+		authenticate: false // string define a method used to authenticate
 	},
 
 	initialize: function (catalogs, options) {
@@ -106,6 +107,12 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		templayer.notReady = true;
 		this.addLayer(templayer, catalog.name);
 
+		if (catalog.authenticate) {
+			this.options.authenticate = catalog.authenticate;
+		} else {
+			this.options.authenticate = false;
+		}
+
 		// Compute the search cone
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
@@ -163,7 +170,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
 					dlat: dlat.toFixed(4),
-					nmax: catalog.nmax + 1
+					nmax: catalog.nmax + 1,
+					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
 				function (context, httpRequest) {

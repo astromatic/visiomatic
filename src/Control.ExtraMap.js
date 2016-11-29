@@ -1,5 +1,5 @@
 /*
-# L.Control.ExtraMap adds support for extra synchronized maps 
+# L.Control.ExtraMap adds support for extra synchronized maps
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
@@ -90,11 +90,11 @@ L.Control.ExtraMap = L.Control.extend({
 			touchZoom: !this._isZoomLevelFixed(),
 			scrollWheelZoom: !this._isZoomLevelFixed(),
 			doubleClickZoom: !this._isZoomLevelFixed(),
-			boxZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed()
 		});
 
 		this._layer.addTo(this._extraMap);
-	
+
 		// These bools are used to prevent infinite loops of the two maps notifying
 		// each other that they've moved.
 		// this._mainMapMoving = false;
@@ -332,19 +332,19 @@ L.Control.ExtraMap = L.Control.extend({
 
 	_isDefined: function (value) {
 		return typeof value !== 'undefined';
-	},
+	}
 });
-	
+
 L.Map.mergeOptions({
 	extraMapControl: false
 });
-	
+
 L.Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
 		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
 	}
 });
-	
+
 L.control.extraMap = function (layer, options) {
 	return new L.Control.ExtraMap(layer, options);
 };

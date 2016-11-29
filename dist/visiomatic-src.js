@@ -778,9 +778,15 @@ L.IIPUtils = {
 
 		}
 
+		// if request catalog need authenticate
+		if ((context) && (context.options.authenticate === 'csrftoken')) {
+			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
+		}
+
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
+
 		httpRequest.send();
 	},
 
@@ -863,7 +869,7 @@ L.IIPUtils = {
 		}
 	},
 
-// Return the distance between two world coords latLng1 and latLng2 in degrees
+	// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
@@ -876,6 +882,22 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
+	getCookie: function (cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) === 0) {
+	            return c.substring(name.length,c.length);
+	        }
+	    }
+	    return "";
 	}
 
 };
@@ -1871,12 +1893,13 @@ L.Catalog = {
 					geometry: {
 						type: 'Point',
 						coordinates: [0.0, 0.0]
-					},
+					}
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
+
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
@@ -1910,8 +1933,11 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ' +
-			       this.units[i] + '</TD></TR>';
+			       '<TD>' + feature.properties.items[i].toString() + ' ';
+	        if (this.units[i]){
+	        	str += this.units[i];
+	        }
+	        str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -2081,8 +2107,6 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
-
-
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -2681,7 +2705,7 @@ L.Control.ExtraMap = L.Control.extend({
 			touchZoom: !this._isZoomLevelFixed(),
 			scrollWheelZoom: !this._isZoomLevelFixed(),
 			doubleClickZoom: !this._isZoomLevelFixed(),
-			boxZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed()
 		});
 
 		this._layer.addTo(this._extraMap);
@@ -2923,7 +2947,7 @@ L.Control.ExtraMap = L.Control.extend({
 
 	_isDefined: function (value) {
 		return typeof value !== 'undefined';
-	},
+	}
 });
 	
 L.Map.mergeOptions({
@@ -3660,7 +3684,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30	// seconds
+		timeOut: 30,	// seconds,
+		authenticate: false // string define a method used to authenticate
 	},
 
 	initialize: function (catalogs, options) {
@@ -3737,6 +3762,12 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		templayer.notReady = true;
 		this.addLayer(templayer, catalog.name);
 
+		if (catalog.authenticate) {
+			this.options.authenticate = catalog.authenticate;
+		} else {
+			this.options.authenticate = false;
+		}
+
 		// Compute the search cone
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
@@ -3794,7 +3825,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
 					dlat: dlat.toFixed(4),
-					nmax: catalog.nmax + 1
+					nmax: catalog.nmax + 1,
+					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
 				function (context, httpRequest) {

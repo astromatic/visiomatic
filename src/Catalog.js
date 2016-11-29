@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2016
+#	Last modified: 29/11/2016
 */
 
 L.Catalog = {
@@ -30,7 +30,7 @@ L.Catalog = {
 					geometry: {
 						type: 'Point',
 						coordinates: [0.0, 0.0]
-					},
+					}
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;
@@ -69,8 +69,11 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ' +
-			       this.units[i] + '</TD></TR>';
+			       '<TD>' + feature.properties.items[i].toString() + ' ';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -240,4 +243,3 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
-
