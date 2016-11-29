@@ -109,7 +109,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 		if (catalog.authenticate) {
 			this.options.authenticate = catalog.authenticate;
-		}else {
+		} else {
 			this.options.authenticate = false;
 		}
 
