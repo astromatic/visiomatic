@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
