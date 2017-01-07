@@ -736,7 +736,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -786,7 +786,6 @@ L.IIPUtils = {
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
-
 		httpRequest.send();
 	},
 
@@ -869,7 +868,7 @@ L.IIPUtils = {
 		}
 	},
 
-	// Return the distance between two world coords latLng1 and latLng2 in degrees
+// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
@@ -886,18 +885,18 @@ L.IIPUtils = {
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
-	    var name = cname + "=";
+	    var name = cname + '=';
 	    var ca = document.cookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
+	    for (var i = 0; i < ca.length; i++) {
 	        var c = ca[i];
-	        while (c.charAt(0)==' ') {
+	        while (c.charAt(0) === ' ') {
 	            c = c.substring(1);
 	        }
 	        if (c.indexOf(name) === 0) {
-	            return c.substring(name.length,c.length);
+	            return c.substring(name.length, c.length);
 	        }
 	    }
-	    return "";
+	    return '';
 	}
 
 };
@@ -1864,12 +1863,12 @@ L.ellipse = function (latlng, options) {
 /*
 # L.Catalog contains specific catalog settings and conversion tools.
 #
-#	This file part of:	VisiOmatic
+#	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2016
+#	Last modified: 07/01/2017
 */
 
 L.Catalog = {
@@ -1899,7 +1898,6 @@ L.Catalog = {
 				properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
-
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
@@ -1934,10 +1932,10 @@ L.Catalog = {
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
 			       '<TD>' + feature.properties.items[i].toString() + ' ';
-	        if (this.units[i]){
-	        	str += this.units[i];
-	        }
-	        str += '</TD></TR>';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -1945,9 +1943,9 @@ L.Catalog = {
 	},
 
 	draw: function (feature, latlng) {
+		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
 		return L.circleMarker(latlng, {
-			radius: feature.properties.items[0] ?
-			  5 + 17 - feature.properties.items[0] : 8
+			radius: refmag ? this.maglim + 5 - refmag : 8
 		});
 	},
 
@@ -2107,6 +2105,7 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
+
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -2614,7 +2613,7 @@ L.Map.addInitHook(function () {
 
 
 /*
-# L.Control.ExtraMap adds support for extra synchronized maps 
+# L.Control.ExtraMap adds support for extra synchronized maps
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
@@ -2709,7 +2708,7 @@ L.Control.ExtraMap = L.Control.extend({
 		});
 
 		this._layer.addTo(this._extraMap);
-	
+
 		// These bools are used to prevent infinite loops of the two maps notifying
 		// each other that they've moved.
 		// this._mainMapMoving = false;
@@ -2949,17 +2948,17 @@ L.Control.ExtraMap = L.Control.extend({
 		return typeof value !== 'undefined';
 	}
 });
-	
+
 L.Map.mergeOptions({
 	extraMapControl: false
 });
-	
+
 L.Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
 		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
 	}
 });
-	
+
 L.control.extraMap = function (layer, options) {
 	return new L.Control.ExtraMap(layer, options);
 };
@@ -3658,10 +3657,10 @@ L.control.iip = function (baseLayers, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 24/11/2015
+#	Last modified: 29/11/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3684,7 +3683,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30,	// seconds,
+		timeOut: 30,	// seconds
 		authenticate: false // string define a method used to authenticate
 	},
 
@@ -5000,6 +4999,10 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 					},
 					style: function (feature) {
 						return {color: region.color, weight: 2};
+					},
+					pointToLayer: function (feature, latlng) {
+						return region.drawPoint ?
+						  region.drawPoint(feature, latlng) : L.marker(latlng);
 					}
 				});
 				geoRegion.nameColor = region.color;
