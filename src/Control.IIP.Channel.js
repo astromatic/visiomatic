@@ -29,38 +29,39 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		this._id = 'leaflet-iipchannel';
 		this._sideClass = 'channel';
 		this._settings = [];
+		this._initsettings = [];
 	},
 
 	// Copy channel mixing settings from layer
-	saveSettings: function (layer, mode) {
-		if (!this._settings[mode]) {
-			this._settings[mode] = {};
+	saveSettings: function (layer, settings, mode) {
+		if (!settings[mode]) {
+			settings[mode] = {};
 		}
 
-		var settings = this._settings[mode],
+		var setting = settings[mode],
 			nchan = layer.iipNChannel;
 
-		settings.channel = layer.iipChannel;
-		settings.cMap = layer.iipCMap;
-		settings.rgb = [];
+		setting.channel = layer.iipChannel;
+		setting.cMap = layer.iipCMap;
+		setting.rgb = [];
 		for (var c = 0; c < nchan; c++) {
-			settings.rgb[c] = layer.iipRGB[c].clone();
+			setting.rgb[c] = layer.iipRGB[c].clone();
 		}
 	},
 
 	// Copy channel mixing settings to layer
-	loadSettings: function (layer, mode) {
-		var settings = this._settings[mode],
+	loadSettings: function (layer, settings, mode) {
+		var setting = settings[mode],
 			nchan = layer.iipNChannel;
 
-		if (!settings) {
+		if (!setting) {
 			return;
 		}
 
-		layer.iipChannel = settings.channel;
-		layer.iipCMap = settings.cMap;
+		layer.iipChannel = setting.channel;
+		layer.iipCMap = setting.cMap;
 		for (var c = 0; c < nchan; c++) {
-			layer.iipRGB[c] = settings.rgb[c].clone();
+			layer.iipRGB[c] = setting.rgb[c].clone();
 		}
 	},
 
@@ -70,9 +71,13 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			className = this._className,
 			dialog = this._dialog;
 
-		// copy IIP mixing parameters from the layer object
-		this.saveSettings(layer, 'mono');
-		this.saveSettings(layer, 'color');
+		// copy initial IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._initsettings, 'mono');
+		this.saveSettings(layer, this._initsettings, 'color');
+
+		// copy current IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._settings, 'mono');
+		this.saveSettings(layer, this._settings, 'color');
 
 		this._mode = this.options.mixingMode ?
 		  this.options.mixingMode : layer.iipMode;
@@ -87,7 +92,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
 		  (this._mode === 'mono'), function () {
 			// Save previous settings 
-			_this.saveSettings(layer, _this._mode);
+			_this.saveSettings(layer, _this._settings, _this._mode);
 
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -97,7 +102,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 				dialog.removeChild(elem);
 			}
 			_this._channelList = undefined;
-			_this.loadSettings(layer, 'mono');
+			_this.loadSettings(layer, _this._settings, 'mono');
 			_this._initMonoDialog(layer, box);
 			_this._mode = 'mono';
 		}, 'Select mono-channel palettized mode');
@@ -105,7 +110,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
 		  (this._mode !== 'mono'), function () {
 			// Save previous settings 
-			_this.saveSettings(layer, _this._mode);
+			_this.saveSettings(layer, _this._settings, _this._mode);
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
 				box.removeChild(elem);
@@ -113,10 +118,9 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
 				dialog.removeChild(elem);
 			}
-			_this.loadSettings(layer, 'color');
+			_this.loadSettings(layer, _this._settings, 'color');
 			_this._channelList = undefined;
 			_this._initColorDialog(layer, box);
-			_this._updateChannelList(layer);
 			_this._mode = 'color';
 		}, 'Select color mixing mode');
 
@@ -124,7 +128,6 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			_this._initMonoDialog(layer, box);
 		} else {
 			_this._initColorDialog(layer, box);
-			_this._updateChannelList(layer);
 		}
 	},
 
@@ -211,6 +214,50 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		);
 
 		this._addMinMax(layer, layer.iipChannel, box);
+
+		line = this._addDialogLine('Colors:', box);
+		elem = this._addDialogElement(line);
+
+		// Create reset color settings button
+		this._createButton(className + '-button', elem, 'colormix-reset', function () {
+			_this.loadSettings(layer, _this._initsettings, 'color');
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+		}, 'Reset color mix');
+
+		// Create automated color settings button
+		this._createButton(className + '-button', elem, 'colormix-auto', function () {
+			var	nchan = layer.iipNChannel,
+				cc = 0,
+				nchanon = 0,
+				rgb = layer.iipRGB,
+				defcol = layer.iipdefault.channelColors;
+
+			for (var c = 0; c < nchan; c++) {
+				if (rgb[c].isOn()) {
+					nchanon++;
+				}
+			}
+			if (nchanon >= defcol.length) {
+				nchanon = defcol.length - 1;
+			}
+
+			for (c = 0; c < nchan; c++) {
+				if (rgb[c].isOn() && cc < nchanon) {
+					rgb[c] = L.rgb(defcol[nchanon][cc++]);
+				}
+			}
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+
+		}, 'Re-color active channels');
+
+
+		_this._updateChannelList(layer);
 		layer.redraw();
 	},
 
@@ -312,12 +359,16 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		}
 	},
 
+	_updateColPick: function (layer) {
+		$(this._chanColPick).spectrum('set', layer.iipRGB[layer.iipChannel].toStr());
+		$(this._chanColPick).val(layer.iipRGB[layer.iipChannel].toStr());
+	},
+
 	_activateTrashElem: function (trashElem, layer, chan) {
 		L.DomEvent.on(trashElem, 'click touch', function () {
 			this._updateMix(layer, chan, L.rgb(0.0, 0.0, 0.0));
 			if (layer === this._layer && chan === layer.iipChannel) {
-				$(this._chanColPick).spectrum('set', layer.iipRGB[chan].toStr());
-				$(this._chanColPick).val(layer.iipRGB[chan].toStr());
+				this._updateColPick(layer);
 			}
 		}, this);
 	},

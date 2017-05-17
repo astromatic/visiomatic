@@ -113,6 +113,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipMix = [[]];
 		this.iipRGB = [];
 		this.iipChannelLabels = [];
+		this.iipChannelFlags = [];
 		this.iipChannelUnits = [];
 		this.iipQuality = options.quality;
 
@@ -266,18 +267,18 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						omix = options.channelColors,
 						rgb = layer.iipRGB,
 						re = new RegExp(options.channelLabelMatch),
-						nmaxchannel = 0,
-						channelflag = [];
+						nchanon = 0,
+						channelflags = layer.iipChannelFlags;
 
-				nmaxchannel = 0;
+				nchanon = 0;
 				for (c = 0; c < nchannel; c++) {
-					channelflag[c] = re.test(labels[c]);
-					if (channelflag[c]) {
-						nmaxchannel++;
+					channelflags[c] = re.test(labels[c]);
+					if (channelflags[c]) {
+						nchanon++;
 					}
 				}
-				if (nmaxchannel >= iipdefault.channelColors.length) {
-					nmaxchannel = iipdefault.channelColors.length - 1;
+				if (nchanon >= iipdefault.channelColors.length) {
+					nchanon = iipdefault.channelColors.length - 1;
 				}
 
 				for (c = 0; c < nchannel; c++) {
@@ -289,8 +290,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					} else {
 						rgb[c] = L.rgb(0.0, 0.0, 0.0);
 					}
-					if (omix.length === 0 && channelflag[c] && cc < nmaxchannel) {
-						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][cc++]);
+					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nchanon][cc++]);
 					}
 					// Compute the current row of the mixing matrix
 					layer.rgbToMix(c);

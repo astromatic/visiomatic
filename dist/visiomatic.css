@@ -513,6 +513,16 @@ input#leaflet-cmap-hot + label {
 
 /*-------------------------------- Channel list -----------------------------*/
 
+a#leaflet-control-iip-button-colormix-reset {
+	background-image: url(images/icon-reset.svg);
+	border-radius: 4px 0px 0px 4px;
+}
+
+a#leaflet-control-iip-button-colormix-auto {
+	background-image: url(images/icon-magicwand.svg);
+	border-radius: 0px 4px 4px 0px;
+}
+
 .leaflet-control-iip-chanlist {
 	display: table;
 	width: 100%;
