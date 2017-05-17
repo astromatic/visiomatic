@@ -6,7 +6,7 @@
 #
 #	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		18/07/2016
+#	Last modified:		17/05/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({

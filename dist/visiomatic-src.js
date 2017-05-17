@@ -911,7 +911,7 @@ L.IIPUtils = {
 #
 #	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		18/07/2016
+#	Last modified:		17/05/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -3920,9 +3920,9 @@ L.control.iip.catalog = function (catalogs, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC and GEOPS/Paris-Sud
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
 #
-#	Last modified:		18/07/2016
+#	Last modified:		17/05/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -3966,7 +3966,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 	},
 
 	// Copy channel mixing settings to layer
-	loadSettings: function (layer, settings, mode) {
+	loadSettings: function (layer, settings, mode, keepchanflag) {
 		var setting = settings[mode],
 			nchan = layer.iipNChannel;
 
@@ -3974,7 +3974,9 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			return;
 		}
 
-		layer.iipChannel = setting.channel;
+		if (!keepchanflag) {
+			layer.iipChannel = setting.channel;
+		}
 		layer.iipCMap = setting.cMap;
 		for (var c = 0; c < nchan; c++) {
 			layer.iipRGB[c] = setting.rgb[c].clone();
@@ -4064,7 +4066,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			undefined,
 			layer.iipChannel,
 			function () {
-				layer.iipChannel =  parseInt(this._chanSelect.selectedIndex - 1, 10);
+				layer.iipChannel = parseInt(this._chanSelect.selectedIndex - 1, 10);
 				this._updateChannel(layer, layer.iipChannel);
 				layer.redraw();
 			},
@@ -4136,7 +4138,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 		// Create reset color settings button
 		this._createButton(className + '-button', elem, 'colormix-reset', function () {
-			_this.loadSettings(layer, _this._initsettings, 'color');
+			_this.loadSettings(layer, _this._initsettings, 'color', true);
 			layer.updateMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
@@ -4291,6 +4293,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 	_activateChanElem: function (chanElem, layer, chan) {
 		L.DomEvent.on(chanElem, 'click touch', function () {
+			layer.iipChannel = chan;
 			this._updateChannel(layer, chan, this._chanColPick);
 		}, this);
 	}
