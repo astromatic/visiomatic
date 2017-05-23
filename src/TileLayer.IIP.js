@@ -4,9 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		17/05/2017
+#	Last modified:		23/05/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -61,11 +61,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelColors: [
 			[''],
 			['#FFFFFF'],
-			['#0000FF', '#FFFF00'],
+			['#00BAFF', '#FFBA00'],
 			['#0000FF', '#00FF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FFA000', '#FF0000']
+			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
+			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
+			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
 		],
 		quality: 90
 	},
