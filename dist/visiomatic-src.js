@@ -736,7 +736,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -786,7 +786,6 @@ L.IIPUtils = {
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
-
 		httpRequest.send();
 	},
 
@@ -869,7 +868,7 @@ L.IIPUtils = {
 		}
 	},
 
-	// Return the distance between two world coords latLng1 and latLng2 in degrees
+// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
@@ -886,18 +885,18 @@ L.IIPUtils = {
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
-	    var name = cname + "=";
+	    var name = cname + '=';
 	    var ca = document.cookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
+	    for (var i = 0; i < ca.length; i++) {
 	        var c = ca[i];
-	        while (c.charAt(0)==' ') {
+	        while (c.charAt(0) === ' ') {
 	            c = c.substring(1);
 	        }
 	        if (c.indexOf(name) === 0) {
-	            return c.substring(name.length,c.length);
+	            return c.substring(name.length, c.length);
 	        }
 	    }
-	    return "";
+	    return '';
 	}
 
 };
@@ -910,9 +909,9 @@ L.IIPUtils = {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		18/07/2016
+#	Last modified:		23/05/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -967,11 +966,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelColors: [
 			[''],
 			['#FFFFFF'],
-			['#0000FF', '#FFFF00'],
+			['#00BAFF', '#FFBA00'],
 			['#0000FF', '#00FF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FFA000', '#FF0000']
+			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
+			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
+			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
 		],
 		quality: 90
 	},
@@ -1019,6 +1018,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipMix = [[]];
 		this.iipRGB = [];
 		this.iipChannelLabels = [];
+		this.iipChannelFlags = [];
 		this.iipChannelUnits = [];
 		this.iipQuality = options.quality;
 
@@ -1172,18 +1172,18 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						omix = options.channelColors,
 						rgb = layer.iipRGB,
 						re = new RegExp(options.channelLabelMatch),
-						nmaxchannel = 0,
-						channelflag = [];
+						nchanon = 0,
+						channelflags = layer.iipChannelFlags;
 
-				nmaxchannel = 0;
+				nchanon = 0;
 				for (c = 0; c < nchannel; c++) {
-					channelflag[c] = re.test(labels[c]);
-					if (channelflag[c]) {
-						nmaxchannel++;
+					channelflags[c] = re.test(labels[c]);
+					if (channelflags[c]) {
+						nchanon++;
 					}
 				}
-				if (nmaxchannel >= iipdefault.channelColors.length) {
-					nmaxchannel = iipdefault.channelColors.length - 1;
+				if (nchanon >= iipdefault.channelColors.length) {
+					nchanon = iipdefault.channelColors.length - 1;
 				}
 
 				for (c = 0; c < nchannel; c++) {
@@ -1195,8 +1195,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					} else {
 						rgb[c] = L.rgb(0.0, 0.0, 0.0);
 					}
-					if (omix.length === 0 && channelflag[c] && cc < nmaxchannel) {
-						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][cc++]);
+					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nchanon][cc++]);
 					}
 					// Compute the current row of the mixing matrix
 					layer.rgbToMix(c);
@@ -1864,12 +1864,12 @@ L.ellipse = function (latlng, options) {
 /*
 # L.Catalog contains specific catalog settings and conversion tools.
 #
-#	This file part of:	VisiOmatic
+#	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2016
+#	Last modified: 07/01/2017
 */
 
 L.Catalog = {
@@ -1899,7 +1899,6 @@ L.Catalog = {
 				properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
-
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
@@ -1934,10 +1933,10 @@ L.Catalog = {
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
 			       '<TD>' + feature.properties.items[i].toString() + ' ';
-	        if (this.units[i]){
-	        	str += this.units[i];
-	        }
-	        str += '</TD></TR>';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -1945,9 +1944,9 @@ L.Catalog = {
 	},
 
 	draw: function (feature, latlng) {
+		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
 		return L.circleMarker(latlng, {
-			radius: feature.properties.items[0] ?
-			  5 + 17 - feature.properties.items[0] : 8
+			radius: refmag ? this.maglim + 5 - refmag : 8
 		});
 	},
 
@@ -2107,6 +2106,7 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
+
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -2614,7 +2614,7 @@ L.Map.addInitHook(function () {
 
 
 /*
-# L.Control.ExtraMap adds support for extra synchronized maps 
+# L.Control.ExtraMap adds support for extra synchronized maps
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
@@ -2709,7 +2709,7 @@ L.Control.ExtraMap = L.Control.extend({
 		});
 
 		this._layer.addTo(this._extraMap);
-	
+
 		// These bools are used to prevent infinite loops of the two maps notifying
 		// each other that they've moved.
 		// this._mainMapMoving = false;
@@ -2949,17 +2949,17 @@ L.Control.ExtraMap = L.Control.extend({
 		return typeof value !== 'undefined';
 	}
 });
-	
+
 L.Map.mergeOptions({
 	extraMapControl: false
 });
-	
+
 L.Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
 		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
 	}
 });
-	
+
 L.control.extraMap = function (layer, options) {
 	return new L.Control.ExtraMap(layer, options);
 };
@@ -3658,10 +3658,10 @@ L.control.iip = function (baseLayers, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 24/11/2015
+#	Last modified: 29/11/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3684,7 +3684,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30,	// seconds,
+		timeOut: 30,	// seconds
 		authenticate: false // string define a method used to authenticate
 	},
 
@@ -3920,9 +3920,9 @@ L.control.iip.catalog = function (catalogs, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC and GEOPS/Paris-Sud
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
 #
-#	Last modified:		18/07/2016
+#	Last modified:		17/05/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -3945,38 +3945,41 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		this._id = 'leaflet-iipchannel';
 		this._sideClass = 'channel';
 		this._settings = [];
+		this._initsettings = [];
 	},
 
 	// Copy channel mixing settings from layer
-	saveSettings: function (layer, mode) {
-		if (!this._settings[mode]) {
-			this._settings[mode] = {};
+	saveSettings: function (layer, settings, mode) {
+		if (!settings[mode]) {
+			settings[mode] = {};
 		}
 
-		var settings = this._settings[mode],
+		var setting = settings[mode],
 			nchan = layer.iipNChannel;
 
-		settings.channel = layer.iipChannel;
-		settings.cMap = layer.iipCMap;
-		settings.rgb = [];
+		setting.channel = layer.iipChannel;
+		setting.cMap = layer.iipCMap;
+		setting.rgb = [];
 		for (var c = 0; c < nchan; c++) {
-			settings.rgb[c] = layer.iipRGB[c].clone();
+			setting.rgb[c] = layer.iipRGB[c].clone();
 		}
 	},
 
 	// Copy channel mixing settings to layer
-	loadSettings: function (layer, mode) {
-		var settings = this._settings[mode],
+	loadSettings: function (layer, settings, mode, keepchanflag) {
+		var setting = settings[mode],
 			nchan = layer.iipNChannel;
 
-		if (!settings) {
+		if (!setting) {
 			return;
 		}
 
-		layer.iipChannel = settings.channel;
-		layer.iipCMap = settings.cMap;
+		if (!keepchanflag) {
+			layer.iipChannel = setting.channel;
+		}
+		layer.iipCMap = setting.cMap;
 		for (var c = 0; c < nchan; c++) {
-			layer.iipRGB[c] = settings.rgb[c].clone();
+			layer.iipRGB[c] = setting.rgb[c].clone();
 		}
 	},
 
@@ -3986,9 +3989,13 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			className = this._className,
 			dialog = this._dialog;
 
-		// copy IIP mixing parameters from the layer object
-		this.saveSettings(layer, 'mono');
-		this.saveSettings(layer, 'color');
+		// copy initial IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._initsettings, 'mono');
+		this.saveSettings(layer, this._initsettings, 'color');
+
+		// copy current IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._settings, 'mono');
+		this.saveSettings(layer, this._settings, 'color');
 
 		this._mode = this.options.mixingMode ?
 		  this.options.mixingMode : layer.iipMode;
@@ -4003,7 +4010,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
 		  (this._mode === 'mono'), function () {
 			// Save previous settings 
-			_this.saveSettings(layer, _this._mode);
+			_this.saveSettings(layer, _this._settings, _this._mode);
 
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -4013,7 +4020,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 				dialog.removeChild(elem);
 			}
 			_this._channelList = undefined;
-			_this.loadSettings(layer, 'mono');
+			_this.loadSettings(layer, _this._settings, 'mono');
 			_this._initMonoDialog(layer, box);
 			_this._mode = 'mono';
 		}, 'Select mono-channel palettized mode');
@@ -4021,7 +4028,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
 		  (this._mode !== 'mono'), function () {
 			// Save previous settings 
-			_this.saveSettings(layer, _this._mode);
+			_this.saveSettings(layer, _this._settings, _this._mode);
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
 				box.removeChild(elem);
@@ -4029,10 +4036,9 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
 				dialog.removeChild(elem);
 			}
-			_this.loadSettings(layer, 'color');
+			_this.loadSettings(layer, _this._settings, 'color');
 			_this._channelList = undefined;
 			_this._initColorDialog(layer, box);
-			_this._updateChannelList(layer);
 			_this._mode = 'color';
 		}, 'Select color mixing mode');
 
@@ -4040,7 +4046,6 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			_this._initMonoDialog(layer, box);
 		} else {
 			_this._initColorDialog(layer, box);
-			_this._updateChannelList(layer);
 		}
 	},
 
@@ -4061,7 +4066,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			undefined,
 			layer.iipChannel,
 			function () {
-				layer.iipChannel =  parseInt(this._chanSelect.selectedIndex - 1, 10);
+				layer.iipChannel = parseInt(this._chanSelect.selectedIndex - 1, 10);
 				this._updateChannel(layer, layer.iipChannel);
 				layer.redraw();
 			},
@@ -4127,6 +4132,50 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		);
 
 		this._addMinMax(layer, layer.iipChannel, box);
+
+		line = this._addDialogLine('Colors:', box);
+		elem = this._addDialogElement(line);
+
+		// Create reset color settings button
+		this._createButton(className + '-button', elem, 'colormix-reset', function () {
+			_this.loadSettings(layer, _this._initsettings, 'color', true);
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+		}, 'Reset color mix');
+
+		// Create automated color settings button
+		this._createButton(className + '-button', elem, 'colormix-auto', function () {
+			var	nchan = layer.iipNChannel,
+				cc = 0,
+				nchanon = 0,
+				rgb = layer.iipRGB,
+				defcol = layer.iipdefault.channelColors;
+
+			for (var c = 0; c < nchan; c++) {
+				if (rgb[c].isOn()) {
+					nchanon++;
+				}
+			}
+			if (nchanon >= defcol.length) {
+				nchanon = defcol.length - 1;
+			}
+
+			for (c = 0; c < nchan; c++) {
+				if (rgb[c].isOn() && cc < nchanon) {
+					rgb[c] = L.rgb(defcol[nchanon][cc++]);
+				}
+			}
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+
+		}, 'Re-color active channels');
+
+
+		_this._updateChannelList(layer);
 		layer.redraw();
 	},
 
@@ -4228,18 +4277,23 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		}
 	},
 
+	_updateColPick: function (layer) {
+		$(this._chanColPick).spectrum('set', layer.iipRGB[layer.iipChannel].toStr());
+		$(this._chanColPick).val(layer.iipRGB[layer.iipChannel].toStr());
+	},
+
 	_activateTrashElem: function (trashElem, layer, chan) {
 		L.DomEvent.on(trashElem, 'click touch', function () {
 			this._updateMix(layer, chan, L.rgb(0.0, 0.0, 0.0));
 			if (layer === this._layer && chan === layer.iipChannel) {
-				$(this._chanColPick).spectrum('set', layer.iipRGB[chan].toStr());
-				$(this._chanColPick).val(layer.iipRGB[chan].toStr());
+				this._updateColPick(layer);
 			}
 		}, this);
 	},
 
 	_activateChanElem: function (chanElem, layer, chan) {
 		L.DomEvent.on(chanElem, 'click touch', function () {
+			layer.iipChannel = chan;
 			this._updateChannel(layer, chan, this._chanColPick);
 		}, this);
 	}
@@ -5000,6 +5054,10 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 					},
 					style: function (feature) {
 						return {color: region.color, weight: 2};
+					},
+					pointToLayer: function (feature, latlng) {
+						return region.drawPoint ?
+						  region.drawPoint(feature, latlng) : L.marker(latlng);
 					}
 				});
 				geoRegion.nameColor = region.color;

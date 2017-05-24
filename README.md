@@ -1,4 +1,4 @@
-#VisiOmatic
+# VisiOmatic
 [![Build Status](https://travis-ci.org/astromatic/visiomatic.svg?branch=master)](https://travis-ci.org/astromatic/visiomatic)
 
 an [IIPImage] web client for visualizing science-grade, multi-channel astronomy images. VisiOmatic works essentially as a large [Leaflet] plug-in, providing subproperties to the original Leaflet "classes" with new or overloaded methods. It relies on the [iipsrv-astro] image server for pixel data and [Vizier] for catalog overlays. See on-line [documentation] and [demo]

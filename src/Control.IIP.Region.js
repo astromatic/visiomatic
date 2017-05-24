@@ -132,6 +132,10 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 					},
 					style: function (feature) {
 						return {color: region.color, weight: 2};
+					},
+					pointToLayer: function (feature, latlng) {
+						return region.drawPoint ?
+						  region.drawPoint(feature, latlng) : L.marker(latlng);
 					}
 				});
 				geoRegion.nameColor = region.color;

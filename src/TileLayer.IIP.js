@@ -4,9 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		18/07/2016
+#	Last modified:		23/05/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -61,11 +61,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelColors: [
 			[''],
 			['#FFFFFF'],
-			['#0000FF', '#FFFF00'],
+			['#00BAFF', '#FFBA00'],
 			['#0000FF', '#00FF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FFA000', '#FF0000']
+			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
+			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
+			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
 		],
 		quality: 90
 	},
@@ -113,6 +113,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipMix = [[]];
 		this.iipRGB = [];
 		this.iipChannelLabels = [];
+		this.iipChannelFlags = [];
 		this.iipChannelUnits = [];
 		this.iipQuality = options.quality;
 
@@ -266,18 +267,18 @@ L.TileLayer.IIP = L.TileLayer.extend({
 						omix = options.channelColors,
 						rgb = layer.iipRGB,
 						re = new RegExp(options.channelLabelMatch),
-						nmaxchannel = 0,
-						channelflag = [];
+						nchanon = 0,
+						channelflags = layer.iipChannelFlags;
 
-				nmaxchannel = 0;
+				nchanon = 0;
 				for (c = 0; c < nchannel; c++) {
-					channelflag[c] = re.test(labels[c]);
-					if (channelflag[c]) {
-						nmaxchannel++;
+					channelflags[c] = re.test(labels[c]);
+					if (channelflags[c]) {
+						nchanon++;
 					}
 				}
-				if (nmaxchannel >= iipdefault.channelColors.length) {
-					nmaxchannel = iipdefault.channelColors.length - 1;
+				if (nchanon >= iipdefault.channelColors.length) {
+					nchanon = iipdefault.channelColors.length - 1;
 				}
 
 				for (c = 0; c < nchannel; c++) {
@@ -289,8 +290,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					} else {
 						rgb[c] = L.rgb(0.0, 0.0, 0.0);
 					}
-					if (omix.length === 0 && channelflag[c] && cc < nmaxchannel) {
-						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][cc++]);
+					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nchanon][cc++]);
 					}
 					// Compute the current row of the mixing matrix
 					layer.rgbToMix(c);

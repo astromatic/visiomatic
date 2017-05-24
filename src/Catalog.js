@@ -1,12 +1,12 @@
 /*
 # L.Catalog contains specific catalog settings and conversion tools.
 #
-#	This file part of:	VisiOmatic
+#	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 07/01/2017
 */
 
 L.Catalog = {
@@ -81,9 +81,9 @@ L.Catalog = {
 	},
 
 	draw: function (feature, latlng) {
+		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
 		return L.circleMarker(latlng, {
-			radius: feature.properties.items[0] ?
-			  5 + 17 - feature.properties.items[0] : 8
+			radius: refmag ? this.maglim + 5 - refmag : 8
 		});
 	},
 
