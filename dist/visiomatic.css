@@ -511,6 +511,10 @@ input#leaflet-cmap-hot + label {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#leaflet-iipchannel div.leaflet-control-iip-select {
+	display: flow-root;
+}
+
 /*-------------------------------- Channel list -----------------------------*/
 
 a#leaflet-control-iip-button-colormix-reset {
@@ -616,6 +620,10 @@ a#leaflet-iipcatalog-toggle {
 	color: #505050;
 }
 
+#leaflet-iipcatalog div.leaflet-control-iip-select {
+	display: flow-root;
+}
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -642,6 +650,10 @@ a#leaflet-iipregion-toggle {
 #leaflet-control-iip-button-region:after {
 	content: 'GO';
 	color: #505050;
+}
+
+#leaflet-iipregion div.leaflet-control-iip-select {
+	display: flow-root;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
