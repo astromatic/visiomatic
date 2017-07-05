@@ -190,8 +190,8 @@ input.leaflet-control-iip-radio:checked + label {
 /*------------------------------- Select menu -------------------------------*/
 
 div.leaflet-control-iip-select {
-	padding-left: 32px;
 	margin-right: 2px;
+	display: inline-block;
 }
 
 select.leaflet-control-iip-select {
@@ -574,6 +574,11 @@ a#leaflet-iipimage-toggle {
 	background-image: url(images/icon-contrast.svg);
 	background-repeat: no-repeat;
 	background-position: center;
+}
+
+a#leaflet-control-iip-button-snapshot {
+	background-image: url(images/icon-camera.svg);
+	border-radius: 4px 4px 4px 4px;
 }
 
 .sidebar.image {

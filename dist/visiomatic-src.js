@@ -733,10 +733,10 @@ L.CRS.wcs = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 27/06/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -783,9 +783,11 @@ L.IIPUtils = {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
 
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
+		if ((action)) {
+			httpRequest.onreadystatechange = function () {
+				action(context, httpRequest);
+			};
+		}
 		httpRequest.send();
 	},
 
@@ -881,6 +883,43 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
@@ -1398,8 +1437,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (coords) {
-		var str = this._url,
-				z = this._getZoomForUrl();
+		var	str = this._url,
+			z = this._getZoomForUrl();
+
 		if (this.iipCMap !== this.iipdefault.cMap) {
 			str += '&CMP=' + this.iipCMap;
 		}
@@ -4453,10 +4493,10 @@ L.control.iip.doc = function (url, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		15/12/2015
+#	Last modified:		05/07/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4482,7 +4522,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			layer = this._layer,
-			elem;
+			map = this._map;
 
 		// Invert
 		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
@@ -4507,6 +4547,62 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._addNumericalInput(layer, this._dialog,  'JPEG quality:', 'iipQuality',
 		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
 		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
+
+		this._addDialogLine('', this._dialog);
+
+		// Image snapshot
+		var	line = this._addDialogLine('Snapshot:', this._dialog),
+			elem = this._addDialogElement(line),
+			items = ['Screen', 'Native'];
+
+		this._snapType = 0;
+		this._snapSelect =  this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			items,
+			undefined,
+			this._snapType,
+			function () {
+				this._snapType = parseInt(this._snapSelect.selectedIndex - 1, 10);
+			},
+			'Select snapshot resolution'
+		);
+
+		var	hiddenlink = document.createElement('a'),
+			button = this._createButton(className + '-button', elem, 'snapshot',
+			  function (event) {
+				var	latlng = map.getCenter(),
+					bounds = map.getPixelBounds(),
+					z = map.getZoom(),
+					zfac;
+
+				if (z > layer.iipMaxZoom) {
+					zfac = Math.pow(2, z - layer.iipMaxZoom);
+					z = layer.iipMaxZoom;
+				} else {
+					zfac = 1;
+				}
+
+				var	sizex = layer.iipImageSize[z].x * zfac,
+					sizey = layer.iipImageSize[z].y * zfac,
+					dx = (bounds.max.x - bounds.min.x),
+					dy = (bounds.max.y - bounds.min.y);
+
+				hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
+				  ).replace(/JTL\=\d+\,\d+/g,
+				  'RGN=' + bounds.min.x / sizex + ',' +
+				  bounds.min.y / sizey + ',' +
+				  dx / sizex + ',' + dy / sizey +
+				  '&WID=' + (this._snapType === 0 ?
+				    Math.floor(dx / zfac) :
+				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+				hiddenlink.download = layer._title + '_' +
+				  L.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+				  '.jpg';
+				hiddenlink.click();
+			}, 'Take a snapshot of the displayed image');
+
+		document.body.appendChild(hiddenlink);
 	},
 
 	_updateMix: function (layer) {
@@ -5875,10 +5971,10 @@ L.control.sidebar = function (map, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 07/09/2016
+#	Last modified: 27/06/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -5952,7 +6048,7 @@ L.Control.WCS = L.Control.extend({
 				latlng = map.getCenter();
 			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-			  this._latLngToHMSDMS(latlng));
+			  L.IIPUtils.latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
@@ -5981,7 +6077,7 @@ L.Control.WCS = L.Control.extend({
 			}
 			switch (coord.units) {
 			case 'HMS':
-				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
@@ -5991,43 +6087,6 @@ L.Control.WCS = L.Control.extend({
 				break;
 			}
 		}
-	},
-
-	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
-	_latLngToHMSDMS : function (latlng) {
-		var lng = (latlng.lng + 360.0) / 360.0;
-		lng = (lng - Math.floor(lng)) * 24.0;
-		var h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-		 lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat < 0.0 ? '-' : '+',
-		 d = Math.floor(lat);
-		mf = (lat - d) * 60.0;
-		m = Math.floor(mf);
-		sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-		 (m < 10 ? '0' : '') + m.toString() + ':' +
-		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	panTo: function (str) {
