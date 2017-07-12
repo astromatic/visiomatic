@@ -58,62 +58,6 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._addNumericalInput(layer, this._dialog,  'JPEG quality:', 'iipQuality',
 		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
 		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
-
-		this._addDialogLine('', this._dialog);
-
-		// Image snapshot
-		var	line = this._addDialogLine('Snapshot:', this._dialog),
-			elem = this._addDialogElement(line),
-			items = ['Screen', 'Native'];
-
-		this._snapType = 0;
-		this._snapSelect =  this._createSelectMenu(
-			this._className + '-select',
-			elem,
-			items,
-			undefined,
-			this._snapType,
-			function () {
-				this._snapType = parseInt(this._snapSelect.selectedIndex - 1, 10);
-			},
-			'Select snapshot resolution'
-		);
-
-		var	hiddenlink = document.createElement('a'),
-			button = this._createButton(className + '-button', elem, 'snapshot',
-			  function (event) {
-				var	latlng = map.getCenter(),
-					bounds = map.getPixelBounds(),
-					z = map.getZoom(),
-					zfac;
-
-				if (z > layer.iipMaxZoom) {
-					zfac = Math.pow(2, z - layer.iipMaxZoom);
-					z = layer.iipMaxZoom;
-				} else {
-					zfac = 1;
-				}
-
-				var	sizex = layer.iipImageSize[z].x * zfac,
-					sizey = layer.iipImageSize[z].y * zfac,
-					dx = (bounds.max.x - bounds.min.x),
-					dy = (bounds.max.y - bounds.min.y);
-
-				hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
-				  ).replace(/JTL\=\d+\,\d+/g,
-				  'RGN=' + bounds.min.x / sizex + ',' +
-				  bounds.min.y / sizey + ',' +
-				  dx / sizex + ',' + dy / sizey +
-				  '&WID=' + (this._snapType === 0 ?
-				    Math.floor(dx / zfac) :
-				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
-				hiddenlink.download = layer._title + '_' +
-				  L.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-				  '.jpg';
-				hiddenlink.click();
-			}, 'Take a snapshot of the displayed image');
-
-		document.body.appendChild(hiddenlink);
 	},
 
 	_updateMix: function (layer) {
