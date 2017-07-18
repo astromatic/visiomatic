@@ -22,6 +22,7 @@ var deps = {
 			'Control.IIP.Image.js',
 			'Control.IIP.Profile.js',
 			'Control.IIP.Region.js',
+			'Control.IIP.Snapshot.js',
 			'Control.Layers.IIP.js',
 			'Control.Reticle.js',
 			'Control.Scale.WCS.js',

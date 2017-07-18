@@ -7,7 +7,7 @@
 #                                Chiara Marmo - IDES/Paris-Sud,
 #                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 17/05/2017
+#	Last modified: 12/07/2017
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -190,8 +190,8 @@ input.leaflet-control-iip-radio:checked + label {
 /*------------------------------- Select menu -------------------------------*/
 
 div.leaflet-control-iip-select {
-	padding-left: 32px;
 	margin-right: 2px;
+	display: flow-root;
 }
 
 select.leaflet-control-iip-select {
@@ -511,6 +511,10 @@ input#leaflet-cmap-hot + label {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#leaflet-iipchannel div.leaflet-control-iip-select {
+	display: flow-root;
+}
+
 /*-------------------------------- Channel list -----------------------------*/
 
 a#leaflet-control-iip-button-colormix-reset {
@@ -611,6 +615,10 @@ a#leaflet-iipcatalog-toggle {
 	color: #505050;
 }
 
+#leaflet-iipcatalog div.leaflet-control-iip-select {
+	display: flow-root;
+}
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -637,6 +645,10 @@ a#leaflet-iipregion-toggle {
 #leaflet-control-iip-button-region:after {
 	content: 'GO';
 	color: #505050;
+}
+
+#leaflet-iipregion div.leaflet-control-iip-select {
+	display: flow-root;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -712,6 +724,38 @@ a#leaflet-iipprofile-toggle {
 table.jqplot-table-legend, table.jqplot-cursor-legend {
 	z-index: 2000;
 	background-color: rgba(255,255,255,0.75);
+}
+
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Snapshot %%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#leaflet-iipsnapshot-toggle {
+	background-image: url(images/icon-camera.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+a#leaflet-control-iip-button-snapshot {
+	background-image: url(images/icon-image.svg);
+	border-radius: 4px 4px 4px 4px;
+}
+
+a#leaflet-control-iip-button-print {
+	background-image: url(images/icon-print.svg);
+	border-radius: 4px 4px 4px 4px;
+}
+
+.sidebar.snapshot {
+	width: 224px;
+}
+.sidebar-left.snapshot ~ .leaflet-left {
+	left: 238px;
+}
+
+#leaflet-iipsnapshot div.leaflet-control-iip-select {
+	display: inline-block;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

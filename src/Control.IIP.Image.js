@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		15/12/2015
+#	Last modified:		05/07/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -33,7 +33,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			layer = this._layer,
-			elem;
+			map = this._map;
 
 		// Invert
 		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',

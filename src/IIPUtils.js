@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 27/06/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -53,9 +53,11 @@ L.IIPUtils = {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
 
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
+		if ((action)) {
+			httpRequest.onreadystatechange = function () {
+				action(context, httpRequest);
+			};
+		}
 		httpRequest.send();
 	},
 
@@ -151,6 +153,43 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
