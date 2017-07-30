@@ -1962,7 +1962,6 @@ L.Catalog = {
 		var str = '<div>';
 		if (this.objurl) {
 			str += 'ID: <a href=\"' +  L.Util.template(this.objurl, L.extend({
-                                id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
