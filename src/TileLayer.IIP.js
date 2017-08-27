@@ -6,7 +6,7 @@
 #
 #	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		23/05/2017
+#	Last modified:		28/08/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -572,7 +572,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// Compute tile size (IIP tile size can be less at image borders)
 		var	coords = tile.coords,
-			  z = coords.z;
+			z = this._getZoomForUrl();
+
 		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
 		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
 			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,

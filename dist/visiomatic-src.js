@@ -950,7 +950,7 @@ L.IIPUtils = {
 #
 #	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		23/05/2017
+#	Last modified:		28/08/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
