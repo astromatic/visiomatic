@@ -7,8 +7,11 @@
 #                                Chiara Marmo - IDES/Paris-Sud,
 #                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 12/07/2017
+#	Last modified: 27/08/2017
 */
+.leaflet-container {
+  touch-action: none;
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Global effects %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -562,14 +565,6 @@ a#leaflet-control-iip-button-colormix-auto {
 }
 
 
-#logo-cds {
-	background: url(images/cds.png) no-repeat;
-	background-size: 2.4em;
-	background-position: center;
-	display: inline-block;
-	width: 32px;
-}
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Image %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -618,6 +613,23 @@ a#leaflet-iipcatalog-toggle {
 #leaflet-iipcatalog div.leaflet-control-iip-select {
 	display: flow-root;
 }
+
+.logo-catalog-cds {
+	background: url(images/cds.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
+.logo-catalog-mast {
+	background: url(images/mast.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 27/08/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -40,7 +40,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'catalog';
-		this._catalogs =	catalogs ? catalogs : this.defaultCatalogs;
+		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
 	_initDialog: function () {
@@ -48,8 +48,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
 			// CDS catalog overlay
-			line = this._addDialogLine('<a id="logo-cds" ' +
-			  'href="http://cds.u-strasbg.fr">&nbsp;</a>', box),
+			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
 			colpick = this._createColorPicker(
 				className + '-color',
@@ -67,12 +66,20 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs.map(function (catalog) { return catalog.name; }),
 			undefined,
 			-1,
-			undefined,
+			function () {
+				var className = catalogs[catselect.selectedIndex - 1].className;
+				if (className === undefined) {
+					className = '';
+				}
+				L.DomUtil.setClass(catselect, this._className + '-select ' + className);
+				return;
+			},
 			'Select Catalog'
 		);
 
 		L.DomEvent.on(catselect, 'change keyup', function () {
-			catselect.title = catalogs[catselect.selectedIndex - 1].attribution;
+			var catalog = catalogs[catselect.selectedIndex - 1];
+			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
 
 		elem = this._addDialogElement(line);
@@ -84,6 +91,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				catalog.color = colpick.value;
 				catselect.selectedIndex = 0;
 				catselect.title = 'Select Catalog';
+				L.DomUtil.setClass(catselect, this._className + '-select ');
 				this._getCatalog(catalog, this.options.timeOut);
 			}
 		}, 'Query catalog');
@@ -192,6 +200,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
+					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
 				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
 					_this._loadCatalog(catalog, templayer, context, httpRequest);
@@ -218,6 +227,9 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 						} else {
 							return new L.LatLng(coords[1], coords[0], coords[2]);
 						}
+					},
+					filter: function (feature) {
+						return catalog.filter(feature);
 					},
 					pointToLayer: function (feature, latlng) {
 						return catalog.draw(feature, latlng);

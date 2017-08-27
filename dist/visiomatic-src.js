@@ -1516,7 +1516,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// Compute tile size (IIP tile size can be less at image borders)
 		var	coords = tile.coords,
-			  z = coords.z;
+			z = this._getZoomForUrl();
+
 		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
 		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
 			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
@@ -1909,7 +1910,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 30/07/2017
+#	Last modified: 27/08/2017
 */
 
 L.Catalog = {
@@ -1917,7 +1918,7 @@ L.Catalog = {
 
 	_csvToGeoJSON: function (str) {
 		// Check to see if the delimiter is defined. If not, then default to comma.
-		var badreg = new RegExp('#|--|^$'),
+		var badreg = new RegExp('#|--|objName|string|^$'),
 		 lines = str.split('\n'),
 		 geo = {type: 'FeatureCollection', features: []};
 
@@ -1945,13 +1946,17 @@ L.Catalog = {
 				var items = cell.slice(3),
 				    item;
 				for (var j in items) {
-					item = parseFloat(items[j]);
-					properties.items.push(isNaN(item) ? '--' : item);
+					properties.items.push(this.readProperty(items[j]));
 				}
 				geo.features.push(feature);
 			}
 		}
 		return geo;
+	},
+
+	readProperty: function (item) {
+		var	fitem = parseFloat(item);
+		return isNaN(fitem) ? '--' : fitem;
 	},
 
 	toGeoJSON: function (str) {
@@ -1970,13 +1975,15 @@ L.Catalog = {
 		}
 		str += '<TABLE style="margin:auto;">' +
 		       '<TBODY style="vertical-align:top;text-align:left;">';
-		for	(var i in this.properties) {
-			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ';
-			if (this.units[i]) {
-				str += this.units[i];
+		for (var i in this.properties) {
+			if (this.propertyMask === undefined || this.propertyMask[i] === true) {
+				str += '<TR><TD>' + this.properties[i] + ':</TD>' +
+				       '<TD>' + feature.properties.items[i].toString() + ' ';
+				if (this.units[i]) {
+					str += this.units[i];
+				}
+				str += '</TD></TR>';
 			}
-			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -1990,16 +1997,22 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+	filter: function (feature) {
+		return true;
+	},
+
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
+	mastURL: 'http://archive.stsci.edu'
 
 };
 
 L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: '2MASS',
+	className: 'logo-catalog-cds',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',
 	color: 'red',
 	maglim: 17.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
 	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
@@ -2011,26 +2024,28 @@ L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.SDSS = L.extend({}, L.Catalog, {
-	name: 'SDSS release 9',
-	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al. 2012)',
+	service: 'Vizier@CDS',
+	name: 'SDSS release 12',
+	className: 'logo-catalog-cds',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Alam et al. 2015)',
 	color: 'yellow',
 	maglim: 25.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
-	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/139&' +
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
 	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-sort=imag&-out.max={nmax}',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'PPMXL',
-	attribution: 'PPM-Extended, positions and proper motions by Roeser et al. 2008',
+	className: 'logo-catalog-cds',
+	attribution: 'PPM-Extended, positions and proper motions (Roeser et al. 2008)',
 	color: 'green',
 	maglim: 20.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/317&' +
 	 '-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
@@ -2043,11 +2058,12 @@ L.Catalog.PPMXL = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.Abell = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'Abell clusters',
+	className: 'logo-catalog-cds',
 	attribution: 'Rich Clusters of Galaxies (Abell et al. 1989) ',
 	color: 'orange',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VII/110A&' +
 	 '-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
@@ -2058,11 +2074,12 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.NVSS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'NVSS',
+	className: 'logo-catalog-cds',
 	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
 	color: 'magenta',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
 	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
@@ -2080,11 +2097,12 @@ L.Catalog.NVSS = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.FIRST = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'FIRST',
+	className: 'logo-catalog-cds',
 	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
 	color: 'blue',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
 	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
@@ -2102,11 +2120,12 @@ L.Catalog.FIRST = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.AllWISE = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'AllWISE',
+	className: 'logo-catalog-cds',
 	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
 	color: 'red',
 	maglim: 18.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
 	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
@@ -2118,11 +2137,13 @@ L.Catalog.AllWISE = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'GALEX AIS',
+	className: 'logo-catalog-cds',
 	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
 	color: 'magenta',
 	maglim: 21.0,
-	service: 'Vizier@CDS',
+	filter: true,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
 	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
@@ -2133,11 +2154,12 @@ L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'Gaia DR1',
+	className: 'logo-catalog-cds',
 	attribution: 'First Gaia Data Release (2016)',
 	color: 'green',
 	maglim: 20.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
@@ -2148,11 +2170,12 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'URAT1',
+	className: 'logo-catalog-cds',
 	attribution: 'The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)',
 	color: 'yellow',
 	maglim: 17.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/329&' +
 	 '-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +
@@ -2161,6 +2184,36 @@ L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
+
+L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
+	service: 'MAST@STScI',
+	name: 'Pan-Starrs1',
+	className: 'logo-catalog-mast',
+	attribution: 'The Pan-STARRS1 Database and Data Products (Flewelling et al. 2016)',
+	color: 'yellow',
+	maglim: 24.0,
+	magindex: 1,
+	regionType: 'cone',
+	url: L.Catalog.mastURL + '/panstarrs/search.php?' +
+	 'action=Search&target=&radius={drm}&ra={lng}&dec={lat}&equinox={sys}&nDetections=%3E+1&' +
+	 'selectedColumnsCsv=objname%2Cramean%2Cdecmean%2C' +
+	 'gmeankronmag%2Crmeankronmag%2Cimeankronmag%2Czmeankronmag%2Cymeankronmag%2CqualityFlag&' +
+	 'selectedColumnsList%5B%5D=rmeankronmag&availableColumns=objname&ordercolumn1=gmeankronmag&' +
+	 'coordformat=dec&outputformat=TSV&max_records={nmax}',
+	properties: ['g', 'r', 'i', 'z', 'y', 'quality'],
+	units: ['', '', '', '', '', ''],
+	propertyMask: [true, true, true, true, true, false],
+	readProperty: function (item) {
+		var	fitem = parseFloat(item);
+		return fitem < 0.0 ? '--' : fitem;
+	},
+	objurl: L.Catalog.mastURL + '/panstarrs/search.php?' +
+	 'action=Search&target=&radius=0.001&ra={ra}&dec={dec}&equinox=J2000&nDetections=%3E+1',
+	filter: function (feature) {
+		return parseFloat(feature.properties.items[5]) >= 40;
+	}
+});
+
 
 
 /*
@@ -3713,10 +3766,10 @@ L.control.iip = function (baseLayers, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 27/08/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3750,7 +3803,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'catalog';
-		this._catalogs =	catalogs ? catalogs : this.defaultCatalogs;
+		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
 	_initDialog: function () {
@@ -3758,8 +3811,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
 			// CDS catalog overlay
-			line = this._addDialogLine('<a id="logo-cds" ' +
-			  'href="http://cds.u-strasbg.fr">&nbsp;</a>', box),
+			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
 			colpick = this._createColorPicker(
 				className + '-color',
@@ -3777,12 +3829,20 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs.map(function (catalog) { return catalog.name; }),
 			undefined,
 			-1,
-			undefined,
+			function () {
+				var className = catalogs[catselect.selectedIndex - 1].className;
+				if (className === undefined) {
+					className = '';
+				}
+				L.DomUtil.setClass(catselect, this._className + '-select ' + className);
+				return;
+			},
 			'Select Catalog'
 		);
 
 		L.DomEvent.on(catselect, 'change keyup', function () {
-			catselect.title = catalogs[catselect.selectedIndex - 1].attribution;
+			var catalog = catalogs[catselect.selectedIndex - 1];
+			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
 
 		elem = this._addDialogElement(line);
@@ -3794,6 +3854,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				catalog.color = colpick.value;
 				catselect.selectedIndex = 0;
 				catselect.title = 'Select Catalog';
+				L.DomUtil.setClass(catselect, this._className + '-select ');
 				this._getCatalog(catalog, this.options.timeOut);
 			}
 		}, 'Query catalog');
@@ -3902,6 +3963,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
+					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
 				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
 					_this._loadCatalog(catalog, templayer, context, httpRequest);
@@ -3928,6 +3990,9 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 						} else {
 							return new L.LatLng(coords[1], coords[0], coords[2]);
 						}
+					},
+					filter: function (feature) {
+						return catalog.filter(feature);
 					},
 					pointToLayer: function (feature, latlng) {
 						return catalog.draw(feature, latlng);
