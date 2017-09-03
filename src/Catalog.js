@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/08/2017
+#	Last modified: 03/09/2017
 */
 
 L.Catalog = {
@@ -187,7 +187,7 @@ L.Catalog.NVSS = L.extend({}, L.Catalog, {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
 			minAxis: feature.properties.items[2] / 7200.0,
-			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
 		});
 	}
 });
@@ -210,7 +210,7 @@ L.Catalog.FIRST = L.extend({}, L.Catalog, {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
 			minAxis: feature.properties.items[2] / 7200.0,
-			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
 		});
 	}
 });
@@ -308,4 +308,52 @@ L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
 		return parseFloat(feature.properties.items[5]) >= 40;
 	}
 });
+
+L.Catalog.GLEAM = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'GLEAM',
+	className: 'logo-catalog-cds',
+	attribution: 'GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM)' +
+	    ' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&' +
+	 '-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['F<sub>int</sub>(170-231MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['Jy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 3600.0,
+			minAxis: feature.properties.items[2] / 3600.0,
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.TGSS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'TGSS',
+	className: 'logo-catalog-cds',
+	attribution: 'The GMRT 150 MHz all-sky radio survey. TGSS ADR1 (Intema et al. 2017)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&' +
+	 '-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['F<sub>peak</sub>(150MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
+		});
+	}
+});
+
 
