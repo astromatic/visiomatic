@@ -2032,11 +2032,11 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	maglim: 25.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
-	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-sort=imag&-out.max={nmax}',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
@@ -2143,7 +2143,6 @@ L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
 	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
 	color: 'magenta',
 	maglim: 21.0,
-	filter: true,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
 	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
