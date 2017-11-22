@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 24/11/2015
+#	Last modified: 22/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -98,7 +98,7 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 				var map = _this._map,
 					latLng = map.getCenter(),
 					zoom = map.options.crs.options.nzoom - 1,
-				  point = map.project(latLng, zoom).round(),
+					point = map.project(latLng, zoom).floor().add([0.5, 0.5]),
 					rLatLng = map.unproject(point, zoom),
 					marker = this._spectrumMarker = L.circleMarker(rLatLng, {
 						color: speccolpick.value,
@@ -113,8 +113,8 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 				  {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
 				L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
 				  '&PFL=' + zoom.toString() + ':' +
-				  point.x.toFixed(0) + ',' + point.y.toFixed(0) + '-' +
-				  point.x.toFixed(0) + ',' + point.y.toFixed(0),
+				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0) + '-' +
+				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0),
 				  'getting IIP layer spectrum', this._plotSpectrum, this);
 			}, 'Plot a spectrum at the current map position');
 		}
@@ -169,9 +169,9 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 		}
 
 		L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
-			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
-			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
-			 point2.y.toFixed(0),
+			'&PFL=' + zoom.toString() + ':' + (point1.x - 0.5).toFixed(0) + ',' +
+			 (point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
+			 (point2.y - 0.5).toFixed(0),
 			'getting IIP layer profile',
 			this._plotProfile, this);
 	},
