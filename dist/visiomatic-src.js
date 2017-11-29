@@ -1910,7 +1910,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 03/09/2017
+#	Last modified: 29/11/2017
 */
 
 L.Catalog = {
@@ -2001,15 +2001,15 @@ L.Catalog = {
 		return true;
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
-	mastURL: 'http://archive.stsci.edu'
+	vizierURL: 'https://vizier.cfa.harvard.edu/viz-bin',
+	mastURL: 'https://archive.stsci.edu'
 
 };
 
 L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: '2MASS',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',
 	color: 'red',
 	maglim: 17.0,
@@ -2024,9 +2024,9 @@ L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.SDSS = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'SDSS release 12',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'SDSS Photometric Catalog, Release 9 (Alam et al. 2015)',
 	color: 'yellow',
 	maglim: 25.0,
@@ -2040,9 +2040,9 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'PPMXL',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'PPM-Extended, positions and proper motions (Roeser et al. 2008)',
 	color: 'green',
 	maglim: 20.0,
@@ -2058,9 +2058,9 @@ L.Catalog.PPMXL = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.Abell = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'Abell clusters',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'Rich Clusters of Galaxies (Abell et al. 1989) ',
 	color: 'orange',
 	maglim: 30.0,
@@ -2074,9 +2074,9 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.NVSS = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'NVSS',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
 	color: 'magenta',
 	maglim: 30.0,
@@ -2097,9 +2097,9 @@ L.Catalog.NVSS = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.FIRST = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'FIRST',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
 	color: 'blue',
 	maglim: 30.0,
@@ -2120,9 +2120,9 @@ L.Catalog.FIRST = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.AllWISE = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'AllWISE',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
 	color: 'red',
 	maglim: 18.0,
@@ -2137,9 +2137,9 @@ L.Catalog.AllWISE = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'GALEX AIS',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
 	color: 'magenta',
 	maglim: 21.0,
@@ -2153,9 +2153,9 @@ L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'Gaia DR1',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'First Gaia Data Release (2016)',
 	color: 'green',
 	maglim: 20.0,
@@ -2169,9 +2169,9 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'URAT1',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)',
 	color: 'yellow',
 	maglim: 17.0,
@@ -2214,9 +2214,9 @@ L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GLEAM = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'GLEAM',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM)' +
 	    ' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
 	color: 'blue',
@@ -2238,9 +2238,9 @@ L.Catalog.GLEAM = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.TGSS = L.extend({}, L.Catalog, {
-	service: 'Vizier@CDS',
+	service: 'Vizier@CFA',
 	name: 'TGSS',
-	className: 'logo-catalog-cds',
+	className: 'logo-catalog-vizier',
 	attribution: 'The GMRT 150 MHz all-sky radio survey. TGSS ADR1 (Intema et al. 2017)',
 	color: 'blue',
 	maglim: 30.0,

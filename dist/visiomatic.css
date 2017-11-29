@@ -627,6 +627,14 @@ a#leaflet-iipcatalog-toggle {
 	padding-right: 32px!important;
 }
 
+.logo-catalog-vizier {
+	background: url(images/vizier.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
