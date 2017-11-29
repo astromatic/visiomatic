@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -307,7 +307,7 @@ L.Control.IIP = L.Control.extend({
 	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			flip = L.flipswitch(elem, {
+			flip = elem.flip = L.flipswitch(elem, {
 				checked: checked,
 				id: id,
 				title: title
@@ -338,6 +338,14 @@ L.Control.IIP = L.Control.extend({
 		}, this);
 
 		return elem;
+	},
+
+	_updateInput:	function (elem, value) {
+		if (elem.spinbox) {
+			elem.spinbox.value(value);
+		} else if (elem.flip) {
+			elem.flip.value(value);
+		}
 	},
 
 	_spinboxStep: function (min, max) {

@@ -3329,10 +3329,10 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -3632,7 +3632,7 @@ L.Control.IIP = L.Control.extend({
 	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			flip = L.flipswitch(elem, {
+			flip = elem.flip = L.flipswitch(elem, {
 				checked: checked,
 				id: id,
 				title: title
@@ -3663,6 +3663,14 @@ L.Control.IIP = L.Control.extend({
 		}, this);
 
 		return elem;
+	},
+
+	_updateInput:	function (elem, value) {
+		if (elem.spinbox) {
+			elem.spinbox.value(value);
+		} else if (elem.flip) {
+			elem.flip.value(value);
+		}
 	},
 
 	_spinboxStep: function (min, max) {
@@ -4623,7 +4631,7 @@ L.control.iip.doc = function (url, options) {
 #	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		05/07/2017
+#	Last modified:		29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4643,6 +4651,38 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
 		this._sideClass = 'image';
+		this._initsettings = {};
+	},
+
+	// Copy image settings from layer
+	saveSettings: function (layer, settings) {
+		if (!settings) {
+			return;
+		}
+
+		settings.invertCMap = layer.iipInvertCMap;
+		settings.contrast = layer.iipContrast;
+		settings.colorSat = layer.iipColorSat;
+		settings.gamma = layer.iipGamma;
+		settings.quality = layer.iipQuality;
+	},
+
+	// Copy image settings back to layer and update widget values
+	loadSettings: function (layer, settings) {
+		if (!settings) {
+			return;
+		}
+
+		layer.iipInvertCMap = settings.invertCMap;
+		this._updateInput(this._input.invertCMap, settings.invertCMap);
+		layer.iipContrast = settings.contrast;
+		this._updateInput(this._input.contrast, settings.contrast);
+		layer.iipColorSat = settings.colorSat;
+		this._updateInput(this._input.colorSat, settings.colorSat);
+		layer.iipGamma = settings.gamma;
+		this._updateInput(this._input.gamma, settings.gamma);
+		layer.iipQuality = settings.quality;
+		this._updateInput(this._input.quality, settings.quality);
 	},
 
 	_initDialog: function () {
@@ -4651,29 +4691,51 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			layer = this._layer,
 			map = this._map;
 
+		// _input will contain widget instances
+		this._input = {};
+
+		// copy initial IIP image parameters from the layer object
+		this.saveSettings(layer, this._initsettings);
+
 		// Invert
-		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
+		this._input.invertCMap = this._addSwitchInput(layer, this._dialog,
+		  'Invert:', 'iipInvertCMap',
 		  'Invert color map(s)', 'leaflet-invertCMap', layer.iipInvertCMap);
 
 		// Contrast
-		this._addNumericalInput(layer, this._dialog, 'Contrast:', 'iipContrast',
+		this._input.contrast = this._addNumericalInput(layer,
+		  this._dialog, 'Contrast:', 'iipContrast',
 		  'Adjust Contrast. 1.0: normal.', 'leaflet-contrastValue',
 		  layer.iipContrast, 0.05, 0.0, 10.0);
 
 		// Colour saturation
-		this._addNumericalInput(layer, this._dialog, 'Color Sat.:', 'iipColorSat',
+		this._input.colorSat = this._addNumericalInput(layer,
+		  this._dialog, 'Color Sat.:', 'iipColorSat',
 		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
 		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
 
 		// Gamma
-		this._addNumericalInput(layer, this._dialog,  'Gamma:', 'iipGamma',
+		this._input.gamma = this._addNumericalInput(layer,
+		  this._dialog,  'Gamma:', 'iipGamma',
 		  'Adjust Gamma correction. The standard value is 2.2.',
 		  'leaflet-gammavalue', layer.iipGamma, 0.05, 0.5, 5.0);
 
 		// JPEG quality
-		this._addNumericalInput(layer, this._dialog,  'JPEG quality:', 'iipQuality',
+		this._input.quality = this._addNumericalInput(layer,
+		  this._dialog,  'JPEG quality:', 'iipQuality',
 		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
 		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
+
+		// Reset settings button
+		var line = this._addDialogLine('Reset:', this._dialog),
+		    elem = this._addDialogElement(line);
+
+		this._createButton(className + '-button', elem, 'image-reset', function () {
+			_this.loadSettings(layer, _this._initsettings);
+			layer.updateMix();
+			layer.redraw();
+		}, 'Reset image settings');
+
 	},
 
 	_updateMix: function (layer) {

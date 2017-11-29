@@ -7,7 +7,7 @@
 #                                Chiara Marmo - IDES/Paris-Sud,
 #                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 27/08/2017
+#	Last modified: 29/11/2017
 */
 .leaflet-container {
   touch-action: none;
@@ -491,14 +491,6 @@ input.leaflet-cmap:checked + label {
 	box-shadow: 1px 1px 2px black inset;
 }
 
-/*
-input.leaflet-cmap.invert + label {
-	transform: scaleY(-1.0);
-	-ms-transform: scaleY(-1.0);
-	-webkit-transform: scaleY(-1.0);
-}
-*/
-
 input#leaflet-cmap-grey + label {
 	background-image: url(images/icon-grey.svg);
 	border-radius: 4px 0px 0px 4px;
@@ -580,6 +572,11 @@ a#leaflet-iipimage-toggle {
 }
 .sidebar-left.image ~ .leaflet-left {
 	left: 234px;
+}
+
+a#leaflet-control-iip-button-image-reset {
+	background-image: url(images/icon-reset.svg);
+	border-radius: 4px 0px 0px 4px;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
