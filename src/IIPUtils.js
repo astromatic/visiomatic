@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 01/12/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -191,6 +191,24 @@ L.IIPUtils = {
 		 (m < 10 ? '0' : '') + m.toString() + ':' +
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
+
+	// Convert HMSDMS to degrees
+	hmsDMSToLatLng: function (str) {
+		var result;
+/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
+		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
+/* jshint ignore:end */
+		if (result && result.length >= 7) {
+			var	dd = Number(result[4]);
+
+			return L.latLng((dd < 0.0 ? -1.0 : 1.0) *
+			    (Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
+			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
+		} else {
+			return undefined;
+		}
+	},
+
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {

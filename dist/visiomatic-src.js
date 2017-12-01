@@ -395,10 +395,10 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/09/2016
+#	Last modified: 01/12/2017
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -603,18 +603,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	// Parse a string of coordinates. Return undefined if parsing failed
-	parseCoords: function (str, cdsflag) {
-		var result;
-		if (cdsflag) {
-			// Special parsing for Sesame@CDS
-			result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-		} else {
-			result = /(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g.exec(str);
+	parseCoords: function (str) {
+		var result, latlng;
+
+		// Try VisiOmatic sexagesimal first
+		latlng = L.IIPUtils.hmsDMSToLatLng(str);
+		if (typeof latlng === 'undefined') {
+			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
+			result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
+			if (result && result.length >= 3) {
+				latlng = L.latLng(Number(result[2]), Number(result[1]));
+			}
 		}
-
-		if (result && result.length >= 3) {
-			var latlng = L.latLng(Number(result[2]), Number(result[1]));
-
+		if (latlng) {
 			if (this.forceNativeCelsys) {
 				latlng = this.eqToCelsys(latlng);
 			}
@@ -736,7 +737,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 01/12/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -922,6 +923,24 @@ L.IIPUtils = {
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
+	// Convert HMSDMS to degrees
+	hmsDMSToLatLng: function (str) {
+		var result;
+/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
+		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
+/* jshint ignore:end */
+		if (result && result.length >= 7) {
+			var	dd = Number(result[4]);
+
+			return L.latLng((dd < 0.0 ? -1.0 : 1.0) *
+			    (Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
+			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
+		} else {
+			return undefined;
+		}
+	},
+
+
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
 	    var name = cname + '=';
@@ -950,7 +969,7 @@ L.IIPUtils = {
 #
 #	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		28/08/2017
+#	Last modified:		01/12/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -977,7 +996,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
-		credentials: false
+		credentials: false,
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
+
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -1323,8 +1344,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				curcrs = map.options.crs,
 				prevcrs = map._prevcrs,
 				maploadedflag = map._loaded,
-				// Default center coordinates
-				center = map.options.center ? map.options.center : newcrs.projparam.crval;
+				center;
 
 		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
@@ -1349,48 +1369,46 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
-		} else {
+		} else if (this.options.center) {
 			// Default center coordinates and zoom
-			if (this.options.center) {
-				var	latlng = newcrs.parseCoords(this.options.center);
-
-				if (latlng) {
-					if (this.options.fov) {
-						zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
-					}
-					map.setView(latlng, zoom, {reset: true, animate: false});
-				} else {
-					// If not, ask Sesame@CDS!
-					L.IIPUtils.requestURL(
-						'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' +
-						  this.options.center,
-						'getting coordinates for ' + this.options.center,
-						function (_this, httpRequest) {
-							if (httpRequest.readyState === 4) {
-								if (httpRequest.status === 200) {
-									var str = httpRequest.responseText,
-										latlng = newcrs.parseCoords(str, true);
-
-									if (latlng) {
-										if (_this.options.fov) {
-											zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
-										}
-										map.setView(latlng, zoom, {reset: true, animate: false});
-									} else {
-										map.setView(center, zoom, {reset: true, animate: false});
-										alert(str + ': Unknown location');
-									}
-								} else {
-									map.setView(center, zoom, {reset: true, animate: false});
-									alert('There was a problem with the request to the Sesame service at CDS');
-								}
-							}
-						}, this, 10
-					);
+			var latlng = (typeof this.options.center === 'string') ?
+			  newcrs.parseCoords(decodeURI(this.options.center)) :
+			  this.options.center;
+			if (latlng) {
+				if (this.options.fov) {
+					zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
 				}
+				map.setView(latlng, zoom, {reset: true, animate: false});
 			} else {
-				map.setView(center, zoom, {reset: true, animate: false});
+				// If not, ask Sesame@CDS!
+				L.IIPUtils.requestURL(
+					this.options.sesameURL + '/-oI/A?' +
+					  this.options.center,
+					'getting coordinates for ' + this.options.center,
+					function (_this, httpRequest) {
+						if (httpRequest.readyState === 4) {
+							if (httpRequest.status === 200) {
+								var str = httpRequest.responseText,
+									latlng = newcrs.parseCoords(str);
+								if (latlng) {
+									if (_this.options.fov) {
+										zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
+									}
+									map.setView(latlng, zoom, {reset: true, animate: false});
+								} else {
+									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									alert(str + ': Unknown location');
+								}
+							} else {
+								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								alert('There was a problem with the request to the Sesame service at CDS');
+							}
+						}
+					}, this, 10
+				);
 			}
+		} else {
+			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},
 
@@ -6216,7 +6234,7 @@ L.control.sidebar = function (map, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 30/11/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -6228,7 +6246,8 @@ L.Control.WCS = L.Control.extend({
 			nativeCelsys: false
 		}],
 		centerQueryKey: 'center',
-		fovQueryKey: 'fov'
+		fovQueryKey: 'fov',
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
 	},
 
 	onAdd: function (map) {
@@ -6332,11 +6351,10 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	panTo: function (str) {
-		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
-				result = re.exec(str),
-				wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord],
-				latlng = wcs.parseCoords(str);
+		var	wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord],
+			latlng = wcs.parseCoords(str);
+
 		if (latlng) {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
@@ -6350,7 +6368,7 @@ L.Control.WCS = L.Control.extend({
 			}
 		} else {
 			// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			L.IIPUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
@@ -6359,7 +6377,7 @@ L.Control.WCS = L.Control.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var str = httpRequest.responseText,
-					latlng = _this._map.options.crs.parseCoords(str, true);
+					latlng = _this._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					_this._map.panTo(latlng);

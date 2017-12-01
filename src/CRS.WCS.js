@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/09/2016
+#	Last modified: 01/12/2017
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -212,18 +212,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	// Parse a string of coordinates. Return undefined if parsing failed
-	parseCoords: function (str, cdsflag) {
-		var result;
-		if (cdsflag) {
-			// Special parsing for Sesame@CDS
-			result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-		} else {
-			result = /(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g.exec(str);
+	parseCoords: function (str) {
+		var result, latlng;
+
+		// Try VisiOmatic sexagesimal first
+		latlng = L.IIPUtils.hmsDMSToLatLng(str);
+		if (typeof latlng === 'undefined') {
+			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
+			result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
+			if (result && result.length >= 3) {
+				latlng = L.latLng(Number(result[2]), Number(result[1]));
+			}
 		}
-
-		if (result && result.length >= 3) {
-			var latlng = L.latLng(Number(result[2]), Number(result[1]));
-
+		if (latlng) {
 			if (this.forceNativeCelsys) {
 				latlng = this.eqToCelsys(latlng);
 			}

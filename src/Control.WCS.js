@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 30/11/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -18,7 +18,8 @@ L.Control.WCS = L.Control.extend({
 			nativeCelsys: false
 		}],
 		centerQueryKey: 'center',
-		fovQueryKey: 'fov'
+		fovQueryKey: 'fov',
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
 	},
 
 	onAdd: function (map) {
@@ -122,11 +123,10 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	panTo: function (str) {
-		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
-				result = re.exec(str),
-				wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord],
-				latlng = wcs.parseCoords(str);
+		var	wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord],
+			latlng = wcs.parseCoords(str);
+
 		if (latlng) {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
@@ -140,7 +140,7 @@ L.Control.WCS = L.Control.extend({
 			}
 		} else {
 			// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			L.IIPUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
@@ -149,7 +149,7 @@ L.Control.WCS = L.Control.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var str = httpRequest.responseText,
-					latlng = _this._map.options.crs.parseCoords(str, true);
+					latlng = _this._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					_this._map.panTo(latlng);

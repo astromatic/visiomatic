@@ -6,7 +6,7 @@
 #
 #	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		28/08/2017
+#	Last modified:		01/12/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -33,7 +33,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
-		credentials: false
+		credentials: false,
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
+
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -379,8 +381,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				curcrs = map.options.crs,
 				prevcrs = map._prevcrs,
 				maploadedflag = map._loaded,
-				// Default center coordinates
-				center = map.options.center ? map.options.center : newcrs.projparam.crval;
+				center;
 
 		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
@@ -405,48 +406,46 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
-		} else {
+		} else if (this.options.center) {
 			// Default center coordinates and zoom
-			if (this.options.center) {
-				var	latlng = newcrs.parseCoords(this.options.center);
-
-				if (latlng) {
-					if (this.options.fov) {
-						zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
-					}
-					map.setView(latlng, zoom, {reset: true, animate: false});
-				} else {
-					// If not, ask Sesame@CDS!
-					L.IIPUtils.requestURL(
-						'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' +
-						  this.options.center,
-						'getting coordinates for ' + this.options.center,
-						function (_this, httpRequest) {
-							if (httpRequest.readyState === 4) {
-								if (httpRequest.status === 200) {
-									var str = httpRequest.responseText,
-										latlng = newcrs.parseCoords(str, true);
-
-									if (latlng) {
-										if (_this.options.fov) {
-											zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
-										}
-										map.setView(latlng, zoom, {reset: true, animate: false});
-									} else {
-										map.setView(center, zoom, {reset: true, animate: false});
-										alert(str + ': Unknown location');
-									}
-								} else {
-									map.setView(center, zoom, {reset: true, animate: false});
-									alert('There was a problem with the request to the Sesame service at CDS');
-								}
-							}
-						}, this, 10
-					);
+			var latlng = (typeof this.options.center === 'string') ?
+			  newcrs.parseCoords(decodeURI(this.options.center)) :
+			  this.options.center;
+			if (latlng) {
+				if (this.options.fov) {
+					zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
 				}
+				map.setView(latlng, zoom, {reset: true, animate: false});
 			} else {
-				map.setView(center, zoom, {reset: true, animate: false});
+				// If not, ask Sesame@CDS!
+				L.IIPUtils.requestURL(
+					this.options.sesameURL + '/-oI/A?' +
+					  this.options.center,
+					'getting coordinates for ' + this.options.center,
+					function (_this, httpRequest) {
+						if (httpRequest.readyState === 4) {
+							if (httpRequest.status === 200) {
+								var str = httpRequest.responseText,
+									latlng = newcrs.parseCoords(str);
+								if (latlng) {
+									if (_this.options.fov) {
+										zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
+									}
+									map.setView(latlng, zoom, {reset: true, animate: false});
+								} else {
+									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									alert(str + ': Unknown location');
+								}
+							} else {
+								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								alert('There was a problem with the request to the Sesame service at CDS');
+							}
+						}
+					}, this, 10
+				);
 			}
+		} else {
+			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},
 
