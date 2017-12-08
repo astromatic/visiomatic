@@ -6,7 +6,7 @@
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/08/2016
+#	Last modified: 08/12/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -251,7 +251,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				  (excessflag ? '+ entries)' : ' entries)'));
 				if (excessflag) {
 					alert('Selected area is too large: ' + catalog.name +
-					  ' sample has been truncated to the first ' + catalog.nmax + ' sources.');
+					  ' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
 				}
 			} else {
 				if (httpRequest.status !== 0) {
