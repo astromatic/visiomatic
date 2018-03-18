@@ -195,9 +195,8 @@ L.IIPUtils = {
 	// Convert HMSDMS to degrees
 	hmsDMSToLatLng: function (str) {
 		var result;
-/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
+
 		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
-/* jshint ignore:end */
 		if (result && result.length >= 7) {
 			var	dd = Number(result[4]);
 

@@ -3,10 +3,10 @@
 #
 #	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/12/2017
+#	Last modified: 18/03/2018
 */
 
 L.Catalog = {
@@ -123,7 +123,7 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	service: 'Vizier@CDS',
 	name: 'SDSS release 12',
 	className: 'logo-catalog-vizier',
-	attribution: 'SDSS Photometric Catalog, Release 9 (Alam et al. 2015)',
+	attribution: 'SDSS Photometric Catalog, Release 12 (Alam et al. 2015)',
 	color: 'yellow',
 	maglim: 25.0,
 	regionType: 'box',
@@ -133,6 +133,22 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.PanSTARRS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'PanSTARRS',
+	className: 'logo-catalog-vizier',
+	attribution: 'Pan-STARRS release 1 (PS1) Survey (Chambers et al. 2016)',
+	color: 'yellow',
+	maglim: 24.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/349&' +
+	 '-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
+	properties: ['g', 'r', 'i', 'z', 'y'],
+	units: ['', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
@@ -278,35 +294,6 @@ L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
 	properties: ['f<sub>mag</sub>', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-});
-
-L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
-	service: 'MAST@STScI',
-	name: 'Pan-Starrs1',
-	className: 'logo-catalog-mast',
-	attribution: 'The Pan-STARRS1 Database and Data Products (Flewelling et al. 2016)',
-	color: 'yellow',
-	maglim: 24.0,
-	magindex: 1,
-	regionType: 'cone',
-	url: L.Catalog.mastURL + '/panstarrs/search.php?' +
-	 'action=Search&target=&radius={drm}&ra={lng}&dec={lat}&equinox={sys}&nDetections=%3E+1&' +
-	 'selectedColumnsCsv=objname%2Cramean%2Cdecmean%2C' +
-	 'gmeankronmag%2Crmeankronmag%2Cimeankronmag%2Czmeankronmag%2Cymeankronmag%2CqualityFlag&' +
-	 'selectedColumnsList%5B%5D=rmeankronmag&availableColumns=objname&ordercolumn1=gmeankronmag&' +
-	 'coordformat=dec&outputformat=TSV&max_records={nmax}',
-	properties: ['g', 'r', 'i', 'z', 'y', 'quality'],
-	units: ['', '', '', '', '', ''],
-	propertyMask: [true, true, true, true, true, false],
-	readProperty: function (item) {
-		var	fitem = parseFloat(item);
-		return fitem < 0.0 ? '--' : fitem;
-	},
-	objurl: L.Catalog.mastURL + '/panstarrs/search.php?' +
-	 'action=Search&target=&radius=0.001&ra={ra}&dec={dec}&equinox=J2000&nDetections=%3E+1',
-	filter: function (feature) {
-		return parseFloat(feature.properties.items[5]) >= 40;
-	}
 });
 
 L.Catalog.GLEAM = L.extend({}, L.Catalog, {
