@@ -1927,7 +1927,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 18/03/2018
+#	Last modified: 20/03/2018
 */
 
 L.Catalog = {
@@ -2056,9 +2056,9 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
-L.Catalog.PanSTARRS = L.extend({}, L.Catalog, {
+L.Catalog.PanSTARRS1 = L.extend({}, L.Catalog, {
 	service: 'Vizier@CDS',
-	name: 'PanSTARRS',
+	name: 'PanSTARRS 1',
 	className: 'logo-catalog-vizier',
 	attribution: 'Pan-STARRS release 1 (PS1) Survey (Chambers et al. 2016)',
 	color: 'yellow',
