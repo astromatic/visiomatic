@@ -1927,7 +1927,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 20/03/2018
+#	Last modified: 25/04/2018
 */
 
 L.Catalog = {
@@ -2191,7 +2191,7 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	className: 'logo-catalog-vizier',
 	attribution: 'First Gaia Data Release (2016)',
 	color: 'green',
-	maglim: 20.0,
+	maglim: 21.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
@@ -2199,6 +2199,23 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.GAIA_DR2 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'Gaia DR2',
+	className: 'logo-catalog-vizier',
+	attribution: 'Second Gaia Data Release (2018)',
+	color: 'green',
+	maglim: 21.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/345&' +
+	 '-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag',
+	properties: ['G', 'B<sub>P</sub>', 'R<sub>P</sub>',
+	 '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', '', '', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/345&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
@@ -3825,10 +3842,10 @@ L.control.iip = function (baseLayers, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/12/2017
+#	Last modified: 25/04/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -3838,7 +3855,7 @@ if (typeof require !== 'undefined') {
 L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 	defaultCatalogs: [
-		L.Catalog.GAIA_DR1,
+		L.Catalog.GAIA_DR2,
 		L.Catalog['2MASS'],
 		L.Catalog.SDSS,
 		L.Catalog.PPMXL,

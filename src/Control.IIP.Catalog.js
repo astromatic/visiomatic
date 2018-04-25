@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/12/2017
+#	Last modified: 25/04/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -16,7 +16,7 @@ if (typeof require !== 'undefined') {
 L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 	defaultCatalogs: [
-		L.Catalog.GAIA_DR1,
+		L.Catalog.GAIA_DR2,
 		L.Catalog['2MASS'],
 		L.Catalog.SDSS,
 		L.Catalog.PPMXL,
