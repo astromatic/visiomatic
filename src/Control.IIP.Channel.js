@@ -4,9 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
+#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU and GEOPS/Paris-Sud
 #
-#	Last modified:		17/05/2017
+#	Last modified:		14/05/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -163,8 +163,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		var	cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
-			_changeMap = function () {
-				_this._onInputChange(layer, 'iipCMap', this);
+			_changeMap = function (value) {
+				_this._onInputChange(layer, 'iipCMap', value);
 			},
 			i;
 		for (i in cmaps) {
@@ -200,7 +200,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			);
 
 		this._onInputChange(layer, 'iipCMap', 'grey');
-		layer.updateMix();
+		layer.iipMode = 'color';
+		layer.updateColorMix();
 
 		this._chanSelect = this._createSelectMenu(
 			this._className + '-select',
@@ -223,7 +224,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		// Create reset color settings button
 		this._createButton(className + '-button', elem, 'colormix-reset', function () {
 			_this.loadSettings(layer, _this._initsettings, 'color', true);
-			layer.updateMix();
+			layer.iipMode = 'color';
+			layer.updateColorMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();
@@ -251,7 +253,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 					rgb[c] = L.rgb(defcol[nchanon][cc++]);
 				}
 			}
-			layer.updateMix();
+			this.iipMode = 'color';
+			layer.updateColorMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();

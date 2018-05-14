@@ -203,7 +203,9 @@ L.Control.IIP = L.Control.extend({
 		button.value = value;
 		button.checked = checked;
 		if (fn) {
-			L.DomEvent.on(button, 'click touch', fn, this);
+			L.DomEvent.on(button, 'click touch', function () {
+				fn(value);
+			}, this);
 		}
 
 		var label =  L.DomUtil.create('label', className, parent);

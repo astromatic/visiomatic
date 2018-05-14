@@ -13,7 +13,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
 		title: '',
 		crs: null,
-		nativeCelsys: false,
 		center: false,
 		fov: false,
 		minZoom: 0,
@@ -338,14 +337,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	// Current channel index defines mixing matrix elements in "mono" mode
 	updateMono: function () {
-		this.iipMode = 'mono';
 	},
 
 	// RGB colours and saturation settings define mixing matrix elements in "color" mode
-	updateMix: function () {
+	updateColorMix: function () {
 		var nchannel = this.iipNChannel;
 
-		this.iipMode = 'color';
 		for (var c = 0; c < nchannel; c++) {
 			this.rgbToMix(c, this.iipRGB[c]);
 		}

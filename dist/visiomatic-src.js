@@ -975,7 +975,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
 		title: '',
 		crs: null,
-		nativeCelsys: false,
 		center: false,
 		fov: false,
 		minZoom: 0,
@@ -1300,14 +1299,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	// Current channel index defines mixing matrix elements in "mono" mode
 	updateMono: function () {
-		this.iipMode = 'mono';
 	},
 
 	// RGB colours and saturation settings define mixing matrix elements in "color" mode
-	updateMix: function () {
+	updateColorMix: function () {
 		var nchannel = this.iipNChannel;
 
-		this.iipMode = 'color';
 		for (var c = 0; c < nchannel; c++) {
 			this.rgbToMix(c, this.iipRGB[c]);
 		}
@@ -3550,7 +3547,9 @@ L.Control.IIP = L.Control.extend({
 		button.value = value;
 		button.checked = checked;
 		if (fn) {
-			L.DomEvent.on(button, 'click touch', fn, this);
+			L.DomEvent.on(button, 'click touch', function () {
+				fn(value);
+			}, this);
 		}
 
 		var label =  L.DomUtil.create('label', className, parent);
@@ -4117,9 +4116,9 @@ L.control.iip.catalog = function (catalogs, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
+#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU and GEOPS/Paris-Sud
 #
-#	Last modified:		17/05/2017
+#	Last modified:		14/05/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -4276,8 +4275,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		var	cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
-			_changeMap = function () {
-				_this._onInputChange(layer, 'iipCMap', this);
+			_changeMap = function (value) {
+				_this._onInputChange(layer, 'iipCMap', value);
 			},
 			i;
 		for (i in cmaps) {
@@ -4313,7 +4312,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			);
 
 		this._onInputChange(layer, 'iipCMap', 'grey');
-		layer.updateMix();
+		layer.iipMode = 'color';
+		layer.updateColorMix();
 
 		this._chanSelect = this._createSelectMenu(
 			this._className + '-select',
@@ -4336,7 +4336,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		// Create reset color settings button
 		this._createButton(className + '-button', elem, 'colormix-reset', function () {
 			_this.loadSettings(layer, _this._initsettings, 'color', true);
-			layer.updateMix();
+			layer.iipMode = 'color';
+			layer.updateColorMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();
@@ -4364,7 +4365,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 					rgb[c] = L.rgb(defcol[nchanon][cc++]);
 				}
 			}
-			layer.updateMix();
+			this.iipMode = 'color';
+			layer.updateColorMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();
@@ -4650,10 +4652,10 @@ L.control.iip.doc = function (url, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright:		(C) 2014-2018 Emmanuel Bertin - IAP/CNRS/SorbonU,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		29/11/2017
+#	Last modified:		14/05/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -4734,7 +4736,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._input.colorSat = this._addNumericalInput(layer,
 		  this._dialog, 'Color Sat.:', 'iipColorSat',
 		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
-		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
+		  layer.iipColorSat, 0.05, 0.0, 5.0, layer.updateColorMix);
 
 		// Gamma
 		this._input.gamma = this._addNumericalInput(layer,
@@ -4754,18 +4756,12 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		this._createButton(className + '-button', elem, 'image-reset', function () {
 			_this.loadSettings(layer, _this._initsettings);
-			layer.updateMix();
+			if (layer.iipMode === 'color') {
+				layer.updateColorMix();
+			}
 			layer.redraw();
 		}, 'Reset image settings');
 
-	},
-
-	_updateMix: function (layer) {
-		var nchannel = layer.iipNChannel;
-		for (var c = 0; c < nchannel; c++) {
-			layer.rgbToMix(c);
-		}
-		return;
 	}
 
 });
