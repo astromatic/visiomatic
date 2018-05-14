@@ -3350,10 +3350,10 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/SorbonneU,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2017
+#	Last modified: 14/05/2018
 */
 
 if (typeof require !== 'undefined') {
@@ -3416,7 +3416,7 @@ L.Control.IIP = L.Control.extend({
 
 			if (L.Browser.touch) {
 				L.DomEvent
-				    .on(toggle, 'click', L.DomEvent.stop)
+				    .on(toggle, 'click', L.DomEvent.stop, this)
 				    .on(toggle, 'click', this._expand, this);
 			}
 			else {
@@ -3549,7 +3549,7 @@ L.Control.IIP = L.Control.extend({
 		button.value = value;
 		button.checked = checked;
 		if (fn) {
-			L.DomEvent.on(button, 'click touch', fn, value);
+			L.DomEvent.on(button, 'click touch', fn, this);
 		}
 
 		var label =  L.DomUtil.create('label', className, parent);
