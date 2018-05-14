@@ -4,9 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		01/12/2017
+#	Last modified:		14/05/2018
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -445,6 +445,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				);
 			}
 		} else {
+			zoom = 0;
 			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},
