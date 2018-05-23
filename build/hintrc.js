@@ -27,7 +27,7 @@ exports.config = {
 	"trailing": true,
 	"white": true,
 	"smarttabs": true,
-	"maxlen": 120
+	"maxlen": 128
 
 	// code simplicity - not enforced but nice to check from time to time
 	// "maxstatements": 20,

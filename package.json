@@ -2,7 +2,9 @@
 	"name": "visiomatic",
 	"version": "2.0.1",
 	"description": "JavaScript library for remotely visualising astronomical images using Leaflet",
-	"dependencies": {"leaflet": "~1.0"},
+	"dependencies": {
+		"leaflet": "~1.0"
+	},
 	"devDependencies": {
 		"jshint": "~2.2.0",
 		"mocha": "~1.10.0",
@@ -17,15 +19,18 @@
 		"test": "echo \"no test yet\" && exit 0",
 		"prepublish": "jake"
 	},
-	"license" : "BSD-2-Clause",
+	"license": "BSD-2-Clause",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/astromatic/visiomatic"
 	},
-  "contributors": [
-	"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
-	"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
-	"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
+	"contributors": [
+		"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
+		"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
+		"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
 	],
-	"keywords": ["wcs", "astronomy"]
+	"keywords": [
+		"wcs",
+		"astronomy"
+	]
 }

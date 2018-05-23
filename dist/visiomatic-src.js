@@ -734,10 +734,10 @@ L.CRS.wcs = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/SorbonneU,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 01/12/2017
+#	Last modified: 17/05/2018
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -927,12 +927,12 @@ L.IIPUtils = {
 	hmsDMSToLatLng: function (str) {
 		var result;
 
-		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
-		if (result && result.length >= 7) {
-			var	dd = Number(result[4]);
+		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
+		if (result && result.length >= 8) {
+			var	sgn = Number(result[4] + '1');
 
-			return L.latLng((dd < 0.0 ? -1.0 : 1.0) *
-			    (Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
+			return L.latLng(sgn *
+			    (Number(result[5]) + Number(result[6]) / 60.0 + Number(result[7]) / 3600.0),
 			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
 		} else {
 			return undefined;
