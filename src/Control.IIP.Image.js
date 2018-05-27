@@ -4,10 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2018 Emmanuel Bertin - IAP/CNRS/SorbonU,
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		14/05/2018
+#	Last modified:		29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -88,7 +88,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._input.colorSat = this._addNumericalInput(layer,
 		  this._dialog, 'Color Sat.:', 'iipColorSat',
 		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
-		  layer.iipColorSat, 0.05, 0.0, 5.0, layer.updateColorMix);
+		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
 
 		// Gamma
 		this._input.gamma = this._addNumericalInput(layer,
@@ -108,12 +108,18 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		this._createButton(className + '-button', elem, 'image-reset', function () {
 			_this.loadSettings(layer, _this._initsettings);
-			if (layer.iipMode === 'color') {
-				layer.updateColorMix();
-			}
+			layer.updateMix();
 			layer.redraw();
 		}, 'Reset image settings');
 
+	},
+
+	_updateMix: function (layer) {
+		var nchannel = layer.iipNChannel;
+		for (var c = 0; c < nchannel; c++) {
+			layer.rgbToMix(c);
+		}
+		return;
 	}
 
 });

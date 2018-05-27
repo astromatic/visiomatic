@@ -4,15 +4,16 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		14/05/2018
+#	Last modified:		01/12/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
 		title: '',
 		crs: null,
+		nativeCelsys: false,
 		center: false,
 		fov: false,
 		minZoom: 0,
@@ -337,12 +338,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	// Current channel index defines mixing matrix elements in "mono" mode
 	updateMono: function () {
+		this.iipMode = 'mono';
 	},
 
 	// RGB colours and saturation settings define mixing matrix elements in "color" mode
-	updateColorMix: function () {
+	updateMix: function () {
 		var nchannel = this.iipNChannel;
 
+		this.iipMode = 'color';
 		for (var c = 0; c < nchannel; c++) {
 			this.rgbToMix(c, this.iipRGB[c]);
 		}
@@ -442,7 +445,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				);
 			}
 		} else {
-			zoom = 0;
 			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},

@@ -966,15 +966,16 @@ L.IIPUtils = {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU, IDES/Paris-Sud and C2RMF/CNRS
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		14/05/2018
+#	Last modified:		01/12/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {
 		title: '',
 		crs: null,
+		nativeCelsys: false,
 		center: false,
 		fov: false,
 		minZoom: 0,
@@ -1299,12 +1300,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	// Current channel index defines mixing matrix elements in "mono" mode
 	updateMono: function () {
+		this.iipMode = 'mono';
 	},
 
 	// RGB colours and saturation settings define mixing matrix elements in "color" mode
-	updateColorMix: function () {
+	updateMix: function () {
 		var nchannel = this.iipNChannel;
 
+		this.iipMode = 'color';
 		for (var c = 0; c < nchannel; c++) {
 			this.rgbToMix(c, this.iipRGB[c]);
 		}
@@ -1404,7 +1407,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				);
 			}
 		} else {
-			zoom = 0;
 			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},
@@ -4116,9 +4118,9 @@ L.control.iip.catalog = function (catalogs, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2018 IAP/CNRS/SorbonneU and GEOPS/Paris-Sud
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
 #
-#	Last modified:		14/05/2018
+#	Last modified:		17/05/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4312,8 +4314,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			);
 
 		this._onInputChange(layer, 'iipCMap', 'grey');
-		layer.iipMode = 'color';
-		layer.updateColorMix();
+		layer.updateMix();
 
 		this._chanSelect = this._createSelectMenu(
 			this._className + '-select',
@@ -4336,8 +4337,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		// Create reset color settings button
 		this._createButton(className + '-button', elem, 'colormix-reset', function () {
 			_this.loadSettings(layer, _this._initsettings, 'color', true);
-			layer.iipMode = 'color';
-			layer.updateColorMix();
+			layer.updateMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();
@@ -4365,8 +4365,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 					rgb[c] = L.rgb(defcol[nchanon][cc++]);
 				}
 			}
-			this.iipMode = 'color';
-			layer.updateColorMix();
+			layer.updateMix();
 			this._updateColPick(layer);
 			this._updateChannelList(layer);
 			layer.redraw();
@@ -4652,10 +4651,10 @@ L.control.iip.doc = function (url, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2018 Emmanuel Bertin - IAP/CNRS/SorbonU,
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		14/05/2018
+#	Last modified:		29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4736,7 +4735,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._input.colorSat = this._addNumericalInput(layer,
 		  this._dialog, 'Color Sat.:', 'iipColorSat',
 		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
-		  layer.iipColorSat, 0.05, 0.0, 5.0, layer.updateColorMix);
+		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
 
 		// Gamma
 		this._input.gamma = this._addNumericalInput(layer,
@@ -4756,12 +4755,18 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		this._createButton(className + '-button', elem, 'image-reset', function () {
 			_this.loadSettings(layer, _this._initsettings);
-			if (layer.iipMode === 'color') {
-				layer.updateColorMix();
-			}
+			layer.updateMix();
 			layer.redraw();
 		}, 'Reset image settings');
 
+	},
+
+	_updateMix: function (layer) {
+		var nchannel = layer.iipNChannel;
+		for (var c = 0; c < nchannel; c++) {
+			layer.rgbToMix(c);
+		}
+		return;
 	}
 
 });
