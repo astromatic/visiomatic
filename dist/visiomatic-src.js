@@ -1927,7 +1927,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 25/04/2018
+#	Last modified: 12/10/2018
 */
 
 L.Catalog = {
@@ -2193,12 +2193,12 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	color: 'green',
 	maglim: 21.0,
 	regionType: 'box',
-	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337/gaia&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.GAIA_DR2 = L.extend({}, L.Catalog, {
@@ -2209,13 +2209,13 @@ L.Catalog.GAIA_DR2 = L.extend({}, L.Catalog, {
 	color: 'green',
 	maglim: 21.0,
 	regionType: 'box',
-	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/345&' +
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/345/gaia2&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag',
 	properties: ['G', 'B<sub>P</sub>', 'R<sub>P</sub>',
 	 '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', '', '', 'mas/yr', 'mas/yr'],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/345&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
