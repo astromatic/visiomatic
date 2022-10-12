@@ -1,0 +1,9 @@
+sphinx >= 4.3
+sphinx-rtd-theme >= 1.0
+sphinxcontrib-bibtex >= 2.4.0
+astropy >= 5.0
+fastapi >= 0.74
+numpy >= 1.19
+uvicorn >= 0.17
+tiler >= 0.5
+
