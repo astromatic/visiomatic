@@ -33,7 +33,7 @@ jobs:
           make html
 
       - name: Set destination dir
-        if: github.ref_name != 'master'
+        if: github.ref_name != 'main'
         run: |
           echo "DOC_DEST=${{ github.ref_name }}" >> $GITHUB_ENV
 
