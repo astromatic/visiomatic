@@ -6,4 +6,5 @@ fastapi >= 0.74
 numpy >= 1.19
 uvicorn >= 0.17
 tiler >= 0.5
+opencv-python>=4.5
 
