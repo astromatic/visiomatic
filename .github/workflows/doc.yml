@@ -9,7 +9,8 @@ on:
     paths:
       - 'doc/**'
       - 'src/**'
-  
+  workflow_dispatch:
+
 jobs:
 
 #############
