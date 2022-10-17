@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=defs.package_description)
 
     parser.add_argument("-H", "--host", type=str, default="localhost", help="host name or IP address (default=localhost)")
-    parser.add_argument("-p", "--port", type=int, default=8008, help="port (default=8008)")
+    parser.add_argument("-p", "--port", type=int, default=8009, help="port (default=8009)")
     parser.add_argument("-r", "--root_path", type=str, default="", help="ASGI root_path")
 
     args = vars(parser.parse_args())
