@@ -1,2 +1,2 @@
-# VisiOmatic3
-An IIIF compliant web astronomical image client/server
+# VisiOmatic server
+An [IIIF](https://iiif.io/)-compliant web astronomical image server.
