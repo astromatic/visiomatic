@@ -8,14 +8,19 @@ import io, os, re
 import numpy as np
 import cv2
 from typing import List, Optional
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 from fastapi import responses
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from astropy.io import fits
 from tiler import Tiler
 
-banner_filename = "static/banner.html"
-base_url = "/visio"
+# This is where the Python code is
+root_dir = "src/visiomatic"
+
+banner_filename = "banner.html"
+base_url = "/"
 fits_path = "fits/"
 
 class visioimage(object):
@@ -200,6 +205,13 @@ app.ima = None
 app.parse_jtl = re.compile(r"^(\d+),(\d+)$")
 app.parse_minmax = re.compile(r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")
 
+# Provide an endpoint for static files (such as js and css)
+app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
+
+# Instantiate templates
+templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
+
+
 # Test endpoint
 @app.get("/random")
 async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
@@ -222,10 +234,13 @@ async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
     res, im_jpg = cv2.imencode(".jpg", a)
     return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
+# VisiOmatic client endpoint
+
 
 # Tile endpoint
 @app.get(base_url)
 async def read_visio(
+        request: Request,
         FIF: str = None,
         obj: List[str] = Query(None, max_length=200),
         GAM: float = None,
@@ -252,11 +267,13 @@ async def read_visio(
         `Streaming response <https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>`_
         containing the JPEG image.
     """
+    print("coucou")
     if FIF == None:
-        file = open(banner_filename)
-        html = file.read()
-        file.close()
-        return responses.HTMLResponse(html)
+        return templates.TemplateResponse(
+            "banner.html", {
+                "request": request,
+                "root_path": request.scope.get("root_path"),
+        })
 
     if app.ima == None:
         app.ima = visioimage(FIF)
