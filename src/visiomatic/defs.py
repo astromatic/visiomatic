@@ -4,15 +4,15 @@ Package-wide definitions
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT license
 
-from visiomatic3 import __version__
+from visiomatic import __version__
 
 # Full package name
-package_str = "VisiOmatic3"
+package_str = "VisiOmatic server"
 
 # Package id/short name
-package_id = "visiomatic3"
+package_id = "visiomatic"
 
 package_version = __version__
 
-package_description = "An IIIF compliant web astronomical image client/server"
+package_description = "An IIIF-compliant web astronomical image client/server"
 

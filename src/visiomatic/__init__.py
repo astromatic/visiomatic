@@ -1,7 +1,7 @@
 """
-VisiOmatic3
-===========
-An IIIF compliant web astronomical image client/server.
+VisiOmatic Server
+=================
+An IIIF compliant web astronomical image server.
 """
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT license

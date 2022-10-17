@@ -13,13 +13,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(1, os.path.abspath('../../src/visiomatic3'))
+sys.path.insert(1, os.path.abspath('../../src/visiomatic'))
 import sphinx_rtd_theme
 import adsarxiv
 
 # -- Project information -----------------------------------------------------
 
-project = 'VisiOmatic3'
+project = 'VisiOmatic server'
 copyright = '2022, Emmanuel Bertin'
 author = 'Emmanuel Bertin'
 

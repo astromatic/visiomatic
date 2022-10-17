@@ -1,13 +1,13 @@
 #! /usr/bin/python
 import uvicorn
 
-def start_server(app="src.visiomatic3.server.app:app", host="localhost", port=8009, root_path=""):
+def start_server(app="src.visiomatic.server.app:app", host="localhost", port=8009, root_path=""):
     uvicorn.run(app, host=host, port=port, root_path=root_path, reload=True)
 
 if __name__ == "__main__":
     import argparse
 
-    from visiomatic3 import defs
+    from visiomatic import defs
 
     print(f"{defs.package_str} v{defs.package_version}")
 
