@@ -6,20 +6,25 @@
     <meta id="root_path" content="{{ root_path }}">
     <link rel="icon" type="image/svg+xml" href="{{ root_path }}/static/images/visiomatic.svg">
     <title>VisiOmatic III</title>
-    <link rel="stylesheet" href="{{ root_path }}/static/css/jqplot/jquery.jqplot.css" />
+    <link rel="stylesheet" href="{{ root_path }}/static/css/jqplot.css" />
     <link rel="stylesheet" href="{{ root_path }}/static/css/spectrum.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-    <link rel="stylesheet" href="{{ root_path }}/static/visiomatic.css" />
-    <script type="module" src="{{ root_path }}/static/dist/jquery.js"></script>
-    <script type="module" src="{{ root_path }}/static/dist/jqplot-min.js"></script>
-    <script type="module" src="{{ root_path }}/static/dist/spectrum-min.js"></script>
-    <script type="module" src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script type="module" src="{{ root_path }}/static/dist/visiomatic.js"></script>
+    <link rel="stylesheet" href="{{ root_path }}/static/css/visiomatic.css" />
+    <script src="{{ root_path }}/static/dist/jquery.js"></script>
+    <script src="{{ root_path }}/static/dist/jqplot-min.js"></script>
+    <script src="{{ root_path }}/static/dist/spectrum-min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script src="{{ root_path }}/static/dist/visiomatic.js"></script>
+<style type='text/css'>
+		body {padding: 0; margin: 0; }
+		html,body,#map { width: 100%; height: 100%; }
+</style>
   </head>
   <body>
+    <div id='map' style='background:black'></div>
 	<script>
 		var args = L.IIPUtils.parseURL(window.location.search.substring(1)),
-				iip = '{{ visiomatic_url }}?FIF=' + (args['tile'] ? args['tile'] : {{ fits_image }}),
+				iip = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ fits_image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
 				layer = L.tileLayer.iip(iip, {
 					center: args['center'] ? args['center'] : false,

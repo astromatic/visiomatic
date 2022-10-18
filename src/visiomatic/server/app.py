@@ -16,12 +16,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from astropy.io import fits
 from tiler import Tiler
 
+from .. import defs
+
 # This is where the Python code is
 root_dir = "src/visiomatic"
 
 banner_filename = "banner.html"
-base_url = "/"
-fits_path = "fits/"
+tiles_url = "/tiles/"
+fits_dir = os.path.join(root_dir, "fits/")
 
 class visioimage(object):
     """
@@ -43,26 +45,26 @@ class visioimage(object):
     def __init__(
             self,
             filename,
-            ext=1,
+            ext=0,
             tilesize=[256,256],
             minmax = [0.0, 65535.0],
             gamma = 0.45):
 
         self._filename = filename
         self._ext = ext
-        self._hdus = fits.open(fits_path + filename)
+        self._hdus = fits.open(fits_dir + filename)
         self._hdu = self._hdus[self._ext]
         self._hdr = self._hdu.header
         self._tilesize = tilesize;
         self._shape = [self._hdr["NAXIS1"], self._hdr["NAXIS2"]]
-        self._nlevels = max((self._size[0] // (self._tilesize[0] + 1) + 1).bit_length() + 1, \
-                        (self._size[1] // (self._tilesize[1] + 1) + 1).bit_length() + 1)
+        self._nlevels = max((self._shape[0] // (self._tilesize[0] + 1) + 1).bit_length() + 1, \
+                        (self._shape[1] // (self._tilesize[1] + 1) + 1).bit_length() + 1)
         self._bitpix = self._hdr["BITPIX"]
         self._bitdepth = abs(self._bitpix)
         self._minmax = minmax
         self._gamma = gamma
         self._maxfac = 1.0e30
-        self._data = self._hdu.data
+        self._data = self._hdu.data.astype(np.float32)
         self.make_tiles()
 
     def get_shape(self):
@@ -185,7 +187,7 @@ class visioimage(object):
 
 
 app = FastAPI()
-
+"""
 origins = [
     "http://halau.cfht.hawaii.edu",
     "https://halau.cfht.hawaii.edu",
@@ -200,8 +202,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.ima = None
+"""
+# Prepare the dictionary of images
+app.ima = {}
 app.parse_jtl = re.compile(r"^(\d+),(\d+)$")
 app.parse_minmax = re.compile(r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")
 
@@ -210,7 +213,6 @@ app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), na
 
 # Instantiate templates
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
-
 
 # Test endpoint
 @app.get("/random")
@@ -234,11 +236,8 @@ async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
     res, im_jpg = cv2.imencode(".jpg", a)
     return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
-# VisiOmatic client endpoint
-
-
 # Tile endpoint
-@app.get(base_url)
+@app.get(tiles_url, tags=["UI"])
 async def read_visio(
         request: Request,
         FIF: str = None,
@@ -267,7 +266,6 @@ async def read_visio(
         `Streaming response <https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>`_
         containing the JPEG image.
     """
-    print("coucou")
     if FIF == None:
         return templates.TemplateResponse(
             "banner.html", {
@@ -275,11 +273,12 @@ async def read_visio(
                 "root_path": request.scope.get("root_path"),
         })
 
-    if app.ima == None:
-        app.ima = visioimage(FIF)
+    if FIF in app.ima:
+        ima = app.ima[FIF]
+    else:
+        app.ima[FIF] = (ima := visioimage(FIF))
     if obj != None:
-        return responses.PlainTextResponse(app.ima.get_iipheaderstr())
-    ima = app.ima
+        return responses.PlainTextResponse(ima.get_iipheaderstr())
     if JTL == None:
         return
     if GAM != None:
@@ -296,7 +295,27 @@ async def read_visio(
           r = 0
     t = int(resp[1])
     #print(f"Tile #{t} at level {r}")
-    res, pix = cv2.imencode(".jpg", app.ima.scale_tile(ima._tiles[r][t]))
+    res, pix = cv2.imencode(".jpg", ima.scale_tile(ima._tiles[r][t]))
     return responses.StreamingResponse(io.BytesIO(pix.tobytes()), media_type="image/jpg")
+
+
+# VisiOmatic client endpoint
+@app.get("/", tags=["UI"], response_class=responses.HTMLResponse)
+async def visiomatic(
+        request: Request,
+        image : str = "mef.fits"):
+    """
+    Main web user interface.
+    """
+    return templates.TemplateResponse(
+        "base.html",
+        {
+            "request": request,
+            "root_path": request.scope.get("root_path"),
+            "tiles_url": tiles_url,
+            "fits_image": image,
+            "package": defs.package_str
+        }
+    )
 
 
