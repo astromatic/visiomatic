@@ -449,14 +449,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 	},
 
-	_getTileSizeFac: function () {
-		var	map = this._map,
-			zoom = this._tileZoom,
-			zoomN = this.options.maxNativeZoom;
-		return (zoomN && zoom > zoomN) ?
-				Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN)) : 1;
-	},
-
 	_isValidTile: function (coords) {
 		var crs = this._map.options.crs;
 
@@ -554,49 +546,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_initTile: function (tile) {
 		L.DomUtil.addClass(tile, 'leaflet-tile');
-		var	tileSizeFac = this._getTileSizeFac();
 
 		// Force pixels to be visible at high zoom factos whenever possible
-		if (tileSizeFac > 1) {
-			if (L.Browser.ie) {
-				tile.style.msInterpolationMode = 'nearest-neighbor';
-			} else if (L.Browser.chrome) {
-				tile.style.imageRendering = 'pixelated';
-			} else if (L.Browser.gecko) {
-				tile.style.imageRendering = '-moz-crisp-edges';
-			} else {
-				tile.style.imageRendering = '-webkit-optimize-contrast';
-			}
-		}
-
-		// Compute tile size (IIP tile size can be less at image borders)
-		var	coords = tile.coords,
-			z = this._getZoomForUrl();
-
-		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
-		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
-			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
-			  sizeY = coords.y + 1 === this.iipGridSize[z].y ?
-			    this.iipImageSize[z].y % this.iipTileSize.y : this.iipTileSize.y;
-
-		if (sizeX === 0) {
-			sizeX = this.iipTileSize.x;
-		}
-		if (sizeY === 0) {
-			sizeY = this.iipTileSize.y;
-		}
-
-		sizeX *= tileSizeFac;
-		sizeY *= tileSizeFac;
-/*
-		// Add an extra 1/2 pixel as an ugly fix to the tile gap pb in some browsers
-		if (L.Browser.chrome || L.Browser.safari) {
-			sizeX += 0.5;
-			sizeY += 0.5;
-		}
-*/
-		tile.style.width = sizeX  + 'px';
-		tile.style.height = sizeY + 'px';
+		if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
+            tile.style.imageRendering = 'crisp-edges';
+	    }
 
 		tile.onselectstart = L.Util.falseFn;
 		tile.onmousemove = L.Util.falseFn;
