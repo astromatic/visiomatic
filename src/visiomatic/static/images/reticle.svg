@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:cc="http://creativecommons.org/ns#" viewBox="-13 -13 26 26" width="26px" height="26px">
+ <filter id="dropshadow" height="130%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> <!-- stdDeviation is how much to blur -->
+  <feMerge> 
+    <feMergeNode/> <!-- this contains the offset blurred image -->
+    <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
+  </feMerge>
+ </filter>
+ <g stroke="#444" stroke-width="3" stroke-linecap="butt" shape-rendering="crispEdges">
+  <path d="M-12,0H-4M3,0H11M0,-12V-4M0,3V11" style="filter:url(#dropshadow)"/>
+ </g>
+ <g stroke="white" stroke-width="1" stroke-linecap="butt" shape-rendering="crispEdges">
+  <path d="M-11,0H-5M4,0H10M0,-11V-5M0,4V10"/>
+ </g>
+</svg>
+

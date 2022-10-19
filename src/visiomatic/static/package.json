@@ -1,0 +1,44 @@
+{
+	"name": "visiomatic",
+	"version": "3.0.0",
+	"description": "Astronomical image client viewer",
+    "homepage": "https://github.com/ebertin/pypu#readme",
+    "author": "Emmanuel Bertin (IAP/CNRS/SorbonneU/CFHT)",
+	"contributors": [
+		"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
+		"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
+		"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
+	],
+	"license": "MIT",
+    "keywords": [
+        "astronomy",
+		"wcs",
+        "imaging"
+    ],
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ebertin/visiomatic-server.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ebertin/pypu/issues"
+    },
+	"dependencies": {
+		"leaflet": "~1.7"
+	},
+	"devDependencies": {
+		"jshint": "~2.2.0",
+		"mocha": "~1.10.0",
+		"happen": "~0.1.2",
+		"karma": "~0.8.6",
+		"uglify-js": "~>2.6.0",
+		"jake": "~0.5.16",
+		"jquery": "~2.1.4",
+        "esbuild": "^0.14.53"
+	},
+	"main": "dist/visiomatic.js",
+	"scripts": {
+        "build": "jake",
+        "test": "npm run unit"
+	}
+}
