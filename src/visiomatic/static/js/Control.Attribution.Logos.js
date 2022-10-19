@@ -41,11 +41,7 @@ L.Map.addInitHook(function () {
 	 this.options.attributionControl) {
 		this.attributionControl.setPrefix(
 			'<a id="logo-visiomatic" class="leaflet-control-attribution-logo"' +
-			 'href="http://visiomatic.org">&nbsp;</a>' +
-			 '<a id="logo-iipimage" class="leaflet-control-attribution-logo"' +
-			 'href="http://iipimage.sourceforge.net">&nbsp;</a>' +
-			 '<a id="logo-leaflet" class="leaflet-control-attribution-logo"' +
-			 'href="http://leafletjs.com">&nbsp;</a>'
+			 'href="http://visiomatic.org">&nbsp;</a>'
 		);
 	}
 });

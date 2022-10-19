@@ -1213,16 +1213,6 @@ UL.filetree A:hover {
 	background-position: center;
 }
 
-#logo-iipimage {
-	background: url(../images/iip.png) no-repeat;
-	background-size: 2.4em;
-	background-position: center;
-}
-
-#logo-leaflet {
-	background: url(../images/leaflet.svg) no-repeat;
-}
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Sidebar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

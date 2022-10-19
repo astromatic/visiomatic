@@ -10,15 +10,19 @@
     <link rel="stylesheet" href="{{ root_path }}/static/css/spectrum.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
     <link rel="stylesheet" href="{{ root_path }}/static/css/visiomatic.css" />
+    <style type='text/css'>
+		body {padding: 0; margin: 0; }
+		html,body,#map { width: 100%; height: 100%; }
+        .leaflet-control-attribution {
+	        background: rgba(100,100,100,0.0) !important;
+	        box-shadow: none;
+        }
+    </style>
     <script src="{{ root_path }}/static/dist/jquery.js"></script>
     <script src="{{ root_path }}/static/dist/jqplot-min.js"></script>
     <script src="{{ root_path }}/static/dist/spectrum-min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script src="{{ root_path }}/static/dist/visiomatic.js"></script>
-<style type='text/css'>
-		body {padding: 0; margin: 0; }
-		html,body,#map { width: 100%; height: 100%; }
-</style>
   </head>
   <body>
     <div id='map' style='background:black'></div>
