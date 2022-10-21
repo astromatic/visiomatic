@@ -16,3 +16,6 @@ package_version = __version__
 
 package_description = "An IIIF-compliant web astronomical image client/server"
 
+# This is where the Python code is
+root_dir = "src/visiomatic"
+

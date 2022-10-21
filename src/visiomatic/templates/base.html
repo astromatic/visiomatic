@@ -28,7 +28,7 @@
     <div id='map' style='background:black'></div>
 	<script>
 		var args = L.IIPUtils.parseURL(window.location.search.substring(1)),
-				iip = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ fits_image }}'),
+				iip = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
 				layer = L.tileLayer.iip(iip, {
 					center: args['center'] ? args['center'] : false,
