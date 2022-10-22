@@ -7,7 +7,8 @@ Image module
 import io, os
 import numpy as np
 import cv2
-from typing import Union
+import torch
+from typing import Union, Optional
 from astropy.io import fits
 from tiler import Tiler
 
@@ -39,8 +40,14 @@ class Image(object):
             ext : int = 0,
             tilesize : tuple[int] = [256,256],
             minmax : Union[tuple[int], None] = None,
-            gamma = 0.45):
+            gamma = 0.45,
+            device : Optional[Union[str,None]] = None):
 
+        self._device = device
+        if self._device==None:
+            self._device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if self._device == 'cuda':
+            torch.cuda.empty_cache()
         self._filename = filename
         self._ext = ext
         self._hdus = fits.open(fits_dir + filename)
@@ -58,11 +65,37 @@ class Image(object):
         self._maxfac = 1.0e30
         self.make_tiles()
 
+    @staticmethod
+    @torch.jit.script
+    def median_mad(x):
+        x1 = x.flatten().clone()
+        med = x1.nanmedian()
+        ax1 = (x1-med).abs()
+        mad = (ax1.nanmedian() + 1e-30)
+        x1[ax1 > 3.0 * mad] = torch.nan
+        med = x1.nanmedian()
+        ax1 = (x1-med).abs()
+        mad = (ax1.nanmedian() + 1e-30)
+        x1 = x.flatten().clone()
+        ax1 = (x1-med).abs()
+        x1[ax1 > 3.0 * mad] = torch.nan
+        med = x1.nanmedian()
+        ax1 = (x1-med).abs()
+        mad = (ax1.nanmedian() + 1e-30)
+        x1 = x.flatten().clone()
+        ax1 = (x1-med).abs()
+        x1[ax1 > 3.0 * mad] = torch.nan
+        med = x1.nanmedian()
+        ax1 = (x1-med).abs()
+        mad = (ax1.nanmedian() + 1e-30)
+        return (3.5*med - 2.5*x1.nanmean()).item(), mad.item()
+
     def compute_background(self) -> None:
         """
         Compute background level and median absolute deviation.
         """
-        x = self._data.copy()
+        # NumPy version
+        x = self._data.flatten().copy()
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
@@ -70,13 +103,13 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        x = self._data.copy()
+        x = self._data.flatten().copy()
         ax = np.abs(x-med)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        x = self._data.copy()
+        x = self._data.flatten().copy()
         ax = np.abs(x-med)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
@@ -84,6 +117,11 @@ class Image(object):
         mad = np.nanmedian(ax)
         self._background_level = 3.5*med - 2.5*np.nanmean(x)
         self._background_mad = mad
+        """
+        self._background_level, self._background_mad = self.median_mad(
+            torch.tensor(self._data, device=self._device)
+        )
+        """
         return
 
     def compute_minmax(self, nmadmin: float = -3.0, nmadmax: float = 1000.0) -> np.ndarray:
