@@ -62,7 +62,6 @@ if __name__ == "__main__":
     )
 
     args = vars(parser.parse_args())
-    print(args["access_log"])
     start_server(
         host=args["host"],
         port=args["port"],
