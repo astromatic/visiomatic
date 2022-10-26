@@ -219,7 +219,13 @@ class Image(object):
         str += f"subject/{len(str2)}:{str2}"
         return str
 
-    def scale_tile(self, tile, contrast: float = 1.0, gamma: float = 0.45):
+    def scale_tile(
+            self,
+            tile,
+            minmax: tuple[float, float] = [0.0, 65535.0],
+            contrast: float = 1.0,
+            gamma: float = 0.45,
+            invert: bool = False):
         """
         Process the dynamic range of a tile.
         
@@ -227,17 +233,26 @@ class Image(object):
         ----------
         tile:  2D :class:`numpy.ndarray`
             Input tile.
+        minmax: tuple[float, float], optional
+            Tile intensity cuts.
+        contrast:  float, optional
+            Relative tile contrast.
+        gamma:  float, optional
+            Inverse tile display gamma.
+        invert: bool, optional
+            Invert the colormap.
         Returns
         -------
         tile: 2D :class:`numpy.ndarray`
-            processed tile.
+            Processed tile.
         """
-        fac = self._minmax[1] - self._minmax[0]
+        fac = minmax[1] - minmax[0]
         fac = contrast / fac if fac > 0.0 else self._maxfac
         tile = (tile - self._minmax[0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
-        return (255.49 * np.power(tile, gamma)).astype(np.uint8)
+        tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+        return 255 - tile if invert else tile
 
     def make_tiles(self):
         """
@@ -264,12 +279,46 @@ class Image(object):
                 interpolation=cv2.INTER_AREA
             )
 
-    def get_tile(self, r: int, t: int, contrast: float = 1.0, gamma: float = 0.4545, quality: int = 90):
+    def get_tile(
+            self,
+            r: int,
+            t: int,
+            minmax: tuple[float, float] = [0.0, 65535.0],
+            contrast: float = 1.0,
+            gamma: float = 0.4545,
+            invert: bool = False,
+            quality: int = 90):
+        """
+        Generate a JPEG bytestream from a tile.
+        
+        Parameters
+        ----------
+        r:  int
+            Tile resolution level.
+        t:  int
+            Tile number.
+        minmax: tuple[float, float], optional
+            Tile intensity cuts.
+        contrast:  float, optional
+            Relative tile contrast.
+        gamma:  float, optional
+            Inverse tile display gamma.
+        invert: bool, optional
+            Invert the colormap.
+        quality: int, optional
+            JPEG quality
+        Returns
+        -------
+        tile: 2D :class:`numpy.ndarray`
+            JPEG bytestream of the tile.
+        """
         return encode_jpeg(
             self.scale_tile(
                 self._tiles[r][t],
+                minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
+                invert=invert
             )[:,:, None],
             quality=quality,
             colorspace='Gray'

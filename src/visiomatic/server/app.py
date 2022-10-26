@@ -81,12 +81,16 @@ async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
 async def read_visio(
         request: Request,
         FIF: str = None,
-        obj: List[str] = Query(None, max_length=200),
-        CNT: float = Query(title="Inverse display gamma", default=1.0, ge=0.0, le=10.0),
-        GAM: float = Query(title="Inverse display gamma", default=0.4545, ge=0.2, le=2.0),
-        QLT: int = Query(title="JPEG quality", default=90, ge=0, le=100),
-        JTL: str = Query(None, min_length=3, max_length=11, regex="^\d+,\d+$"),
-        MINMAX: str = Query(None, min_length=5, max_length=48, regex="^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")):
+        obj: str = Query(None, title="Get image information instead of a tile",
+            max_length=200),
+        CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
+        GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
+        INV: str = Query(None, title="Invert the colormap"),
+        QLT: int = Query(90, title="JPEG quality", ge=0, le=100),
+        JTL: str = Query(None, title="Tile coordinates",
+            min_length=3, max_length=11, regex="^\d+,\d+$"),
+        MINMAX: str = Query(None, title="Minimum and Maximum intensity range",
+            min_length=5, max_length=48, regex="^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")):
     """
     Tile endpoint of the web API: returns a JPEG tile at the requested position.
 
@@ -95,13 +99,19 @@ async def read_visio(
     FIF: str
         Image name.
     obj: str or None
-        If present, return image information instead of a tile.
+        Query parameter to return image information instead of a tile.
+    CNT:  float, optional
+        Query parameter controlling the relative tile contrast.
     GAM:  float, optional
-        Tile display gamma.
+        Query parameter controlling the inverse display gamma.
+    INV: bool, optional
+        Query parameter to invert the colormap.
     JTL: str
         Query parameters controlling the tile level and coordinates.
     MINMAX: str, optional
         Query parameters controlling the tile intensity cuts.
+    QLT: int, optional
+        Query parameter controlling the JPEG quality
     Returns
     -------
     response: byte stream
@@ -126,16 +136,23 @@ async def read_visio(
     if MINMAX != None:
         #print(MINMAX)
         resp = app.parse_minmax.findall(MINMAX)[0]
-        image._minmax[0] = float(resp[1])
-        image._minmax[1] = float(resp[2])
-        #print(f"Min: {image._minmax[0]} / Max: {image._minmax[1]}")
+        minmax = float(resp[1]), float(resp[2])
+    else:
+        minmax = image._minmax
     resp = app.parse_jtl.findall(JTL)[0]
     r = image._nlevels - 1 - int(resp[0])
     if r < 0:
           r = 0
     t = int(resp[1])
-    #print(f"Tile #{t} at level {r}")
-    pix = image.get_tile(r, t, contrast=CNT, gamma=GAM, quality=QLT)
+    pix = image.get_tile(
+        r,
+        t,
+        minmax=minmax,
+        contrast=CNT,
+        gamma=GAM,
+        invert=(INV!=None),
+        quality=QLT
+    )
     return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
 
 

@@ -4,7 +4,8 @@ sphinxcontrib-bibtex >= 2.4.0
 astropy >= 5.0
 fastapi >= 0.74
 numpy >= 1.19
-uvicorn >= 0.17
+opencv-python >= 4.5
+simplejpeg >= 1.6
 tiler >= 0.5
-opencv-python>=4.5
+uvicorn >= 0.17
 
