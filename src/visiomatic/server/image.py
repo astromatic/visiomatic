@@ -7,6 +7,7 @@ Image module
 import io, os
 import numpy as np
 import cv2
+from simplejpeg import encode_jpeg
 import torch
 from typing import Union, Optional
 from astropy.io import fits
@@ -218,7 +219,7 @@ class Image(object):
         str += f"subject/{len(str2)}:{str2}"
         return str
 
-    def scale_tile(self, tile):
+    def scale_tile(self, tile, contrast: float = 1.0, gamma: float = 0.45):
         """
         Process the dynamic range of a tile.
         
@@ -232,10 +233,11 @@ class Image(object):
             processed tile.
         """
         fac = self._minmax[1] - self._minmax[0]
-        fac = 1.0 / fac if fac > 0.0 else self._maxfac
+        fac = contrast / fac if fac > 0.0 else self._maxfac
         tile = (tile - self._minmax[0]) * fac
         tile[tile < 0.0] = 0.0
-        return 255.0 * np.power(tile, self._gamma)
+        tile[tile > 1.0] = 1.0
+        return (255.49 * np.power(tile, gamma)).astype(np.uint8)
 
     def make_tiles(self):
         """
@@ -262,6 +264,14 @@ class Image(object):
                 interpolation=cv2.INTER_AREA
             )
 
-    def get_tile(self, r: int, t: int):
-        return cv2.imencode(".jpg", self.scale_tile(self._tiles[r][t]))
+    def get_tile(self, r: int, t: int, contrast: float = 1.0, gamma: float = 0.4545, quality: int = 90):
+        return encode_jpeg(
+            self.scale_tile(
+                self._tiles[r][t],
+                contrast=contrast,
+                gamma=gamma,
+            )[:,:, None],
+            quality=quality,
+            colorspace='Gray'
+        )
 

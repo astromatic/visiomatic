@@ -49,6 +49,12 @@ app.mount("/static", StaticFiles(directory=os.path.join(defs.root_dir, "static")
 templates = Jinja2Templates(directory=os.path.join(defs.root_dir, "templates"))
 
 # Test endpoint
+a = np.random.random(1)[0]
+@app.get("/test", response_class=responses.HTMLResponse)
+async def read_test():
+    return f"a={a}"
+
+# Test endpoint
 @app.get("/random")
 async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
     """
@@ -76,7 +82,9 @@ async def read_visio(
         request: Request,
         FIF: str = None,
         obj: List[str] = Query(None, max_length=200),
-        GAM: float = None,
+        CNT: float = Query(title="Inverse display gamma", default=1.0, ge=0.0, le=10.0),
+        GAM: float = Query(title="Inverse display gamma", default=0.4545, ge=0.2, le=2.0),
+        QLT: int = Query(title="JPEG quality", default=90, ge=0, le=100),
         JTL: str = Query(None, min_length=3, max_length=11, regex="^\d+,\d+$"),
         MINMAX: str = Query(None, min_length=5, max_length=48, regex="^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")):
     """
@@ -115,8 +123,6 @@ async def read_visio(
         return responses.PlainTextResponse(image.get_iipheaderstr())
     if JTL == None:
         return
-    if GAM != None:
-        image._gamma = GAM
     if MINMAX != None:
         #print(MINMAX)
         resp = app.parse_minmax.findall(MINMAX)[0]
@@ -129,8 +135,8 @@ async def read_visio(
           r = 0
     t = int(resp[1])
     #print(f"Tile #{t} at level {r}")
-    res, pix = image.get_tile(r, t)
-    return responses.StreamingResponse(io.BytesIO(pix.tobytes()), media_type="image/jpg")
+    pix = image.get_tile(r, t, contrast=CNT, gamma=GAM, quality=QLT)
+    return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
 
 
 # VisiOmatic client endpoint
