@@ -38,32 +38,40 @@ class Image(object):
     def __init__(
             self,
             filename,
-            ext : int = 0,
+            ext : Optional[Union[int, None]] = None,
             tilesize : tuple[int] = [256,256],
             minmax : Union[tuple[int], None] = None,
             gamma = 0.45,
             device : Optional[Union[str,None]] = None):
 
-        self._device = device
-        if self._device==None:
-            self._device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        if self._device == 'cuda':
+        self.device = device
+        if self.device==None:
+            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if self.device == 'cuda':
             torch.cuda.empty_cache()
-        self._filename = filename
-        self._ext = ext
-        self._hdus = fits.open(fits_dir + filename)
-        self._hdu = self._hdus[self._ext]
-        self._data = self._hdu.data.astype(np.float32)
-        self._hdr = self._hdu.header
-        self._tilesize = tilesize;
-        self._shape = [self._hdr["NAXIS1"], self._hdr["NAXIS2"]]
-        self._nlevels = max((self._shape[0] // (self._tilesize[0] + 1) + 1).bit_length() + 1, \
-                        (self._shape[1] // (self._tilesize[1] + 1) + 1).bit_length() + 1)
-        self._bitpix = self._hdr["BITPIX"]
-        self._bitdepth = abs(self._bitpix)
-        self._minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
-        self._gamma = gamma
-        self._maxfac = 1.0e30
+        self.filename = filename
+        self.hdus = fits.open(fits_dir + filename)
+        if ext is None:
+            for e,hdu in enumerate(self.hdus):
+                if isinstance(hdu.data, np.ndarray) and len(hdu.data.shape) >= 2:
+                    ext = e
+                    break
+        if ext is None:
+            raise(LookupError(f"No 2D+ data found in {filename}"))
+            return
+        self.ext = ext
+        self.hdu = self.hdus[self.ext]
+        self.data = self.hdu.data.astype(np.float32)
+        self.hdr = self.hdu.header
+        self.tilesize = tilesize;
+        self.shape = [self.hdr["NAXIS1"], self.hdr["NAXIS2"]]
+        self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
+                        (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
+        self.bitpix = self.hdr["BITPIX"]
+        self.bitdepth = abs(self.bitpix)
+        self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
+        self.gamma = gamma
+        self.maxfac = 1.0e30
         self.make_tiles()
 
     @staticmethod
@@ -96,7 +104,7 @@ class Image(object):
         Compute background level and median absolute deviation.
         """
         # NumPy version
-        x = self._data.flatten().copy()
+        x = self.data.flatten().copy()
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
@@ -104,23 +112,23 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        x = self._data.flatten().copy()
+        x = self.data.flatten().copy()
         ax = np.abs(x-med)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        x = self._data.flatten().copy()
+        x = self.data.flatten().copy()
         ax = np.abs(x-med)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        self._background_level = 3.5*med - 2.5*np.nanmean(x)
-        self._background_mad = mad
+        self.background_level = 3.5*med - 2.5*np.nanmean(x)
+        self.background_mad = mad
         """
-        self._background_level, self._background_mad = self.median_mad(
-            torch.tensor(self._data, device=self._device)
+        self.background_level, self.background_mad = self.median_mad(
+            torch.tensor(self.data, device=self.device)
         )
         """
         return
@@ -141,53 +149,11 @@ class Image(object):
             Intensity cuts for displaying the image.
         """
         self.compute_background()
-        high = self._background_level + nmadmax * self._background_mad
-        low = self._background_level + nmadmin * self._background_mad
+        high = self.background_level + nmadmax * self.background_mad
+        low = self.background_level + nmadmin * self.background_mad
         return np.array([low, high])
 
-    def get_shape(self):
-        """
-        Get the image shape in pixels.
-        
-        Returns
-        -------
-        shape: Tuple of ints
-            Image shape in pixels.
-        """
-        return self._shape
-
-    def get_nlevels(self):
-        """
-        Get the number of resolution levels in the image.
-        
-        Returns
-        -------
-        nlevels: int
-            Number of resolution levels in the image.
-        """
-        return self._nlevels
-
-    def get_bitdepth(self):
-        """
-        Get the number of bits per pixels in the image.
-        
-        Returns
-        -------
-        bitdepth: int
-            Number of bits per pixels in the image.
-        """
-        return self._bitdepth
-
-    def get_minmax(self):
-        """
-        Get the intensity cuts for displaying the image.
-        
-        Returns
-        -------
-        minmax: 2-tuple of ints
-            Intensity cuts for displaying the image.
-        """
-        return self._minmax
+        return self.minmax
 
     def get_header(self):
         """
@@ -198,7 +164,7 @@ class Image(object):
         header: str
             Image header.
         """
-        return self._hdr.tostring()
+        return self.hdr.tostring()
 
     def get_iipheaderstr(self):
         """
@@ -210,12 +176,12 @@ class Image(object):
             IIP image header.
         """
         str = "IIP:1.0\n"
-        str += f"Max-size:{self._shape[0]} {self._shape[1]}\n"
-        str += f"Tile-size:{self._tilesize[0]} {self._tilesize[1]}\n"
-        str += f"Resolution-number:{self._nlevels}\n"
-        str += f"Bits-per-channel:{self._bitdepth}\n"
-        str += f"Min-Max-sample-values:{self._minmax[0]} {self._minmax[1]}\n"
-        str2 = self._hdr.tostring()
+        str += f"Max-size:{self.shape[0]} {self.shape[1]}\n"
+        str += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
+        str += f"Resolution-number:{self.nlevels}\n"
+        str += f"Bits-per-channel:{self.bitdepth}\n"
+        str += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
+        str2 = self.hdr.tostring()
         str += f"subject/{len(str2)}:{str2}"
         return str
 
@@ -247,8 +213,8 @@ class Image(object):
             Processed tile.
         """
         fac = minmax[1] - minmax[0]
-        fac = contrast / fac if fac > 0.0 else self._maxfac
-        tile = (tile - self._minmax[0]) * fac
+        fac = contrast / fac if fac > 0.0 else self.maxfac
+        tile = (tile - self.minmax[0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
@@ -258,19 +224,19 @@ class Image(object):
         """
         Generate all tiles from the image.
         """
-        self._levels = []
-        self._tiles = []
-        ima = np.flipud(self._data)
-        for r in range(self._nlevels):
+        self.levels = []
+        self.tiles = []
+        ima = np.flipud(self.data)
+        for r in range(self.nlevels):
             tiles = []
             tiler = Tiler(
                 data_shape = ima.shape,
-                tile_shape = (self._tilesize[1], self._tilesize[0]),
+                tile_shape = (self.tilesize[1], self.tilesize[0]),
                 mode='irregular'
             )
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
-            self._tiles.append(tiles)
+            self.tiles.append(tiles)
             ima = cv2.resize(
                 ima,
                 fx=0.5,
@@ -314,7 +280,7 @@ class Image(object):
         """
         return encode_jpeg(
             self.scale_tile(
-                self._tiles[r][t],
+                self.tiles[r][t],
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,

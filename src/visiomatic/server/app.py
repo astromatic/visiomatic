@@ -138,9 +138,9 @@ async def read_visio(
         resp = app.parse_minmax.findall(MINMAX)[0]
         minmax = float(resp[1]), float(resp[2])
     else:
-        minmax = image._minmax
+        minmax = image.minmax
     resp = app.parse_jtl.findall(JTL)[0]
-    r = image._nlevels - 1 - int(resp[0])
+    r = image.nlevels - 1 - int(resp[0])
     if r < 0:
           r = 0
     t = int(resp[1])
