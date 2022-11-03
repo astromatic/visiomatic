@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
 from .. import defs
-from visiomatic.server.image import Image
+from visiomatic.server.image import Tiled
 
 banner_filename = "banner.html"
 tiles_url = "/tiles/"
@@ -37,8 +37,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 """
-# Prepare the dictionary of images
-app.images = {}
+# Prepare the dictionary of tiled image pyramids
+app.tiled = {}
 app.parse_jtl = re.compile(r"^(\d+),(\d+)$")
 app.parse_minmax = re.compile(r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")
 
@@ -97,7 +97,7 @@ async def read_visio(
     Parameters
     ----------
     FIF: str
-        Image name.
+        Image filename.
     obj: str or None
         Query parameter to return image information instead of a tile.
     CNT:  float, optional
@@ -125,12 +125,12 @@ async def read_visio(
                 "root_path": request.scope.get("root_path"),
         })
 
-    if FIF in app.images:
-        image = app.images[FIF]
+    if FIF in app.tiled:
+        tiled = app.tiled[FIF]
     else:
-        app.images[FIF] = (image := Image(FIF))
+        app.tiled[FIF] = (tiled := Tiled(FIF))
     if obj != None:
-        return responses.PlainTextResponse(image.get_iipheaderstr())
+        return responses.PlainTextResponse(tiled.get_iipheaderstr())
     if JTL == None:
         return
     if MINMAX != None:
@@ -138,13 +138,13 @@ async def read_visio(
         resp = app.parse_minmax.findall(MINMAX)[0]
         minmax = float(resp[1]), float(resp[2])
     else:
-        minmax = image.minmax
+        minmax = tiled.minmax
     resp = app.parse_jtl.findall(JTL)[0]
-    r = image.nlevels - 1 - int(resp[0])
+    r = tiled.nlevels - 1 - int(resp[0])
     if r < 0:
           r = 0
     t = int(resp[1])
-    pix = image.get_tile(
+    pix = tiled.get_tile(
         r,
         t,
         minmax=minmax,

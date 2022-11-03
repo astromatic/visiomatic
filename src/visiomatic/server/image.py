@@ -4,12 +4,13 @@ Image module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import io, os
+import io, os, re
+from typing import Union, Optional
+from joblib import Parallel, delayed
 import numpy as np
+import torch
 import cv2
 from simplejpeg import encode_jpeg
-import torch
-from typing import Union, Optional
 from astropy.io import fits
 from tiler import Tiler
 
@@ -17,62 +18,65 @@ from .. import defs
 
 fits_dir = os.path.join(defs.root_dir, "fits/")
 
-
 class Image(object):
+    re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
     """
-    Class for the image to be visualized.
-    
+    Class for the individual images that can be part of a mosaic.
+ 
     Parameters
     ----------
-    filename: str or `pathlib.Path`,
-        Relative path to the image.
-    ext: int, optional
-        Extension number (for Multi-Extension FITS files).
-    tilesize: 2-tuple of ints, optional
-        shape of the served tiles.
+    header: astropy.header,
+        Image header.
+    data: 2D+ :class:`numpy.ndarray`
+        Image data 
+    extnum: int
+        Position in mosaic or Extension number (for Multi-Extension FITS files).
     minmax: 2-tuple of floats, optional
-        Intensity cuts of the served tiles.
-    gamma: float, optional
-        Display gamma of the served tiles.
+        Default intensity cuts.
     """
     def __init__(
             self,
-            filename,
-            ext : Optional[Union[int, None]] = None,
-            tilesize : tuple[int] = [256,256],
-            minmax : Union[tuple[int], None] = None,
-            gamma = 0.45,
-            device : Optional[Union[str,None]] = None):
+            hdu : fits.hdu,
+            minmax : Union[tuple[int], None] = None):
 
-        self.device = device
-        if self.device==None:
-            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        if self.device == 'cuda':
-            torch.cuda.empty_cache()
-        self.filename = filename
-        self.hdus = fits.open(fits_dir + filename)
-        if ext is None:
-            for e,hdu in enumerate(self.hdus):
-                if isinstance(hdu.data, np.ndarray) and len(hdu.data.shape) >= 2:
-                    ext = e
-                    break
-        if ext is None:
-            raise(LookupError(f"No 2D+ data found in {filename}"))
-            return
-        self.ext = ext
-        self.hdu = self.hdus[self.ext]
-        self.data = self.hdu.data.astype(np.float32)
-        self.hdr = self.hdu.header
-        self.tilesize = tilesize;
-        self.shape = [self.hdr["NAXIS1"], self.hdr["NAXIS2"]]
-        self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
-                        (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
-        self.bitpix = self.hdr["BITPIX"]
-        self.bitdepth = abs(self.bitpix)
+        self.header = hdu.header
+        self.data = hdu.data.astype(np.float32)
+        self.bitpix = self.header["BITPIX"]
+        self.bitdepth = 32
+        self.shape = [self.header["NAXIS1"], self.header["NAXIS2"]]
+        datasec = self.parse_2dslice(self.header.get("DATASEC", ""))
+        self.datasec = tuple(datasec) \
+            if (datasec := self.parse_2dslice(self.header.get("DATASEC", ""))) \
+            else [1, self.shape[0], 1, self.shape[1]]
+        self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
-        self.gamma = gamma
-        self.maxfac = 1.0e30
-        self.make_tiles()
+
+    def get_header(self):
+        """
+        Get the image header as a string.
+        
+        Returns
+        -------
+        header: str
+            Image header.
+        """
+        return self.header.tostring()
+
+    def parse_2dslice(self, str: str) -> Union[tuple[int], None]:
+        """
+        Parse a string representation of a 2D slice.
+
+        Parameters
+        ----------
+        str:  str
+            Input string.
+        Returns
+        -------
+        tile: tuple[int] or None
+            4-tuple representing the slice parameters or None if not found
+        """
+        coords = self.re_2dslice.findall(str)
+        return [int(s) for s in coords[0]] if coords else [None, None, None, None]
 
     @staticmethod
     @torch.jit.script
@@ -108,6 +112,7 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
+        '''
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
         ax = np.abs(x-med)
@@ -124,6 +129,7 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
+        '''
         self.background_level = 3.5*med - 2.5*np.nanmean(x)
         self.background_mad = mad
         """
@@ -155,16 +161,73 @@ class Image(object):
 
         return self.minmax
 
-    def get_header(self):
-        """
-        Get the image header as a string.
-        
-        Returns
-        -------
-        header: str
-            Image header.
-        """
-        return self.hdr.tostring()
+
+class Tiled(object):
+    """
+    Class for the tiled image pyramid to be visualized.
+    
+    Parameters
+    ----------
+    filename: str or `pathlib.Path`,
+        Relative path to the image.
+    extnum: int, optional
+        Extension number (for Multi-Extension FITS files).
+    tilesize: 2-tuple of ints, optional
+        shape of the served tiles.
+    minmax: 2-tuple of floats, optional
+        Intensity cuts of the served tiles.
+    gamma: float, optional
+        Display gamma of the served tiles.
+    """
+    def __init__(
+            self,
+            filename,
+            extnum : Union[int, None] = None,
+            tilesize : tuple[int] = [256,256],
+            minmax : Union[tuple[int], None] = None,
+            gamma : float = 0.45,
+            nthreads : int = 10,
+            device : Union[str,None] = None):
+
+        self.nthreads = nthreads
+        self.device = device
+        if self.device==None:
+            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if self.device == 'cuda':
+            torch.cuda.empty_cache()
+        self.filename = filename
+        hdus = fits.open(fits_dir + filename)
+        # Collect Header Data Units that contain 2D+ image data ("HDIs")
+        if extnum is not None:
+            hdus = [hdus[extnum]]
+        hdis = []
+        for hdu in hdus:
+            if isinstance(hdu.data, np.ndarray) and len(hdu.data.shape) >= 2:
+                hdis.append(hdu)
+        self.images = Parallel(n_jobs=self.nthreads, prefer="threads")(
+            delayed(Image)(hdi) for hdi in hdis
+        )
+        if len(self.images) == 0:
+            raise(LookupError(f"No 2D+ data found in {filename}"))
+            return
+        self.tilesize = tilesize;
+        self.make_mosaic(self.images)
+        image = self.images[0]
+        self.header = image.header
+        self.data = image.data
+        self.shape = image.shape
+        self.minmax = image.minmax
+        self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
+                        (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
+        self.bitdepth = image.bitdepth
+        self.gamma = gamma
+        self.maxfac = 1.0e30
+        self.make_tiles()
+
+    def make_mosaic(self, images : list[Image]):
+        x = [image.detsec[0] for image in images] + [image.detsec[2] for image in images]
+        y = [image.detsec[1] for image in images] + [image.detsec[3] for image in images]
+        mosaicrange = [[min(y) - 1, max(y)], [min(x) -1, max(x)]]
 
     def get_iipheaderstr(self):
         """
@@ -181,7 +244,7 @@ class Image(object):
         str += f"Resolution-number:{self.nlevels}\n"
         str += f"Bits-per-channel:{self.bitdepth}\n"
         str += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
-        str2 = self.hdr.tostring()
+        str2 = self.header.tostring()
         str += f"subject/{len(str2)}:{str2}"
         return str
 
