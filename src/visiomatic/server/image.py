@@ -279,7 +279,7 @@ class Tiled(object):
             IIP image header.
         """
         str = "IIP:1.0\n"
-        str += f"Max-size:{self.shape[0]} {self.shape[1]}\n"
+        str += f"Max-size:{self.shape[1]} {self.shape[0]}\n"
         str += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
         str += f"Resolution-number:{self.nlevels}\n"
         str += f"Bits-per-channel:{self.bitdepth}\n"
@@ -334,12 +334,13 @@ class Tiled(object):
             tiles = []
             tiler = Tiler(
                 data_shape = ima.shape,
-                tile_shape = (self.tilesize[1], self.tilesize[0]),
+                tile_shape = (self.tilesize[0], self.tilesize[1]),
                 mode='irregular'
             )
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
             self.tiles.append(tiles)
+            print(ima.shape)
             ima = cv2.resize(
                 ima,
                 fx=0.5,
