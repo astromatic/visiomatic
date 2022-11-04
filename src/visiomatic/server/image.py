@@ -112,11 +112,11 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        '''
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
+        '''
         x = self.data.flatten().copy()
         ax = np.abs(x-med)
         x[ax > 3.0 * mad] = np.nan
@@ -207,27 +207,67 @@ class Tiled(object):
         self.images = Parallel(n_jobs=self.nthreads, prefer="threads")(
             delayed(Image)(hdi) for hdi in hdis
         )
-        if len(self.images) == 0:
+        self.nimages = len(self.images)
+        if self.nimages == 0:
             raise(LookupError(f"No 2D+ data found in {filename}"))
             return
         self.tilesize = tilesize;
-        self.make_mosaic(self.images)
-        image = self.images[0]
-        self.header = image.header
-        self.data = image.data
-        self.shape = image.shape
-        self.minmax = image.minmax
+        if self.nimages > 1:
+            self.make_mosaic(self.images)
+        else:
+            image = self.images[0]
+            self.bitdepth = image.bitdepth
+            self.header = image.header
+            self.data = image.data
+            self.shape = image.shape
+            self.minmax = image.minmax
         self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
                         (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
-        self.bitdepth = image.bitdepth
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.make_tiles()
 
     def make_mosaic(self, images : list[Image]):
-        x = [image.detsec[0] for image in images] + [image.detsec[2] for image in images]
-        y = [image.detsec[1] for image in images] + [image.detsec[3] for image in images]
-        mosaicrange = [[min(y) - 1, max(y)], [min(x) -1, max(x)]]
+        x = [image.detsec[0] for image in images] + [image.detsec[1] for image in images]
+        y = [image.detsec[2] for image in images] + [image.detsec[3] for image in images]
+        if None in x or None in y:
+            pass
+        else:
+            # Compute the min and max chip corner coordinates on the mosaic
+            minx = min(x) 
+            miny = min(y)
+            sizex = max(x) - minx + 1
+            sizey = max(y) - miny + 1
+            self.data = np.zeros((sizey, sizex), dtype=images[0].data.dtype)
+            for image in images:
+                # Add +/-1 to end at pos +/- 1 (Python convention)
+                xsign = 1 if image.detsec[0] < image.detsec[1] else -1
+                ysign = 1 if image.detsec[2] < image.detsec[3] else -1
+                image.detslice = \
+                        slice(
+                            image.detsec[2] - miny,
+                            None if (endy:=image.detsec[3] - miny + ysign) < 0 \
+                                else endy,
+                            ysign
+                        ), \
+                        slice(
+                            image.detsec[0] - minx,
+                            None if (endx:=image.detsec[1] - minx + xsign) < 0 \
+                                else endx,
+                            xsign
+                        )
+                # Subtract 1 to start at 0 (Python convention)
+                image.dataslice = \
+                        slice(image.datasec[2] - 1, image.datasec[3]), \
+                        slice(image.datasec[0] - 1, image.datasec[1])
+                self.data[image.detslice] = image.data[image.dataslice]
+            self.header = images[0].header
+            self.shape = self.data.shape
+            self.minmax =  np.median(
+                np.array([image.minmax for image in images]),
+                axis=0
+            )
+            self.bitdepth = images[0].bitdepth
 
     def get_iipheaderstr(self):
         """
@@ -277,7 +317,7 @@ class Tiled(object):
         """
         fac = minmax[1] - minmax[0]
         fac = contrast / fac if fac > 0.0 else self.maxfac
-        tile = (tile - self.minmax[0]) * fac
+        tile = (tile - minmax[0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
