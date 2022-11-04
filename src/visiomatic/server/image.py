@@ -8,7 +8,6 @@ import io, os, re
 from typing import Union, Optional
 from joblib import Parallel, delayed
 import numpy as np
-import torch
 import cv2
 from simplejpeg import encode_jpeg
 from astropy.io import fits
@@ -94,12 +93,7 @@ class Image(object):
         mad = np.nanmedian(ax)
         self.background_level = 3.5*med - 2.5*np.nanmean(x)
         self.background_mad = mad
-        """
-        self.background_level, self.background_mad = self.median_mad(
-            torch.tensor(self.data, device=self.device)
-        )
-        """
-        return
+
 
     def compute_minmax(self, nmadmin: float = -3.0, nmadmax: float = 1000.0) -> np.ndarray:
         """
@@ -148,15 +142,9 @@ class Tiled(object):
             tilesize : tuple[int] = [256,256],
             minmax : Union[tuple[int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = 10,
-            device : Union[str,None] = None):
+            nthreads : int = 10):
 
         self.nthreads = nthreads
-        self.device = device
-        if self.device==None:
-            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        if self.device == 'cuda':
-            torch.cuda.empty_cache()
         self.filename = filename
         hdus = fits.open(fits_dir + filename)
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
