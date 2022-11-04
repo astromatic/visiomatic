@@ -340,7 +340,6 @@ class Tiled(object):
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
             self.tiles.append(tiles)
-            print(ima.shape)
             ima = cv2.resize(
                 ima,
                 fx=0.5,
