@@ -78,37 +78,13 @@ class Image(object):
         coords = self.re_2dslice.findall(str)
         return [int(s) for s in coords[0]] if coords else [None, None, None, None]
 
-    @staticmethod
-    @torch.jit.script
-    def median_mad(x):
-        x1 = x.flatten().clone()
-        med = x1.nanmedian()
-        ax1 = (x1-med).abs()
-        mad = (ax1.nanmedian() + 1e-30)
-        x1[ax1 > 3.0 * mad] = torch.nan
-        med = x1.nanmedian()
-        ax1 = (x1-med).abs()
-        mad = (ax1.nanmedian() + 1e-30)
-        x1 = x.flatten().clone()
-        ax1 = (x1-med).abs()
-        x1[ax1 > 3.0 * mad] = torch.nan
-        med = x1.nanmedian()
-        ax1 = (x1-med).abs()
-        mad = (ax1.nanmedian() + 1e-30)
-        x1 = x.flatten().clone()
-        ax1 = (x1-med).abs()
-        x1[ax1 > 3.0 * mad] = torch.nan
-        med = x1.nanmedian()
-        ax1 = (x1-med).abs()
-        mad = (ax1.nanmedian() + 1e-30)
-        return (3.5*med - 2.5*x1.nanmean()).item(), mad.item()
-
     def compute_background(self) -> None:
         """
         Compute background level and median absolute deviation.
         """
         # NumPy version
-        x = self.data.flatten().copy()
+        # Speed up ~x8 by using only a fraction of the lines
+        x = self.data[::16,:].flatten().copy()
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
@@ -116,20 +92,6 @@ class Image(object):
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
-        '''
-        x = self.data.flatten().copy()
-        ax = np.abs(x-med)
-        x[ax > 3.0 * mad] = np.nan
-        med = np.nanmedian(x)
-        ax = np.abs(x-med)
-        mad = np.nanmedian(ax)
-        x = self.data.flatten().copy()
-        ax = np.abs(x-med)
-        x[ax > 3.0 * mad] = np.nan
-        med = np.nanmedian(x)
-        ax = np.abs(x-med)
-        mad = np.nanmedian(ax)
-        '''
         self.background_level = 3.5*med - 2.5*np.nanmean(x)
         self.background_mad = mad
         """
