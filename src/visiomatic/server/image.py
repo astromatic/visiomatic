@@ -17,6 +17,7 @@ from .. import defs
 
 fits_dir = os.path.join(defs.root_dir, "fits/")
 
+
 class Image(object):
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
     """
@@ -50,7 +51,8 @@ class Image(object):
         self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
-    def get_header(self):
+
+    def get_header(self) -> str:
         """
         Get the image header as a string.
         
@@ -61,7 +63,8 @@ class Image(object):
         """
         return self.header.tostring()
 
-    def parse_2dslice(self, str: str) -> Union[tuple[int], None]:
+
+    def parse_2dslice(self, str: str) -> tuple[Union[int, None]]:
         """
         Parse a string representation of a 2D slice.
 
@@ -69,21 +72,28 @@ class Image(object):
         ----------
         str:  str
             Input string.
+
         Returns
         -------
         tile: tuple[int] or None
-            4-tuple representing the slice parameters or None if not found
+            4-tuple representing the slice parameters or Nones if not found
         """
         coords = self.re_2dslice.findall(str)
         return [int(s) for s in coords[0]] if coords else [None, None, None, None]
 
-    def compute_background(self) -> None:
+
+    def compute_background(self, skip : int = 15) -> None:
         """
         Compute background level and median absolute deviation.
+
+        Parameters
+        ----------
+        skip:  int, optional
+            Number of lines skipped after each line analyzed.
         """
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
-        x = self.data[::16,:].flatten().copy()
+        x = self.data[::(skip + 1), :].flatten().copy()
         med = np.nanmedian(x)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax)
@@ -105,6 +115,7 @@ class Image(object):
             Target grey level (0.0 = black, 1.0 = 50% grey).
         nmad: float, optional
             Upper intensity cut above background in units of Maximum Absolute Deviations.
+
         Returns
         -------
         minmax: numpy.ndarray of 2 numpy.float32
@@ -134,6 +145,8 @@ class Tiled(object):
         Intensity cuts of the served tiles.
     gamma: float, optional
         Display gamma of the served tiles.
+    nthreads: int, optional
+        Number of compute threads for parallelized operations.
     """
     def __init__(
             self,
@@ -142,7 +155,7 @@ class Tiled(object):
             tilesize : tuple[int] = [256,256],
             minmax : Union[tuple[int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = 10):
+            nthreads : int = os.cpu_count() // 2):
 
         self.nthreads = nthreads
         self.filename = filename
@@ -177,7 +190,16 @@ class Tiled(object):
         self.maxfac = 1.0e30
         self.make_tiles()
 
+
     def make_mosaic(self, images : list[Image]):
+        """
+        Stitch together several images to make a mosaic
+        
+        Parameters
+        ----------
+        images: list[Image]
+            list of input images.
+        """
         x = [image.detsec[0] for image in images] + [image.detsec[1] for image in images]
         y = [image.detsec[2] for image in images] + [image.detsec[3] for image in images]
         if None in x or None in y:
@@ -219,6 +241,7 @@ class Tiled(object):
             )
             self.bitdepth = images[0].bitdepth
 
+
     def get_iipheaderstr(self):
         """
         Generate an IIP image header.
@@ -237,6 +260,7 @@ class Tiled(object):
         str2 = self.header.tostring()
         str += f"subject/{len(str2)}:{str2}"
         return str
+
 
     def scale_tile(
             self,
@@ -260,6 +284,7 @@ class Tiled(object):
             Inverse tile display gamma.
         invert: bool, optional
             Invert the colormap.
+
         Returns
         -------
         tile: 2D :class:`numpy.ndarray`
@@ -272,6 +297,7 @@ class Tiled(object):
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
         return 255 - tile if invert else tile
+
 
     def make_tiles(self):
         """
@@ -291,6 +317,7 @@ class Tiled(object):
                 tiles.append(tile)
             self.tiles.append(tiles)
             '''
+            # Pure NumPy approach (slower)
             ima = ima[:(-1 if ima.shape[0]%2 else None),
                 :(-1 if ima.shape[1]%2 else None)].reshape(
                     ima.shape[0]//2, 2, -1, 2
@@ -303,6 +330,7 @@ class Tiled(object):
                 dsize=(ima.shape[1]//2, ima.shape[0]//2),
                 interpolation=cv2.INTER_AREA
             )
+
 
     def get_tile(
             self,
@@ -331,7 +359,8 @@ class Tiled(object):
         invert: bool, optional
             Invert the colormap.
         quality: int, optional
-            JPEG quality
+            JPEG quality (0-100)
+
         Returns
         -------
         tile: 2D :class:`numpy.ndarray`
