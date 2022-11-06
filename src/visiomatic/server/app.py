@@ -13,8 +13,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
-from visiomatic import defs
-from visiomatic.server.image import Tiled
+from .. import defs
+from .image import Tiled
 
 
 def create_app(

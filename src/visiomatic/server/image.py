@@ -13,7 +13,7 @@ from simplejpeg import encode_jpeg
 from astropy.io import fits
 from tiler import Tiler
 
-from visiomatic import defs
+from .. import defs
 
 fits_dir = os.path.join(defs.root_dir, "fits/")
 

@@ -3,6 +3,7 @@ sphinx-rtd-theme >= 1.0
 sphinxcontrib-bibtex >= 2.4.0
 astropy >= 5.0
 fastapi >= 0.74
+joblib >= 1.0
 numpy >= 1.19
 opencv-python >= 4.5
 simplejpeg >= 1.6

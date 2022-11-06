@@ -1,10 +1,10 @@
-:mod:`server`
--------------
-.. automodule:: server.app
+:mod:`~visiomatic.server`
+-------------------------
+.. automodule:: visiomatic.server.app
    :members:
    :show-inheritance:
 
-.. automodule:: server.image
+.. automodule:: visiomatic.server.image
    :members:
    :show-inheritance:
 
