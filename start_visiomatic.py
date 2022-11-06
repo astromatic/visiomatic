@@ -2,7 +2,7 @@
 import uvicorn
 
 def start_server(
-        app="src.visiomatic.server.app:app",
+        app="src.visiomatic.server.app:create_app",
         host="localhost",
         port=8009,
         root_path="",
@@ -17,7 +17,8 @@ def start_server(
         root_path=root_path,
         access_log=access_log,
         workers=workers,
-        reload=reload
+        reload=reload,
+        factory=True
     )
     return
 

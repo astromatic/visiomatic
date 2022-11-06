@@ -13,30 +13,29 @@ from simplejpeg import encode_jpeg
 from astropy.io import fits
 from tiler import Tiler
 
-from .. import defs
+from visiomatic import defs
 
 fits_dir = os.path.join(defs.root_dir, "fits/")
 
 
 class Image(object):
-    re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
     """
     Class for the individual images that can be part of a mosaic.
  
     Parameters
     ----------
-    header: astropy.header,
+    header: ~astropy.io.fits.Header
         Image header.
-    data: 2D+ :class:`numpy.ndarray`
+    data: ~numpy.ndarray
         Image data 
     extnum: int
         Position in mosaic or Extension number (for Multi-Extension FITS files).
-    minmax: 2-tuple of floats, optional
+    minmax: tuple[float,float], optional
         Default intensity cuts.
     """
     def __init__(
             self,
-            hdu : fits.hdu,
+            hdu : fits.ImageHDU,
             minmax : Union[tuple[int], None] = None):
 
         self.header = hdu.header
@@ -59,10 +58,11 @@ class Image(object):
         Returns
         -------
         header: str
-            Image header.
+            Image header string.
         """
         return self.header.tostring()
 
+    re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
     def parse_2dslice(self, str: str) -> tuple[Union[int, None]]:
         """
@@ -75,8 +75,8 @@ class Image(object):
 
         Returns
         -------
-        tile: tuple[int] or None
-            4-tuple representing the slice parameters or Nones if not found
+        tile: tuple[int,int,int,int]
+            4-tuple representing the slice parameters or 4-tuple of Nones if not found.
         """
         coords = self.re_2dslice.findall(str)
         return [int(s) for s in coords[0]] if coords else [None, None, None, None]
@@ -118,7 +118,7 @@ class Image(object):
 
         Returns
         -------
-        minmax: numpy.ndarray of 2 numpy.float32
+        minmax: ~numpy.ndarray
             Intensity cuts for displaying the image.
         """
         self.compute_background()
@@ -139,9 +139,9 @@ class Tiled(object):
         Relative path to the image.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
-    tilesize: 2-tuple of ints, optional
+    tilesize: tuple[int, int], optional
         shape of the served tiles.
-    minmax: 2-tuple of floats, optional
+    minmax: tuple[float, float], optional
         Intensity cuts of the served tiles.
     gamma: float, optional
         Display gamma of the served tiles.
@@ -152,8 +152,8 @@ class Tiled(object):
             self,
             filename,
             extnum : Union[int, None] = None,
-            tilesize : tuple[int] = [256,256],
-            minmax : Union[tuple[int], None] = None,
+            tilesize : tuple[int, int] = [256,256],
+            minmax : Union[tuple[int, int], None] = None,
             gamma : float = 0.45,
             nthreads : int = os.cpu_count() // 2):
 
@@ -274,7 +274,7 @@ class Tiled(object):
         
         Parameters
         ----------
-        tile:  2D :class:`numpy.ndarray`
+        tile:  ~numpy.ndarray
             Input tile.
         minmax: tuple[float, float], optional
             Tile intensity cuts.
@@ -287,7 +287,7 @@ class Tiled(object):
 
         Returns
         -------
-        tile: 2D :class:`numpy.ndarray`
+        tile: ~numpy.ndarray
             Processed tile.
         """
         fac = minmax[1] - minmax[0]
@@ -363,7 +363,7 @@ class Tiled(object):
 
         Returns
         -------
-        tile: 2D :class:`numpy.ndarray`
+        tile: ~numpy.ndarray
             JPEG bytestream of the tile.
         """
         return encode_jpeg(
