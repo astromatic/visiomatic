@@ -5,7 +5,7 @@ Image module
 # Licensed under the MIT licence
 
 import io, os, re
-from typing import Union, Optional
+from typing import Optional, Tuple, Union
 from joblib import Parallel, delayed
 import numpy as np
 import cv2
@@ -36,7 +36,7 @@ class Image(object):
     def __init__(
             self,
             hdu : fits.ImageHDU,
-            minmax : Union[tuple[int], None] = None):
+            minmax : Union[Tuple[int], None] = None):
 
         self.header = hdu.header
         self.data = hdu.data.astype(np.float32)
@@ -64,7 +64,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> tuple[Union[int, None]]:
+    def parse_2dslice(self, str: str) -> Tuple[Union[int, None]]:
         """
         Parse a string representation of a 2D slice.
 
@@ -152,8 +152,8 @@ class Tiled(object):
             self,
             filename,
             extnum : Union[int, None] = None,
-            tilesize : tuple[int, int] = [256,256],
-            minmax : Union[tuple[int, int], None] = None,
+            tilesize : Tuple[int, int] = [256,256],
+            minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
             nthreads : int = os.cpu_count() // 2):
 
@@ -265,7 +265,7 @@ class Tiled(object):
     def scale_tile(
             self,
             tile,
-            minmax: tuple[float, float] = [0.0, 65535.0],
+            minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.45,
             invert: bool = False):
@@ -336,7 +336,7 @@ class Tiled(object):
             self,
             r: int,
             t: int,
-            minmax: tuple[float, float] = [0.0, 65535.0],
+            minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.4545,
             invert: bool = False,
