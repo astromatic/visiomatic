@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta id="root_path" content="{{ root_path }}">
+    <link rel="icon" type="image/svg+xml" href="{{ root_path }}/static/images/visiomatic.svg">
+    <title>VisiOmatic III</title>
+    <link rel="stylesheet" href="{{ root_path }}/static/css/jqplot.css" />
+    <link rel="stylesheet" href="{{ root_path }}/static/css/spectrum.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <link rel="stylesheet" href="{{ root_path }}/static/css/visiomatic.css" />
+    <style type='text/css'>
+		body {padding: 0; margin: 0; }
+		html,body,#map { width: 100%; height: 100%; }
+        .leaflet-control-attribution {
+	        background: rgba(100,100,100,0.0) !important;
+	        box-shadow: none;
+        }
+    </style>
+    <script src="{{ root_path }}/static/dist/jquery.js"></script>
+    <script src="{{ root_path }}/static/dist/jqplot-min.js"></script>
+    <script src="{{ root_path }}/static/dist/spectrum-min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script src="{{ root_path }}/static/dist/visiomatic.js"></script>
+  </head>
+  <body>
+    <div id='map' style='background:black'></div>
+	<script>
+		var args = L.IIPUtils.parseURL(window.location.search.substring(1)),
+				iip = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
+				map = L.map('map', {fullscreenControl: true, zoom: 1}),
+				layer = L.tileLayer.iip(iip, {
+					center: args['center'] ? args['center'] : false,
+					fov: args['fov'] ? parseFloat(args['fov']) : false,
+					mixingMode: args['mode'] ? args['mode'] : 'mono',
+					contrast: 1.0,
+					gamma: 2.2,
+					colorSat: 1.5,
+					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
+					channelLabels: ['data', 'weights'],
+					reuseTiles: true
+				}).addTo(map),
+				minilayer = L.tileLayer.iip(iip, {
+					mixingMode: args['mode'] ? args['mode'] : 'mono',
+					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
+					minMaxValues: [2100,5000],
+					contrast: 1.0,
+					gamma: 2.2,
+					colorSat: 1.5,
+					reuseTiles: true
+				});
+
+		L.control.scale.wcs({pixels: false}).addTo(map);
+		L.control.reticle().addTo(map);
+		L.control.wcs({coordinates: [
+			{label: 'RA,Dec', units: 'HMS'},
+		], position: 'topright'}).addTo(map);
+
+		var minimap = L.control.extraMap(minilayer, {
+					position: 'topright',
+					width: 192,
+					height: 192,
+					zoomLevelOffset: -5,
+				}).addTo(map),
+				sidebar = L.control.sidebar().addTo(map);
+
+		L.control.iip.channel('color').addTo(sidebar);
+		L.control.iip.image().addTo(sidebar);
+		L.control.iip.catalog([
+			L.Catalog['PanSTARRS1'],
+			L.Catalog['GAIA_DR2'],
+			L.Catalog['SDSS'],
+			L.Catalog['URAT_1'],
+			L.Catalog['GALEX_AIS'],
+			L.Catalog['2MASS'],
+			L.Catalog['AllWISE'],
+			L.Catalog['PPMXL'],
+			L.Catalog['NVSS'],
+			L.Catalog['FIRST'],
+			L.Catalog['GLEAM'],
+			L.Catalog['TGSS']
+		]).addTo(sidebar);
+		L.control.iip.region(
+			[
+			]
+		).addTo(sidebar);
+		L.control.iip.profile().addTo(sidebar);
+		L.control.iip.snapshot().addTo(sidebar);
+		sidebar.addTabList();
+	</script>
+  </body>
+</html>
+

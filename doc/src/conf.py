@@ -13,7 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(1, os.path.abspath('../../src/visiomatic'))
+sys.path.insert(1, os.path.abspath('../../src'))
 import sphinx_rtd_theme
 import adsarxiv
 
@@ -45,12 +45,12 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['../theme']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['global.rst', 'keys.rst', 'macros.rst', 'roles.rst']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -119,6 +119,10 @@ latex_elements = {
 add_module_names = False
 autodoc_member_order = 'bysource'
 #autodoc_mock_imports = ['', '']
+
+# -- Napoleon options---------------------------------------------------------
+# Set return type to "inline".
+napoleon_use_rtype = False
 
 # -- Options for todo extension ----------------------------------------------
 
