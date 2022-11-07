@@ -5,7 +5,7 @@ Image module
 # Licensed under the MIT licence
 
 import io, os, re
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 from joblib import Parallel, delayed
 import numpy as np
 import cv2
@@ -191,7 +191,7 @@ class Tiled(object):
         self.make_tiles()
 
 
-    def make_mosaic(self, images : list[Image]):
+    def make_mosaic(self, images : List[Image]):
         """
         Stitch together several images to make a mosaic
         
