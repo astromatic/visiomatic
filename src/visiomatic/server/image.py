@@ -188,7 +188,7 @@ class Tiled(object):
         self.make_tiles()
 
 
-    def make_mosaic(self, images : List[Image]):
+    def make_mosaic(self, images : List[Image]) -> None:
         """
         Stitch together several images to make a mosaic
         
@@ -239,7 +239,7 @@ class Tiled(object):
             self.bitdepth = images[0].bitdepth
 
 
-    def get_iipheaderstr(self):
+    def get_iipheaderstr(self) -> str:
         """
         Generate an IIP image header.
         
@@ -265,7 +265,7 @@ class Tiled(object):
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.45,
-            invert: bool = False):
+            invert: bool = False) -> None:
         """
         Process the dynamic range of a tile.
         
@@ -296,7 +296,7 @@ class Tiled(object):
         return 255 - tile if invert else tile
 
 
-    def make_tiles(self):
+    def make_tiles(self) -> None:
         """
         Generate all tiles from the image.
         """
@@ -337,7 +337,7 @@ class Tiled(object):
             contrast: float = 1.0,
             gamma: float = 0.4545,
             invert: bool = False,
-            quality: int = 90):
+            quality: int = 90) -> bytes:
         """
         Generate a JPEG bytestream from a tile.
         
@@ -360,7 +360,7 @@ class Tiled(object):
 
         Returns
         -------
-        tile: ~numpy.ndarray
+        tile: bytes
             JPEG bytestream of the tile.
         """
         return encode_jpeg(
