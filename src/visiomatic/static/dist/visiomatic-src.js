@@ -1511,7 +1511,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// Force pixels to be visible at high zoom factos whenever possible
 		if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
-            tile.style.imageRendering = 'crisp-edges';
+            tile.style.imageRendering = 'pixelated';
 	    }
 
 		tile.onselectstart = L.Util.falseFn;
