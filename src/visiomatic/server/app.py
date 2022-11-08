@@ -13,41 +13,28 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
-from .. import defs
+from .. import package
+from .settings import app_settings 
 from .image import Tiled
 
 
-def create_app(
-        tiles_url : str = "/tiles",
-        banner: str = "banner.html") -> FastAPI:
+def create_app() -> FastAPI:
     """
     Create FASTAPI application
-
-    Parameters
-    ----------
-    tiles_url: str, optional
-        URL for tile queries
-    banner: str, optional
-        Name of the HTML with the service banner.
-
-    Returns
-    -------
-    app: FastAPI
-        FastAPI application
     """
 
     app = FastAPI(
-        title=defs.package_str,
-        description=defs.package_description,
-        version=defs.package_version,
+        title=package.title,
+        description=package.description,
+        version=package.version,
         contact={
-            "name":  f"{defs.contact_name} ({defs.contact_affiliation})",
-            "url":   defs.package_url,
-            "email": defs.contact_email
+            "name":  f"{package.contact_name} ({package.contact_affiliation})",
+            "url":   package.url,
+            "email": package.contact_email
         },
         license_info={
-            "name": defs.license_name,
-            "url":  defs.license_url
+            "name": package.license_name,
+            "url":  package.license_url
         }
     )
     """
@@ -66,16 +53,23 @@ def create_app(
         allow_headers=["*"],
     )
     """
+    banner = app_settings.BANNER
+    tiles_url = app_settings.TILES_URL
+
     # Prepare the dictionary of tiled image pyramids
     app.tiled = {}
     app.parse_jtl = re.compile(r"^(\d+),(\d+)$")
     app.parse_minmax = re.compile(r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")
 
     # Provide an endpoint for static files (such as js and css)
-    app.mount("/static", StaticFiles(directory=os.path.join(defs.root_dir, "static")), name="static")
+    app.mount(
+        "/static",
+        StaticFiles(directory=os.path.join(package.root_dir, "static")),
+        name="static"
+    )
 
     # Instantiate templates
-    templates = Jinja2Templates(directory=os.path.join(defs.root_dir, "templates"))
+    templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
     async def toto():
         """
         test function
@@ -210,7 +204,7 @@ def create_app(
                 "root_path": request.scope.get("root_path"),
                 "tiles_url": tiles_url,
                 "image": image,
-                "package": defs.package_str
+                "package": package.title
             }
         )
 

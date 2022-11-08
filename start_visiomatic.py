@@ -25,11 +25,11 @@ def start_server(
 if __name__ == "__main__":
     import argparse
 
-    from visiomatic import defs
+    from visiomatic import package
 
-    print(f"{defs.package_str} v{defs.package_version}")
+    print(f"{package.title} v{package.version}")
 
-    parser = argparse.ArgumentParser(description=defs.package_description)
+    parser = argparse.ArgumentParser(description=package.description)
 
     parser.add_argument(
         "-H", "--host",
