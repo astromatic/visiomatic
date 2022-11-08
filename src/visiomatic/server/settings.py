@@ -12,9 +12,12 @@ class AppSettings(BaseSettings):
     """
     Default application settings, can be overriden by ENV:
     
-    BANNER: Name of the HTML with the service banner
-    DATA_DIR: Data root directory
-    TILES_URL: Endpoint URL for tile queries.
+    BANNER: str
+        Name of the HTML with the service banner
+    DATA_DIR: Path
+        Data root directory
+    TILES_URL: str
+        Endpoint URL for tile queries.
     """
     BANNER: str = "banner.html"
     DATA_DIR : Path = "fits"
