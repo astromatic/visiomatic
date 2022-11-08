@@ -13,10 +13,7 @@ from simplejpeg import encode_jpeg
 from astropy.io import fits
 from tiler import Tiler
 
-from .. import defs
-
-fits_dir = os.path.join(defs.root_dir, "fits/")
-
+from .settings import app_settings 
 
 class Image(object):
     """
@@ -136,7 +133,7 @@ class Tiled(object):
     Parameters
     ----------
     filename: str or `pathlib.Path`,
-        Relative path to the image.
+        Path to the image.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
     tilesize: tuple[int, int], optional
@@ -159,7 +156,7 @@ class Tiled(object):
 
         self.nthreads = nthreads
         self.filename = filename
-        hdus = fits.open(fits_dir + filename)
+        hdus = fits.open(os.path.join(app_settings.DATA_DIR, filename))
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
             hdus = [hdus[extnum]]
