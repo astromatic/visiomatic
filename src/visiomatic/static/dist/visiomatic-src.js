@@ -435,6 +435,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
 		this.naxis = L.point(defaultparam.naxis, true);
 		this.projparam = new this._paramInit(defaultparam);
+		var hdrs = hdr.split('XTENSION= \'IMAGE');
+        console.log(hdrs.length);
 		if (hdr) {
 			this._readWCS(hdr);
 		}

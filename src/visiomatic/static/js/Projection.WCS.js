@@ -244,6 +244,26 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 
 });
 
+L.Projection.WCS.MUL = L.Projection.WCS.ZEA.extend({
+	code: 'MEF',
+
+	_paramInit: function (projparams, projections) {
+		this.projparams = projparams;
+		this.projections = projections
+		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
+	},
+
+	project: function (latlng) {
+        
+		return L.point(latlng.lng, latlng.lat);
+	},
+
+	unproject: function (point) {
+		return L.latLng(point.y, point.x);
+	}
+});
+
+
 L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
 
 	_paramInit: function (projparam) {

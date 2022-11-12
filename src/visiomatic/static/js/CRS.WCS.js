@@ -41,84 +41,92 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 		this.tileSize = L.point(options.tileSize);
 		this.nzoom = options.nzoom;
-		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
 		this.naxis = L.point(defaultparam.naxis, true);
-		this.projparam = new this._paramInit(defaultparam);
 		if (hdr) {
-			this._readWCS(hdr);
-		}
-		this._paramInit(options, this.projparam);
+    		var hdrs = hdr.split('XTENSION= \'IMAGE');
+    		nhdrs = hdrs.length;
+    		this.projparams = Array[nhdrs]
+            for (const [i, hdr] of hdrs.entries() {
+        		this.projparams[i] = new this._paramInit(defaultparam);
+			    this._readWCS(hdrs[i], this.projparams[i]);
+                this._paramInit(options, this.projparams[i]);
+            } else {
+                this projparams = [new this._paramInit(defaultparam)];
+                this._paramInit(options, this.projparams[0]);
+            }
 
-		// Identify the WCS projection type
-		switch (this.ctype.x.substr(5, 3)) {
-		case 'ZEA':
-			this.projection = new L.Projection.WCS.ZEA();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'TAN':
-			this.projection = new L.Projection.WCS.TAN();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'CAR':
-			this.projection = new L.Projection.WCS.CAR();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'CEA':
-			this.projection = new L.Projection.WCS.CEA();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'COE':
-			this.projection = new L.Projection.WCS.COE();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		default:
-			this.projection = new L.Projection.WCS.PIX();
-			this.pixelFlag = true;
-			this.infinite = false;
-			// Center on image if WCS is in pixels
-			if (!this.options.crval) {
-				this.projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
+        this.projections = Array[nhdrs]
+   		this.pixelFlag = false;
+		this.infinite = true;
+        // Code is not very elegant for now. To be improved later...
+        for (const [i, projparam] of this.projparams.entries() {
+            projection = this.projections[i]
+    		// Identify the WCS projection type
+    		switch (projparam.ctype.x.substr(5, 3)) {
+    		case 'ZEA':
+    			projection = new L.Projection.WCS.ZEA();
+    			break;
+    		case 'TAN':
+    			projection = new L.Projection.WCS.TAN();
+	    		break;
+		    case 'CAR':
+			    projection = new L.Projection.WCS.CAR();
+    			break;
+	    	case 'CEA':
+	    		projection = new L.Projection.WCS.CEA();
+    			break;
+       		case 'COE':
+    			projection = new L.Projection.WCS.COE();
+    			break;
+    		default:
+    			projection = new L.Projection.WCS.PIX();
+    			this.pixelFlag = projection.pixelFlag = true;
+	    		this.infinite = projection.infinite = false;
+		    	// Center on image if WCS is in pixels
+    			if (!this.options.crval) {
+	    			projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
 				                                (this.naxis.x + 1.0) / 2.0);
+	    		}
+			    this.wrapLng = [0.5, this.naxis.x - 0.5];
+			    this.wrapLat = [this.naxis.y - 0.5, 0.5];
+			    break;
 			}
-			this.wrapLng = [0.5, this.naxis.x - 0.5];
-			this.wrapLat = [this.naxis.y - 0.5, 0.5];
-			break;
+
+    		if (!projection.pixelFlag) {
+			    // Identify the native celestial coordinate system
+			    switch (projparam.ctype.x.substr(0, 1)) {
+			    case 'G':
+				    projection.celsyscode = 'galactic';
+				    break;
+			    case 'E':
+				    projection.celsyscode = 'ecliptic';
+				    break;
+			    case 'S':
+				    projection.celsyscode = 'supergalactic';
+				    break;
+			    default:
+				    projection.celsyscode = 'equatorial';
+				    break;
+			    }
+			    if (projection.celsyscode !== 'equatorial') {
+				    projparam.celsysmat = this._celsysmatInit(projection.celsyscode);
+				    projection.celsysToEq = this.celsysToEq;
+				    projection.eqToCelsys = this.eqToCelsys;
+				    projection.forceNativeCelsys = (this.options.nativeCelsys === true);
+				    projection.celsysflag = !this.forceNativeCelsys;
+			    }
+		    }
+            projection._paramInit(projparam);
 		}
 
-		if (!this.pixelFlag) {
-			// Identify the native celestial coordinate system
-			switch (this.ctype.x.substr(0, 1)) {
-			case 'G':
-				this.celsyscode = 'galactic';
-				break;
-			case 'E':
-				this.celsyscode = 'ecliptic';
-				break;
-			case 'S':
-				this.celsyscode = 'supergalactic';
-				break;
-			default:
-				this.celsyscode = 'equatorial';
-				break;
-			}
+        if (hdr and nhdrs > 1) {
+            this.projection = new L.Projection.WCS.MEF();
 
-			if (this.celsyscode !== 'equatorial') {
-				this.projparam.celsysmat = this._celsysmatInit(this.celsyscode);
-				this.projection.celsysToEq = this.celsysToEq;
-				this.projection.eqToCelsys = this.eqToCelsys;
-				this.forceNativeCelsys = (this.options.nativeCelsys === true);
-				this.projection.celsysflag = !this.forceNativeCelsys;
-			}
-		}
-
+        } else {
+            this.projection = this.projections[0];
+        }
 		this.transformation = new L.Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
-		this.projection._paramInit(this.projparam);
-		this.code += ':' + this.projection.code;
+		// this.code += ':' + this.projection.code;
 	},
 
 	// convert celestial (angular) coordinates to equatorial
@@ -188,7 +196,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			size = map.getSize();
 
 		if (fov < scale) { fov = scale; }
-		scale *= Math.sqrt(size.x * size.x + size.y * size.y);
+		scale *= Math.sqrt(size.x * size.x + size.y * size.y); 
 		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
 	},
 
@@ -297,14 +305,13 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	// Read WCS information from a FITS header
-	_readWCS: function (hdr) {
+	_readWCS: function (hdr, projparam) {
 		var key = L.IIPUtils.readFITSKey,
-		    projparam = this.projparam,
 		    v;
-		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
-		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
-		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
-		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = this.naxis.y = parseInt(v, 10); }
+		if ((v = key('CTYPE1', hdr))) { projparam.ctype.x = v; }
+		if ((v = key('CTYPE2', hdr))) { projparam.ctype.y = v; }
+		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = parseInt(v, 10); }
 		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
 		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
 		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
@@ -322,6 +329,11 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 				}
 			}
 		}
+	},
+
+	// Read WCS information from a FITS header
+	_readMultiWCS: function (hdrs) {
+        var projparams[hdrs.length];
 	},
 
 	_deltaLng: function (latLng, latLng0) {
