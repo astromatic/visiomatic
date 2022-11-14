@@ -115,6 +115,7 @@ def create_app() -> FastAPI:
             max_length=200),
             CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
             GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
+            INFO: str = Query(None, title="Get advanced image information instead of a tile"),
             INV: str = Query(None, title="Invert the colormap"),
             QLT: int = Query(90, title="JPEG quality", ge=0, le=100),
             JTL: str = Query(None, title="Tile coordinates",
@@ -134,6 +135,8 @@ def create_app() -> FastAPI:
           Query parameter controlling the relative tile contrast.
         GAM:  float, optional
           Query parameter controlling the inverse display gamma.
+        INFO: str or None
+          Query parameter to return extended image information (as JSON) instead of a tile.
         INV: bool, optional
           Query parameter to invert the colormap.
         JTL: str
@@ -164,6 +167,8 @@ def create_app() -> FastAPI:
             app.tiled[FIF] = (tiled := Tiled(FIF))
         if obj != None:
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
+        elif INFO != None:
+            return responses.JSONResponse(tiled.get_model().json())
         if JTL == None:
             return
         if MINMAX != None:

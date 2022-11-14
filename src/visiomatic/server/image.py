@@ -7,6 +7,8 @@ Image module
 import io, os, re
 from typing import List, Optional, Tuple, Union
 from joblib import Parallel, delayed
+from pydantic import BaseModel
+
 import numpy as np
 import cv2
 from simplejpeg import encode_jpeg
@@ -14,6 +16,25 @@ from astropy.io import fits
 from tiler import Tiler
 
 from .settings import app_settings 
+
+class HeaderModel(BaseModel):
+    lines: List[str]
+
+class ImageModel(BaseModel):
+    size: List[int]
+    datasec: List[int]
+    detsec: List[int]
+    min_max: List[List[float]]
+    header_dict: dict
+
+class TiledModel(BaseModel):
+    version: str
+    full_size: List[int]
+    tile_size: List[int]
+    tile_levels: int
+    channels: int
+    bits_per_channel: int 
+    images: List[ImageModel]
 
 class Image(object):
     """
@@ -47,6 +68,15 @@ class Image(object):
         self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
+    def get_model(self) -> ImageModel:
+        print(set(self.header.comments))
+        return ImageModel(
+            size=self.shape,
+            datasec=self.datasec,
+            detsec=self.detsec,
+            min_max=[list(self.minmax)],
+            header_dict=dict(self.header)
+        )
 
     def get_header(self) -> str:
         """
@@ -188,6 +218,18 @@ class Tiled(object):
         self.make_tiles()
 
 
+    def get_model(self) -> TiledModel:
+        return TiledModel(
+            version="3.0",
+            full_size=self.shape,
+            tile_size=self.tilesize,
+            tile_levels=self.nlevels,
+            channels=1,
+            bits_per_channel=32,
+            images=[image.get_model() for image in self.images]
+        )
+
+
     def make_mosaic(self, images : List[Image]) -> None:
         """
         Stitch together several images to make a mosaic
@@ -257,7 +299,6 @@ class Tiled(object):
         string2 = "".join([header.tostring() for header in self.headers])
         string += f"subject/{len(string2)}:{string2}"
         return string
-
 
     def scale_tile(
             self,
