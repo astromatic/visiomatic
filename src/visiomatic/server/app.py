@@ -12,6 +12,7 @@ from fastapi import responses
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 
 from .. import package
 from .settings import app_settings 
@@ -168,7 +169,7 @@ def create_app() -> FastAPI:
         if obj != None:
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
         elif INFO != None:
-            return responses.JSONResponse(tiled.get_model().json())
+            return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
         if JTL == None:
             return
         if MINMAX != None:

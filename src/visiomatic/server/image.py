@@ -17,9 +17,6 @@ from tiler import Tiler
 
 from .settings import app_settings 
 
-class HeaderModel(BaseModel):
-    lines: List[str]
-
 class ImageModel(BaseModel):
     size: List[int]
     datasec: List[int]
@@ -27,14 +24,6 @@ class ImageModel(BaseModel):
     min_max: List[List[float]]
     header_dict: dict
 
-class TiledModel(BaseModel):
-    version: str
-    full_size: List[int]
-    tile_size: List[int]
-    tile_levels: int
-    channels: int
-    bits_per_channel: int 
-    images: List[ImageModel]
 
 class Image(object):
     """
@@ -68,15 +57,16 @@ class Image(object):
         self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
+
     def get_model(self) -> ImageModel:
-        print(set(self.header.comments))
         return ImageModel(
             size=self.shape,
             datasec=self.datasec,
             detsec=self.detsec,
             min_max=[list(self.minmax)],
-            header_dict=dict(self.header)
+            header_dict=dict(self.header.items())
         )
+
 
     def get_header(self) -> str:
         """
@@ -88,6 +78,7 @@ class Image(object):
             Image header string.
         """
         return self.header.tostring()
+
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
@@ -154,6 +145,16 @@ class Image(object):
         return np.array([low, high])
 
         return self.minmax
+
+
+class TiledModel(BaseModel):
+    version: str
+    full_size: List[int]
+    tile_size: List[int]
+    tile_levels: int
+    channels: int
+    bits_per_channel: int 
+    images: List[ImageModel]
 
 
 class Tiled(object):
@@ -299,6 +300,7 @@ class Tiled(object):
         string2 = "".join([header.tostring() for header in self.headers])
         string += f"subject/{len(string2)}:{string2}"
         return string
+
 
     def scale_tile(
             self,
