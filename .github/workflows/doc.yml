@@ -32,7 +32,9 @@ jobs:
           npm install -g jsdoc
 
       - name: Build
-        run: make html
+        run: |
+          pwd
+          make html
 
       - name: Set destination dir
         if: github.ref_name != 'main'
