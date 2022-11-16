@@ -28,12 +28,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install -r doc/requirements.txt
-          npm install jsdoc
+          cd doc
+          npm install -g jsdoc
 
       - name: Build
-        run: |
-          cd doc
-          make html
+        run: make html
 
       - name: Set destination dir
         if: github.ref_name != 'main'
