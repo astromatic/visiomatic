@@ -28,12 +28,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install -r doc/requirements.txt
-          cd doc
           npm install -g jsdoc
 
       - name: Build
         run: |
-          pwd
+          cd doc
           make html
 
       - name: Set destination dir
