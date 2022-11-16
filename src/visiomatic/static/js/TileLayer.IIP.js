@@ -136,10 +136,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			'&obj=resolution-number&obj=bits-per-channel' +
 			'&obj=min-max-sample-values&obj=subject',
 			'getting IIP metadata',
-			this._parseMetadata, this);
+			this._parseIIPMetadata, this);
 	},
 
-	_parseMetadata: function (layer, httpRequest) {
+	/**
+	* Parse Image metadata (old IIPImage style).
+	* @param {object} layer - IIP tile layer.
+	* @param {object} httpRequest - AJAX request.
+	*/
+	_parseIIPMetadata: function (layer, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var response = httpRequest.responseText,
