@@ -3,11 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
-#
-#
-#	Last modified: 24/11/2015
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 L.Control.IIP.Region = L.Control.IIP.extend({
 

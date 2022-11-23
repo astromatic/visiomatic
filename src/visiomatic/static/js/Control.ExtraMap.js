@@ -4,10 +4,9 @@
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                             Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 
 Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
@@ -32,6 +31,8 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import L from 'leaflet';
+
 L.Control.ExtraMap = L.Control.extend({
 	options: {
 		position: 'bottomright',

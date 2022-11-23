@@ -1,7 +1,7 @@
 /*
-Copyright:    (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-                            Chiara Marmo - IDES/Paris-Sud,
-                            Ruven Pillay - C2RMF/CNRS
+   Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+                            Chiara Marmo    - Paris-Saclay
+                            Ruven Pillay    - C2RMF/CNRS
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are

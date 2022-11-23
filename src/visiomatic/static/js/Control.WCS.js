@@ -3,11 +3,11 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 30/11/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
+
 L.Control.WCS = L.Control.extend({
 	options: {
 		position: 'bottomleft',

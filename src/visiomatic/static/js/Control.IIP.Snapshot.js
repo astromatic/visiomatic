@@ -2,11 +2,10 @@
 # L.Control.IIP.snapshot offers several options to take snapshots of the current image/field
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified:		11/07/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery'),

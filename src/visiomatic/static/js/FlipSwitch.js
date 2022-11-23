@@ -5,9 +5,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 #
 */
+import L from 'leaflet';
 
 L.FlipSwitch = L.Evented.extend({
 	options: {

@@ -4,10 +4,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#
-#	Last modified: 15/10/2015
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 */
+import L from 'leaflet';
 
 L.EllipseMarker = L.Path.extend({
 	CANVAS: true,

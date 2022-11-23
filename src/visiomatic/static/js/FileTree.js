@@ -5,10 +5,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                     Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 #
-#	Last modified: 11/02/2014
 // Originally authored by Cory S.N. LaViska
 // A Beautiful Site (http://abeautifulsite.net/)
 // 24 March 2008
@@ -31,6 +30,7 @@
 // is copyright 2008 A Beautiful Site, LLC. 
 //
 */
+import L from 'leaflet';
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery-browser');

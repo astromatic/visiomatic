@@ -4,11 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 01/12/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 L.CRS.WCS = L.extend({}, L.CRS, {
 	code: 'WCS',

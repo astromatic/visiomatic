@@ -3,11 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 20/10/2015
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 L.Control.Scale.WCS = L.Control.Scale.extend({
 	options: {

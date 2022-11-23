@@ -4,11 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified:		29/11/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery');

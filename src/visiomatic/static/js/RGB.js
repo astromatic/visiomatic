@@ -3,10 +3,9 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
-#
-#	Last modified:		04/11/2015
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 */
+import L from 'leaflet';
 
 L.RGB = function (r, g, b) {
 	this.r = r;

@@ -5,15 +5,15 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
-#
-#	Last modified: 13/11/2015
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+*/
 /*
  * jQuery Mobile Framework : plugin to provide number spinbox.
  * Copyright (c) JTSage
  * CC 3.0 Attribution.  May be relicensed without permission/notification.
  * https://github.com/jtsage/jquery-mobile-spinbox
  */
+import L from 'leaflet';
 
 L.SpinBox = L.Evented.extend({
 	options: {

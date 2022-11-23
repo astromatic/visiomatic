@@ -4,10 +4,8 @@
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                        Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 20/11/2015
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 
 The MIT License (MIT)
 
@@ -30,6 +28,8 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import L from 'leaflet';
+
 L.Control.Sidebar = L.Control.extend({
 	includes: L.Mixin.Events,
 

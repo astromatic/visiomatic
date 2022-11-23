@@ -5,12 +5,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2013-2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud.
-#
-#	Last modified: 10/02/2014
+#	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 
-original code Copyright (c) 2013, Bruno Bergot
+Original code Copyright (c) 2013, Bruno Bergot
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
@@ -33,6 +31,7 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import L from 'leaflet';
 
 if (typeof require !== 'undefined') {
 	var jQuery = require('jquery-browser');

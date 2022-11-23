@@ -3,11 +3,10 @@
 #
 #  This file part of: VisiOmatic
 #
-#  Copyright:         (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                   Chiara Marmo - IDES/Paris-Sud,
-#
-#  Last modified: 07/03/2014
+#	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 // Remove this ugly Pipe sign
 L.Control.Attribution.include({

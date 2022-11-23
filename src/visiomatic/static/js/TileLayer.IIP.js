@@ -4,10 +4,12 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
-#
-#	Last modified:		01/12/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
+#	                         Ruven Pillay    - C2RMF/CNRS
+
 */
+import L from 'leaflet';
 
 L.TileLayer.IIP = L.TileLayer.extend({
 	options: {

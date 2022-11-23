@@ -3,11 +3,10 @@
 #
 #	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2018 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                         Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 12/10/2018
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                         Chiara Marmo    - Paris-Saclay
 */
+import L from 'leaflet';
 
 L.Catalog = {
 	nmax: 10000,	// Sets the maximum number of sources per query
