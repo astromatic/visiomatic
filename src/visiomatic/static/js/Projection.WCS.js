@@ -244,48 +244,6 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 
 });
 
-L.Projection.WCS.MUL = L.Projection.WCS.ZEA.extend({
-	code: 'MEF',
-
-	projparam: {
-		ctype: {x: 'RA---ZEA', y: 'DEC--ZEA'},
-		naxis: [256, 256],
-		crpix: [129, 129],
-		crval: [0.0, 0.0],										// (\delta_0, \alpha_0)
-//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
-		cd: [[-1e-5, 0.0], [0.0, 1e-5]],
-		natrval: [90.0, 0.0],										// (\theta_0. \phi_0)
-		natpole: [90.0, 999.0],								// (\theta_p, \phi_p)
-		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
-	},
-
-	_paramInit: function (projparams, projections) {
-		this.projparams = projparams;
-		this.projections = projections
-		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
-	},
-	_paramInit: function (projparam) {
-		this.projparam = projparam;
-		projparam.cdinv = this._invertCD(projparam.cd);
-		projparam.natrval = L.latLng(90.0, 0.0);
-		projparam.natpole = this._natpole();
-		projparam.cpole = this._cpole();
-	},
-
-	project: function (latlng) {
-        
-		return L.point(latlng.lng, latlng.lat);
-	},
-
-	unproject: function (point) {
-		return L.latLng(point.y, point.x);
-	}
-});
-
-
 L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
 
 	_paramInit: function (projparam) {
