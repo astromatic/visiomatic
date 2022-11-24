@@ -13,9 +13,9 @@ if (typeof require !== 'undefined') {
 	var $ = require('jquery');
 }
 
-L.Control.IIP = L.Control.extend({
+VMControl = Control.extend({
 	options: {
-		title: 'a control related to IIPImage',
+		title: 'a control related to VisiOmatic',
 		collapsed: true,
 		position: 'topleft'
 	},

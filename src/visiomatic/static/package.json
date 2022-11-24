@@ -21,25 +21,23 @@
 		"url": "git+https://github.com/ebertin/visiomatic-server.git"
 	},
 	"bugs": {
-		"url": "https://github.com/ebertin/pypu/issues"
+		"url": "https://github.com/ebertin/visiomatic-server/issues"
 	},
 	"dependencies": {
-		"leaflet": "~1.7"
+		"html2canvas": "~1.4.1",
+		"jquery": "~2.1.4",
+		"leaflet": "~1.9.3"
 	},
 	"devDependencies": {
+		"eslint": "^8.23.1",
 		"esbuild": "^0.14.53",
-		"happen": "~0.1.2",
-		"jake": "~0.5.16",
-		"jquery": "~2.1.4",
-		"jsdoc": "~>3.6.3",
-		"jshint": "~2.2.0",
-		"karma": "~0.8.6",
-		"mocha": "~1.10.0",
-		"uglify-js": "~>2.6.0"
+		"jsdoc": "~>3.6.3"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"build": "jake",
+		"build": "esbuild js/index.js --bundle --outfile=dist/visiomatic.js --watch",
+		"lint": "eslint .",
 		"test": "npm run unit"
 	}
 }
+

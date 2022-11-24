@@ -7,13 +7,14 @@
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {DomEvent, DomUtil, setOptions}  from 'leaflet';
+import {Control.IIP} from './Control.IIP';
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery');
 }
 
-L.Control.IIP.Channel = L.Control.IIP.extend({
+VMControlChannel = VMControl.extend({
 	options: {
 		title: 'Channel mixing',
 		collapsed: true,
@@ -23,7 +24,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 	},
 
 	initialize: function (mode, options) {
-		L.setOptions(this, options);
+		setOptions(this, options);
 
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipchannel';
@@ -87,7 +88,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		var	box = this._addDialogBox(),
 			modeline = this._addDialogLine('Mode:', box),
 			modelem = this._addDialogElement(modeline),
-			modeinput = L.DomUtil.create('div', className + '-radios', modelem),
+			modeinput = DomUtil.create('div', className + '-radios', modelem),
 			elem, modebutton;
 
 		// Create Mode selection control section
@@ -160,7 +161,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		line = this._addDialogLine('LUT:', box);
 		elem = this._addDialogElement(line);
 
-		var	cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
+		var	cmapinput = DomUtil.create('div', className + '-cmaps', elem),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function (value) {
@@ -192,7 +193,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 				function () {
 					var chan = layer.iipChannel,
 				    hex = $(colpick).val();
-					_this._updateMix(layer, chan, L.rgb(hex));
+					_this._updateMix(layer, chan, rgb(hex));
 					_this.collapsedOff = true;
 				},
 				'iipChannel',
@@ -248,7 +249,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 			for (c = 0; c < nchan; c++) {
 				if (rgb[c].isOn() && cc < nchanon) {
-					rgb[c] = L.rgb(defcol[nchanon][cc++]);
+					rgb[c] = rgb(defcol[nchanon][cc++]);
 				}
 			}
 			layer.updateMix();
@@ -290,7 +291,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 				.val(layer.iipRGB[chan].toStr())
 				.off('change')
 				.on('change', function () {
-					_this._updateMix(layer, chan, L.rgb($(colorElem).val()));
+					_this._updateMix(layer, chan, rgb($(colorElem).val()));
 				});
 		}
 
@@ -328,13 +329,13 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		if (chanList) {
 /*
 			for (c in chanElems) {
-				L.DomEvent.off(chanElems[c], 'click touch');
-				L.DomEvent.off(trashElems[c], 'click touch');
+				DomEvent.off(chanElems[c], 'click touch');
+				DomEvent.off(trashElems[c], 'click touch');
 			}
 */
-			L.DomUtil.empty(this._channelList);
+			DomUtil.empty(this._channelList);
 		} else {
-			chanList = this._channelList = L.DomUtil.create('div', this._className + '-chanlist',
+			chanList = this._channelList = DomUtil.create('div', this._className + '-chanlist',
 			  this._dialog);
 		}
 
@@ -345,11 +346,11 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			chan = parseInt(c, 10);
 			rgb = layer.iipRGB[chan];
 			if (rgb.isOn()) {
-				chanElem = L.DomUtil.create('div', this._className + '-channel', chanList);
-				color = L.DomUtil.create('div', this._className + '-chancolor', chanElem);
+				chanElem = DomUtil.create('div', this._className + '-channel', chanList);
+				color = DomUtil.create('div', this._className + '-chancolor', chanElem);
 				color.style.backgroundColor = rgb.toStr();
 				this._activateChanElem(color, layer, chan);
-				label = L.DomUtil.create('div', this._className + '-chanlabel', chanElem);
+				label = DomUtil.create('div', this._className + '-chanlabel', chanElem);
 				label.innerHTML = chanLabels[c];
 				this._activateChanElem(label, layer, chan);
 				trashElem = this._createButton('leaflet-control-iip-trash', chanElem,
@@ -367,8 +368,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 	},
 
 	_activateTrashElem: function (trashElem, layer, chan) {
-		L.DomEvent.on(trashElem, 'click touch', function () {
-			this._updateMix(layer, chan, L.rgb(0.0, 0.0, 0.0));
+		DomEvent.on(trashElem, 'click touch', function () {
+			this._updateMix(layer, chan, rgb(0.0, 0.0, 0.0));
 			if (layer === this._layer && chan === layer.iipChannel) {
 				this._updateColPick(layer);
 			}
@@ -376,7 +377,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 	},
 
 	_activateChanElem: function (chanElem, layer, chan) {
-		L.DomEvent.on(chanElem, 'click touch', function () {
+		DomEvent.on(chanElem, 'click touch', function () {
 			layer.iipChannel = chan;
 			this._updateChannel(layer, chan, this._chanColPick);
 		}, this);
@@ -384,7 +385,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 });
 
-L.control.iip.channel = function (options) {
-	return new L.Control.IIP.Channel(options);
+export function control.iip.channel {
+	return new Control.IIP.Channel(options);
 };
 

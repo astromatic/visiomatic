@@ -32,6 +32,8 @@ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF TH
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import L from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
 if (typeof require !== 'undefined') {
 	var jQuery = require('jquery-browser');
