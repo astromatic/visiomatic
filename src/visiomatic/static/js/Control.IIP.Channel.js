@@ -14,7 +14,7 @@ if (typeof require !== 'undefined') {
 	var $ = require('jquery');
 }
 
-VMControlChannel = VMControl.extend({
+ControlVMChannel = ControlVM.extend({
 	options: {
 		title: 'Channel mixing',
 		collapsed: true,
@@ -385,7 +385,7 @@ VMControlChannel = VMControl.extend({
 
 });
 
-export function control.iip.channel {
-	return new Control.IIP.Channel(options);
+export function controlVMChannel {
+	return new ControlVMChannel(options);
 };
 

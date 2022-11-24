@@ -7,13 +7,13 @@
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {Control, DomEvent, setOptions} from 'leaflet';
 
 if (typeof require !== 'undefined') {
 	var $ = require('jquery');
 }
 
-VMControl = Control.extend({
+ControlVM = Control.extend({
 	options: {
 		title: 'a control related to VisiOmatic',
 		collapsed: true,
@@ -486,7 +486,7 @@ VMControl = Control.extend({
 
 });
 
-L.control.iip = function (baseLayers, options) {
-	return new L.Control.IIP(baseLayers, options);
+export function controlVM(baseLayers, options) {
+	return new ControlVM(baseLayers, options);
 };
 
