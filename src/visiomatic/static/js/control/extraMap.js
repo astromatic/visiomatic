@@ -1,7 +1,7 @@
 /*
-# Add support for extra synchronized maps
-# (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
-# (original copyright notice reproduced below).
+#	Add extra synchronized map.
+#	(Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
+#	(original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
 #

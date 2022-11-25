@@ -1,5 +1,5 @@
 /*
-# UI for mixing the channels of a VisiOmatic layer.
+#	UI for channel mixing in a VisiOmatic layer.
 #
 #	This file part of:	VisiOmatic
 #

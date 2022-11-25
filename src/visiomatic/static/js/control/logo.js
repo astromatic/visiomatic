@@ -1,7 +1,7 @@
 /*
-#Add a VisiOmatic logo to the map.
+#	Add a VisiOmatic logo to the map.
 #
-#  This file part of: VisiOmatic
+#	This file part of: VisiOmatic
 #
 #	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay

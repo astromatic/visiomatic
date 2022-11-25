@@ -1,13 +1,11 @@
 /*
-# CSS definitions
+#	CSS definitions
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                Chiara Marmo - IDES/Paris-Sud,
-#                                Ruven Pillay - C2RMF/CNRS
-#
-#	Last modified: 29/11/2017
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                            Chiara Marmo - Paris-Saclay,
+#	                            Ruven Pillay - C2RMF/CNRS
 */
 .leaflet-container {
   touch-action: none;
@@ -881,14 +879,14 @@ iframe.leaflet-control-iip-doc {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.WCS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-.leaflet-control-wcs-dialog {
+.leaflet-control-coords-dialog {
 	background-color: #ffffff;
 	color: #505050;
 	border-radius: 4px;
 	font-size: 1.2em;
 }
 
-.leaflet-control-wcs-select {
+.leaflet-control-coords-select {
 	height: 32px;
 	background-color: #F4F4F4;
 	vertical-align: top;
@@ -899,12 +897,12 @@ iframe.leaflet-control-iip-doc {
 	border-radius: 4px 0px 0px 4px;
 }
 
-.leaflet-control-wcs-select:hover,.leaflet-control-wcs-select:focus {
+.leaflet-control-coords-select:hover,.leaflet-control-coords-select:focus {
 	background-color: #E4E4E4;
 }
 
 
-.leaflet-control-wcs-input {
+.leaflet-control-coords-input {
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 100%;
@@ -919,10 +917,10 @@ iframe.leaflet-control-iip-doc {
 	-webkit-appearance: texfield;
 }
 
-.leaflet-control-wcs-input:hover {
+.leaflet-control-coords-input:hover {
 	background-color: #E4E4E4;
 }
-.leaflet-control-wcs-clipboard {
+.leaflet-control-coords-clipboard {
 	position: absolute;
 	right: 2px;
 	top: 1px;
@@ -938,7 +936,7 @@ iframe.leaflet-control-iip-doc {
 	cursor: pointer;
 }
 
-.leaflet-control-wcs-clipboard:hover {
+.leaflet-control-coords-clipboard:hover {
 	background-color: #F4F4F4;
 }
 

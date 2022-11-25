@@ -1,5 +1,5 @@
 /*
-# Base for VisiOmatic UI Classes.
+#	Base for VisiOmatic UI Classes.
 #
 #	This file part of:	VisiOmatic
 #

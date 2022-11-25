@@ -1,7 +1,7 @@
 /*
-# Add a full screen toggle button to the map.
-# Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed jake errors)
-# (original copyright notice reproduced below).
+#	Add a full screen toggle button to the map.
+#	Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed jake errors)
+#	(original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
 #
@@ -31,13 +31,6 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery-browser');
-//}
-
 import {
 	Control,
 	DOMEvent,

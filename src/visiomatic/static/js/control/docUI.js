@@ -1,18 +1,11 @@
 /*
-# UI for the online documentation.
+#	UI for the online documentation.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
 import {
 	DOMEvent,
 	DOMUtil,

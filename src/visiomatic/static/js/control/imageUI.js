@@ -1,18 +1,11 @@
 /*
-# UI for adjusting the basic rendering options of a VisiOmatic layer.
+#	UI for basic rendering options of a VisiOmatic layer.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
 import {Util} from 'leaflet';
 
 import {UI} from './ui'

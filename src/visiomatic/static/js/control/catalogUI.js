@@ -1,24 +1,17 @@
 /*
-# UI for managing catalog overlays.
+#	UI for catalog overlays.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
 import {
 	DOMEvent,
 	DOMUtil,
 	LayerGroup,
 	Util,
-	geoJSON,
+	geoJson,
 	point
 } from 'leaflet';
 
