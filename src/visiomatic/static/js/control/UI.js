@@ -1,19 +1,28 @@
 /*
-# L.Control.IIP adjusts the rendering of an IIP layer
-# (see http://iipimage.sourceforge.net/documentation/protocol/)
+# Base for VisiOmatic UI Classes.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import {Control, DomEvent, setOptions} from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
 
-ControlVM = Control.extend({
+import {
+	Browser,
+	Control,
+	DomEvent,
+	Util
+} from 'leaflet';
+
+import {flipSwitch, spinbox} from 'widgets'
+
+UI = Control.extend({
 	options: {
 		title: 'a control related to VisiOmatic',
 		collapsed: true,
@@ -21,7 +30,7 @@ ControlVM = Control.extend({
 	},
 
 	initialize: function (baseLayers,  options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
 		this._layers = baseLayers;
@@ -33,47 +42,47 @@ ControlVM = Control.extend({
 			this._sidebar = dest;
 		// dest is a sidebar class instance
 			this._map = dest._map;
-			this._dialog = L.DomUtil.create('div', this._className + '-dialog');
+			this._dialog = DomUtil.create('div', this._className + '-dialog');
 			dest.addTab(this._id, this._className, this.options.title, this._dialog,
 			   this._sideClass);
 			this._map.on('layeradd', this._checkIIP, this);
 			return dest;
 		} else {
-			return L.Control.prototype.addTo.call(this, dest);
+			return Control.prototype.addTo.call(this, dest);
 		}
 	},
 
 	onAdd: function (map) {
 		var className = this._className,
 		 id = this._id,
-		 container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+		 container = this._container = DomUtil.create('div', className + ' leaflet-bar');
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
-		L.DomEvent
+		DomEvent
 				.disableClickPropagation(container)
 				.disableScrollPropagation(container);
 
-		this._dialog = L.DomUtil.create('div', className + '-dialog', container);
+		this._dialog = DomUtil.create('div', className + '-dialog', container);
 		if (this.options.collapsed) {
-			if (!L.Browser.android) {
-				L.DomEvent
+			if (!Browser.android) {
+				DomEvent
 					.on(container, 'mouseover', this._expand, this)
 					.on(container, 'mouseout', this._collapse, this);
 			}
 
-			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
+			var toggle = this._toggle = DomUtil.create('a', className + '-toggle leaflet-bar', container);
 			toggle.href = '#';
 			toggle.id = id + '-toggle';
 			toggle.title = this.options.title;
 
-			if (L.Browser.touch) {
-				L.DomEvent
-				    .on(toggle, 'click', L.DomEvent.stop, this)
+			if (Browser.touch) {
+				DomEvent
+				    .on(toggle, 'click', DomEvent.stop, this)
 				    .on(toggle, 'click', this._expand, this);
 			}
 			else {
-				L.DomEvent.on(toggle, 'focus', this._expand, this);
+				DomEvent.on(toggle, 'focus', this._expand, this);
 			}
 
 			this._map.on('click', this._collapse, this);
@@ -122,7 +131,7 @@ ControlVM = Control.extend({
 	},
 
 	_addDialogBox: function (id) {
-		var box = L.DomUtil.create('div', this._className + '-box', this._dialog);
+		var box = DomUtil.create('div', this._className + '-box', this._dialog);
 		if (id) {
 			box.id = id;
 		}
@@ -130,18 +139,18 @@ ControlVM = Control.extend({
 	},
 
 	_addDialogLine: function (label, dialogBox) {
-		var line = L.DomUtil.create('div', this._className + '-line', dialogBox),
-		 text = L.DomUtil.create('div', this._className + '-label', line);
+		var line = DomUtil.create('div', this._className + '-line', dialogBox),
+		 text = DomUtil.create('div', this._className + '-label', line);
 		text.innerHTML = label;
 		return line;
 	},
 
 	_addDialogElement: function (line) {
-		return L.DomUtil.create('div', this._className + '-element', line);
+		return DomUtil.create('div', this._className + '-element', line);
 	},
 
 	_expand: function () {
-		L.DomUtil.addClass(this._container, this._className + '-expanded');
+		DomUtil.addClass(this._container, this._className + '-expanded');
 	},
 
 	_collapse: function () {
@@ -180,13 +189,13 @@ ControlVM = Control.extend({
 	},
 
 	_createButton: function (className, parent, subClassName, fn, title) {
-		var button = L.DomUtil.create('a', className, parent);
+		var button = DomUtil.create('a', className, parent);
 		button.target = '_blank';
 		if (subClassName) {
 			button.id = className + '-' + subClassName;
 		}
 		if (fn) {
-			L.DomEvent.on(button, 'click touch', fn, this);
+			DomEvent.on(button, 'click touch', fn, this);
 		}
 		if (title) {
 			button.title = title;
@@ -195,19 +204,19 @@ ControlVM = Control.extend({
 	},
 
 	_createRadioButton: function (className, parent, value, checked, fn, title) {
-		var button = L.DomUtil.create('input', className, parent);
+		var button = DomUtil.create('input', className, parent);
 
 		button.type = 'radio';
 		button.name = className;
 		button.value = value;
 		button.checked = checked;
 		if (fn) {
-			L.DomEvent.on(button, 'click touch', function () {
+			DomEvent.on(button, 'click touch', function () {
 				fn(value);
 			}, this);
 		}
 
-		var label =  L.DomUtil.create('label', className, parent);
+		var label =  DomUtil.create('label', className, parent);
 
 		label.htmlFor = button.id = className + '-' + value;
 		if (title) {
@@ -218,8 +227,8 @@ ControlVM = Control.extend({
 
 	_createSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
 		// Wrapper around the select element for better positioning and sizing
-		var	div =  L.DomUtil.create('div', className, parent),
-			select = L.DomUtil.create('select', className, div),
+		var	div =  DomUtil.create('div', className, parent),
+			select = DomUtil.create('select', className, div),
 			choose = document.createElement('option'),
 			opt = select.opt = [],
 			index;
@@ -244,22 +253,22 @@ ControlVM = Control.extend({
 		}
 
 		// Fix collapsing dialog issue when selecting a channel
-		if (this._container && !L.Browser.android && this.options.collapsed) {
-			L.DomEvent.on(select, 'mousedown', function () {
-				L.DomEvent.off(this._container, 'mouseout', this._collapse, this);
+		if (this._container && !Browser.android && this.options.collapsed) {
+			DomEvent.on(select, 'mousedown', function () {
+				DomEvent.off(this._container, 'mouseout', this._collapse, this);
 				this.collapsedOff = true;
 			}, this);
 
-			L.DomEvent.on(this._container, 'mouseover', function () {
+			DomEvent.on(this._container, 'mouseover', function () {
 				if (this.collapsedOff) {
-					L.DomEvent.on(this._container, 'mouseout', this._collapse, this);
+					DomEvent.on(this._container, 'mouseout', this._collapse, this);
 					this.collapsedOff = false;
 				}
 			}, this);
 		}
 
 		if (fn) {
-			L.DomEvent.on(select, 'change keyup', fn, this);
+			DomEvent.on(select, 'change keyup', fn, this);
 		}
 		if (title) {
 			div.title = title;
@@ -272,7 +281,7 @@ ControlVM = Control.extend({
 	_createColorPicker: function (className, parent, subClassName, defaultColor,
 	    fn, storageKey, title) {
 		var _this = this,
-			colpick = L.DomUtil.create('input', className, parent);
+			colpick = DomUtil.create('input', className, parent);
 
 		colpick.type = 'color';
 		colpick.value = defaultColor;
@@ -290,7 +299,7 @@ ControlVM = Control.extend({
 				}
 			}).on('show.spectrum', function () {
 				if (_this._container) {
-					L.DomEvent.off(_this._container, 'mouseout', _this._collapse);
+					DomEvent.off(_this._container, 'mouseout', _this._collapse);
 				}
 			});
 			if (fn) {
@@ -308,7 +317,7 @@ ControlVM = Control.extend({
 	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			flip = elem.flip = L.flipswitch(elem, {
+			flip = elem.flip = flipswitch(elem, {
 				checked: checked,
 				id: id,
 				title: title
@@ -325,7 +334,7 @@ ControlVM = Control.extend({
 	  step, min, max, func) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			spinbox = elem.spinbox = L.spinbox(elem, {
+			spinbox = elem.spinbox = spinbox(elem, {
 				step: step,
 				dmin:  min,
 				dmax:  max,
@@ -334,7 +343,7 @@ ControlVM = Control.extend({
 			});
 
 		spinbox.on('change', function () {
-			L.IIPUtils.flashElement(spinbox._input);
+			VUtils.flashElement(spinbox._input);
 			this._onInputChange(layer, attr, spinbox.value(), func);
 		}, this);
 
@@ -376,9 +385,9 @@ ControlVM = Control.extend({
 		}
 
 		if (this._layerList) {
-			L.DomUtil.empty(this._layerList);
+			DomUtil.empty(this._layerList);
 		} else {
-			this._layerList = L.DomUtil.create('div', 'leaflet-control-iip' + '-layerlist',
+			this._layerList = DomUtil.create('div', 'leaflet-control-iip' + '-layerlist',
 			  this._dialog);
 		}
 
@@ -391,11 +400,11 @@ ControlVM = Control.extend({
 
 	_addLayerItem: function (obj) {
 		var _this = this,
-		 layerItem = L.DomUtil.create('div', 'leaflet-control-iip-layer'),
-		 inputdiv = L.DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
+		 layerItem = DomUtil.create('div', 'leaflet-control-iip-layer'),
+		 inputdiv = DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
 
 		if (obj.layer.notReady) {
-			L.DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
+			DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
 		} else {
 			var input,
 			    checked = this._map.hasLayer(obj.layer);
@@ -403,8 +412,8 @@ ControlVM = Control.extend({
 			input.type = 'checkbox';
 			input.className = 'leaflet-control-iip-selector';
 			input.defaultChecked = checked;
-			input.layerId = L.stamp(obj.layer);
-			L.DomEvent.on(input, 'click', function () {
+			input.layerId = stamp(obj.layer);
+			DomEvent.on(input, 'click', function () {
 				var i, input, obj,
 			      inputs = this._layerList.getElementsByTagName('input'),
 				    inputsLen = inputs.length;
@@ -429,7 +438,7 @@ ControlVM = Control.extend({
 			inputdiv.appendChild(input);
 		}
 	
-		var name = L.DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
+		var name = DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
 
@@ -453,7 +462,7 @@ ControlVM = Control.extend({
 	addLayer: function (layer, name, index) {
 		layer.on('add remove', this._onLayerChange, this);
 
-		var id = L.stamp(layer);
+		var id = stamp(layer);
 
 		this._layers[id] = {
 			layer: layer,
@@ -466,10 +475,10 @@ ControlVM = Control.extend({
 
 	removeLayer: function (layer) {
 		layer.off('add remove', this._onLayerChange, this);
-		layer.fire('trash', {index: this._layers[L.stamp(layer)].index});
+		layer.fire('trash', {index: this._layers[stamp(layer)].index});
 		layer.off('trash');
 
-		delete this._layers[L.stamp(layer)];
+		delete this._layers[stamp(layer)];
 		return this._updateLayerList();
 	},
 
@@ -478,7 +487,7 @@ ControlVM = Control.extend({
 			this._updateLayerList();
 		}
 
-		var obj = this._layers[L.stamp(e.target)],
+		var obj = this._layers[stamp(e.target)],
 		    type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
 
 		this._map.fire(type, obj);
@@ -486,7 +495,7 @@ ControlVM = Control.extend({
 
 });
 
-export function controlVM(baseLayers, options) {
-	return new ControlVM(baseLayers, options);
+export const ui = function (baseLayers, options) {
+	return new UI(baseLayers, options);
 };
 

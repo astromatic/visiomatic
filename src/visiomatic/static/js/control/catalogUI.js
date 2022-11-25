@@ -1,25 +1,39 @@
 /*
-# L.Control.IIP.Catalog manages catalog overlays
+# UI for managing catalog overlays.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
 
-L.Control.IIP.Catalog = L.Control.IIP.extend({
+import {
+	DOMEvent,
+	DOMUtil,
+	LayerGroup,
+	Util,
+	geoJSON,
+	point
+} from 'leaflet';
+
+import {Utils} as VUtils from '../utils'
+import {UI} from './ui'
+import {Catalog} from '../catalogs'
+
+CatalogUI = UI.extend({
 
 	defaultCatalogs: [
-		L.Catalog.GAIA_DR2,
-		L.Catalog['2MASS'],
-		L.Catalog.SDSS,
-		L.Catalog.PPMXL,
-		L.Catalog.Abell
+		Catalog.GAIA_DR2,
+		Catalog['2MASS'],
+		Catalog.SDSS,
+		Catalog.PPMXL,
+		Catalog.Abell
 	],
 
 	options: {
@@ -33,7 +47,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 	},
 
 	initialize: function (catalogs, options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipcatalog';
 		this._layers = {};
@@ -70,13 +84,13 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				if (className === undefined) {
 					className = '';
 				}
-				L.DomUtil.setClass(catselect, this._className + '-select ' + className);
+				DomUtil.setClass(catselect, this._className + '-select ' + className);
 				return;
 			},
 			'Select Catalog'
 		);
 
-		L.DomEvent.on(catselect, 'change keyup', function () {
+		DomEvent.on(catselect, 'change keyup', function () {
 			var catalog = catalogs[catselect.selectedIndex - 1];
 			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
@@ -90,7 +104,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				catalog.color = colpick.value;
 				catselect.selectedIndex = 0;
 				catselect.title = 'Select Catalog';
-				L.DomUtil.setClass(catselect, this._className + '-select ');
+				DomUtil.setClass(catselect, this._className + '-select ');
 				this._getCatalog(catalog, this.options.timeOut);
 			}
 		}, 'Query catalog');
@@ -108,7 +122,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
 		    b = map.getPixelBounds(),
 		    z = map.getZoom(),
-		    templayer = new L.LayerGroup(null);
+		    templayer = new LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
 		templayer.notReady = true;
@@ -124,13 +138,13 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
 				   [wcs.celsysToEq(map.unproject(b.min, z)),
-			      wcs.celsysToEq(map.unproject(L.point(b.min.x, b.max.y), z)),
+			      wcs.celsysToEq(map.unproject(point(b.min.x, b.max.y), z)),
 			      wcs.celsysToEq(map.unproject(b.max, z)),
-			      wcs.celsysToEq(map.unproject(L.point(b.max.x, b.min.y), z))] :
+			      wcs.celsysToEq(map.unproject(point(b.max.x, b.min.y), z))] :
 			                    [map.unproject(b.min, z),
-			                     map.unproject(L.point(b.min.x, b.max.y), z),
+			                     map.unproject(point(b.min.x, b.max.y), z),
 			                     map.unproject(b.max, z),
-			                     map.unproject(L.point(b.max.x, b.min.y), z)],
+			                     map.unproject(point(b.max.x, b.min.y), z)],
 			  sys;
 		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
 			switch (wcs.celsyscode) {
@@ -170,8 +184,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				dlng = 0.0001;
 			}
 
-			L.IIPUtils.requestURL(
-				L.Util.template(catalog.url, L.extend({
+			VUtils.requestURL(
+				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
@@ -193,8 +207,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center));
-			L.IIPUtils.requestURL(
-				L.Util.template(catalog.url, L.extend({
+			VUtils.requestURL(
+				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
@@ -213,7 +227,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				var wcs = _this._map.options.crs,
 				 response = httpRequest.responseText,
 				 geo = catalog.toGeoJSON(response),
-				 geocatalog = L.geoJson(geo, {
+				 geocatalog = geoJson(geo, {
 					onEachFeature: function (feature, layer) {
 						if (feature.properties && feature.properties.items) {
 							layer.bindPopup(catalog.popup(feature));
@@ -264,7 +278,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 });
 
-L.control.iip.catalog = function (catalogs, options) {
-	return new L.Control.IIP.Catalog(catalogs, options);
+export const catalogUI = function (catalogs, options) {
+	return new CatalogUI(catalogs, options);
 };
 

@@ -1,15 +1,15 @@
 /*
-# L.Control.Attribution.Logos adds a VisiOmatic logo to the map.
+#Add a VisiOmatic logo to the map.
 #
 #  This file part of: VisiOmatic
 #
 #	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {Control, Map} from 'leaflet';
 
 // Remove this ugly Pipe sign
-L.Control.Attribution.include({
+Control.Attribution.include({
 	_update: function () {
 		if (!this._map) { return; }
 
@@ -35,7 +35,7 @@ L.Control.Attribution.include({
 });
 
 // Set Attribution prefix to a series of clickable logos
-L.Map.addInitHook(function () {
+Map.addInitHook(function () {
 	if (this.options.visiomaticLogo !== false &&
 	 this.options.attributionControl) {
 		this.attributionControl.setPrefix(
@@ -44,5 +44,4 @@ L.Map.addInitHook(function () {
 		);
 	}
 });
-
 

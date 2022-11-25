@@ -1,20 +1,22 @@
 /*
-# L.Control.IIP.Channel manages the channel mixing of an IIP layer
-# (see http://iipimage.sourceforge.net/documentation/protocol/)
+# UI for mixing the channels of a VisiOmatic layer.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import {DomEvent, DomUtil, setOptions}  from 'leaflet';
-import {Control.IIP} from './Control.IIP';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
 
-ControlVMChannel = ControlVM.extend({
+import {DomEvent, DomUtil, Util}  from 'leaflet';
+import {UI} from './ui';
+
+ChannelUI = UI.extend({
 	options: {
 		title: 'Channel mixing',
 		collapsed: true,
@@ -24,7 +26,7 @@ ControlVMChannel = ControlVM.extend({
 	},
 
 	initialize: function (mode, options) {
-		setOptions(this, options);
+		Util.setOptions(this, options);
 
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipchannel';
@@ -385,7 +387,7 @@ ControlVMChannel = ControlVM.extend({
 
 });
 
-export function controlVMChannel {
-	return new ControlVMChannel(options);
+export function channelUI {
+	return new ChannelUI(options);
 };
 

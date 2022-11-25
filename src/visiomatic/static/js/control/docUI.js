@@ -1,21 +1,28 @@
 /*
-# L.Control.IIP.Doc adds online documentation to the VisiOmatic interface
-# (see http://iipimage.sourceforge.net/documentation/protocol/)
+# UI for the online documentation.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
-#
-#	Last modified:		10/11/2015
 */
-import L from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
 
-L.Control.IIP.Doc = L.Control.IIP.extend({
+import {
+	DOMEvent,
+	DOMUtil,
+	Util
+} from 'leaflet';
+
+import {Utils} as VUtils from '../utils'
+import {UI} from './ui'
+
+DocUI = UI.extend({
 	options: {
 		title: 'Documentation',
 		collapsed: true,
@@ -24,7 +31,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 	},
 
 	initialize: function (url, options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipdoc';
@@ -36,9 +43,9 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			layer = this._layer,
-			frameBox = L.DomUtil.create('div',
+			frameBox = DomUtil.create('div',
 		    this._className + '-framebox', this._dialog),
-			iframe = this._iframe = L.DomUtil.create('iframe',
+			iframe = this._iframe = DomUtil.create('iframe',
 			  this._className + '-doc', frameBox);
 		iframe.src = this._url;
 		iframe.frameborder = 0;
@@ -47,7 +54,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 		this._navPos = 0;
 		this._ignore = false;
 
-		L.DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
+		DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
 
 		var	box = this._addDialogBox('leaflet-iipdoc-dialog'),
 			line = this._addDialogLine('Navigate:', box),
@@ -112,7 +119,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 			// from 
 			var	as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
-				if (L.IIPUtils.isExternal(as[i].href)) {
+				if (VUtils.isExternal(as[i].href)) {
 					as[i].setAttribute('target', '_blank');
 				}
 			}
@@ -134,7 +141,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 
 });
 
-L.control.iip.doc = function (url, options) {
-	return new L.Control.IIP.Doc(url, options);
+export const docUI = function (url, options) {
+	return new DocUI(url, options);
 };
 

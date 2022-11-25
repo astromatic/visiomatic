@@ -1,19 +1,23 @@
 /*
-# L.Control.IIP.image adjusts the basic rendering options of an IIP layer
-# (see http://iipimage.sourceforge.net/documentation/protocol/)
+# UI for adjusting the basic rendering options of a VisiOmatic layer.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
 
-L.Control.IIP.Image = L.Control.IIP.extend({
+import {Util} from 'leaflet';
+
+import {UI} from './ui'
+
+ImageUI = UI.extend({
 	options: {
 		title: 'Image preferences',
 		collapsed: true,
@@ -21,7 +25,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 	},
 
 	initialize: function (options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
@@ -123,7 +127,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 });
 
-L.control.iip.image = function (options) {
-	return new L.Control.IIP.Image(options);
+export const imageUI = function (options) {
+	return new ImageUI(options);
 };
 

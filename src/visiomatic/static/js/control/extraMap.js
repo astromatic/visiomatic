@@ -1,5 +1,5 @@
 /*
-# L.Control.ExtraMap adds support for extra synchronized maps
+# Add support for extra synchronized maps
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
@@ -31,9 +31,17 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import L from 'leaflet';
+import {
+	Control,
+	DOMEvent,
+	DOMUtil,
+	LatLngBounds,
+	Map,
+	Util,
+	rectangle
+} from 'leaflet';
 
-L.Control.ExtraMap = L.Control.extend({
+ExtraMap = Control.extend({
 	options: {
 		position: 'bottomright',
 		title: 'Navigation mini-map. Grab to navigate',
@@ -63,7 +71,7 @@ L.Control.ExtraMap = L.Control.extend({
 
 	// Layer is the map layer to be shown in the minimap
 	initialize: function (layer, options) {
-		L.Util.setOptions(this, options);
+		Util.setOptions(this, options);
 		// Make sure the aiming rects are non-clickable even if the user tries to set
 		// them clickable (most likely by forgetting to specify them false)
 		this.options.aimingRectOptions.clickable = false;
@@ -76,14 +84,14 @@ L.Control.ExtraMap = L.Control.extend({
 		this._mainMap = map;
 
 		// Creating the container and stopping events from spilling through to the main map.
-		this._container = L.DomUtil.create('div', 'leaflet-control-extramap');
+		this._container = DomUtil.create('div', 'leaflet-control-extramap');
 		this._container.style.width = this.options.width + 'px';
 		this._container.style.height = this.options.height + 'px';
 		this._container.title = this.options.title;
-		L.DomEvent.disableClickPropagation(this._container);
-		L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
+		DomEvent.disableClickPropagation(this._container);
+		DomEvent.on(this._container, 'mousewheel', DomEvent.stopPropagation);
 
-		this._extraMap = new L.Map(this._container, {
+		this._extraMap = new Map(this._container, {
 			attributionControl: false,
 			zoomControl: false,
 			zoomAnimation: this.options.zoomAnimation,
@@ -110,11 +118,11 @@ L.Control.ExtraMap = L.Control.extend({
 		}
 
 		this._layer.once('metaload', function () {
-			this._mainMap.whenReady(L.Util.bind(function () {
-				this._extraMap.whenReady(L.Util.bind(function () {
-					this._aimingRect = L.rectangle(this._mainMap.getBounds(),
+			this._mainMap.whenReady(Util.bind(function () {
+				this._extraMap.whenReady(Util.bind(function () {
+					this._aimingRect = rectangle(this._mainMap.getBounds(),
 					  this.options.aimingRectOptions).addTo(this._extraMap);
-					this._shadowRect = L.rectangle(this._mainMap.getBounds(),
+					this._shadowRect = rectangle(this._mainMap.getBounds(),
 					  this.options.shadowRectOptions).addTo(this._extraMap);
 					this._mainMap.on('moveend', this._onMainMapMoved, this);
 					this._mainMap.on('move', this._onMainMapMoving, this);
@@ -131,7 +139,7 @@ L.Control.ExtraMap = L.Control.extend({
 	},
 
 	addTo: function (map) {
-		L.Control.prototype.addTo.call(this, map);
+		Control.prototype.addTo.call(this, map);
 		return this;
 	},
 
@@ -163,18 +171,18 @@ L.Control.ExtraMap = L.Control.extend({
 	},
 
 	_createButton: function (html, title, className, container, fn, context) {
-		var link = L.DomUtil.create('a', className, container);
+		var link = DomUtil.create('a', className, container);
 		link.innerHTML = html;
 		link.href = '#';
 		link.title = title;
 
-		var stop = L.DomEvent.stopPropagation;
+		var stop = DomEvent.stopPropagation;
 
-		L.DomEvent
+		DomEvent
 			.on(link, 'click', stop)
 			.on(link, 'mousedown', stop)
 			.on(link, 'dblclick', stop)
-			.on(link, 'click', L.DomEvent.preventDefault)
+			.on(link, 'click', DomEvent.preventDefault)
 			.on(link, 'click', fn, context);
 
 		return link;
@@ -249,7 +257,7 @@ L.Control.ExtraMap = L.Control.extend({
 
 	_onExtraMapMoving: function (e) {
 		if (!this._mainMapMoving && this._lastAimingRectPosition) {
-			this._shadowRect.setBounds(new L.LatLngBounds(
+			this._shadowRect.setBounds(new LatLngBounds(
 				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
 				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
 			));
@@ -336,16 +344,16 @@ L.Control.ExtraMap = L.Control.extend({
 	}
 });
 
-L.Map.mergeOptions({
+Map.mergeOptions({
 	extraMapControl: false
 });
 
-L.Map.addInitHook(function () {
+Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
-		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
+		this.extraMapControl = (new Control.ExtraMap()).addTo(this);
 	}
 });
 
-L.control.extraMap = function (layer, options) {
-	return new L.Control.ExtraMap(layer, options);
+export const extraMap = function (layer, options) {
+	return new ExtraMap(layer, options);
 };
