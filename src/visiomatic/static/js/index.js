@@ -1,14 +1,14 @@
-export * from './IIPUtils';
-export * from './TileLayer.IIP';
-export * from './Control.Scale.WCS';
-export * from './Control.Reticle';
-export * from './Control.WCS';
-export * from './Control.ExtraMap';
-export * from './Control.Sidebar';
-export * from './Control.IIP.Channel';
-export * from './Control.IIP.Image';
-export * from './Control.IIP.Catalog';
-export * from './Control.IIP.Region';
-export * from './Control.IIP.Profile';
-export * from './Control.IIP.Snapshot';
+/*
+#	Module index for vectors.
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+*/
+export * as catalog from './catalog';
+export * as control from './control';
+export * as crs from './crs';
+export * as layer from './layer';
+export * as util from './util';
+export * as vector from './vector';
 

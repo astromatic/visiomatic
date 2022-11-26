@@ -1,5 +1,5 @@
 /*
-# 	General utilities.
+# 	Global utilities.
 #
 #	This file part of:	VisiOmatic
 #
@@ -12,7 +12,7 @@ import {
 } from 'leaflet';
 
 
-VUtil = {
+export const VUtil = {
 // Definitions for RegExp
 	REG_PDEC: '(\\d+\\.\\d*)',
 	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',

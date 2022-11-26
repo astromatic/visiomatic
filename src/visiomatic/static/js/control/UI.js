@@ -20,7 +20,8 @@ import {
 	Util
 } from 'leaflet';
 
-import {flipSwitch, spinbox} from 'widgets'
+import {flipSwitch, spinbox} from 'widgets';
+
 
 UI = Control.extend({
 	options: {
