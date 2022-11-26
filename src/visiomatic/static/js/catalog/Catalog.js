@@ -7,10 +7,10 @@
 #	                         Chiara Marmo    - Paris-Saclay
 */
 import {circleMarker, extend} from 'leaflet';
-import {template} from 'leaflet.Util';
+import {template} from 'leaflet';
 
 
-Catalog = {
+export const Catalog = {
 	nmax: 10000,	// Sets the maximum number of sources per query
 
 	_csvToGeoJSON: function (str) {

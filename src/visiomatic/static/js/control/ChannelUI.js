@@ -389,7 +389,7 @@ export const ChannelUI = UI.extend({
 
 });
 
-export function channelUI {
+export const channelUI = function (options) {
 	return new ChannelUI(options);
 };
 

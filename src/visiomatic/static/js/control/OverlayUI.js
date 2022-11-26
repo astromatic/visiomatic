@@ -27,7 +27,7 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {GAIA_DR2, TwoMASS, SDSS, PPMXL, Abell}  from '../catalog';
+import {Gaia_DR2, TwoMASS, SDSS, PPMXL, Abell}  from '../catalog';
 
 
 export const OverlayUI = UI.extend({
@@ -362,7 +362,7 @@ export const OverlayUI = UI.extend({
 
 });
 
-expot const overlayUI = function (options) {
+export const overlayUI = function (options) {
 	return new OverlayUI(options);
 };
 

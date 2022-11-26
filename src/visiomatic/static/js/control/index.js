@@ -17,6 +17,6 @@ export * from './ProfileUI';
 export * from './RegionUI';
 export * from './Reticle';
 export * from './Scale';
-export * from './Sidebar;
+export * from './Sidebar';
 export * from './SnapshotUI';
 

@@ -10,14 +10,14 @@
 */
 import {
 	Browser,
-	DomUtil
+	DomUtil,
 	TileLayer,
 	Util,
 	latLngBounds
 } from 'leaflet';
 
 import {VUtil} from '../util';
-import {rgb} as rgbin from '../util';
+import {rgb as rgbin} from '../util';
 import {wcs} from '../crs';
 
 
@@ -586,7 +586,7 @@ export const VTileLayer = TileLayer.extend({
 
 });
 
-export const vTileLayer= function (url, options) {
+export const vTileLayer = function (url, options) {
 	return new VTileLayer(url, options);
 };
 

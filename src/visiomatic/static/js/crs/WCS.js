@@ -11,7 +11,7 @@ import {
 	Class,
 	CRS,
 	Transformation,
-	Util,
+	extend,
 	latLng,
 	point,
 } from 'leaflet';
@@ -23,7 +23,7 @@ import {TAN, ZEA} from './Zenithal';
 import {Pixel} from './Pixel';
 
 
-export const WCS = Util.extend({}, CRS, {
+WCSObj = extend({}, CRS, {
 	code: 'WCS',
 
 	options: {
@@ -344,7 +344,7 @@ export const WCS = Util.extend({}, CRS, {
 	}
 });
 
-WCS = Class.extend(WCS);
+export const WCS = Class.extend(WCSObj);
 
 export const wcs = function (options) {
 	return new WCS(options);

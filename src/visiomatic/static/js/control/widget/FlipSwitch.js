@@ -66,7 +66,7 @@ export const FlipSwitch = Evented.extend({
 
 });
 
-export const flipswitch = function (parent, options) {
+export const flipSwitch = function (parent, options) {
 	return new FlipSwitch(parent, options);
 };
 

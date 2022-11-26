@@ -170,7 +170,7 @@ export const Coords = Control.extend({
 	}
 });
 
-.Map.mergeOptions({
+Map.mergeOptions({
 	positionControl: false
 });
 

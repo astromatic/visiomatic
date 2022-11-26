@@ -157,7 +157,7 @@ export const Scale = Control.Scale.extend({
 
 });
 
-export const = function (options) {
+export const scale = function (options) {
 	return new Scale(options);
 };
 

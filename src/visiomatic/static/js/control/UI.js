@@ -20,10 +20,10 @@ import {
 	Util
 } from 'leaflet';
 
-import {flipSwitch, spinbox} from 'widgets';
+import {flipSwitch, spinbox} from './widget';
 
 
-UI = Control.extend({
+export const UI = Control.extend({
 	options: {
 		title: 'a control related to VisiOmatic',
 		collapsed: true,
