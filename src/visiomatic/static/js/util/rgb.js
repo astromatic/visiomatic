@@ -1,22 +1,23 @@
 /*
-# L.RGB.js manages RGB triplets
+#	Manage RGB triplets
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU.
 */
-import L from 'leaflet';
+import {Util} from 'leaflet';
 
-L.RGB = function (r, g, b) {
+RGB = function (r, g, b) {
 	this.r = r;
 	this.g = g;
 	this.b = b;
 };
 
-L.RGB.prototype = {
+
+RGB.prototype = {
 
 	clone: function () {
-		return new L.RGB(this.r, this.g, this.b);
+		return new RGB(this.r, this.g, this.b);
 	},
 
 	toStr: function () {
@@ -36,22 +37,23 @@ L.RGB.prototype = {
 	}
 };
 
-L.rgb = function (r, g, b) {
-	if (r instanceof L.RGB) {
+export const rgb = function (r, g, b) {
+	if (r instanceof RGB) {
 		return r;
 	}
 	if (typeof r === 'string') {
 		var bigint = parseInt('0x' + r.slice(1), 16);
 
-		return new L.RGB(((bigint >> 16) & 255) / 255.0,
+		return new RGB(((bigint >> 16) & 255) / 255.0,
 			((bigint >> 8) & 255) / 255.0,
 			(bigint & 255) / 255.0);
 	}
-	if (L.Util.isArray(r)) {
-		return new L.RGB(r[0], r[1], r[2]);
+	if (Util.isArray(r)) {
+		return new RGB(r[0], r[1], r[2]);
 	}
 	if (r === undefined || r === null) {
 		return r;
 	}
-	return new L.RGB(r, g, b);
+	return new RGB(r, g, b);
 };
+

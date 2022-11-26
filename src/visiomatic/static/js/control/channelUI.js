@@ -14,7 +14,9 @@ window.$ = window.jQuery = jQuery;
 //}
 
 import {DomEvent, DomUtil, Util}  from 'leaflet';
+
 import {UI} from './ui';
+
 
 ChannelUI = UI.extend({
 	options: {

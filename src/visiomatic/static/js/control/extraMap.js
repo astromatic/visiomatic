@@ -41,6 +41,7 @@ import {
 	rectangle
 } from 'leaflet';
 
+
 ExtraMap = Control.extend({
 	options: {
 		position: 'bottomright',

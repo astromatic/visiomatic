@@ -10,6 +10,7 @@ import {Util} from 'leaflet';
 
 import {UI} from './ui'
 
+
 ImageUI = UI.extend({
 	options: {
 		title: 'Image preferences',

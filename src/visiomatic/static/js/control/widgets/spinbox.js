@@ -1,7 +1,7 @@
 /*
-# SpinBox implements a number spinbox with adaptive step increment
-# Adapted from JTSage's spinbox (original attribution below), with all the
-# jQuery and jQuery Mobile stuff removed.
+#	A number spinbox with adaptive step increment
+#	Adapted from JTSage's spinbox (original attribution below),
+#	with all the jQuery and jQuery Mobile stuff removed.
 #
 #	This file part of:	VisiOmatic
 #
@@ -13,9 +13,15 @@
  * CC 3.0 Attribution.  May be relicensed without permission/notification.
  * https://github.com/jtsage/jquery-mobile-spinbox
  */
-import L from 'leaflet';
+import {
+	Evented,
+	DomEvent,
+	DomUtil,
+	Util
+} from 'leaflet';
 
-L.SpinBox = L.Evented.extend({
+
+Spinbox = Evented.extend({
 	options: {
 		// All widget options
 		dmin: undefined,
@@ -30,7 +36,7 @@ L.SpinBox = L.Evented.extend({
 	},
 
 	initialize: function (parent, options) {
-		options = L.setOptions(this, options);
+		options = Util.setOptions(this, options);
 		var _this = this,
 			drag = this._drag = {
 				startEvent: 'touchstart mousedown',
@@ -46,14 +52,14 @@ L.SpinBox = L.Evented.extend({
 				step      : options.step,
 				prec      : this._prec(options.step)
 			},
-			wrap = this._wrap = L.DomUtil.create('div', options.className, parent),
-			input = this._input = L.DomUtil.create('input', options.className + '-input', wrap),
-			down = this._down = L.DomUtil.create('div', options.className + '-down', wrap),
-			up = this._up = L.DomUtil.create('div', options.className + '-up', wrap);
+			wrap = this._wrap = DomUtil.create('div', options.className, parent),
+			input = this._input = DomUtil.create('input', options.className + '-input', wrap),
+			down = this._down = DomUtil.create('div', options.className + '-down', wrap),
+			up = this._up = DomUtil.create('div', options.className + '-up', wrap);
 
 		input.type = 'number';
 		input.step = 0.1;	// Tells input that decimal numbers are valid
-		L.DomEvent
+		DomEvent
 				.disableClickPropagation(wrap)
 				.disableScrollPropagation(wrap);
 
@@ -81,21 +87,21 @@ L.SpinBox = L.Evented.extend({
 		down.title = 'Decrease number by ' + options.step;
 		up.title = 'Increase number by ' + options.step;
 
-		L.DomEvent.on(this._input, 'change', function () {
+		DomEvent.on(this._input, 'change', function () {
 			this.fire('change');
 		}, this);
 
 		if (options.repButton === false) {
-			L.DomEvent.on(down, options.clickEvent, function (e) {
+			DomEvent.on(down, options.clickEvent, function (e) {
 				e.preventDefault();
 				this._offset(e.currentTarget, -1);
 			}, this);
-			L.DomEvent.on(up, options.clickEvent, function (e) {
+			DomEvent.on(up, options.clickEvent, function (e) {
 				e.preventDefault();
 				this._offset(e.currentTarget, 1);
 			}, this);
 		} else {
-			L.DomEvent.on(down, drag.startEvent, function (e) {
+			DomEvent.on(down, drag.startEvent, function (e) {
 				input.blur();
 				drag.move = true;
 				drag.cnt = 0;
@@ -110,7 +116,7 @@ L.SpinBox = L.Evented.extend({
 					}, 500);
 				}
 			}, this);
-			L.DomEvent.on(up, drag.startEvent, function (e) {
+			DomEvent.on(up, drag.startEvent, function (e) {
 				input.blur();
 				drag.move = true;
 				drag.cnt = 0;
@@ -125,7 +131,7 @@ L.SpinBox = L.Evented.extend({
 					}, 500);
 				}
 			}, this);
-			L.DomEvent.on(down, drag.stopEvent, function (e) {
+			DomEvent.on(down, drag.stopEvent, function (e) {
 				if (drag.move) {
 					e.preventDefault();
 					clearTimeout(this.runButton);
@@ -136,7 +142,7 @@ L.SpinBox = L.Evented.extend({
 					}
 				}
 			}, this);
-			L.DomEvent.on(up, drag.stopEvent, function (e) {
+			DomEvent.on(up, drag.stopEvent, function (e) {
 				if (drag.move) {
 					e.preventDefault();
 					clearTimeout(this.runButton);
@@ -182,9 +188,9 @@ L.SpinBox = L.Evented.extend({
 
 		this._input.disabled = true;
 		this._input.blur();
-		L.DomUtil.addClass(this._wrap, cname);
-		L.DomUtil.addClass(this._down, cname);
-		L.DomUtil.addClass(this._up, cname);
+		DomUtil.addClass(this._wrap, cname);
+		DomUtil.addClass(this._down, cname);
+		DomUtil.addClass(this._up, cname);
 		this.options.disabled = true;
 	},
 
@@ -193,9 +199,9 @@ L.SpinBox = L.Evented.extend({
 		var cname = 'disabled';
 
 		this._input.disabled = false;
-		L.DomUtil.removeClass(this._wrap, cname);
-		L.DomUtil.removeClass(this._down, cname);
-		L.DomUtil.removeClass(this._up, cname);
+		DomUtil.removeClass(this._wrap, cname);
+		DomUtil.removeClass(this._down, cname);
+		DomUtil.removeClass(this._up, cname);
 		this.options.disabled = false;
 	},
 
@@ -261,6 +267,7 @@ L.SpinBox = L.Evented.extend({
 	}
 });
 
-L.spinbox = function (parent, options) {
-	return new L.SpinBox(parent, options);
+export const spinbox = function (parent, options) {
+	return new Spinbox(parent, options);
 };
+

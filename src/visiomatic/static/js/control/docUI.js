@@ -12,8 +12,9 @@ import {
 	Util
 } from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
+
 
 DocUI = UI.extend({
 	options: {
@@ -112,7 +113,7 @@ DocUI = UI.extend({
 			// from 
 			var	as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
-				if (VUtils.isExternal(as[i].href)) {
+				if (VUtil.isExternal(as[i].href)) {
 					as[i].setAttribute('target', '_blank');
 				}
 			}

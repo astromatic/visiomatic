@@ -13,6 +13,7 @@ import {
 	Map
 } from 'leaflet';
 
+
 Coords = Control.extend({
 	options: {
 		position: 'bottomleft',

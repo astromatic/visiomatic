@@ -16,8 +16,9 @@ import {
 	marker
 } from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
+
 
 RegionUI = UI.extend({
 
@@ -113,7 +114,7 @@ RegionUI = UI.extend({
 		templayer.notReady = true;
 		this.addLayer(templayer, region.name);
 
-		VUtils.requestURL(region.url, 'loading ' + region.name + ' data',
+		VUtil.requestURL(region.url, 'loading ' + region.name + ' data',
 			function (context, httpRequest) {
 				_this._loadRegion(region, templayer, context, httpRequest);
 			}, this, this.options.timeOut);

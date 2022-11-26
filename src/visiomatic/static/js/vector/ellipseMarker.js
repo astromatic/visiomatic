@@ -1,14 +1,22 @@
 /*
-# Add an ellipse defined by its semi-major and semi-minor axes (in pixels), as
-# well as a position angle in degrees (CCW from x axis).
+# 	Add an ellipse marker defined by its semi-major and semi-minor axes (in pixels),
+#	as well as a position angle in degrees (CCW from x axis).
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 */
-import L from 'leaflet';
+import {
+	Bounds,
+	Canvas,
+	Path,
+	SVG,
+	Util,
+	latLng
+} from 'leaflet';
 
-L.EllipseMarker = L.Path.extend({
+
+EllipseMarker = Path.extend({
 	CANVAS: true,
 	SVG: false,
 
@@ -20,12 +28,12 @@ L.EllipseMarker = L.Path.extend({
 	},
 
 	initialize: function (latlng, options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 
 		this._majAxis = this.options.majAxis;
 		this._minAxis = this.options.majAxis;
 		this._posAngle = this.options.posAngle;
-		this._latlng = L.latLng(latlng);
+		this._latlng = latLng(latlng);
 
 		var	deg = Math.PI / 180.0,
 			  cpa = Math.cos(this._posAngle * deg),
@@ -54,7 +62,7 @@ L.EllipseMarker = L.Path.extend({
 	},
 
 	setLatLng: function (latlng) {
-		this._latlng = L.latLng(latlng);
+		this._latlng = latLng(latlng);
 		this.redraw();
 		return this.fire('move', {latlng: this._latlng});
 	},
@@ -79,7 +87,7 @@ L.EllipseMarker = L.Path.extend({
 		return ellipseParams;
 	},
 
-	setStyle: L.Path.prototype.setStyle,
+	setStyle: Path.prototype.setStyle,
 
 	_project: function () {
 		this._point = this._map.latLngToLayerPoint(this._latlng);
@@ -89,7 +97,7 @@ L.EllipseMarker = L.Path.extend({
 	_updateBounds: function () {
 		var w = this._clickTolerance(),
 		    p = [this._limX + w, this._limY + w];
-		this._pxBounds = new L.Bounds(this._point.subtract(p), this._point.add(p));
+		this._pxBounds = new Bounds(this._point.subtract(p), this._point.add(p));
 	},
 
 	_update: function () {
@@ -117,11 +125,11 @@ L.EllipseMarker = L.Path.extend({
 	}
 });
 
-L.ellipseMarker = function (latlng, options) {
-	return new L.EllipseMarker(latlng, options);
+export const ellipseMarker = function (latlng, options) {
+	return new EllipseMarker(latlng, options);
 };
 
-L.Canvas.include({
+Canvas.include({
 	_updateEllipse: function (layer) {
 
 		if (layer._empty()) { return; }
@@ -144,7 +152,7 @@ L.Canvas.include({
 	}
 });
 
-L.SVG.include({
+SVG.include({
 	_updateEllipse: function (layer) {
 		var deg = Math.PI / 180.0,
 		    p = layer._point,

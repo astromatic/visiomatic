@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {Control, DomEvent, DomUtil} from 'leaflet';
 
+
 Sidebar = Control.extend({
 	includes: L.Mixin.Events,
 

@@ -20,8 +20,9 @@ import {
 	polyline
 } from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
+
 
 ProfileUI = UI.extend({
 
@@ -121,7 +122,7 @@ ProfileUI = UI.extend({
 				popdiv.id = 'leaflet-spectrum-plot';
 				marker.bindPopup(popdiv,
 				  {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-				VUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
+				VUtil.requestURL(this._layer._url.replace(/\&.*$/g, '') +
 				  '&PFL=' + zoom.toString() + ':' +
 				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0) + '-' +
 				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0),
@@ -178,7 +179,7 @@ ProfileUI = UI.extend({
 			point1.y = y;
 		}
 
-		VUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
+		VUtil.requestURL(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + (point1.x - 0.5).toFixed(0) + ',' +
 			 (point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
 			 (point2.y - 0.5).toFixed(0),
@@ -192,7 +193,7 @@ ProfileUI = UI.extend({
 		 distance, distanceStr, unit;
 
 		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + VUtils.distance(currentLatLng, previousLatLng);
+		distance = this._measurementRunningTotal + VUtil.distance(currentLatLng, previousLatLng);
 
 		if (distance >= 1.0) {
 			unit = '&#176;';

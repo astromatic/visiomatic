@@ -8,6 +8,7 @@
 */
 import {Control, DomUtil} from 'leaflet';
 
+
 Scale = Control.Scale.extend({
 	options: {
 		position: 'bottomleft',

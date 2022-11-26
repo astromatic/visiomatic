@@ -25,9 +25,10 @@ import {
 	polyline
 } from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
 import * from '../Catalog'
+
 
 OverlayUI = UI.extend({
 	options: {
@@ -183,7 +184,7 @@ OverlayUI = UI.extend({
 				layercontrol._expand();
 			}
 		}
-		VUtils.requestURI(
+		VUtil.requestURI(
 			Util.template(catalog.uri, Util.extend({
 				ra: center.lng.toFixed(6),
 				dec: center.lat.toFixed(6),
@@ -284,7 +285,7 @@ OverlayUI = UI.extend({
 			point1.y = y;
 		}
 
-		VUtils.requestURI(this._layer._url.replace(/\&.*$/g, '') +
+		VUtil.requestURI(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
 			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
 			 point2.y.toFixed(0),
@@ -298,7 +299,7 @@ OverlayUI = UI.extend({
 		 distance, distanceStr, unit;
 
 		// calculate the distance from the last fixed point to the mouse position
-		distance = this._measurementRunningTotal + VUtils.distance(currentLatLng, previousLatLng);
+		distance = this._measurementRunningTotal + VUtil.distance(currentLatLng, previousLatLng);
 
 		if (distance >= 1.0) {
 			unit = '&#176;';

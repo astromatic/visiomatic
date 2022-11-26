@@ -9,6 +9,7 @@
 import {circleMarker, extend} from 'leaflet';
 import {template} from 'leaflet.Util';
 
+
 Catalog = {
 	nmax: 10000,	// Sets the maximum number of sources per query
 

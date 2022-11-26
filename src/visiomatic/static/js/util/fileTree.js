@@ -1,7 +1,7 @@
 /*
-# FileTree parses directory trees serverside.
-# Adapted from the jQuery File Tree Plugin (original copyright notice reproduced
-# below).
+#	Parse directory trees serverside.
+#	Adapted from the jQuery File Tree Plugin (original copyright notice reproduced
+#	below).
 #
 #	This file part of:	VisiOmatic
 #
@@ -30,11 +30,13 @@
 // is copyright 2008 A Beautiful Site, LLC. 
 //
 */
-import L from 'leaflet';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
-if (typeof require !== 'undefined') {
-	var $ = require('jquery-browser');
-}
+//if (typeof require !== 'undefined') {
+//	var jQuery = require('jquery');
+//}
+
 
 $.extend($.fn, {
 	fileTree: function (options, file) {

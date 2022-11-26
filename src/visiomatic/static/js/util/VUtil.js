@@ -1,14 +1,18 @@
 /*
-# L.IIPUtils contains general utility methods
+# 	General utilities.
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {
+	DomUtil,
+	latLng
+} from 'leaflet';
 
-L.IIPUtils = {
+
+VUtil = {
 // Definitions for RegExp
 	REG_PDEC: '(\\d+\\.\\d*)',
 	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
@@ -117,9 +121,9 @@ L.IIPUtils = {
 
 	// Add a short (<400ms) "flash" animation to an element
 	flashElement: function (elem) {
-		L.DomUtil.addClass(elem, 'leaflet-control-flash');
+		DomUtil.addClass(elem, 'leaflet-control-flash');
 		setTimeout(function () {
-			L.DomUtil.removeClass(elem, 'leaflet-control-flash');
+			DomUtil.removeClass(elem, 'leaflet-control-flash');
 		}, 400);
 
 	},
@@ -200,7 +204,7 @@ L.IIPUtils = {
 		if (result && result.length >= 8) {
 			var	sgn = Number(result[4] + '1');
 
-			return L.latLng(sgn *
+			return latLng(sgn *
 			    (Number(result[5]) + Number(result[6]) / 60.0 + Number(result[7]) / 3600.0),
 			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
 		} else {

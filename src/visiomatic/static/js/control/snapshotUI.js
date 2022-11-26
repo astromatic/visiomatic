@@ -8,8 +8,9 @@
 */
 import {Util} from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
+
 
 SnapshotUI = UI.extend({
 	options: {
@@ -79,7 +80,7 @@ SnapshotUI = UI.extend({
 				    Math.floor(dx / zfac) :
 				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
 				hiddenlink.download = layer._title + '_' +
-				  VUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+				  VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
 				  '.jpg';
 				hiddenlink.click();
 			}, 'Take a snapshot of the displayed image');

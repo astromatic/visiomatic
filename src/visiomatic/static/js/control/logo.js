@@ -8,6 +8,7 @@
 */
 import {Control, Map} from 'leaflet';
 
+
 // Remove this ugly Pipe sign
 Control.Attribution.include({
 	_update: function () {

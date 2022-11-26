@@ -15,9 +15,10 @@ import {
 	point
 } from 'leaflet';
 
-import {Utils} as VUtils from '../utils'
+import {VUtil} from '../util'
 import {UI} from './ui'
 import {Catalog} from '../catalogs'
+
 
 CatalogUI = UI.extend({
 
@@ -177,7 +178,7 @@ CatalogUI = UI.extend({
 				dlng = 0.0001;
 			}
 
-			VUtils.requestURL(
+			VUtil.requestURL(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					lng: center.lng.toFixed(6),
@@ -200,7 +201,7 @@ CatalogUI = UI.extend({
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center));
-			VUtils.requestURL(
+			VUtil.requestURL(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					lng: center.lng.toFixed(6),

@@ -8,6 +8,7 @@
 */
 import {Control, DomUtil} from 'leaflet';
 
+
 Reticle = Control.extend({
 	options: {
 		position: 'bottomleft'

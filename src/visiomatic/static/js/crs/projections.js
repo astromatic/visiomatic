@@ -1,18 +1,24 @@
 /*
-# L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
-# (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
+# 	Compute a list of FITS WCS (World Coordinate System)
+#	(de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #                            Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {
+	Class,
+	Point,
+	bounds,
+	latLng,
+	point,
+} from 'leaflet';
 
 
-L.Projection.WCS = L.Class.extend({
+Projection = Class.extend({
 
-	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5]),
+	bounds: bounds([-0.5, -0.5], [0.5, 0.5]),
 
 	// LatLng [deg] -> Point
 	project: function (latlng) {
@@ -37,7 +43,7 @@ L.Projection.WCS = L.Class.extend({
 	_natpole: function () {
 		var	deg = Math.PI / 180.0,
 		    projparam = this.projparam,
-				natpole = L.latLng(90.0, 180.0);
+				natpole = latLng(90.0, 180.0);
 		// Special case of fiducial point lying at the native pole
 		if (projparam.natrval.lat === 90.0) {
 			if (projparam.natpole.lng === 999.0) {
@@ -114,7 +120,7 @@ L.Projection.WCS = L.Class.extend({
 		} else if (asinarg < -1.0) {
 			asinarg = -1.0;
 		}
-		return L.latLng(Math.asin(asinarg) * rad,
+		return latLng(Math.asin(asinarg) * rad,
 		 projparam.cpole.lng + Math.atan2(- ct * Math.sin(dphi),
 		  st * cdp  - ct * sdp * cdphi) * rad);
 	},
@@ -134,7 +140,7 @@ L.Projection.WCS = L.Class.extend({
 			  cdp = Math.cos(dp),
 			  sdp = Math.sin(dp),
 			  asinarg = sd * sdp + cd * cdp * cda,
-				phitheta = L.latLng(Math.asin(asinarg > 1.0 ? 1.0
+				phitheta = latLng(Math.asin(asinarg > 1.0 ? 1.0
 		       : (asinarg < -1.0 ? -1.0 : asinarg)) * rad,
 		         projparam.natpole.lng + Math.atan2(- cd * sda,
 		         sd * cdp  - cd * sdp * cda) * rad);
@@ -151,7 +157,7 @@ L.Projection.WCS = L.Class.extend({
 		var	projparam = this.projparam,
 		    cd = projparam.cd,
 		    red = pix.subtract(projparam.crpix);
-		return L.point(red.x * cd[0][0] + red.y * cd[0][1],
+		return point(red.x * cd[0][0] + red.y * cd[0][1],
 			red.x * cd[1][0] + red.y * cd[1][1]);
 	},
 
@@ -159,7 +165,7 @@ L.Projection.WCS = L.Class.extend({
 	_redToPix: function (red) {
 		var projparam = this.projparam,
 		    cdinv = projparam.cdinv;
-		return L.point(red.x * cdinv[0][0] + red.y * cdinv[0][1],
+		return point(red.x * cdinv[0][0] + red.y * cdinv[0][1],
 		 red.x * cdinv[1][0] + red.y * cdinv[1][1]).add(projparam.crpix);
 	},
 
@@ -171,38 +177,38 @@ L.Projection.WCS = L.Class.extend({
 	}
 });
 
-L.Projection.WCS.PIX = L.Projection.WCS.extend({
+Projection.PIX = Projection.extend({
 	code: 'PIX',
 
 	_paramInit: function (projparam) {
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.cpole = projparam.crval;
-		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
+		this.bounds = bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
 	},
 
 	project: function (latlng) {
-		return L.point(latlng.lng, latlng.lat);
+		return point(latlng.lng, latlng.lat);
 	},
 
 	unproject: function (point) {
-		return L.latLng(point.y, point.x);
+		return latLng(point.y, point.x);
 	}
 });
 
-L.Projection.WCS.zenithal = L.Projection.WCS.extend({
+Projection.zenithal = Projection.extend({
 
 	_paramInit: function (projparam) {
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
-		projparam.natrval = L.latLng(90.0, 0.0);
+		projparam.natrval = latLng(90.0, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
 	},
 
 	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.
 	_redToPhiR: function (red) {
-		return L.latLng(Math.sqrt(red.x * red.x + red.y * red.y),
+		return latLng(Math.sqrt(red.x * red.x + red.y * red.y),
 		 Math.atan2(red.x, - red.y) * 180.0 / Math.PI);
 	},
 
@@ -210,11 +216,11 @@ L.Projection.WCS.zenithal = L.Projection.WCS.extend({
 	_phiRToRed: function (phiR) {
 		var	deg = Math.PI / 180.0,
 			p = phiR.lng * deg;
-		return new L.Point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p));
+		return new Point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p));
 	}
 });
 
-L.Projection.WCS.TAN = L.Projection.WCS.zenithal.extend({
+Projection.TAN = Projection.zenithal.extend({
 	code: 'TAN',
 
 	_rToTheta: function (r) {
@@ -226,7 +232,7 @@ L.Projection.WCS.TAN = L.Projection.WCS.zenithal.extend({
 	}
 });
 
-L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
+Projection.ZEA = Projection.zenithal.extend({
 	code: 'ZEA',
 
 	_rToTheta: function (r) {
@@ -244,7 +250,7 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 
 });
 
-L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
+Projection.cylindrical = Projection.extend({
 
 	_paramInit: function (projparam) {
 		var	deg = Math.PI / 180.0;
@@ -252,7 +258,7 @@ L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.lambda = projparam.pv[1][1];
 		if (projparam.lambda === 0.0) { projparam.lambda = 1.0; }
-		projparam.natrval = L.latLng(0.0, 0.0);
+		projparam.natrval = latLng(0.0, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
 	},
@@ -267,38 +273,38 @@ L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
 
 });
 
-L.Projection.WCS.CAR = L.Projection.WCS.cylindrical.extend({
+Projection.CAR = Projection.cylindrical.extend({
 
 	// (x, y) ["deg"] -> \phi, r [deg] for CAR projections.
 	_redToPhiR: function (red) {
-		return L.latLng(red.y, red.x);
+		return latLng(red.y, red.x);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for CAR projections.
 	_phiRToRed: function (phiR) {
-		return L.point(phiR.lng, phiR.lat);
+		return point(phiR.lng, phiR.lat);
 	}
 });
 
-L.Projection.WCS.CEA = L.Projection.WCS.cylindrical.extend({
+Projection.CEA = Projection.cylindrical.extend({
 
 	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
 	_redToPhiR: function (red) {
 		var deg = Math.PI / 180.0,
 				slat = red.y * this.projparam.lambda * deg;
-		return L.latLng(slat > -1.0 ?
+		return latLng(slat > -1.0 ?
 		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
 	_phiRToRed: function (phiR) {
 		var deg = Math.PI / 180.0;
-		return L.point(phiR.lng,
+		return point(phiR.lng,
 		               Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
 	}
 });
 
-L.Projection.WCS.conical = L.Projection.WCS.extend({
+Projection.WCS.conical = Projection.WCS.extend({
 
 	// (x, y) ["deg"] -> \phi, r [deg] for conical projections.
 	_redToPhiR: function (red) {
@@ -306,18 +312,18 @@ L.Projection.WCS.conical = L.Projection.WCS.extend({
 		    projparam = this.projparam,
 		    dy = projparam.y0 - red.y,
 				rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
-		return L.latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
+		return latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for conical projections.
 	_phiRToRed: function (phiR) {
 		var	deg = Math.PI / 180.0,
 		     p = this.projparam.c * phiR.lng * deg;
-		return L.point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p) + this.projparam.y0);
+		return point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p) + this.projparam.y0);
 	}
 });
 
-L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
+Projection.COE = Projection.conical.extend({
 
 	_paramInit: function (projparam) {
 		var	deg = Math.PI / 180.0;
@@ -335,7 +341,7 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 		projparam.c = projparam.gamma / 2.0;
 		projparam.y0 = 2.0 / projparam.gamma * Math.sqrt(projparam.s1s2p1 -
 		   projparam.gamma * Math.sin(projparam.thetaA * deg)) / deg;
-		projparam.natrval = L.latLng(projparam.thetaA, 0.0);
+		projparam.natrval = latLng(projparam.thetaA, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
 	},

@@ -1,21 +1,28 @@
 /*
-# Add an ellipse defined by its semi-major and semi-minor axes (in degrees), as
-# well as a position angle in degrees (east of north).
+#	Add an ellipse defined by its semi-major and semi-minor axes (in degrees), as
+#	well as a position angle in degrees (east of north).
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 */
-import L from 'leaflet';
+import {
+	LatLngBounds,
+	Util,
+	latLng
+} from 'leaflet';
 
-L.Ellipse = L.EllipseMarker.extend({
+import {EllipseMarker} from './ellipseMarker'
+
+
+Ellipse = EllipseMarker.extend({
 
 	options: {
 		fill: true
 	},
 
 	initialize: function (latlng, options) {
-		L.setOptions(this, options);
+		Util.setOptions(this, options);
 
 		var	deg = Math.PI / 180.0,
 			  cpa = Math.cos(this.options.posAngle * deg),
@@ -24,7 +31,7 @@ L.Ellipse = L.EllipseMarker.extend({
 			  spa2 = spa * spa,
 			  a2 = this.options.majAxis * this.options.majAxis,
 			  b2 = this.options.minAxis * this.options.minAxis;
-		this._latlng = L.latLng(latlng);
+		this._latlng = latLng(latlng);
 		// Compute quadratic forms to be used for coordinate transforms
 		this._mLat2 = a2 * cpa2 + b2 * spa2;
 		this._mLng2 = a2 * spa2 + b2 * cpa2;
@@ -34,7 +41,7 @@ L.Ellipse = L.EllipseMarker.extend({
 	getBounds: function () {
 		var half = [this._limX, this._limY];
 
-		return new L.LatLngBounds(
+		return new LatLngBounds(
 			this._map.layerPointToLatLng(this._point.subtract(half)),
 			this._map.layerPointToLatLng(this._point.add(half)));
 	},
@@ -51,8 +58,8 @@ L.Ellipse = L.EllipseMarker.extend({
 					clat = Math.cos(lat * deg),
 					dl = lat < 90.0 ? 0.001 : -0.001,
 					point = crs.project(this._latlng),
-			    dpointdlat = crs.project(L.latLng(lat + dl, lng)).subtract(point),
-			    dpointdlng = crs.project(L.latLng(lat, lng + dl * 1.0 /
+			    dpointdlat = crs.project(latLng(lat + dl, lng)).subtract(point),
+			    dpointdlng = crs.project(latLng(lat, lng + dl * 1.0 /
 					  (clat > dl ? clat : dl))).subtract(point),
 					c11 = dpointdlat.x / dl,
 					c12 = dpointdlng.x / dl,
@@ -99,7 +106,7 @@ L.Ellipse = L.EllipseMarker.extend({
 	}
 });
 
-L.ellipse = function (latlng, options) {
-	return new L.Ellipse(latlng, options);
+export const ellipse = function (latlng, options) {
+	return new Ellipse(latlng, options);
 };
 

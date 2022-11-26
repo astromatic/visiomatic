@@ -1,16 +1,22 @@
 /*
-# SpinBox implements a number spinbox with adaptive step increment
-# Adapted from Proto.io On/Off FlipSwitch designed by Anna Mitsinga:
-# https://proto.io/freebies/onoff/
+# 	Add a number spinbox with adaptive step increment
+# 	Adapted from Proto.io On/Off FlipSwitch designed by Anna Mitsinga:
+# 	https://proto.io/freebies/onoff/
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 #
 */
-import L from 'leaflet';
+import {
+	Evented,
+	DomEvent,
+	DomUtil,
+	Util
+} from 'leaflet';
 
-L.FlipSwitch = L.Evented.extend({
+
+FlipSwitch = Evented.extend({
 	options: {
 		// All widget options
 		checked: false,
@@ -20,12 +26,12 @@ L.FlipSwitch = L.Evented.extend({
 	},
 
 	initialize: function (parent, options) {
-		options = L.setOptions(this, options);
+		options = Util.setOptions(this, options);
 		var _this = this,
 			  className = options.className,
-			  button = L.DomUtil.create('div', className, parent),
+			  button = DomUtil.create('div', className, parent),
 				input = this._input = L.DomUtil.create('input', className, button),
-				label = L.DomUtil.create('label', className, button);
+				label = DomUtil.create('label', className, button);
 
 		input.type = 'checkbox';
 		input.name = options.className;
@@ -35,13 +41,13 @@ L.FlipSwitch = L.Evented.extend({
 			label.title = options.title;
 		}
 
-		L.DomUtil.create('span', className + '-inner', label);
-		L.DomUtil.create('span', className + '-button', label);
+		DomUtil.create('span', className + '-inner', label);
+		DomUtil.create('span', className + '-button', label);
 
-		L.DomEvent
+		DomEvent
 				.disableClickPropagation(button)
 				.disableScrollPropagation(button);
-		L.DomEvent.on(input, 'change', function () {
+		DomEvent.on(input, 'change', function () {
 			this.fire('change');
 		}, this);
 
@@ -60,6 +66,7 @@ L.FlipSwitch = L.Evented.extend({
 
 });
 
-L.flipswitch = function (parent, options) {
-	return new L.FlipSwitch(parent, options);
+export const flipswitch = function (parent, options) {
+	return new FlipSwitch(parent, options);
 };
+

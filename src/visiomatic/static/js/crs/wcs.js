@@ -1,15 +1,26 @@
 /*
-# L.WCS emulates the FITS WCS (World Coordinate System) popular among
-# the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
+#	Emulate the FITS WCS (World Coordinate System) popular among
+#	the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
 #
 #	This file part of:	VisiOmatic
 #
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #	                         Chiara Marmo    - Paris-Saclay
 */
-import L from 'leaflet';
+import {
+	Class,
+	CRS,
+	Transformation,
+	Util,
+	latLng,
+	point,
+} from 'leaflet';
 
-L.CRS.WCS = L.extend({}, L.CRS, {
+import {VUtil} from '../util'
+import * from './projections'
+
+
+WCS = Util.extend({}, CRS, {
 	code: 'WCS',
 
 	options: {
@@ -35,13 +46,13 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	initialize: function (hdr, options) {
-		options = L.setOptions(this, options);
+		options = Util.setOptions(this, options);
 		var	defaultparam = this.defaultparam;
 
-		this.tileSize = L.point(options.tileSize);
+		this.tileSize = point(options.tileSize);
 		this.nzoom = options.nzoom;
 		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
-		this.naxis = L.point(defaultparam.naxis, true);
+		this.naxis = point(defaultparam.naxis, true);
 		this.projparam = new this._paramInit(defaultparam);
 		if (hdr) {
 			this._readWCS(hdr);
@@ -51,37 +62,37 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		// Identify the WCS projection type
 		switch (this.ctype.x.substr(5, 3)) {
 		case 'ZEA':
-			this.projection = new L.Projection.WCS.ZEA();
+			this.projection = new Projection.WCS.ZEA();
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
 		case 'TAN':
-			this.projection = new L.Projection.WCS.TAN();
+			this.projection = new Projection.WCS.TAN();
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
 		case 'CAR':
-			this.projection = new L.Projection.WCS.CAR();
+			this.projection = new Projection.WCS.CAR();
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
 		case 'CEA':
-			this.projection = new L.Projection.WCS.CEA();
+			this.projection = new Projection.WCS.CEA();
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
 		case 'COE':
-			this.projection = new L.Projection.WCS.COE();
+			this.projection = new Projection.WCS.COE();
 			this.pixelFlag = false;
 			this.infinite = true;
 			break;
 		default:
-			this.projection = new L.Projection.WCS.PIX();
+			this.projection = new Projection.WCS.PIX();
 			this.pixelFlag = true;
 			this.infinite = false;
 			// Center on image if WCS is in pixels
 			if (!this.options.crval) {
-				this.projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
+				this.projparam.crval = latLng((this.naxis.y + 1.0) / 2.0,
 				                                (this.naxis.x + 1.0) / 2.0);
 			}
 			this.wrapLng = [0.5, this.naxis.x - 0.5];
@@ -115,7 +126,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			}
 		}
 
-		this.transformation = new L.Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
+		this.transformation = new Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
 		this.projection._paramInit(this.projparam);
 		this.code += ':' + this.projection.code;
 	},
@@ -130,7 +141,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 				sd2 = Math.sin(d2),
 				cd2cp = Math.cos(d2) * cmat[2],
 				sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
-		return L.latLng(Math.asin(sd) * invdeg,
+		return latLng(Math.asin(sd) * invdeg,
 		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
 		                 cmat[0]) * invdeg + 360.0) % 360.0);
 	},
@@ -144,7 +155,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			  sd = Math.sin(latlng.lat * deg),
 				cdcp = Math.cos(latlng.lat * deg) * cmat[2],
 				sd2 = sd * cmat[3] + cdcp * Math.cos(a);
-		return L.latLng(Math.asin(sd2) * invdeg,
+		return latLng(Math.asin(sd2) * invdeg,
 		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
 		                 cmat[1]) * invdeg + 360.0) % 360.0);
 	},
@@ -215,12 +226,12 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		var result, latlng;
 
 		// Try VisiOmatic sexagesimal first
-		latlng = L.IIPUtils.hmsDMSToLatLng(str);
+		latlng = VUtil.hmsDMSToLatLng(str);
 		if (typeof latlng === 'undefined') {
 			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
 			result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
 			if (result && result.length >= 3) {
-				latlng = L.latLng(Number(result[2]), Number(result[1]));
+				latlng = latLng(Number(result[2]), Number(result[1]));
 			}
 		}
 		if (latlng) {
@@ -239,23 +250,23 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 			param = this;
 		}
 		if (newparam.naxis) {
-			param.naxis = L.point(newparam.naxis);
+			param.naxis = point(newparam.naxis);
 		}
 		if (newparam.crval) {
-			param.crval = param.cpole = L.latLng(newparam.crval);
+			param.crval = param.cpole = latLng(newparam.crval);
 		}
 		if (newparam.crpix) {
-			param.crpix = L.point(newparam.crpix);
+			param.crpix = point(newparam.crpix);
 		}
 		if (newparam.cd) {
 			param.cd = [[newparam.cd[0][0], newparam.cd[0][1]],
 		           [newparam.cd[1][0], newparam.cd[1][1]]];
 		}
 		if (newparam.natrval) {
-			param.natrval = L.latLng(newparam.natrval);
+			param.natrval = latLng(newparam.natrval);
 		}
 		if (newparam.natpole) {
-			param.natpole = L.latLng(newparam.natpole);
+			param.natpole = latLng(newparam.natpole);
 		}
 		if (newparam.pv) {
 			param.pv = [];
@@ -271,20 +282,20 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 				cmat = [];
 		switch (celcode) {
 		case 'galactic':
-			corig = L.latLng(-28.93617242, 266.40499625);
-			cpole = L.latLng(27.12825120, 192.85948123);
+			corig = latLng(-28.93617242, 266.40499625);
+			cpole = latLng(27.12825120, 192.85948123);
 			break;
 		case 'ecliptic':
-			corig = L.latLng(0.0, 0.0);
-			cpole = L.latLng(66.99111111, 273.85261111);
+			corig = latLng(0.0, 0.0);
+			cpole = latLng(66.99111111, 273.85261111);
 			break;
 		case 'supergalactic':
-			corig = L.latLng(59.52315, 42.29235);
-			cpole = L.latLng(15.70480, 283.7514);
+			corig = latLng(59.52315, 42.29235);
+			cpole = latLng(15.70480, 283.7514);
 			break;
 		default:
-			corig = L.latLng(0.0, 0.0);
-			cpole = L.latLng(0.0, 0.0);
+			corig = latLng(0.0, 0.0);
+			cpole = latLng(0.0, 0.0);
 			break;
 		}
 		cmat[0] = cpole.lng * deg;
@@ -297,7 +308,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	// Read WCS information from a FITS header
 	_readWCS: function (hdr) {
-		var key = L.IIPUtils.readFITSKey,
+		var key = VUtil.readFITSKey,
 		    projparam = this.projparam,
 		    v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
@@ -330,8 +341,9 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	}
 });
 
-L.CRS.WCS = L.Class.extend(L.CRS.WCS);
+WCS = Class.extend(WCS);
 
-L.CRS.wcs = function (options) {
-	return new L.CRS.WCS(options);
+export const wcs = function (options) {
+	return new WCS(options);
 };
+
