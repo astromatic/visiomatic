@@ -46,7 +46,7 @@ export const OverlayUI = UI.extend({
 
 	_initDialog: function () {
 		var className = this._className,
-		    catalogs = [GAIA_DR2, TwoMASS, SDSS, PPMXL, Abell],
+		    catalogs = [Gaia_DR2, TwoMASS, SDSS, PPMXL, Abell],
 		    elem;
 
 		// CDS catalog overlay

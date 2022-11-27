@@ -32,7 +32,7 @@ Conical = Projection.extend({
 });
 
 
-export const COE = Projection.conical.extend({
+export const COE = Conical.extend({
 
 	_paramInit: function (projparam) {
 		var	deg = Math.PI / 180.0;

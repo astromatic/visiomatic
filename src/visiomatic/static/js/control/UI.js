@@ -344,7 +344,7 @@ export const UI = Control.extend({
 			});
 
 		spinbox.on('change', function () {
-			VUtils.flashElement(spinbox._input);
+			VUtil.flashElement(spinbox._input);
 			this._onInputChange(layer, attr, spinbox.value(), func);
 		}, this);
 

@@ -85,13 +85,13 @@ export const Coords = Control.extend({
 				url = location.href,
 				wcs = this._map.options.crs,
 				latlng = map.getCenter();
-			VUtils.flashElement(this._wcsinput);
-			url = VUtils.updateURL(url, this.options.centerQueryKey,
-			  VUtils.latLngToHMSDMS(latlng));
-			url = VUtils.updateURL(url, this.options.fovQueryKey,
+			VUtil.flashElement(this._wcsinput);
+			url = VUtil.updateURL(url, this.options.centerQueryKey,
+			  VUtil.latLngToHMSDMS(latlng));
+			url = VUtil.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
-			VUtils.copyToClipboard(url);
+			VUtil.copyToClipboard(url);
 		}, this);
 
 		return this._wcsdialog;
@@ -116,7 +116,7 @@ export const Coords = Control.extend({
 			}
 			switch (coord.units) {
 			case 'HMS':
-				this._wcsinput.value = VUtils.latLngToHMSDMS(latlng);
+				this._wcsinput.value = VUtil.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
@@ -146,7 +146,7 @@ export const Coords = Control.extend({
 			}
 		} else {
 			// If not, ask Sesame@CDS!
-			VUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
+			VUtil.requestURL(this.options.sesameURL + '/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
