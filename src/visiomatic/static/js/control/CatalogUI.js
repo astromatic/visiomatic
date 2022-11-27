@@ -23,7 +23,7 @@ import {Gaia_DR2, TwoMASS, SDSS, PPMXL, Abell} from '../catalog';
 export const CatalogUI = UI.extend({
 
 	defaultCatalogs: [
-		GAIA_DR2,
+		Gaia_DR2,
 		TwoMASS,
 		SDSS,
 		PPMXL,
