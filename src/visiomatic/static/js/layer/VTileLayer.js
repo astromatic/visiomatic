@@ -18,7 +18,7 @@ import {
 
 import {VUtil} from '../util';
 import {rgb as rgbin} from '../util';
-import {wcs} from '../crs';
+import {WCS} from '../crs';
 
 
 export const VTileLayer = TileLayer.extend({
@@ -319,7 +319,7 @@ export const VTileLayer = TileLayer.extend({
 				if (options.bounds) {
 					options.bounds = latLngBounds(options.bounds);
 				}
-				layer.wcs = options.crs ? options.crs : wcs(response, {
+				layer.wcs = options.crs ? options.crs : new WCS(response, {
 					nativeCelsys: layer.options.nativeCelsys,
 					nzoom: layer.iipMaxZoom + 1,
 					tileSize: layer.iipTileSize

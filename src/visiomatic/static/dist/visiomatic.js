@@ -30980,7 +30980,7 @@
     _resetDialog: function() {
     },
     _getCatalog: function(catalog, timeout) {
-      var _this = this, map = this._map, wcs2 = map.options.crs, sysflag = wcs2.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs2.celsysToEq(map.getCenter()) : map.getCenter(), b = map.getPixelBounds(), z = map.getZoom(), templayer = new import_leaflet23.LayerGroup(null);
+      var _this = this, map = this._map, wcs = map.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(), b = map.getPixelBounds(), z = map.getZoom(), templayer = new import_leaflet23.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
       if (catalog.authenticate) {
@@ -30989,18 +30989,18 @@
         this.options.authenticate = false;
       }
       var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
-        wcs2.celsysToEq(map.unproject(b.min, z)),
-        wcs2.celsysToEq(map.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z)),
-        wcs2.celsysToEq(map.unproject(b.max, z)),
-        wcs2.celsysToEq(map.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z))
+        wcs.celsysToEq(map.unproject(b.min, z)),
+        wcs.celsysToEq(map.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z)),
+        wcs.celsysToEq(map.unproject(b.max, z)),
+        wcs.celsysToEq(map.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z))
       ] : [
         map.unproject(b.min, z),
         map.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z),
         map.unproject(b.max, z),
         map.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z)
       ], sys;
-      if (wcs2.forceNativeCelsys && this.options.nativeCelsys) {
-        switch (wcs2.celsyscode) {
+      if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
+        switch (wcs.celsyscode) {
           case "ecliptic":
             sys = "E2000.0";
             break;
@@ -31019,15 +31019,15 @@
       }
       if (catalog.regionType === "box") {
         var dlng = (Math.max(
-          wcs2._deltaLng(c[0], center),
-          wcs2._deltaLng(c[1], center),
-          wcs2._deltaLng(c[2], center),
-          wcs2._deltaLng(c[3], center)
+          wcs._deltaLng(c[0], center),
+          wcs._deltaLng(c[1], center),
+          wcs._deltaLng(c[2], center),
+          wcs._deltaLng(c[3], center)
         ) - Math.min(
-          wcs2._deltaLng(c[0], center),
-          wcs2._deltaLng(c[1], center),
-          wcs2._deltaLng(c[2], center),
-          wcs2._deltaLng(c[3], center)
+          wcs._deltaLng(c[0], center),
+          wcs._deltaLng(c[1], center),
+          wcs._deltaLng(c[2], center),
+          wcs._deltaLng(c[3], center)
         )) * lngfac, dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) - Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
         if (dlat < 1e-4) {
           dlat = 1e-4;
@@ -31054,10 +31054,10 @@
         );
       } else {
         var dr = Math.max(
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center)
+          wcs.distance(c[0], center),
+          wcs.distance(c[0], center),
+          wcs.distance(c[0], center),
+          wcs.distance(c[0], center)
         );
         VUtil.requestURL(
           import_leaflet23.Util.template(catalog.url, import_leaflet23.Util.extend({
@@ -31080,15 +31080,15 @@
     _loadCatalog: function(catalog, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var wcs2 = _this._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet23.geoJson)(geo, {
+          var wcs = _this._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet23.geoJson)(geo, {
             onEachFeature: function(feature, layer) {
               if (feature.properties && feature.properties.items) {
                 layer.bindPopup(catalog.popup(feature));
               }
             },
             coordsToLatLng: function(coords2) {
-              if (wcs2.forceNativeCelsys) {
-                var latLng10 = wcs2.eqToCelsys(L.latLng(coords2[1], coords2[0]));
+              if (wcs.forceNativeCelsys) {
+                var latLng10 = wcs.eqToCelsys(L.latLng(coords2[1], coords2[0]));
                 return new L.LatLng(latLng10.lat, latLng10.lng, coords2[2]);
               } else {
                 return new L.LatLng(coords2[1], coords2[0], coords2[2]);
@@ -31486,7 +31486,7 @@
       var clipboardbutton = import_leaflet25.DomUtil.create("div", className + "-clipboard", dialog);
       clipboardbutton.title = "Copy to clipboard";
       import_leaflet25.DomEvent.on(clipboardbutton, "click", function() {
-        var stateObj = {}, url = location.href, wcs2 = this._map.options.crs, latlng = map.getCenter();
+        var stateObj = {}, url = location.href, wcs = this._map.options.crs, latlng = map.getCenter();
         VUtil.flashElement(this._wcsinput);
         url = VUtil.updateURL(
           url,
@@ -31496,7 +31496,7 @@
         url = VUtil.updateURL(
           url,
           this.options.fovQueryKey,
-          wcs2.zoomToFov(map, map.getZoom(), latlng).toPrecision(4)
+          wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4)
         );
         history.pushState(stateObj, "", url);
         VUtil.copyToClipboard(url);
@@ -31507,14 +31507,14 @@
       map.off("drag", this._onDrag);
     },
     _onDrag: function(e) {
-      var latlng = this._map.getCenter(), wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
-      if (wcs2.pixelFlag) {
+      var latlng = this._map.getCenter(), wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      if (wcs.pixelFlag) {
         this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
       } else {
-        if (!coord.nativeCelsys && wcs2.forceNativeCelsys) {
-          latlng = wcs2.celsysToEq(latlng);
-        } else if (coord.nativeCelsys && wcs2.forceNativeCelsys === false) {
-          latlng = wcs2.eqToCelsys(latlng);
+        if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+          latlng = wcs.celsysToEq(latlng);
+        } else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+          latlng = wcs.eqToCelsys(latlng);
         }
         switch (coord.units) {
           case "HMS":
@@ -31530,15 +31530,15 @@
       }
     },
     panTo: function(str) {
-      var wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord], latlng = wcs2.parseCoords(str);
+      var wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord], latlng = wcs.parseCoords(str);
       if (latlng) {
-        if (wcs2.pixelFlag) {
+        if (wcs.pixelFlag) {
           this._map.panTo(latlng);
         } else {
-          if (!coord.nativeCelsys && wcs2.forceNativeCelsys) {
-            latlng = wcs2.eqToCelsys(latlng);
-          } else if (coord.nativeCelsys && wcs2.forceNativeCelsys === false) {
-            latlng = wcs2.celsysToEq(latlng);
+          if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+            latlng = wcs.eqToCelsys(latlng);
+          } else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+            latlng = wcs.celsysToEq(latlng);
           }
           this._map.panTo(latlng);
         }
@@ -32033,7 +32033,6 @@
     toogleFullScreen: function() {
       this._exitFired = false;
       var container = this._container;
-      console.log("full screen state:", this._isFullscreen);
       if (this._isFullscreen) {
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.cancelFullScreen(container);
@@ -32845,7 +32844,7 @@
     _resetDialog: function() {
     },
     _getRegion: function(region, timeout) {
-      var _this = this, map = this._map, wcs2 = map.options.crs, sysflag = wcs2.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet32.LayerGroup(null);
+      var _this = this, map = this._map, wcs = map.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet32.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, region.name);
       VUtil.requestURL(
@@ -32861,7 +32860,7 @@
     _loadRegion: function(region, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var wcs2 = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet32.geoJson)(JSON.parse(response), {
+          var wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet32.geoJson)(JSON.parse(response), {
             onEachFeature: function(feature, layer) {
               if (feature.properties && feature.properties.description) {
                 layer.bindPopup(feature.properties.description);
@@ -32870,8 +32869,8 @@
               }
             },
             coordsToLatLng: function(coords2) {
-              if (wcs2.forceNativeCelsys) {
-                var latLng10 = wcs2.eqToCelsys(latLng10(coords2[1], coords2[0]));
+              if (wcs.forceNativeCelsys) {
+                var latLng10 = wcs.eqToCelsys(latLng10(coords2[1], coords2[0]));
                 return new import_leaflet32.LatLng(latLng10.lat, latLng10.lng, coords2[2]);
               } else {
                 return new import_leaflet32.LatLng(coords2[1], coords2[0], coords2[2]);
@@ -33306,8 +33305,7 @@
     Pixel: () => Pixel,
     TAN: () => TAN,
     WCS: () => WCS,
-    ZEA: () => ZEA,
-    wcs: () => wcs
+    ZEA: () => ZEA
   });
 
   // js/crs/WCS.js
@@ -33902,9 +33900,6 @@
     }
   });
   var WCS = import_leaflet42.Class.extend(WCSObj);
-  var wcs = function(options) {
-    return new WCS(options);
-  };
 
   // js/layer/index.js
   var layer_exports = {};
@@ -34134,7 +34129,7 @@
           if (options.bounds) {
             options.bounds = (0, import_leaflet43.latLngBounds)(options.bounds);
           }
-          layer.wcs = options.crs ? options.crs : wcs(response, {
+          layer.wcs = options.crs ? options.crs : new WCS(response, {
             nativeCelsys: layer.options.nativeCelsys,
             nzoom: layer.iipMaxZoom + 1,
             tileSize: layer.iipTileSize
@@ -34344,12 +34339,12 @@
   function getGlobalObject() {
     if (typeof globalThis !== "undefined") {
       return globalThis;
-      if (typeof self !== "undefined") {
-        return self;
-      }
-      if (typeof window !== "undefined") {
-        return window;
-      }
+    }
+    if (typeof self !== "undefined") {
+      return self;
+    }
+    if (typeof window !== "undefined") {
+      return window;
     }
     if (typeof global !== "undefined") {
       return global;

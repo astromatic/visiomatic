@@ -347,7 +347,4 @@ WCSObj = extend({}, CRS, {
 
 export const WCS = Class.extend(WCSObj);
 
-export const wcs = function (options) {
-	return new WCS(options);
-};
 
