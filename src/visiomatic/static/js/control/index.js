@@ -5,6 +5,7 @@
 #
 #	Copyright: (C) 2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 */
+import "./logo";
 export * from './CatalogUI';
 export * from './ChannelUI';
 export * from './Coords';
