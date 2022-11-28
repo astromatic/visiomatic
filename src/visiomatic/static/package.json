@@ -25,8 +25,10 @@
 	},
 	"dependencies": {
 		"html2canvas": "~1.4.1",
+		"jqplot-exported": "~1.0.9-pm.4",
 		"jquery": "~2.1.4",
-		"leaflet": "~1.9.3"
+		"leaflet": "~1.9.3",
+		"spectrum-colorpicker": "~1.8.1"
 	},
 	"devDependencies": {
 		"eslint": "^8.23.1",
@@ -35,7 +37,7 @@
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
+		"build": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
 		"lint": "eslint .",
 		"test": "npm run unit"
 	}

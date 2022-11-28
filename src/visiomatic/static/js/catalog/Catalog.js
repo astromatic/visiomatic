@@ -7,7 +7,7 @@
 #	                         Chiara Marmo    - Paris-Saclay
 */
 import {circleMarker, extend} from 'leaflet';
-import {template} from 'leaflet';
+import {Util} from 'leaflet';
 
 
 export const Catalog = {
@@ -63,7 +63,7 @@ export const Catalog = {
 	popup: function (feature) {
 		var str = '<div>';
 		if (this.objurl) {
-			str += 'ID: <a href=\"' + template(this.objurl, extend({
+			str += 'ID: <a href=\"' + Util.template(this.objurl, extend({
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';

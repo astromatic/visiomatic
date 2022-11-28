@@ -9,9 +9,7 @@
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
+import 'spectrum-colorpicker';
 
 import {
 	Browser,
@@ -415,7 +413,7 @@ export const UI = Control.extend({
 			input.type = 'checkbox';
 			input.className = 'leaflet-control-iip-selector';
 			input.defaultChecked = checked;
-			input.layerId = stamp(obj.layer);
+			input.layerId = Util.stamp(obj.layer);
 			DomEvent.on(input, 'click', function () {
 				var i, input, obj,
 			      inputs = this._layerList.getElementsByTagName('input'),
@@ -465,7 +463,7 @@ export const UI = Control.extend({
 	addLayer: function (layer, name, index) {
 		layer.on('add remove', this._onLayerChange, this);
 
-		var id = stamp(layer);
+		var id = Util.stamp(layer);
 
 		this._layers[id] = {
 			layer: layer,
@@ -478,10 +476,10 @@ export const UI = Control.extend({
 
 	removeLayer: function (layer) {
 		layer.off('add remove', this._onLayerChange, this);
-		layer.fire('trash', {index: this._layers[stamp(layer)].index});
+		layer.fire('trash', {index: this._layers[Util.stamp(layer)].index});
 		layer.off('trash');
 
-		delete this._layers[stamp(layer)];
+		delete this._layers[Util.stamp(layer)];
 		return this._updateLayerList();
 	},
 
@@ -490,7 +488,7 @@ export const UI = Control.extend({
 			this._updateLayerList();
 		}
 
-		var obj = this._layers[stamp(e.target)],
+		var obj = this._layers[Util.stamp(e.target)],
 		    type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
 
 		this._map.fire(type, obj);

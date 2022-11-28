@@ -8,10 +8,7 @@
 */
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
-
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
+import 'jqplot-exported';
 
 import {
 	DomUtil,
