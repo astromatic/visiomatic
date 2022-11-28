@@ -31,15 +31,14 @@
 		"spectrum-colorpicker": "~1.8.1"
 	},
 	"devDependencies": {
-		"eslint": "^8.23.1",
 		"esbuild": "^0.14.53",
+		"eslint": "^8.23.1",
 		"jsdoc": "~>3.6.3"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"build": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
+		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
 		"lint": "eslint .",
 		"test": "npm run unit"
 	}
 }
-

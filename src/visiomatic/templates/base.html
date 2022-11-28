@@ -48,6 +48,7 @@
 					reuseTiles: true
 				});
 
+        V.control.fullScreen().addTo(map);
 		V.control.scale({pixels: false}).addTo(map);
 		V.control.reticle().addTo(map);
 		V.control.coords({coordinates: [
@@ -60,7 +61,7 @@
 					height: 192,
 					zoomLevelOffset: -5,
 				}).addTo(map),
-				sidebar = V.control.sidebar().addTo(map);
+			sidebar = V.control.sidebar().addTo(map);
 
 		V.control.channelUI('color').addTo(sidebar);
 		V.control.imageUI().addTo(sidebar);
@@ -78,10 +79,7 @@
 			V.catalog.GLEAM,
 			V.catalog.TGSS
 		]).addTo(sidebar);
-		V.control.regionUI(
-			[
-			]
-		).addTo(sidebar);
+		V.control.regionUI([]).addTo(sidebar);
 		V.control.profileUI().addTo(sidebar);
 		V.control.snapshotUI().addTo(sidebar);
 		sidebar.addTabList();

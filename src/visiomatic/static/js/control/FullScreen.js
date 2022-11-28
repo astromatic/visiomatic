@@ -40,96 +40,6 @@ import {
 } from 'leaflet';
 
 
-export const FullScreen = Control.extend({
-	options: {
-		position: 'topleft',
-		title: 'Toggle full screen mode',
-		forceSeparateButton: false
-	},
-
-	onAdd: function (map) {
-		var className = 'leaflet-control-zoom-fullscreen', container;
-
-		if (map.zoomControl && !this.options.forceSeparateButton) {
-			container = map.zoomControl._container;
-		} else {
-			container = DomUtil.create('div', 'leaflet-bar');
-		}
-
-		this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
-
-		return container;
-	},
-
-	_createButton: function (title, className, container, fn, context) {
-		var link = DomUtil.create('a', className, container);
-		link.href = '#';
-		link.title = title;
-
-		DomEvent
-			.addListener(link, 'click', DomEvent.stopPropagation)
-			.addListener(link, 'click', DomEvent.preventDefault)
-			.addListener(link, 'click', fn, context);
-
-		DomEvent
-			.addListener(container, fullScreenApi.fullScreenEventName, DomEvent.stopPropagation)
-			.addListener(container, fullScreenApi.fullScreenEventName, DomEvent.preventDefault)
-			.addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
-
-		DomEvent
-			.addListener(document, fullScreenApi.fullScreenEventName, DomEvent.stopPropagation)
-			.addListener(document, fullScreenApi.fullScreenEventName, DomEvent.preventDefault)
-			.addListener(document, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
-
-		return link;
-	},
-
-	toogleFullScreen: function () {
-		this._exitFired = false;
-		var container = this._container;
-		if (this._isFullscreen) {
-			if (fullScreenApi.supportsFullScreen) {
-				fullScreenApi.cancelFullScreen(container);
-			} else {
-				DomUtil.removeClass(container, 'leaflet-pseudo-fullscreen');
-			}
-			this.invalidateSize();
-			this.fire('exitFullscreen');
-			this._exitFired = true;
-			this._isFullscreen = false;
-		} else {
-			if (fullScreenApi.supportsFullScreen) {
-				fullScreenApi.requestFullScreen(container);
-			} else {
-				DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
-			}
-			this.invalidateSize();
-			this.fire('enterFullscreen');
-			this._isFullscreen = true;
-		}
-	},
-
-	_handleEscKey: function () {
-		if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
-			this.fire('exitFullscreen');
-			this._exitFired = true;
-			this._isFullscreen = false;
-		}
-	}
-});
-
-fullScreen = function (options) {
-	return new FullScreen(options);
-};
-
-Map.addInitHook(function () {
-	if (this.options.fullScreenControl) {
-		this.fullScreenControl = control.fullscreen(this.options.fullScreenControlOptions);
-		this.addControl(this.fullScreenControl);
-	}
-});
-
-
 /* 
 Native FullScreen JavaScript API
 -------------
@@ -184,18 +94,94 @@ if (fullScreenApi.supportsFullScreen) {
 	};
 }
 
-// jQuery plugin
-if (typeof jQuery !== 'undefined') {
-	jQuery.fn.requestFullScreen = function () {
-		return this.each(function () {
-			var el = jQuery(this);
-			if (fullScreenApi.supportsFullScreen) {
-				fullScreenApi.requestFullScreen(el);
-			}
-		});
-	};
-}
 
 // export api
 window.fullScreenApi = fullScreenApi;
+
+export const FullScreen = Control.extend({
+	options: {
+		position: 'topleft',
+		title: 'Toggle full screen mode',
+		forceSeparateButton: false
+	},
+
+	onAdd: function (map) {
+		var className = 'leaflet-control-zoom-fullscreen', container;
+
+		if (map.zoomControl && !this.options.forceSeparateButton) {
+			container = map.zoomControl._container;
+		} else {
+			container = DomUtil.create('div', 'leaflet-bar');
+		}
+
+		this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
+
+		return container;
+	},
+
+	_createButton: function (title, className, container, fn, context) {
+		var link = DomUtil.create('a', className, container);
+		link.href = '#';
+		link.title = title;
+
+		DomEvent
+			.addListener(link, 'click', DomEvent.stopPropagation)
+			.addListener(link, 'click', DomEvent.preventDefault)
+			.addListener(link, 'click', fn, context);
+
+		DomEvent
+			.addListener(container, fullScreenApi.fullScreenEventName, DomEvent.stopPropagation)
+			.addListener(container, fullScreenApi.fullScreenEventName, DomEvent.preventDefault)
+			.addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+
+		return link;
+	},
+
+	toogleFullScreen: function () {
+		this._exitFired = false;
+		var container = this._container;
+	    console.log("full screen state:", this._isFullscreen)
+		if (this._isFullscreen) {
+			if (fullScreenApi.supportsFullScreen) {
+				fullScreenApi.cancelFullScreen(container);
+			} else {
+				DomUtil.removeClass(container, 'leaflet-pseudo-fullscreen');
+			}
+			this.invalidateSize();
+			this.fire('exitFullscreen');
+			this._exitFired = true;
+			this._isFullscreen = false;
+		} else {
+			if (fullScreenApi.supportsFullScreen) {
+				fullScreenApi.requestFullScreen(container);
+			} else {
+				DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
+			}
+			this.invalidateSize();
+			this.fire('enterFullscreen');
+			this._isFullscreen = true;
+		}
+	},
+
+	_handleEscKey: function () {
+		if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
+			this.fire('exitFullscreen');
+			this._exitFired = true;
+			this._isFullscreen = false;
+		}
+	}
+});
+
+export const fullScreen = function (options) {
+	return new FullScreen(options);
+};
+
+Map.addInitHook(function () {
+	if (this.options.fullScreenControl) {
+		this.fullScreenControl = control.fullscreen(this.options.fullScreenControlOptions);
+		this.addControl(this.fullScreenControl);
+	}
+});
+
+
 
