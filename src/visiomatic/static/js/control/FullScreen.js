@@ -140,7 +140,6 @@ export const FullScreen = Control.extend({
 	toogleFullScreen: function () {
 		this._exitFired = false;
 		var container = this._container;
-	    console.log("full screen state:", this._isFullscreen)
 		if (this._isFullscreen) {
 			if (fullScreenApi.supportsFullScreen) {
 				fullScreenApi.cancelFullScreen(container);
