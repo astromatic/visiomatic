@@ -7,8 +7,8 @@
 #	                         Chiara Marmo    - Paris-Saclay
 */
 import {
-	DOMEvent,
-	DOMUtil,
+	DomEvent,
+	DomUtil,
 	Util
 } from 'leaflet';
 

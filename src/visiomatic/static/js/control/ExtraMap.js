@@ -33,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import {
 	Control,
-	DOMEvent,
-	DOMUtil,
+	DomEvent,
+	DomUtil,
 	LatLngBounds,
 	Map,
 	Util,

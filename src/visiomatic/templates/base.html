@@ -15,6 +15,7 @@
 		html,body,#map { width: 100%; height: 100%; }
         .leaflet-control-attribution {
 	        background: rgba(100,100,100,0.0) !important;
+	        
 	        box-shadow: none;
         }
     </style>
@@ -27,10 +28,10 @@
   <body>
     <div id='map' style='background:black'></div>
 	<script>
-		var args = L.IIPUtils.parseURL(window.location.search.substring(1)),
-				iip = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
+		var args = V.util.VUtil.parseURL(window.location.search.substring(1)),
+				url = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
-				layer = L.tileLayer.iip(iip, {
+				vlayer = V.layer.vTileLayer(url, {
 					center: args['center'] ? args['center'] : false,
 					fov: args['fov'] ? parseFloat(args['fov']) : false,
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
@@ -41,7 +42,7 @@
 					channelLabels: ['data', 'weights'],
 					reuseTiles: true
 				}).addTo(map),
-				minilayer = L.tileLayer.iip(iip, {
+				minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
 					minMaxValues: [2100,5000],
@@ -51,42 +52,42 @@
 					reuseTiles: true
 				});
 
-		L.control.scale.wcs({pixels: false}).addTo(map);
-		L.control.reticle().addTo(map);
-		L.control.wcs({coordinates: [
+		V.control.scale({pixels: false}).addTo(map);
+		V.control.reticle().addTo(map);
+		V.control.coords({coordinates: [
 			{label: 'RA,Dec', units: 'HMS'},
 		], position: 'topright'}).addTo(map);
 
-		var minimap = L.control.extraMap(minilayer, {
+		var minimap = V.control.extraMap(minivlayer, {
 					position: 'topright',
 					width: 192,
 					height: 192,
 					zoomLevelOffset: -5,
 				}).addTo(map),
-				sidebar = L.control.sidebar().addTo(map);
+				sidebar = V.control.sidebar().addTo(map);
 
-		L.control.iip.channel('color').addTo(sidebar);
-		L.control.iip.image().addTo(sidebar);
-		L.control.iip.catalog([
-			L.Catalog['PanSTARRS1'],
-			L.Catalog['GAIA_DR2'],
-			L.Catalog['SDSS'],
-			L.Catalog['URAT_1'],
-			L.Catalog['GALEX_AIS'],
-			L.Catalog['2MASS'],
-			L.Catalog['AllWISE'],
-			L.Catalog['PPMXL'],
-			L.Catalog['NVSS'],
-			L.Catalog['FIRST'],
-			L.Catalog['GLEAM'],
-			L.Catalog['TGSS']
+		V.control.channelUI('color').addTo(sidebar);
+		V.control.imageUI().addTo(sidebar);
+		V.control.catalogUI([
+			V.catalog.PanSTARRS1,
+			V.catalog.Gaia_DR2,
+			V.catalog.SDSS,
+			V.catalog.URAT_1,
+			V.catalog.GALEX_AIS,
+			V.catalog.TwoMASS,
+			V.catalog.AllWISE,
+			V.catalog.PPMXL,
+			V.catalog.NVSS,
+			V.catalog.FIRST,
+			V.catalog.GLEAM,
+			V.catalog.TGSS
 		]).addTo(sidebar);
-		L.control.iip.region(
+		V.control.regionUI(
 			[
 			]
 		).addTo(sidebar);
-		L.control.iip.profile().addTo(sidebar);
-		L.control.iip.snapshot().addTo(sidebar);
+		V.control.profileUI().addTo(sidebar);
+		V.control.snapshotUI().addTo(sidebar);
 		sidebar.addTabList();
 	</script>
   </body>

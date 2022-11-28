@@ -8,11 +8,12 @@
 */
 import {
 	Control,
-	DOMEvent,
-	DOMUtil,
+	DomEvent,
+	DomUtil,
 	Map
 } from 'leaflet';
 
+import {VUtil} from '../util'
 
 export const Coords = Control.extend({
 	options: {

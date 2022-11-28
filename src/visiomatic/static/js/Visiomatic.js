@@ -1,5 +1,5 @@
 /*
-#	Module index for vectors.
+#	General module index
 #
 #	This file part of:	VisiOmatic
 #

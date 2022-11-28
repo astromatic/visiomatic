@@ -11,6 +11,7 @@ import {
 	Class,
 	CRS,
 	Transformation,
+	Util,
 	extend,
 	latLng,
 	point,

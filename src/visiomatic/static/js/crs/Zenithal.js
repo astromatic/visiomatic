@@ -7,7 +7,7 @@
 #	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 #                            Chiara Marmo    - Paris-Saclay
 */
-import {Point} from 'leaflet';
+import {Point, latLng} from 'leaflet';
 
 import {Projection} from './Projection';
 

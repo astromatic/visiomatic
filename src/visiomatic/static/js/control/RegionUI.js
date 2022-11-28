@@ -7,7 +7,7 @@
 #	                         Chiara Marmo    - Paris-Saclay
 */
 import {
-	DOMEvent,
+	DomEvent,
 	LatLng,
 	LayerGroup,
 	Util,

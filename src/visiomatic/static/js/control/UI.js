@@ -17,10 +17,12 @@ import {
 	Browser,
 	Control,
 	DomEvent,
+	DomUtil,
 	Util
 } from 'leaflet';
 
-import {flipSwitch, spinbox} from './widget';
+import {FlipSwitch, Spinbox} from './widget';
+import {VUtil} from '../util';
 
 
 export const UI = Control.extend({
@@ -318,7 +320,7 @@ export const UI = Control.extend({
 	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			flip = elem.flip = flipswitch(elem, {
+			flip = elem.flip = new FlipSwitch(elem, {
 				checked: checked,
 				id: id,
 				title: title
@@ -335,7 +337,7 @@ export const UI = Control.extend({
 	  step, min, max, func) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			spinbox = elem.spinbox = spinbox(elem, {
+			spinbox = elem.spinbox = new Spinbox(elem, {
 				step: step,
 				dmin:  min,
 				dmax:  max,

@@ -28,8 +28,8 @@
   // node_modules/leaflet/dist/leaflet-src.js
   var require_leaflet_src = __commonJS({
     "node_modules/leaflet/dist/leaflet-src.js"(exports, module) {
-      (function(global, factory) {
-        typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.leaflet = {}));
+      (function(global2, factory) {
+        typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.leaflet = {}));
       })(exports, function(exports2) {
         "use strict";
         var version = "1.9.3";
@@ -173,7 +173,7 @@
             cancelFn.call(window, id);
           }
         }
-        var Util19 = {
+        var Util20 = {
           __proto__: null,
           extend: extend16,
           create: create$2,
@@ -1453,7 +1453,7 @@
             boundingClientRect: rect
           };
         }
-        var DomUtil12 = {
+        var DomUtil17 = {
           __proto__: null,
           TRANSFORM,
           TRANSITION,
@@ -1659,7 +1659,7 @@
           }
           return related !== el;
         }
-        var DomEvent8 = {
+        var DomEvent13 = {
           __proto__: null,
           on,
           off,
@@ -8067,8 +8067,8 @@
         exports2.Control = Control8;
         exports2.DivIcon = DivIcon;
         exports2.DivOverlay = DivOverlay;
-        exports2.DomEvent = DomEvent8;
-        exports2.DomUtil = DomUtil12;
+        exports2.DomEvent = DomEvent13;
+        exports2.DomUtil = DomUtil17;
         exports2.Draggable = Draggable;
         exports2.Evented = Evented3;
         exports2.FeatureGroup = FeatureGroup;
@@ -8100,7 +8100,7 @@
         exports2.TileLayer = TileLayer2;
         exports2.Tooltip = Tooltip;
         exports2.Transformation = Transformation2;
-        exports2.Util = Util19;
+        exports2.Util = Util20;
         exports2.VideoOverlay = VideoOverlay;
         exports2.bind = bind;
         exports2.bounds = toBounds;
@@ -8148,16 +8148,16 @@
   // node_modules/jquery/dist/jquery.js
   var require_jquery = __commonJS({
     "node_modules/jquery/dist/jquery.js"(exports, module) {
-      (function(global, factory) {
+      (function(global2, factory) {
         if (typeof module === "object" && typeof module.exports === "object") {
-          module.exports = global.document ? factory(global, true) : function(w) {
+          module.exports = global2.document ? factory(global2, true) : function(w) {
             if (!w.document) {
               throw new Error("jQuery requires a window with a document");
             }
             return factory(w);
           };
         } else {
-          factory(global);
+          factory(global2);
         }
       })(typeof window !== "undefined" ? window : exports, function(window2, noGlobal) {
         var arr = [];
@@ -13599,6 +13599,17 @@
     }
   });
 
+  // js/Visiomatic.js
+  var Visiomatic_exports = {};
+  __export(Visiomatic_exports, {
+    catalog: () => catalog_exports,
+    control: () => control_exports,
+    crs: () => crs_exports,
+    layer: () => layer_exports,
+    util: () => util_exports,
+    vector: () => vector_exports
+  });
+
   // js/catalog/index.js
   var catalog_exports = {};
   __export(catalog_exports, {
@@ -14661,7 +14672,7 @@
       if (dest._sidebar) {
         this._sidebar = dest;
         this._map = dest._map;
-        this._dialog = DomUtil.create("div", this._className + "-dialog");
+        this._dialog = import_leaflet22.DomUtil.create("div", this._className + "-dialog");
         dest.addTab(
           this._id,
           this._className,
@@ -14676,15 +14687,15 @@
       }
     },
     onAdd: function(map) {
-      var className = this._className, id = this._id, container = this._container = DomUtil.create("div", className + " leaflet-bar");
+      var className = this._className, id = this._id, container = this._container = import_leaflet22.DomUtil.create("div", className + " leaflet-bar");
       container.setAttribute("aria-haspopup", true);
       import_leaflet22.DomEvent.disableClickPropagation(container).disableScrollPropagation(container);
-      this._dialog = DomUtil.create("div", className + "-dialog", container);
+      this._dialog = import_leaflet22.DomUtil.create("div", className + "-dialog", container);
       if (this.options.collapsed) {
         if (!import_leaflet22.Browser.android) {
           import_leaflet22.DomEvent.on(container, "mouseover", this._expand, this).on(container, "mouseout", this._collapse, this);
         }
-        var toggle = this._toggle = DomUtil.create("a", className + "-toggle leaflet-bar", container);
+        var toggle = this._toggle = import_leaflet22.DomUtil.create("a", className + "-toggle leaflet-bar", container);
         toggle.href = "#";
         toggle.id = id + "-toggle";
         toggle.title = this.options.title;
@@ -14720,22 +14731,22 @@
       this._initDialog();
     },
     _addDialogBox: function(id) {
-      var box = DomUtil.create("div", this._className + "-box", this._dialog);
+      var box = import_leaflet22.DomUtil.create("div", this._className + "-box", this._dialog);
       if (id) {
         box.id = id;
       }
       return box;
     },
     _addDialogLine: function(label, dialogBox) {
-      var line = DomUtil.create("div", this._className + "-line", dialogBox), text = DomUtil.create("div", this._className + "-label", line);
+      var line = import_leaflet22.DomUtil.create("div", this._className + "-line", dialogBox), text = import_leaflet22.DomUtil.create("div", this._className + "-label", line);
       text.innerHTML = label;
       return line;
     },
     _addDialogElement: function(line) {
-      return DomUtil.create("div", this._className + "-element", line);
+      return import_leaflet22.DomUtil.create("div", this._className + "-element", line);
     },
     _expand: function() {
-      DomUtil.addClass(this._container, this._className + "-expanded");
+      import_leaflet22.DomUtil.addClass(this._container, this._className + "-expanded");
     },
     _collapse: function() {
       this._container.className = this._container.className.replace(" " + this._className + "-expanded", "");
@@ -14759,7 +14770,7 @@
       return void 0;
     },
     _createButton: function(className, parent, subClassName, fn, title) {
-      var button = DomUtil.create("a", className, parent);
+      var button = import_leaflet22.DomUtil.create("a", className, parent);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;
@@ -14773,7 +14784,7 @@
       return button;
     },
     _createRadioButton: function(className, parent, value, checked, fn, title) {
-      var button = DomUtil.create("input", className, parent);
+      var button = import_leaflet22.DomUtil.create("input", className, parent);
       button.type = "radio";
       button.name = className;
       button.value = value;
@@ -14783,7 +14794,7 @@
           fn(value);
         }, this);
       }
-      var label = DomUtil.create("label", className, parent);
+      var label = import_leaflet22.DomUtil.create("label", className, parent);
       label.htmlFor = button.id = className + "-" + value;
       if (title) {
         label.title = title;
@@ -14791,7 +14802,7 @@
       return button;
     },
     _createSelectMenu: function(className, parent, items, disabled, selected, fn, title) {
-      var div = DomUtil.create("div", className, parent), select = DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [], index;
+      var div = import_leaflet22.DomUtil.create("div", className, parent), select = import_leaflet22.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [], index;
       choose.text = "choose";
       choose.disabled = true;
       if (!selected || selected < 0) {
@@ -14831,7 +14842,7 @@
       return select;
     },
     _createColorPicker: function(className, parent, subClassName, defaultColor, fn, storageKey, title) {
-      var _this = this, colpick = DomUtil.create("input", className, parent);
+      var _this = this, colpick = import_leaflet22.DomUtil.create("input", className, parent);
       colpick.type = "color";
       colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
@@ -14860,7 +14871,7 @@
       return colpick;
     },
     _addSwitchInput: function(layer, box, label, attr, title, id, checked) {
-      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = flipswitch(elem, {
+      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = new FlipSwitch(elem, {
         checked,
         id,
         title
@@ -14871,16 +14882,16 @@
       return elem;
     },
     _addNumericalInput: function(layer, box, label, attr, title, id, initValue, step, min, max, func) {
-      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), spinbox2 = elem.spinbox = spinbox2(elem, {
+      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), spinbox = elem.spinbox = new Spinbox(elem, {
         step,
         dmin: min,
         dmax: max,
         initValue,
         title
       });
-      spinbox2.on("change", function() {
-        VUtils.flashElement(spinbox2._input);
-        this._onInputChange(layer, attr, spinbox2.value(), func);
+      spinbox.on("change", function() {
+        VUtil.flashElement(spinbox._input);
+        this._onInputChange(layer, attr, spinbox.value(), func);
       }, this);
       return elem;
     },
@@ -14912,9 +14923,9 @@
         return this;
       }
       if (this._layerList) {
-        DomUtil.empty(this._layerList);
+        import_leaflet22.DomUtil.empty(this._layerList);
       } else {
-        this._layerList = DomUtil.create(
+        this._layerList = import_leaflet22.DomUtil.create(
           "div",
           "leaflet-control-iip-layerlist",
           this._dialog
@@ -14926,9 +14937,9 @@
       return this;
     },
     _addLayerItem: function(obj) {
-      var _this = this, layerItem = DomUtil.create("div", "leaflet-control-iip-layer"), inputdiv = DomUtil.create("div", "leaflet-control-iip-layerswitch", layerItem);
+      var _this = this, layerItem = import_leaflet22.DomUtil.create("div", "leaflet-control-iip-layer"), inputdiv = import_leaflet22.DomUtil.create("div", "leaflet-control-iip-layerswitch", layerItem);
       if (obj.layer.notReady) {
-        DomUtil.create("div", "leaflet-control-iip-activity", inputdiv);
+        import_leaflet22.DomUtil.create("div", "leaflet-control-iip-activity", inputdiv);
       } else {
         var input, checked = this._map.hasLayer(obj.layer);
         input = document.createElement("input");
@@ -14955,7 +14966,7 @@
         }, this);
         inputdiv.appendChild(input);
       }
-      var name = DomUtil.create("div", "leaflet-control-iip-layername", layerItem);
+      var name = import_leaflet22.DomUtil.create("div", "leaflet-control-iip-layername", layerItem);
       name.innerHTML = " " + obj.name;
       name.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
       this._createButton(
@@ -15002,7 +15013,7 @@
   // js/control/CatalogUI.js
   var CatalogUI = UI.extend({
     defaultCatalogs: [
-      GAIA_DR2,
+      Gaia_DR2,
       TwoMASS,
       SDSS,
       PPMXL,
@@ -15049,12 +15060,12 @@
           if (className2 === void 0) {
             className2 = "";
           }
-          DomUtil.setClass(catselect, this._className + "-select " + className2);
+          import_leaflet23.DomUtil.setClass(catselect, this._className + "-select " + className2);
           return;
         },
         "Select Catalog"
       );
-      DomEvent.on(catselect, "change keyup", function() {
+      import_leaflet23.DomEvent.on(catselect, "change keyup", function() {
         var catalog = catalogs[catselect.selectedIndex - 1];
         catselect.title = catalog.attribution + " from " + catalog.service;
       }, this);
@@ -15066,7 +15077,7 @@
           catalog.color = colpick.value;
           catselect.selectedIndex = 0;
           catselect.title = "Select Catalog";
-          DomUtil.setClass(catselect, this._className + "-select ");
+          import_leaflet23.DomUtil.setClass(catselect, this._className + "-select ");
           this._getCatalog(catalog, this.options.timeOut);
         }
       }, "Query catalog");
@@ -15544,8 +15555,8 @@
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
     },
     onAdd: function(map) {
-      var _this = this, className = "leaflet-control-coords", dialog = this._wcsdialog = DomUtil.create("div", className + "-dialog"), coordSelect = DomUtil.create("select", className + "-select", dialog), choose = document.createElement("option"), coords2 = this.options.coordinates, opt = [], coordIndex;
-      DomEvent.disableClickPropagation(coordSelect);
+      var _this = this, className = "leaflet-control-coords", dialog = this._wcsdialog = import_leaflet25.DomUtil.create("div", className + "-dialog"), coordSelect = import_leaflet25.DomUtil.create("select", className + "-select", dialog), choose = document.createElement("option"), coords2 = this.options.coordinates, opt = [], coordIndex;
+      import_leaflet25.DomEvent.disableClickPropagation(coordSelect);
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
       coordSelect.title = "Switch coordinate system";
@@ -15559,41 +15570,41 @@
         }
         coordSelect.add(opt[c], null);
       }
-      DomEvent.on(coordSelect, "change", function(e) {
+      import_leaflet25.DomEvent.on(coordSelect, "change", function(e) {
         _this._currentCoord = coordSelect.value;
         _this._onDrag();
       });
-      var input = this._wcsinput = DomUtil.create("input", className + "-input", dialog);
-      DomEvent.disableClickPropagation(input);
+      var input = this._wcsinput = import_leaflet25.DomUtil.create("input", className + "-input", dialog);
+      import_leaflet25.DomEvent.disableClickPropagation(input);
       input.type = "text";
       input.title = this.options.title;
       if ("webkitSpeechRecognition" in window) {
         input.setAttribute("x-webkit-speech", "x-webkit-speech");
       }
       map.on("move zoomend", this._onDrag, this);
-      DomEvent.on(input, "focus", function() {
+      import_leaflet25.DomEvent.on(input, "focus", function() {
         this.setSelectionRange(0, this.value.length);
       }, input);
-      DomEvent.on(input, "change", function() {
+      import_leaflet25.DomEvent.on(input, "change", function() {
         this.panTo(this._wcsinput.value);
       }, this);
-      var clipboardbutton = DomUtil.create("div", className + "-clipboard", dialog);
+      var clipboardbutton = import_leaflet25.DomUtil.create("div", className + "-clipboard", dialog);
       clipboardbutton.title = "Copy to clipboard";
-      DomEvent.on(clipboardbutton, "click", function() {
+      import_leaflet25.DomEvent.on(clipboardbutton, "click", function() {
         var stateObj = {}, url = location.href, wcs2 = this._map.options.crs, latlng = map.getCenter();
-        VUtils.flashElement(this._wcsinput);
-        url = VUtils.updateURL(
+        VUtil.flashElement(this._wcsinput);
+        url = VUtil.updateURL(
           url,
           this.options.centerQueryKey,
-          VUtils.latLngToHMSDMS(latlng)
+          VUtil.latLngToHMSDMS(latlng)
         );
-        url = VUtils.updateURL(
+        url = VUtil.updateURL(
           url,
           this.options.fovQueryKey,
           wcs2.zoomToFov(map, map.getZoom(), latlng).toPrecision(4)
         );
         history.pushState(stateObj, "", url);
-        VUtils.copyToClipboard(url);
+        VUtil.copyToClipboard(url);
       }, this);
       return this._wcsdialog;
     },
@@ -15612,7 +15623,7 @@
         }
         switch (coord.units) {
           case "HMS":
-            this._wcsinput.value = VUtils.latLngToHMSDMS(latlng);
+            this._wcsinput.value = VUtil.latLngToHMSDMS(latlng);
             break;
           case "deg":
             this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
@@ -15637,7 +15648,7 @@
           this._map.panTo(latlng);
         }
       } else {
-        VUtils.requestURL(
+        VUtil.requestURL(
           this.options.sesameURL + "/-oI/A?" + str,
           "getting coordinates for " + str,
           this._getCoordinates,
@@ -15692,11 +15703,11 @@
       this._url = url;
     },
     _initDialog: function() {
-      var _this = this, className = this._className, layer = this._layer, frameBox = DomUtil.create(
+      var _this = this, className = this._className, layer = this._layer, frameBox = import_leaflet26.DomUtil.create(
         "div",
         this._className + "-framebox",
         this._dialog
-      ), iframe = this._iframe = DomUtil.create(
+      ), iframe = this._iframe = import_leaflet26.DomUtil.create(
         "iframe",
         this._className + "-doc",
         frameBox
@@ -15706,7 +15717,7 @@
       this._navHistory = [];
       this._navPos = 0;
       this._ignore = false;
-      DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
+      import_leaflet26.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
       var box = this._addDialogBox("leaflet-iipdoc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
       this._homeButton = this._createButton(
         className + "-button",
@@ -15831,12 +15842,12 @@
     },
     onAdd: function(map) {
       this._mainMap = map;
-      this._container = DomUtil.create("div", "leaflet-control-extramap");
+      this._container = import_leaflet27.DomUtil.create("div", "leaflet-control-extramap");
       this._container.style.width = this.options.width + "px";
       this._container.style.height = this.options.height + "px";
       this._container.title = this.options.title;
-      DomEvent.disableClickPropagation(this._container);
-      DomEvent.on(this._container, "mousewheel", DomEvent.stopPropagation);
+      import_leaflet27.DomEvent.disableClickPropagation(this._container);
+      import_leaflet27.DomEvent.on(this._container, "mousewheel", import_leaflet27.DomEvent.stopPropagation);
       this._extraMap = new import_leaflet27.Map(this._container, {
         attributionControl: false,
         zoomControl: false,
@@ -15904,12 +15915,12 @@
       this._toggleDisplayButton.style.height = this.options.collapsedHeight + "px";
     },
     _createButton: function(html, title, className, container, fn, context) {
-      var link = DomUtil.create("a", className, container);
+      var link = import_leaflet27.DomUtil.create("a", className, container);
       link.innerHTML = html;
       link.href = "#";
       link.title = title;
-      var stop = DomEvent.stopPropagation;
-      DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", DomEvent.preventDefault).on(link, "click", fn, context);
+      var stop = import_leaflet27.DomEvent.stopPropagation;
+      import_leaflet27.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet27.DomEvent.preventDefault).on(link, "click", fn, context);
       return link;
     },
     _toggleDisplayButtonClicked: function() {
@@ -16065,18 +16076,18 @@
       if (map.zoomControl && !this.options.forceSeparateButton) {
         container = map.zoomControl._container;
       } else {
-        container = DomUtil.create("div", "leaflet-bar");
+        container = import_leaflet28.DomUtil.create("div", "leaflet-bar");
       }
       this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
       return container;
     },
     _createButton: function(title, className, container, fn, context) {
-      var link = DomUtil.create("a", className, container);
+      var link = import_leaflet28.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
-      DomEvent.addListener(link, "click", DomEvent.stopPropagation).addListener(link, "click", DomEvent.preventDefault).addListener(link, "click", fn, context);
-      DomEvent.addListener(container, fullScreenApi.fullScreenEventName, DomEvent.stopPropagation).addListener(container, fullScreenApi.fullScreenEventName, DomEvent.preventDefault).addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
-      DomEvent.addListener(document, fullScreenApi.fullScreenEventName, DomEvent.stopPropagation).addListener(document, fullScreenApi.fullScreenEventName, DomEvent.preventDefault).addListener(document, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+      import_leaflet28.DomEvent.addListener(link, "click", import_leaflet28.DomEvent.stopPropagation).addListener(link, "click", import_leaflet28.DomEvent.preventDefault).addListener(link, "click", fn, context);
+      import_leaflet28.DomEvent.addListener(container, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.stopPropagation).addListener(container, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.preventDefault).addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+      import_leaflet28.DomEvent.addListener(document, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.stopPropagation).addListener(document, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.preventDefault).addListener(document, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
       return link;
     },
     toogleFullScreen: function() {
@@ -16086,7 +16097,7 @@
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.cancelFullScreen(container);
         } else {
-          DomUtil.removeClass(container, "leaflet-pseudo-fullscreen");
+          import_leaflet28.DomUtil.removeClass(container, "leaflet-pseudo-fullscreen");
         }
         this.invalidateSize();
         this.fire("exitFullscreen");
@@ -16096,7 +16107,7 @@
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.requestFullScreen(container);
         } else {
-          DomUtil.addClass(container, "leaflet-pseudo-fullscreen");
+          import_leaflet28.DomUtil.addClass(container, "leaflet-pseudo-fullscreen");
         }
         this.invalidateSize();
         this.fire("enterFullscreen");
@@ -16315,7 +16326,7 @@
       this._layers = baseLayers;
     },
     _initDialog: function() {
-      var className = this._className, catalogs = [GAIA_DR2, TwoMASS, SDSS, PPMXL, Abell], elem;
+      var className = this._className, catalogs = [Gaia_DR2, TwoMASS, SDSS, PPMXL, Abell], elem;
       elem = this._addDialogLine('<a id="logo-cds" href="http://cds.u-strasbg.fr">&nbsp;</a> catalog:');
       var catcolpick = import_leaflet30.DomUtil.create("input", className + "-catalogs", elem);
       catcolpick.id = "leaflet-catalog-colorpicker";
@@ -16991,7 +17002,7 @@
           geoRegion.addTo(_this._map);
           _this.removeLayer(templayer);
           _this.addLayer(geoRegion, region.name, region.index);
-          DomEvent.on(geoRegion, "trash", function(e) {
+          import_leaflet32.DomEvent.on(geoRegion, "trash", function(e) {
             if (e.index || e.index === 0) {
               _this._regionSelect.opt[e.index].disabled = false;
             }
@@ -17168,7 +17179,7 @@
     },
     initialize: function(options) {
       var i, child;
-      Util.setOptions(this, options);
+      import_leaflet35.Util.setOptions(this, options);
       this._sidebar = import_leaflet35.DomUtil.create("div", "leaflet-container sidebar");
       if (this.options.collapsed) {
         import_leaflet35.DomUtil.addClass(this._sidebar, "collapsed");
@@ -17176,7 +17187,7 @@
         import_leaflet35.DomUtil.addClass(this._sidebar, "closed");
       }
       import_leaflet35.DomUtil.addClass(this._sidebar, "sidebar-" + this.options.position);
-      if (Browser.touch) {
+      if (import_leaflet35.Browser.touch) {
         import_leaflet35.DomUtil.addClass(this._sidebar, "leaflet-touch");
       }
       this._tabs = import_leaflet35.DomUtil.create("div", "sidebar-tabs", this._sidebar);
@@ -17538,7 +17549,7 @@
       return (0, import_leaflet38.point)(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p) + this.projparam.y0);
     }
   });
-  var COE = Projection.conical.extend({
+  var COE = Conical.extend({
     _paramInit: function(projparam) {
       var deg = Math.PI / 180;
       this.projparam = projparam;
@@ -17620,12 +17631,12 @@
     _paramInit: function(projparam) {
       this.projparam = projparam;
       projparam.cdinv = this._invertCD(projparam.cd);
-      projparam.natrval = latLng(90, 0);
+      projparam.natrval = (0, import_leaflet40.latLng)(90, 0);
       projparam.natpole = this._natpole();
       projparam.cpole = this._cpole();
     },
     _redToPhiR: function(red) {
-      return latLng(
+      return (0, import_leaflet40.latLng)(
         Math.sqrt(red.x * red.x + red.y * red.y),
         Math.atan2(red.x, -red.y) * 180 / Math.PI
       );
@@ -17741,7 +17752,7 @@
       ]
     },
     initialize: function(hdr, options) {
-      options = Util.setOptions(this, options);
+      options = import_leaflet42.Util.setOptions(this, options);
       var defaultparam = this.defaultparam;
       this.tileSize = (0, import_leaflet42.point)(options.tileSize);
       this.nzoom = options.nzoom;
@@ -18442,6 +18453,25 @@
   var vTileLayer = function(url, options) {
     return new VTileLayer(url, options);
   };
+
+  // js/VisiomaticGlobal.js
+  function getGlobalObject() {
+    if (typeof globalThis !== "undefined") {
+      return globalThis;
+      if (typeof self !== "undefined") {
+        return self;
+      }
+      if (typeof window !== "undefined") {
+        return window;
+      }
+    }
+    if (typeof global !== "undefined") {
+      return global;
+    }
+    throw new Error("Unable to locate global object.");
+  }
+  var globalObject = getGlobalObject();
+  globalObject.V = Visiomatic_exports;
 })();
 /* @preserve
  * Leaflet 1.9.3, a JS library for interactive maps. https://leafletjs.com

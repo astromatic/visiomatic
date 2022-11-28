@@ -35,7 +35,7 @@
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"build": "esbuild js/index.js --bundle --outfile=dist/visiomatic.js --watch",
+		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
 		"lint": "eslint .",
 		"test": "npm run unit"
 	}
