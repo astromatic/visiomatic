@@ -28,11 +28,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {Browser, Control, DomEvent, DomUtil, Util} from 'leaflet';
+import {Browser, Control, DomEvent, DomUtil, Evented, Util} from 'leaflet';
 
 
 export const Sidebar = Control.extend({
-	includes: L.Mixin.Events,
+	includes: Evented && Evented.prototype,
 
 	options: {
 		position: 'left',

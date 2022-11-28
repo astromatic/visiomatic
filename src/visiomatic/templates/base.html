@@ -37,16 +37,7 @@
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
 					channelLabels: ['data', 'weights'],
 					reuseTiles: true
-				}).addTo(map),
-				minivlayer = V.layer.vTileLayer(url, {
-					mixingMode: args['mode'] ? args['mode'] : 'mono',
-					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
-					minMaxValues: [2100,5000],
-					contrast: 1.0,
-					gamma: 2.2,
-					colorSat: 1.5,
-					reuseTiles: true
-				});
+				}).addTo(map);
 
         V.control.fullScreen().addTo(map);
 		V.control.scale({pixels: false}).addTo(map);
@@ -55,7 +46,15 @@
 			{label: 'RA,Dec', units: 'HMS'},
 		], position: 'topright'}).addTo(map);
 
-		var minimap = V.control.extraMap(minivlayer, {
+		var minivlayer = V.layer.vTileLayer(url, {
+					mixingMode: args['mode'] ? args['mode'] : 'mono',
+					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
+					contrast: 1.0,
+					gamma: 2.2,
+					colorSat: 1.5,
+					reuseTiles: true
+				}),
+            minimap = V.control.extraMap(minivlayer, {
 					position: 'topright',
 					width: 192,
 					height: 192,

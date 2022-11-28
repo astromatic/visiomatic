@@ -475,7 +475,7 @@
         Events.addOneTimeEventListener = Events.once;
         Events.fireEvent = Events.fire;
         Events.hasEventListeners = Events.listens;
-        var Evented3 = Class3.extend(Events);
+        var Evented4 = Class3.extend(Events);
         function Point3(x, y, round) {
           this.x = round ? Math.round(x) : x;
           this.y = round ? Math.round(y) : y;
@@ -1675,7 +1675,7 @@
           addListener: on,
           removeListener: off
         };
-        var PosAnimation = Evented3.extend({
+        var PosAnimation = Evented4.extend({
           run: function(el, newPos, duration, easeLinearity) {
             this.stop();
             this._el = el;
@@ -1725,7 +1725,7 @@
             return 1 - Math.pow(1 - t, this._easeOutPower);
           }
         });
-        var Map5 = Evented3.extend({
+        var Map5 = Evented4.extend({
           options: {
             crs: EPSG3857,
             center: void 0,
@@ -3315,7 +3315,7 @@
         };
         var Mixin = { Events };
         var START = Browser5.touch ? "touchstart mousedown" : "mousedown";
-        var Draggable = Evented3.extend({
+        var Draggable = Evented4.extend({
           options: {
             clickTolerance: 3
           },
@@ -3762,7 +3762,7 @@
         CRS2.EPSG900913 = EPSG900913;
         CRS2.EPSG4326 = EPSG4326;
         CRS2.Simple = Simple;
-        var Layer = Evented3.extend({
+        var Layer = Evented4.extend({
           options: {
             pane: "overlayPane",
             attribution: null,
@@ -8070,7 +8070,7 @@
         exports2.DomEvent = DomEvent13;
         exports2.DomUtil = DomUtil17;
         exports2.Draggable = Draggable;
-        exports2.Evented = Evented3;
+        exports2.Evented = Evented4;
         exports2.FeatureGroup = FeatureGroup;
         exports2.GeoJSON = GeoJSON;
         exports2.GridLayer = GridLayer;
@@ -30100,7 +30100,7 @@
   import_leaflet18.Map.addInitHook(function() {
     if (this.options.visiomaticLogo !== false && this.options.attributionControl) {
       this.attributionControl.setPrefix(
-        '<a id="logo-visiomatic" class="leaflet-control-attribution-logo"href="http://visiomatic.org">&nbsp;</a>'
+        '<a id="logo-cfht" class="leaflet-control-attribution-logo"href="http://www.cfht.hawaii.edu">&nbsp;</a><a id="logo-visiomatic" class="leaflet-control-attribution-logo"href="http://visiomatic.org">&nbsp;</a>'
       );
     }
   });
@@ -31735,7 +31735,7 @@
   var import_leaflet28 = __toESM(require_leaflet_src());
   var ExtraMap = import_leaflet28.Control.extend({
     options: {
-      position: "bottomright",
+      position: "topright",
       title: "Navigation mini-map. Grab to navigate",
       toggleDisplay: true,
       zoomLevelFixed: false,
@@ -33086,7 +33086,7 @@
   // js/control/Sidebar.js
   var import_leaflet36 = __toESM(require_leaflet_src());
   var Sidebar = import_leaflet36.Control.extend({
-    includes: L.Mixin.Events,
+    includes: import_leaflet36.Evented && import_leaflet36.Evented.prototype,
     options: {
       position: "left",
       title: "Toggle advanced menu",

@@ -44,7 +44,7 @@ import {
 
 export const ExtraMap = Control.extend({
 	options: {
-		position: 'bottomright',
+		position: 'topright',
 		title: 'Navigation mini-map. Grab to navigate',
 		toggleDisplay: true,
 		zoomLevelFixed: false,
