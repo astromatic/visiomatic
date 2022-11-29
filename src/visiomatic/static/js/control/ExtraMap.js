@@ -102,7 +102,6 @@ export const ExtraMap = Control.extend({
 			doubleClickZoom: !this._isZoomLevelFixed(),
 			boxZoom: !this._isZoomLevelFixed()
 		});
-
 		this._layer.addTo(this._extraMap);
 
 		// These bools are used to prevent infinite loops of the two maps notifying
@@ -118,23 +117,22 @@ export const ExtraMap = Control.extend({
 			this._addToggleButton();
 		}
 
-		this._layer.once('metaload', function () {
-			this._mainMap.whenReady(Util.bind(function () {
-				this._extraMap.whenReady(Util.bind(function () {
-					this._aimingRect = rectangle(this._mainMap.getBounds(),
-					  this.options.aimingRectOptions).addTo(this._extraMap);
-					this._shadowRect = rectangle(this._mainMap.getBounds(),
-					  this.options.shadowRectOptions).addTo(this._extraMap);
-					this._mainMap.on('moveend', this._onMainMapMoved, this);
-					this._mainMap.on('move', this._onMainMapMoving, this);
-					this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
-					this._extraMap.on('move', this._onExtraMapMoving, this);
-					this._extraMap.on('moveend', this._onExtraMapMoved, this);
-					this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
-					this._setDisplay(this._decideMinimized());
-				}, this));
+		this._mainMap.whenReady(Util.bind(function () {
+			this._extraMap.whenReady(Util.bind(function () {
+				this._aimingRect = rectangle(this._mainMap.getBounds(),
+					this.options.aimingRectOptions).addTo(this._extraMap);
+				this._shadowRect = rectangle(this._mainMap.getBounds(),
+					this.options.shadowRectOptions).addTo(this._extraMap);
+				this._mainMap.on('moveend', this._onMainMapMoved, this);
+				this._mainMap.on('move', this._onMainMapMoving, this);
+				this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
+				this._extraMap.on('move', this._onExtraMapMoving, this);
+				this._extraMap.on('moveend', this._onExtraMapMoved, this);
+				this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+				this._setDisplay(this._decideMinimized());
 			}, this));
-		}, this);
+		}, this));
+
 
 		return this._container;
 	},

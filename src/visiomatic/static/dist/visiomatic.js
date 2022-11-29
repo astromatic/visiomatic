@@ -30100,7 +30100,7 @@
   import_leaflet18.Map.addInitHook(function() {
     if (this.options.visiomaticLogo !== false && this.options.attributionControl) {
       this.attributionControl.setPrefix(
-        '<a id="logo-cfht" class="leaflet-control-attribution-logo"href="http://www.cfht.hawaii.edu">&nbsp;</a><a id="logo-visiomatic" class="leaflet-control-attribution-logo"href="http://visiomatic.org">&nbsp;</a>'
+        '<a id="logo-visiomatic" class="leaflet-control-attribution-logo"href="http://visiomatic.org">&nbsp;</a>'
       );
     }
   });
@@ -31790,27 +31790,25 @@
       if (this.options.toggleDisplay) {
         this._addToggleButton();
       }
-      this._layer.once("metaload", function() {
-        this._mainMap.whenReady(import_leaflet28.Util.bind(function() {
-          this._extraMap.whenReady(import_leaflet28.Util.bind(function() {
-            this._aimingRect = (0, import_leaflet28.rectangle)(
-              this._mainMap.getBounds(),
-              this.options.aimingRectOptions
-            ).addTo(this._extraMap);
-            this._shadowRect = (0, import_leaflet28.rectangle)(
-              this._mainMap.getBounds(),
-              this.options.shadowRectOptions
-            ).addTo(this._extraMap);
-            this._mainMap.on("moveend", this._onMainMapMoved, this);
-            this._mainMap.on("move", this._onMainMapMoving, this);
-            this._extraMap.on("movestart", this._onExtraMapMoveStarted, this);
-            this._extraMap.on("move", this._onExtraMapMoving, this);
-            this._extraMap.on("moveend", this._onExtraMapMoved, this);
-            this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
-            this._setDisplay(this._decideMinimized());
-          }, this));
+      this._mainMap.whenReady(import_leaflet28.Util.bind(function() {
+        this._extraMap.whenReady(import_leaflet28.Util.bind(function() {
+          this._aimingRect = (0, import_leaflet28.rectangle)(
+            this._mainMap.getBounds(),
+            this.options.aimingRectOptions
+          ).addTo(this._extraMap);
+          this._shadowRect = (0, import_leaflet28.rectangle)(
+            this._mainMap.getBounds(),
+            this.options.shadowRectOptions
+          ).addTo(this._extraMap);
+          this._mainMap.on("moveend", this._onMainMapMoved, this);
+          this._mainMap.on("move", this._onMainMapMoving, this);
+          this._extraMap.on("movestart", this._onExtraMapMoveStarted, this);
+          this._extraMap.on("move", this._onExtraMapMoving, this);
+          this._extraMap.on("moveend", this._onExtraMapMoved, this);
+          this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+          this._setDisplay(this._decideMinimized());
         }, this));
-      }, this);
+      }, this));
       return this._container;
     },
     addTo: function(map) {

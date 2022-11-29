@@ -40,8 +40,6 @@ Map.addInitHook(function () {
 	if (this.options.visiomaticLogo !== false &&
 	 this.options.attributionControl) {
 		this.attributionControl.setPrefix(
-			'<a id="logo-cfht" class="leaflet-control-attribution-logo"' +
-			 'href="http://www.cfht.hawaii.edu">&nbsp;</a>' +
 			'<a id="logo-visiomatic" class="leaflet-control-attribution-logo"' +
 			 'href="http://visiomatic.org">&nbsp;</a>'
 		);

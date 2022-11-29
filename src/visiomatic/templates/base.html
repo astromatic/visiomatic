@@ -46,7 +46,7 @@
 			{label: 'RA,Dec', units: 'HMS'},
 		], position: 'topright'}).addTo(map);
 
-		var minivlayer = V.layer.vTileLayer(url, {
+		var	minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
 					contrast: 1.0,
@@ -54,7 +54,7 @@
 					colorSat: 1.5,
 					reuseTiles: true
 				}),
-            minimap = V.control.extraMap(minivlayer, {
+				minimap = V.control.extraMap(minivlayer, {
 					position: 'topright',
 					width: 192,
 					height: 192,
