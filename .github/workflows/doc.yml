@@ -30,10 +30,16 @@ jobs:
           pip3 install -r doc/requirements.txt
           npm install -g jsdoc
 
-      - name: Build
+      - name: Build server doc
         run: |
           cd doc
           make html
+
+      - name: Build client doc
+        run: |
+          cd src/visiomatic/static
+          npm run docs
+          cp -rf doc ../../../doc/build/html/client
 
       - name: Set destination dir
         if: github.ref_name != 'main'
