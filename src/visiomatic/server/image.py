@@ -7,6 +7,8 @@ Image module
 import io, os, re
 from typing import List, Optional, Tuple, Union
 from joblib import Parallel, delayed
+from pydantic import BaseModel
+
 import numpy as np
 import cv2
 from simplejpeg import encode_jpeg
@@ -14,6 +16,14 @@ from astropy.io import fits
 from tiler import Tiler
 
 from .settings import app_settings 
+
+class ImageModel(BaseModel):
+    size: List[int]
+    datasec: List[int]
+    detsec: List[int]
+    min_max: List[List[float]]
+    header_dict: dict
+
 
 class Image(object):
     """
@@ -48,6 +58,16 @@ class Image(object):
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
 
+    def get_model(self) -> ImageModel:
+        return ImageModel(
+            size=self.shape,
+            datasec=self.datasec,
+            detsec=self.detsec,
+            min_max=[list(self.minmax)],
+            header_dict=dict(self.header.items())
+        )
+
+
     def get_header(self) -> str:
         """
         Get the image header as a string.
@@ -58,6 +78,7 @@ class Image(object):
             Image header string.
         """
         return self.header.tostring()
+
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
@@ -126,6 +147,16 @@ class Image(object):
         return self.minmax
 
 
+class TiledModel(BaseModel):
+    version: str
+    full_size: List[int]
+    tile_size: List[int]
+    tile_levels: int
+    channels: int
+    bits_per_channel: int 
+    images: List[ImageModel]
+
+
 class Tiled(object):
     """
     Class for the tiled image pyramid to be visualized.
@@ -177,7 +208,7 @@ class Tiled(object):
         else:
             image = self.images[0]
             self.bitdepth = image.bitdepth
-            self.header = image.header
+            self.headers = [image.header]
             self.data = image.data
             self.shape = image.shape
             self.minmax = image.minmax
@@ -186,6 +217,18 @@ class Tiled(object):
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.make_tiles()
+
+
+    def get_model(self) -> TiledModel:
+        return TiledModel(
+            version="3.0",
+            full_size=self.shape,
+            tile_size=self.tilesize,
+            tile_levels=self.nlevels,
+            channels=1,
+            bits_per_channel=32,
+            images=[image.get_model() for image in self.images]
+        )
 
 
     def make_mosaic(self, images : List[Image]) -> None:
@@ -230,7 +273,7 @@ class Tiled(object):
                         slice(image.datasec[2] - 1, image.datasec[3]), \
                         slice(image.datasec[0] - 1, image.datasec[1])
                 self.data[image.detslice] = image.data[image.dataslice]
-            self.header = images[0].header
+            self.headers = [image.header for image in images]
             self.shape = self.data.shape
             self.minmax =  np.median(
                 np.array([image.minmax for image in images]),
@@ -248,15 +291,15 @@ class Tiled(object):
         header: str
             IIP image header.
         """
-        str = "IIP:1.0\n"
-        str += f"Max-size:{self.shape[1]} {self.shape[0]}\n"
-        str += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
-        str += f"Resolution-number:{self.nlevels}\n"
-        str += f"Bits-per-channel:{self.bitdepth}\n"
-        str += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
-        str2 = self.header.tostring()
-        str += f"subject/{len(str2)}:{str2}"
-        return str
+        string = "IIP:1.0\n"
+        string += f"Max-size:{self.shape[1]} {self.shape[0]}\n"
+        string += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
+        string += f"Resolution-number:{self.nlevels}\n"
+        string += f"Bits-per-channel:{self.bitdepth}\n"
+        string += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
+        string2 = "".join([header.tostring() for header in self.headers])
+        string += f"subject/{len(string2)}:{string2}"
+        return string
 
 
     def scale_tile(

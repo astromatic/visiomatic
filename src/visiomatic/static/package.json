@@ -2,43 +2,71 @@
 	"name": "visiomatic",
 	"version": "3.0.0",
 	"description": "Astronomical image client viewer",
-    "homepage": "https://github.com/ebertin/pypu#readme",
-    "author": "Emmanuel Bertin (IAP/CNRS/SorbonneU/CFHT)",
+	"homepage": "https://github.com/ebertin/pypu#readme",
+	"author": "Emmanuel Bertin (IAP/CNRS/SorbonneU/CFHT)",
 	"contributors": [
 		"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
 		"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
 		"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
 	],
 	"license": "MIT",
-    "keywords": [
-        "astronomy",
+	"keywords": [
+		"astronomy",
 		"wcs",
-        "imaging"
-    ],
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/ebertin/visiomatic-server.git"
-    },
-    "bugs": {
-        "url": "https://github.com/ebertin/pypu/issues"
-    },
+		"imaging"
+	],
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ebertin/visiomatic-server.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ebertin/visiomatic-server/issues"
+	},
 	"dependencies": {
-		"leaflet": "~1.7"
+		"html2canvas": "~1.4.1",
+		"jqplot-exported": "~1.0.9-pm.4",
+		"jquery": "~2.1.4",
+		"leaflet": "~1.9.3",
+		"spectrum-colorpicker": "~1.8.1"
 	},
 	"devDependencies": {
-		"jshint": "~2.2.0",
-		"mocha": "~1.10.0",
-		"happen": "~0.1.2",
-		"karma": "~0.8.6",
-		"uglify-js": "~>2.6.0",
-		"jake": "~0.5.16",
-		"jquery": "~2.1.4",
-        "esbuild": "^0.14.53"
+		"esbuild": "^0.14.53",
+		"eslint": "^8.23.1",
+		"jsdoc": "~>3.6.3"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-        "build": "jake",
-        "test": "npm run unit"
+		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
+		"docs": "jsdoc --recurse --verbose --destination doc js",
+		"lint": "eslint .",
+		"test": "npm run unit"
+	},
+	"eslintConfig": {
+		"ignorePatterns": [
+			"dist"
+		],
+		"parserOptions": {
+			"ecmaVersion": "latest",
+			"sourceType": "module"
+		},
+		"env": {
+			"node": true,
+			"es6": true
+		},
+		"rules": {
+			"curly": "error",
+			"indent": ["error", "tab"],
+			"key-spacing": "off",
+			"linebreak-style": ["off", "unix"],
+			"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+			"no-unused-expressions": ["error"],
+			"spaced-comment": "error",
+			"strict": "off",
+			"wrap-iife": "off",
+			"no-invalid-this": "off",
+			"prefer-object-has-own": "error",
+			"prefer-spread": "off"
+		}
 	}
 }
