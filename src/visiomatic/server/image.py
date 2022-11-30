@@ -50,11 +50,12 @@ class Image(object):
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
         self.shape = [self.header["NAXIS1"], self.header["NAXIS2"]]
-        datasec = self.parse_2dslice(self.header.get("DATASEC", ""))
-        self.datasec = tuple(datasec) \
+        self.datasec = datasec \
             if (datasec := self.parse_2dslice(self.header.get("DATASEC", ""))) \
             else [1, self.shape[0], 1, self.shape[1]]
-        self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
+        self.detsec = detsec \
+        	if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
+        	else self.datasec
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
 
@@ -82,7 +83,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> Tuple[Union[int, None]]:
+    def parse_2dslice(self, str: str) -> Tuple[Union[int], None]:
         """
         Parse a string representation of a 2D slice.
 
@@ -97,7 +98,7 @@ class Image(object):
             4-tuple representing the slice parameters or 4-tuple of Nones if not found.
         """
         coords = self.re_2dslice.findall(str)
-        return [int(s) for s in coords[0]] if coords else [None, None, None, None]
+        return [int(s) for s in coords[0]] if coords else None
 
 
     def compute_background(self, skip : int = 15) -> None:
