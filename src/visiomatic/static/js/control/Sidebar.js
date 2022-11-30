@@ -85,16 +85,16 @@ export const Sidebar = Control.extend({
 	 * @returns {L.Control.Sidebar}
 	 */
 	addTo: function (map) {
-		var className = 'leaflet-control-zoom-sidebar',
-				parent = map._controlContainer,
+		var	className = 'leaflet-control-zoom-sidebar',
+			parent = map._controlContainer,
 		    buttonContainer;
 	
 		// Create sidebar
 		DomUtil.addClass(map._container, 'sidebar-map');
 		parent.insertBefore(this._sidebar, parent.firstChild);
 		DomEvent
-				.disableClickPropagation(this._sidebar)
-				.disableScrollPropagation(this._sidebar);
+			.disableClickPropagation(this._sidebar)
+			.disableScrollPropagation(this._sidebar);
 
 		this._map = map;
 

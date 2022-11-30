@@ -159,14 +159,14 @@ SVG.include({
 		    r = layer._minAxis,
 		    r2 = layer._majAxis,
 		    dx = r * Math.cos(layer._posAngle * deg),
-				dy = r * Math.sin(layer._posAngle * deg),
+			dy = r * Math.sin(layer._posAngle * deg),
 		    arc = 'a' + r + ',' + r2 + ' ' + layer._posAngle + ' 1,0 ';
 
 		// drawing a circle with two half-arcs
-		var d = layer._empty() ? 'M0 0' :
-				'M' + (p.x - dx) + ',' + (p.y - dy) +
-				arc + (dx * 2) + ',' + (dy * 2) + ' ' +
-				arc + (-dx * 2) + ',' + (-dy * 2) + ' ';
+		var	d = layer._empty() ? 'M0 0' :
+			'M' + (p.x - dx) + ',' + (p.y - dy) +
+			arc + (dx * 2) + ',' + (dy * 2) + ' ' +
+			arc + (-dx * 2) + ',' + (-dy * 2) + ' ';
 
 		this._setPath(layer, d);
 	}

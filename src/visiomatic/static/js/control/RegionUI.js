@@ -59,14 +59,14 @@ export const RegionUI = UI.extend({
 			);
 
 		var	select = this._regionSelect = this._createSelectMenu(
-				this._className + '-select',
-				elem,
-				regions.map(function (o) { return o.name; }),
-				regions.map(function (o) { return (o.load ? true : false); }),
-				-1,
-				undefined,
-				'Select region'
-			);
+			this._className + '-select',
+			elem,
+			regions.map(function (o) { return o.name; }),
+			regions.map(function (o) { return (o.load ? true : false); }),
+			-1,
+			undefined,
+			'Select region'
+		);
 
 		elem = this._addDialogElement(line);
 		this._createButton(className + '-button',
@@ -104,10 +104,10 @@ export const RegionUI = UI.extend({
 	},
 
 	_getRegion: function (region, timeout) {
-		var _this = this,
-		    map = this._map,
-				wcs = map.options.crs,
-				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+		var	_this = this,
+			map = this._map,
+			wcs = map.options.crs,
+			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
 		    templayer = new LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
@@ -123,32 +123,34 @@ export const RegionUI = UI.extend({
 	_loadRegion: function (region, templayer, _this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var wcs = _this._map.options.crs,
-				 response = httpRequest.responseText,
-				 geoRegion = geoJson(JSON.parse(response), {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.description) {
-							layer.bindPopup(feature.properties.description);
-						} else if (region.description) {
-							layer.bindPopup(region.description);
+				var	wcs = _this._map.options.crs,
+					response = httpRequest.responseText,
+					geoRegion = geoJson(
+						JSON.parse(response), {
+							onEachFeature: function (feature, layer) {
+								if (feature.properties && feature.properties.description) {
+									layer.bindPopup(feature.properties.description);
+								} else if (region.description) {
+									layer.bindPopup(region.description);
+								}
+							},
+							coordsToLatLng: function (coords) {
+								if (wcs.forceNativeCelsys) {
+									var latLng = wcs.eqToCelsys(latLng(coords[1], coords[0]));
+									return new LatLng(latLng.lat, latLng.lng, coords[2]);
+								} else {
+									return new LatLng(coords[1], coords[0], coords[2]);
+								}
+							},
+							style: function (feature) {
+								return {color: region.color, weight: 2};
+							},
+							pointToLayer: function (feature, latlng) {
+								return region.drawPoint ?
+									region.drawPoint(feature, latlng) : marker(latlng);
+							}
 						}
-					},
-					coordsToLatLng: function (coords) {
-						if (wcs.forceNativeCelsys) {
-							var latLng = wcs.eqToCelsys(latLng(coords[1], coords[0]));
-							return new LatLng(latLng.lat, latLng.lng, coords[2]);
-						} else {
-							return new LatLng(coords[1], coords[0], coords[2]);
-						}
-					},
-					style: function (feature) {
-						return {color: region.color, weight: 2};
-					},
-					pointToLayer: function (feature, latlng) {
-						return region.drawPoint ?
-						  region.drawPoint(feature, latlng) : marker(latlng);
-					}
-				});
+					);
 				geoRegion.nameColor = region.color;
 				geoRegion.addTo(_this._map);
 				_this.removeLayer(templayer);

@@ -13,11 +13,11 @@ import {
 
 
 export const VUtil = {
-// Definitions for RegExp
+	// Definitions for RegExp
 	REG_PDEC: '(\\d+\\.\\d*)',
 	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
 
-// Ajax call to server
+	// Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
 		var	httpRequest;
 
@@ -144,7 +144,7 @@ export const VUtil = {
 		}
 	},
 
-// Return the distance between two world coords latLng1 and latLng2 in degrees
+	// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,

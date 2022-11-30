@@ -54,8 +54,8 @@ export const CEA = Cylindrical.extend({
 
 	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
 	_redToPhiR: function (red) {
-		var deg = Math.PI / 180.0,
-				slat = red.y * this.projparam.lambda * deg;
+		var	deg = Math.PI / 180.0,
+			slat = red.y * this.projparam.lambda * deg;
 		return latLng(slat > -1.0 ?
 		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
 	},

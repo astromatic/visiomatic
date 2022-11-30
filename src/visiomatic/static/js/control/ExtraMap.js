@@ -109,7 +109,7 @@ export const ExtraMap = Control.extend({
 		// this._mainMapMoving = false;
 		// this._extraMapMoving = false;
 
-		//Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
+		// Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
 		this._userToggledDisplay = false;
 		this._minimized = false;
 

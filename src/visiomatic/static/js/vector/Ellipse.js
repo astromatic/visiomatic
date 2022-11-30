@@ -52,28 +52,33 @@ export const Ellipse = EllipseMarker.extend({
 
 		this._point = map.latLngToLayerPoint(this._latlng);
 		if (!this._majAxis1) {
-			var lng = this._latlng.lng,
-			    lat = this._latlng.lat,
-					deg = Math.PI / 180.0,
-					clat = Math.cos(lat * deg),
-					dl = lat < 90.0 ? 0.001 : -0.001,
-					point = crs.project(this._latlng),
+			var	lng = this._latlng.lng,
+				lat = this._latlng.lat,
+				deg = Math.PI / 180.0,
+				clat = Math.cos(lat * deg),
+				dl = lat < 90.0 ? 0.001 : -0.001,
+				point = crs.project(this._latlng),
 			    dpointdlat = crs.project(latLng(lat + dl, lng)).subtract(point),
-			    dpointdlng = crs.project(latLng(lat, lng + dl * 1.0 /
-					  (clat > dl ? clat : dl))).subtract(point),
-					c11 = dpointdlat.x / dl,
-					c12 = dpointdlng.x / dl,
-					c21 = dpointdlat.y / dl,
-					c22 = dpointdlng.y / dl,
-				  mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 +
-			  2.0 * c11 * c12 * this._mLatLng,
-				  my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 +
-			  2.0 * c21 * c22 * this._mLatLng,
-				  mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 +
-			  (c11 * c22 + c12 * c21) * this._mLatLng,
-				  a1 = 0.5 * (mx2 + my2),
-				  a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy),
-				  a3 = mx2 * my2 - mxy * mxy;
+			    dpointdlng = crs.project(
+					latLng(
+						lat,
+						lng + dl * 1.0 /
+						(clat > dl ? clat : dl)
+					)
+				).subtract(point),
+				c11 = dpointdlat.x / dl,
+				c12 = dpointdlng.x / dl,
+				c21 = dpointdlat.y / dl,
+				c22 = dpointdlng.y / dl,
+				mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 +
+					2.0 * c11 * c12 * this._mLatLng,
+				my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 +
+					2.0 * c21 * c22 * this._mLatLng,
+				mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 +
+					(c11 * c22 + c12 * c21) * this._mLatLng,
+				a1 = 0.5 * (mx2 + my2),
+				a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy),
+				a3 = mx2 * my2 - mxy * mxy;
 			this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
 			this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0.0;
 			this._posAngle = 0.5 * Math.atan2(2.0 * mxy, mx2 - my2) / deg;

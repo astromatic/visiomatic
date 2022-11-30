@@ -38,6 +38,6 @@ export const Reticle = Control.extend({
 });
 
 export const reticle = function (options) {
-    return new Reticle(options);
+	return new Reticle(options);
 };
 

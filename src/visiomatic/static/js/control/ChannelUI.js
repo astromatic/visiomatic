@@ -9,10 +9,6 @@
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
 import {DomEvent, DomUtil, Util}  from 'leaflet';
 
 import {UI} from './UI';
@@ -97,39 +93,41 @@ export const ChannelUI = UI.extend({
 
 		// Create Mode selection control section
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
-		  (this._mode === 'mono'), function () {
-			// Save previous settings 
-			_this.saveSettings(layer, _this._settings, _this._mode);
+			(this._mode === 'mono'), function () {
+				// Save previous settings 
+				_this.saveSettings(layer, _this._settings, _this._mode);
 
-			// Remove previous dialogs
-			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
-				box.removeChild(elem);
-			}
-			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
-				dialog.removeChild(elem);
-			}
-			_this._channelList = undefined;
-			_this.loadSettings(layer, _this._settings, 'mono');
-			_this._initMonoDialog(layer, box);
-			_this._mode = 'mono';
-		}, 'Select mono-channel palettized mode');
+				// Remove previous dialogs
+				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+					box.removeChild(elem);
+				}
+				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+					dialog.removeChild(elem);
+				}
+				_this._channelList = undefined;
+				_this.loadSettings(layer, _this._settings, 'mono');
+				_this._initMonoDialog(layer, box);
+				_this._mode = 'mono';
+			}, 'Select mono-channel palettized mode'
+		);
 
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
-		  (this._mode !== 'mono'), function () {
-			// Save previous settings 
-			_this.saveSettings(layer, _this._settings, _this._mode);
-			// Remove previous dialogs
-			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
-				box.removeChild(elem);
-			}
-			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
-				dialog.removeChild(elem);
-			}
-			_this.loadSettings(layer, _this._settings, 'color');
-			_this._channelList = undefined;
-			_this._initColorDialog(layer, box);
-			_this._mode = 'color';
-		}, 'Select color mixing mode');
+			(this._mode !== 'mono'), function () {
+				// Save previous settings 
+				_this.saveSettings(layer, _this._settings, _this._mode);
+				// Remove previous dialogs
+				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+					box.removeChild(elem);
+				}
+				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+					dialog.removeChild(elem);
+				}
+				_this.loadSettings(layer, _this._settings, 'color');
+				_this._channelList = undefined;
+				_this._initColorDialog(layer, box);
+				_this._mode = 'color';
+			}, 'Select color mixing mode'
+		);
 
 		if (_this._mode === 'mono') {
 			_this._initMonoDialog(layer, box);
@@ -304,8 +302,10 @@ export const ChannelUI = UI.extend({
 			.step(step)
 			.off('change')
 			.on('change', function () {
-				_this._onInputChange(layer, 'iipMinValue[' + chan + ']',
-				_this._minElem.spinbox.value());
+				_this._onInputChange(
+					layer, 'iipMinValue[' + chan + ']',
+					_this._minElem.spinbox.value()
+				);
 			}, this);
 
 		this._maxElem.spinbox
@@ -313,8 +313,10 @@ export const ChannelUI = UI.extend({
 			.step(step)
 			.off('change')
 			.on('change', function () {
-				_this._onInputChange(layer, 'iipMaxValue[' + chan + ']',
-				_this._maxElem.spinbox.value());
+				_this._onInputChange(
+					layer, 'iipMaxValue[' + chan + ']',
+					_this._maxElem.spinbox.value()
+				);
 			}, this);
 	},
 
@@ -325,18 +327,18 @@ export const ChannelUI = UI.extend({
 	},
 
 	_updateChannelList: function (layer) {
-		var chanLabels = layer.iipChannelLabels,
-		    chanList = this._channelList,
-				chanElems = this._channelElems,
-				trashElems = this._trashElems,
-		    chanElem, trashElem, rgb, color, label, c, chan;
+		var	chanLabels = layer.iipChannelLabels,
+			chanList = this._channelList,
+			chanElems = this._channelElems,
+			trashElems = this._trashElems,
+			chanElem, trashElem, rgb, color, label, c, chan;
 		if (chanList) {
-/*
+		/*
 			for (c in chanElems) {
 				DomEvent.off(chanElems[c], 'click touch');
 				DomEvent.off(trashElems[c], 'click touch');
 			}
-*/
+		*/
 			DomUtil.empty(this._channelList);
 		} else {
 			chanList = this._channelList = DomUtil.create('div', this._className + '-chanlist',

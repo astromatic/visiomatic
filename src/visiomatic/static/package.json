@@ -40,5 +40,32 @@
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
 		"lint": "eslint .",
 		"test": "npm run unit"
+	},
+	"eslintConfig": {
+		"ignorePatterns": [
+			"dist"
+		],
+		"parserOptions": {
+			"ecmaVersion": "latest",
+			"sourceType": "module"
+		},
+		"env": {
+			"node": true,
+			"es6": true
+		},
+		"rules": {
+			"curly": "error",
+			"indent": ["error", "tab"],
+			"key-spacing": "off",
+			"linebreak-style": ["off", "unix"],
+			"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+			"no-unused-expressions": ["error"],
+			"spaced-comment": "error",
+			"strict": "off",
+			"wrap-iife": "off",
+			"no-invalid-this": "off",
+			"prefer-object-has-own": "error",
+			"prefer-spread": "off"
+		}
 	}
 }

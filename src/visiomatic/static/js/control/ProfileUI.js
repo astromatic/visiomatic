@@ -56,24 +56,27 @@ export const ProfileUI = UI.extend({
 				className + '-color',
 				elem,
 				'profile',
-			  options.profileColor,
+				options.profileColor,
 				false,
 				'iipProfile',
 				'Click to set line color'
-				);
+			);
 
 			// Create start profile line button
 			this._createButton(className + '-button', elem, 'start', function () {
 				if (this._currProfileLine) {
 					this._updateLine();
 				} else {
-					var map = _this._map,
-					 point = map.getCenter(),
-					 line = this._currProfileLine = polyline([point, point], {
-						color: linecolpick.value,
-						weight: 7,
-						opacity: 0.5
-					});
+					var	map = _this._map,
+						point = map.getCenter(),
+						line = this._currProfileLine = polyline(
+							[point, point],
+							{
+								color: linecolpick.value,
+								weight: 7,
+								opacity: 0.5
+							}
+						);
 					line.nameColor = linecolpick.value;
 					line.addTo(map);
 					map.on('drag', this._updateLine, this);
@@ -91,15 +94,15 @@ export const ProfileUI = UI.extend({
 			elem = this._addDialogElement(line);
 
 			// Create Spectrum color picker
-			var speccolpick = this._createColorPicker(
-					className + '-color',
-					elem,
-					'spectrum',
-				  options.spectrumColor,
-					false,
-					'iipSpectra',
-					'Click to set marker color'
-				);
+			var	speccolpick = this._createColorPicker(
+				className + '-color',
+				elem,
+				'spectrum',
+				options.spectrumColor,
+				false,
+				'iipSpectra',
+				'Click to set marker color'
+			);
 
 			// Create Spectrum button
 			this._createButton(className + '-button', elem, 'spectrum', function () {
@@ -159,11 +162,11 @@ export const ProfileUI = UI.extend({
 		popdiv.id = 'leaflet-profile-plot';
 		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-		var zoom = map.options.crs.options.nzoom - 1,
-			  path = line.getLatLngs(),
-			  point1 = map.project(path[0], zoom),
-			  point2 = map.project(path[1], zoom),
-				x, y;
+		var	zoom = map.options.crs.options.nzoom - 1,
+			path = line.getLatLngs(),
+			point1 = map.project(path[0], zoom),
+			point2 = map.project(path[1], zoom),
+			x, y;
 
 		if (point2.x < point1.x) {
 			x = point2.x;
@@ -176,12 +179,15 @@ export const ProfileUI = UI.extend({
 			point1.y = y;
 		}
 
-		VUtil.requestURL(this._layer._url.replace(/\&.*$/g, '') +
+		VUtil.requestURL(
+			this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + (point1.x - 0.5).toFixed(0) + ',' +
-			 (point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
-			 (point2.y - 0.5).toFixed(0),
+			(point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
+			(point2.y - 0.5).toFixed(0),
 			'getting IIP layer profile',
-			this._plotProfile, this);
+			this._plotProfile,
+			this
+		);
 	},
 
 	_getMeasurementString: function () {
@@ -211,14 +217,14 @@ export const ProfileUI = UI.extend({
 	_plotProfile: function (self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var json = JSON.parse(httpRequest.responseText),
-				    rawprof = json.profile,
-						layer = self._layer,
-						line = self._profileLine,
-						popdiv = document.getElementById('leaflet-profile-plot'),
-						prof = [],
-						series = [],
-						title, ylabel;
+				var	json = JSON.parse(httpRequest.responseText),
+					rawprof = json.profile,
+					layer = self._layer,
+					line = self._profileLine,
+					popdiv = document.getElementById('leaflet-profile-plot'),
+					prof = [],
+					series = [],
+					title, ylabel;
 
 				self.addLayer(line, 'Image profile');
 
@@ -312,14 +318,15 @@ export const ProfileUI = UI.extend({
 	_plotSpectrum: function (self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var json = JSON.parse(httpRequest.responseText),
-				    rawprof = json.profile,
-						layer = self._layer,
-						marker = self._spectrumMarker,
-						popdiv = document.getElementById('leaflet-spectrum-plot'),
-						spec = [],
-						series = [],
-						title, ylabel;
+				var	json = JSON.parse(httpRequest.responseText),
+					rawprof = json.profile,
+					layer = self._layer,
+					marker = self._spectrumMarker,
+					popdiv = document.getElementById('leaflet-spectrum-plot'),
+					spec = [],
+					series = [],
+					title, ylabel;
+
 				self.addLayer(marker, 'Image spectrum');
 
 				for (var chan = 0; chan < layer.iipNChannel; chan++) {

@@ -33,11 +33,6 @@
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
-
 $.extend($.fn, {
 	fileTree: function (options, file) {
 		// Default options

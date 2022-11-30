@@ -19,7 +19,7 @@ Conical = Projection.extend({
 		var deg = Math.PI / 180.0,
 		    projparam = this.projparam,
 		    dy = projparam.y0 - red.y,
-				rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
+			rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
 		return latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
 	},
 

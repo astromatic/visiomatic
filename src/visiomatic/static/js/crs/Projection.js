@@ -41,8 +41,8 @@ export const Projection = Class.extend({
 	// Set up native pole
 	_natpole: function () {
 		var	deg = Math.PI / 180.0,
-		    projparam = this.projparam,
-				natpole = new LatLng(90.0, 180.0);
+			projparam = this.projparam,
+			natpole = new LatLng(90.0, 180.0);
 		// Special case of fiducial point lying at the native pole
 		if (projparam.natrval.lat === 90.0) {
 			if (projparam.natpole.lng === 999.0) {
@@ -127,19 +127,19 @@ export const Projection = Class.extend({
 	// (RA, Dec) [deg] -> (phi,theta) [rad] for zenithal projections.
 	_raDecToPhiTheta: function (raDec) {
 		var	projparam = this.projparam,
-		    deg = Math.PI / 180.0,
-			  rad = 180.0 / Math.PI,
-			  da = (raDec.lng - projparam.cpole.lng) * deg,
-			  cda = Math.cos(da),
-			  sda = Math.sin(da),
-			  d = raDec.lat * deg,
-			  cd = Math.cos(d),
-			  sd = Math.sin(d),
-			  dp = projparam.cpole.lat * deg,
-			  cdp = Math.cos(dp),
-			  sdp = Math.sin(dp),
-			  asinarg = sd * sdp + cd * cdp * cda,
-				phitheta = new LatLng(Math.asin(asinarg > 1.0 ? 1.0
+			deg = Math.PI / 180.0,
+			rad = 180.0 / Math.PI,
+			da = (raDec.lng - projparam.cpole.lng) * deg,
+			cda = Math.cos(da),
+			sda = Math.sin(da),
+			d = raDec.lat * deg,
+			cd = Math.cos(d),
+			sd = Math.sin(d),
+			dp = projparam.cpole.lat * deg,
+			cdp = Math.cos(dp),
+			sdp = Math.sin(dp),
+			asinarg = sd * sdp + cd * cdp * cda,
+			phitheta = new LatLng(Math.asin(asinarg > 1.0 ? 1.0
 		       : (asinarg < -1.0 ? -1.0 : asinarg)) * rad,
 		         projparam.natpole.lng + Math.atan2(- cd * sda,
 		         sd * cdp  - cd * sdp * cda) * rad);

@@ -9,10 +9,6 @@
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
-//if (typeof require !== 'undefined') {
-//	var jQuery = require('jquery');
-//}
-
 import {
 	Browser,
 	DomEvent,
@@ -130,13 +126,16 @@ export const OverlayUI = UI.extend({
 				this._profileLine.spliceLatLngs(0, 1, this._map.getCenter());
 				this._profileLine.redraw();
 			} else {
-				var map = this._map,
-				 point = map.getCenter(),
-				 line = this._profileLine = polyline([point, point], {
-					color: profcolpick.value,
-					weight: 7,
-					opacity: 0.5
-				});
+				var	map = this._map,
+					point = map.getCenter(),
+					line = this._profileLine = polyline(
+						[point, point],
+						{
+							color: profcolpick.value,
+							weight: 7,
+							opacity: 0.5
+						}
+					);
 				line.nameColor = profcolpick.value;
 				line.addTo(map);
 				map.on('drag', this._updateLine, this);
@@ -198,24 +197,30 @@ export const OverlayUI = UI.extend({
 	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var response = httpRequest.responseText,
-				 geo = catalog.toGeoJSON(response),
-				 geocatalog = geoJson(geo, {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.mags) {
-							layer.bindPopup(catalog._popup(feature));
+				var	response = httpRequest.responseText,
+					geo = catalog.toGeoJSON(response),
+					geocatalog = geoJson(
+						geo,
+						{
+							onEachFeature: function (feature, layer) {
+								if (feature.properties && feature.properties.mags) {
+									layer.bindPopup(catalog._popup(feature));
+								}
+							},
+							pointToLayer: function (feature, latlng) {
+								return circleMarker(
+									latlng,
+									{
+										radius: feature.properties.mags[0] ?
+										 8 + catalog.maglim - feature.properties.mags[0] : 8
+									}
+								);
+							},
+							style: function (feature) {
+								return {color: catalog.color, weight: 2};
+							}
 						}
-					},
-					pointToLayer: function (feature, latlng) {
-						return circleMarker(latlng, {
-							radius: feature.properties.mags[0] ?
-							 8 + catalog.maglim - feature.properties.mags[0] : 8
-						});
-					},
-					style: function (feature) {
-						return {color: catalog.color, weight: 2};
-					}
-				});
+					);
 				geocatalog.nameColor = catalog.color;
 				geocatalog.addTo(_this._map);
 				var layercontrol = _this._map._layerControl;
@@ -267,11 +272,11 @@ export const OverlayUI = UI.extend({
 		popdiv.appendChild(activity);
 		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-		var zoom = map.options.crs.options.nzoom - 1,
-			  path = line.getLatLngs(),
-			  point1 = map.project(path[0], zoom),
-			  point2 = map.project(path[1], zoom),
-				x, y;
+		var	zoom = map.options.crs.options.nzoom - 1,
+			path = line.getLatLngs(),
+			point1 = map.project(path[0], zoom),
+			point2 = map.project(path[1], zoom),
+			x, y;
 
 		if (point2.x < point1.x) {
 			x = point2.x;
@@ -284,12 +289,14 @@ export const OverlayUI = UI.extend({
 			point1.y = y;
 		}
 
-		VUtil.requestURI(this._layer._url.replace(/\&.*$/g, '') +
+		VUtil.requestURI(
+			this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
-			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
-			 point2.y.toFixed(0),
+			point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
+			point2.y.toFixed(0),
 			'getting IIP layer profile',
-			this._plotProfile, line);
+			this._plotProfile, line
+		);
 	},
 
 	_getMeasurementString: function () {
@@ -319,10 +326,10 @@ export const OverlayUI = UI.extend({
 	_plotProfile: function (layer, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var json = JSON.parse(httpRequest.responseText),
-				    yprof = json.profile,
-				    layercontrol = layer._map._layerControl,
-						popdiv = document.getElementById('leaflet-profile-plot');
+				var	json = JSON.parse(httpRequest.responseText),
+					yprof = json.profile,
+					layercontrol = layer._map._layerControl,
+					popdiv = document.getElementById('leaflet-profile-plot');
 
 				if (layercontrol) {
 					layercontrol.addOverlay(layer, 'Image profile');

@@ -52,38 +52,41 @@ export const SnapshotUI = UI.extend({
 		);
 
 		var	hiddenlink = document.createElement('a'),
-			button = this._createButton(className + '-button', elem, 'snapshot',
-			  function (event) {
-				var	latlng = map.getCenter(),
-					bounds = map.getPixelBounds(),
-					z = map.getZoom(),
-					zfac;
+			button = this._createButton(
+				className + '-button', elem, 'snapshot',
+				function (event) {
+					var	latlng = map.getCenter(),
+						bounds = map.getPixelBounds(),
+						z = map.getZoom(),
+						zfac;
 
-				if (z > layer.iipMaxZoom) {
-					zfac = Math.pow(2, z - layer.iipMaxZoom);
-					z = layer.iipMaxZoom;
-				} else {
-					zfac = 1;
-				}
+					if (z > layer.iipMaxZoom) {
+						zfac = Math.pow(2, z - layer.iipMaxZoom);
+						z = layer.iipMaxZoom;
+					} else {
+						zfac = 1;
+					}
 
-				var	sizex = layer.iipImageSize[z].x * zfac,
-					sizey = layer.iipImageSize[z].y * zfac,
-					dx = (bounds.max.x - bounds.min.x),
-					dy = (bounds.max.y - bounds.min.y);
+					var	sizex = layer.iipImageSize[z].x * zfac,
+						sizey = layer.iipImageSize[z].y * zfac,
+						dx = (bounds.max.x - bounds.min.x),
+						dy = (bounds.max.y - bounds.min.y);
 
-				hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
-				  ).replace(/JTL\=\d+\,\d+/g,
-				  'RGN=' + bounds.min.x / sizex + ',' +
-				  bounds.min.y / sizey + ',' +
-				  dx / sizex + ',' + dy / sizey +
-				  '&WID=' + (this._snapType === 0 ?
-				    Math.floor(dx / zfac) :
-				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
-				hiddenlink.download = layer._title + '_' +
-				  VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-				  '.jpg';
-				hiddenlink.click();
-			}, 'Take a snapshot of the displayed image');
+					hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
+					  ).replace(/JTL\=\d+\,\d+/g,
+					  'RGN=' + bounds.min.x / sizex + ',' +
+					  bounds.min.y / sizey + ',' +
+					  dx / sizex + ',' + dy / sizey +
+					  '&WID=' + (this._snapType === 0 ?
+					    Math.floor(dx / zfac) :
+					    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+					hiddenlink.download = layer._title + '_' +
+					  VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+					  '.jpg';
+					hiddenlink.click();
+				},
+				'Take a snapshot of the displayed image'
+			);
 
 		document.body.appendChild(hiddenlink);
 

@@ -143,12 +143,15 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	getIIPMetaData: function (url) {
-		VUtil.requestURL(url +
+		VUtil.requestURL(
+			url +
 			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
 			'&obj=resolution-number&obj=bits-per-channel' +
 			'&obj=min-max-sample-values&obj=subject',
 			'getting IIP metadata',
-			this._parseIIPMetadata, this);
+			this._parseIIPMetadata,
+			this
+		);
 	},
 
 	/**
@@ -256,8 +259,8 @@ export const VTileLayer = TileLayer.extend({
 				    inunits = options.channelUnits,
 				    ninunits = inunits.length,
 				    units = layer.iipChannelUnits,
-						key = VUtil.readFITSKey,
-						numstr, value;
+					key = VUtil.readFITSKey,
+					numstr, value;
 
 				for (c = 0; c < nchannel; c++) {
 					if (c < ninlabel) {
@@ -281,13 +284,13 @@ export const VTileLayer = TileLayer.extend({
 				}
 
 				// Initialize mixing matrix depending on arguments and the number of channels
-				var cc = 0,
-				    mix = layer.iipMix,
-						omix = options.channelColors,
-						rgb = layer.iipRGB,
-						re = new RegExp(options.channelLabelMatch),
-						nchanon = 0,
-						channelflags = layer.iipChannelFlags;
+				var	cc = 0,
+					mix = layer.iipMix,
+					omix = options.channelColors,
+					rgb = layer.iipRGB,
+					re = new RegExp(options.channelLabelMatch),
+					nchanon = 0,
+					channelflags = layer.iipChannelFlags;
 
 				nchanon = 0;
 				for (c = 0; c < nchannel; c++) {
@@ -341,10 +344,10 @@ export const VTileLayer = TileLayer.extend({
 		}
 
 		var	cr = this._gammaCorr(rgb.r),
-			  cg = this._gammaCorr(rgb.g),
-				cb = this._gammaCorr(rgb.b),
-			  lum = (cr + cg + cb) / 3.0,
-			  alpha = this.iipColorSat / 3.0;
+			cg = this._gammaCorr(rgb.g),
+			cb = this._gammaCorr(rgb.b),
+			lum = (cr + cg + cb) / 3.0,
+			alpha = this.iipColorSat / 3.0;
 
 		this.iipMix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
 		this.iipMix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
@@ -393,12 +396,12 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	_addToMap: function (map) {
-		var zoom,
-		    newcrs = this.wcs,
-				curcrs = map.options.crs,
-				prevcrs = map._prevcrs,
-				maploadedflag = map._loaded,
-				center;
+		var	zoom,
+			newcrs = this.wcs,
+			curcrs = map.options.crs,
+			prevcrs = map._prevcrs,
+			maploadedflag = map._loaded,
+			center;
 
 		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
@@ -566,8 +569,8 @@ export const VTileLayer = TileLayer.extend({
 
 		// Force pixels to be visible at high zoom factos whenever possible
 		if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
-            tile.style.imageRendering = 'pixelated';
-	    }
+			tile.style.imageRendering = 'pixelated';
+		}
 
 		tile.onselectstart = Util.falseFn;
 		tile.onmousemove = Util.falseFn;

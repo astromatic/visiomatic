@@ -84,7 +84,7 @@ export const Scale = Control.Scale.extend({
 		}
 	},
 
-// Return the Jacobian determinant of the astrometric transformation at latLng
+	// Return the Jacobian determinant of the astrometric transformation at latLng
 	_jacobian: function (latlng) {
 		var map = this._map,
 		    p0 = map.project(latlng),
@@ -100,19 +100,19 @@ export const Scale = Control.Scale.extend({
 		var scale = this._cScale;
 
 		if (maxCust > 1.0e9) {
-			var maxGCust = maxCust * 1.0e-9,
-			gCust = this._getRoundNum(maxGCust);
+			var	maxGCust = maxCust * 1.0e-9,
+				gCust = this._getRoundNum(maxGCust);
 			this._updateScale(scale, gCust + ' G' + units, gCust / maxGCust);
 		} else if (maxCust > 1.0e6) {
-			var maxMCust = maxCust * 1.0e-6,
-			mCust = this._getRoundNum(maxMCust);
+			var	maxMCust = maxCust * 1.0e-6,
+				mCust = this._getRoundNum(maxMCust);
 			this._updateScale(scale, mCust + ' M' + units, mCust / maxMCust);
 		} else if (maxCust > 1.0e3) {
-			var maxKCust = maxCust * 1.0e-3,
-			kCust = this._getRoundNum(maxKCust);
+			var	maxKCust = maxCust * 1.0e-3,
+				kCust = this._getRoundNum(maxKCust);
 			this._updateScale(scale, kCust + ' k' + units, kCust / maxKCust);
 		} else {
-			var cust = this._getRoundNum(maxCust);
+			var	cust = this._getRoundNum(maxCust);
 			this._updateScale(scale, cust + ' ' + units, cust / maxCust);
 		}
 	},
@@ -121,12 +121,12 @@ export const Scale = Control.Scale.extend({
 		var scale = this._pScale;
 
 		if (maxPix > 1.0e6) {
-			var maxMPix = maxPix * 1.0e-6,
-			mPix = this._getRoundNum(maxMPix);
+			var	maxMPix = maxPix * 1.0e-6,
+				mPix = this._getRoundNum(maxMPix);
 			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
 		} else if (maxPix > 1.0e3) {
-			var maxKPix = maxPix * 1.0e-3,
-			kPix = this._getRoundNum(maxKPix);
+			var	maxKPix = maxPix * 1.0e-3,
+				kPix = this._getRoundNum(maxKPix);
 			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
 		} else {
 			var pix = this._getRoundNum(maxPix);
@@ -139,8 +139,8 @@ export const Scale = Control.Scale.extend({
 		    scale = this._dScale;
 
 		if (maxSeconds < 1.0) {
-			var maxMas = maxSeconds * 1000.0,
-			mas = this._getRoundNum(maxMas);
+			var	maxMas = maxSeconds * 1000.0,
+				mas = this._getRoundNum(maxMas);
 			this._updateScale(scale, mas + ' mas', mas / maxMas);
 		} else if (maxSeconds < 60.0) {
 			var seconds = this._getRoundNum(maxSeconds);

@@ -27,11 +27,11 @@ export const FlipSwitch = Evented.extend({
 
 	initialize: function (parent, options) {
 		options = Util.setOptions(this, options);
-		var _this = this,
-			  className = options.className,
-			  button = DomUtil.create('div', className, parent),
-				input = this._input = L.DomUtil.create('input', className, button),
-				label = DomUtil.create('label', className, button);
+		var	_this = this,
+			className = options.className,
+			button = DomUtil.create('div', className, parent),
+			input = this._input = L.DomUtil.create('input', className, button),
+			label = DomUtil.create('label', className, button);
 
 		input.type = 'checkbox';
 		input.name = options.className;
@@ -45,8 +45,8 @@ export const FlipSwitch = Evented.extend({
 		DomUtil.create('span', className + '-button', label);
 
 		DomEvent
-				.disableClickPropagation(button)
-				.disableScrollPropagation(button);
+			.disableClickPropagation(button)
+			.disableScrollPropagation(button);
 		DomEvent.on(input, 'change', function () {
 			this.fire('change');
 		}, this);

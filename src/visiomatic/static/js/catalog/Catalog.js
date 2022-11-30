@@ -23,18 +23,18 @@ export const Catalog = {
 			var line = lines[i];
 			if (badreg.test(line) === false) {
 				var feature = {
-					type: 'Feature',
-					id: '',
-					properties: {
-						items: []
+						type: 'Feature',
+						id: '',
+						properties: {
+							items: []
+						},
+						geometry: {
+							type: 'Point',
+							coordinates: [0.0, 0.0]
+						}
 					},
-					geometry: {
-						type: 'Point',
-						coordinates: [0.0, 0.0]
-					}
-				},
-				geometry = feature.geometry,
-				properties = feature.properties;
+					geometry = feature.geometry,
+					properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
 				feature.id = cell[0];

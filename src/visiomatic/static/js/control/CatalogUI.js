@@ -109,10 +109,10 @@ export const CatalogUI = UI.extend({
 	},
 
 	_getCatalog: function (catalog, timeout) {
-		var _this = this,
+		var	_this = this,
 		    map = this._map,
-				wcs = map.options.crs,
-				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+			wcs = map.options.crs,
+			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
 		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
 		    b = map.getPixelBounds(),
 		    z = map.getZoom(),
@@ -218,34 +218,34 @@ export const CatalogUI = UI.extend({
 	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var wcs = _this._map.options.crs,
-				 response = httpRequest.responseText,
-				 geo = catalog.toGeoJSON(response),
-				 geocatalog = geoJson(geo, {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.items) {
-							layer.bindPopup(catalog.popup(feature));
+				var	wcs = _this._map.options.crs,
+					response = httpRequest.responseText,
+					geo = catalog.toGeoJSON(response),
+					geocatalog = geoJson(geo, {
+						onEachFeature: function (feature, layer) {
+							if (feature.properties && feature.properties.items) {
+								layer.bindPopup(catalog.popup(feature));
+							}
+						},
+						coordsToLatLng: function (coords) {
+							if (wcs.forceNativeCelsys) {
+								var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
+								return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+							} else {
+								return new L.LatLng(coords[1], coords[0], coords[2]);
+							}
+						},
+						filter: function (feature) {
+							return catalog.filter(feature);
+						},
+						pointToLayer: function (feature, latlng) {
+							return catalog.draw(feature, latlng);
+						},
+						style: function (feature) {
+							return {color: catalog.color, weight: 2};
 						}
-					},
-					coordsToLatLng: function (coords) {
-						if (wcs.forceNativeCelsys) {
-							var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
-							return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
-						} else {
-							return new L.LatLng(coords[1], coords[0], coords[2]);
-						}
-					},
-					filter: function (feature) {
-						return catalog.filter(feature);
-					},
-					pointToLayer: function (feature, latlng) {
-						return catalog.draw(feature, latlng);
-					},
-					style: function (feature) {
-						return {color: catalog.color, weight: 2};
-					}
-				}),
-				 excessflag;
+					}),
+					excessflag;
 				geocatalog.nameColor = catalog.color;
 				geocatalog.addTo(_this._map);
 				this.removeLayer(templayer);

@@ -103,9 +103,9 @@ export const Coords = Control.extend({
 	},
 
 	_onDrag: function (e) {
-		var latlng = this._map.getCenter(),
-		    wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord];
+		var	latlng = this._map.getCenter(),
+			wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord];
 
 		if (wcs.pixelFlag) {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
@@ -178,8 +178,8 @@ Map.mergeOptions({
 Map.addInitHook(function () {
 	if (this.options.positionControl) {
 		this.positionControl = new Control.MousePosition();
-	this.addControl(this.positionControl);
-    }
+		this.addControl(this.positionControl);
+	}
 });
 
 export const coords = function (options) {

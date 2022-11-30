@@ -60,8 +60,8 @@ export const Spinbox = Evented.extend({
 		input.type = 'number';
 		input.step = 0.1;	// Tells input that decimal numbers are valid
 		DomEvent
-				.disableClickPropagation(wrap)
-				.disableScrollPropagation(wrap);
+			.disableClickPropagation(wrap)
+			.disableScrollPropagation(wrap);
 
 		if (input.disabled === true) {
 			options.disabled = true;
@@ -207,9 +207,9 @@ export const Spinbox = Evented.extend({
 
 	_sboxRun: function () {
 		var	_this = this,
-				timer = 150,
-				options = this.options,
-				drag = this._drag;
+			timer = 150,
+			options = this.options,
+			drag = this._drag;
 
 		if (drag.cnt === 20) {
 			timer = 50;
@@ -240,10 +240,10 @@ export const Spinbox = Evented.extend({
 	},
 
 	_offset: function (obj, direction) {
-		var tmp,
-				options = this.options,
-				input = this._input,
-				drag = this._drag;
+		var	tmp,
+			options = this.options,
+			input = this._input,
+			drag = this._drag;
 
 		if (!this.disabled) {
 			if (direction < 1) {

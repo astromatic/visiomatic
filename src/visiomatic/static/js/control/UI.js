@@ -41,7 +41,7 @@ export const UI = Control.extend({
 	addTo: function (dest) {
 		if (dest._sidebar) {
 			this._sidebar = dest;
-		// dest is a sidebar class instance
+			// dest is a sidebar class instance
 			this._map = dest._map;
 			this._dialog = DomUtil.create('div', this._className + '-dialog');
 			dest.addTab(this._id, this._className, this.options.title, this._dialog,
@@ -54,15 +54,17 @@ export const UI = Control.extend({
 	},
 
 	onAdd: function (map) {
-		var className = this._className,
-		 id = this._id,
-		 container = this._container = DomUtil.create('div', className + ' leaflet-bar');
-		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+		var	className = this._className,
+			id = this._id,
+			container = this._container = DomUtil.create('div', className + ' leaflet-bar');
+
+		// Makes this work on IE10 Touch devices by stopping it
+		// from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
 		DomEvent
-				.disableClickPropagation(container)
-				.disableScrollPropagation(container);
+			.disableClickPropagation(container)
+			.disableScrollPropagation(container);
 
 		this._dialog = DomUtil.create('div', className + '-dialog', container);
 		if (this.options.collapsed) {
@@ -92,7 +94,7 @@ export const UI = Control.extend({
 			this._expand();
 		}
 
-//		this._checkIIP();
+		//	this._checkIIP();
 		this._map.on('layeradd', this._checkIIP, this);
 
 		return	this._container;
@@ -115,15 +117,15 @@ export const UI = Control.extend({
 	},
 
 	_initDialog: function () {
-/*
-		var className = this._className,
+		/*
+		var	className = this._className,
 			container = this._container,
 			dialog = this._dialog,
 			toggle = this._toggle,
 			layer = this._layer;
 		dialog.innerHTML = '';
-*/
-    // Setup the rest of the dialog window here
+		*/
+		// Setup the rest of the dialog window here
 	},
 
 	_resetDialog: function () {
@@ -158,20 +160,20 @@ export const UI = Control.extend({
 		this._container.className = this._container.className.replace(' ' + this._className + '-expanded', '');
 	},
 
-  /**
-* Get currently active base layer on the map
-* @return {Object} l where l.name - layer name on the control,
-* l.layer is L.TileLayer, l.overlay is overlay layer.
-*/
+	/**
+	* Get currently active base layer on the map
+	* @return {Object} l where l.name - layer name on the control,
+	* l.layer is L.TileLayer, l.overlay is overlay layer.
+	*/
 	getActiveBaseLayer: function () {
 		return this._activeBaseLayer;
 	},
 
-  /**
-* Get currently active overlay layers on the map
-* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
-* and l @see #getActiveBaseLayer jsdoc.
-*/
+	/**
+	* Get currently active overlay layers on the map
+	* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
+	* and l @see #getActiveBaseLayer jsdoc.
+	*/
 
 	_findActiveBaseLayer: function () {
 		var layers = this._layers;

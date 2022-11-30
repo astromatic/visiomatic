@@ -30,19 +30,20 @@ WCSObj = extend({}, CRS, {
 	options: {
 		nzoom: 9,
 		tileSize: [256, 256],
-		nativeCelsys: false			// If true, world coordinates are returned
-			                      // in the native celestial system
+		// If true, world coordinates are returned
+		// in the native celestial system
+		nativeCelsys: false
 	},
 
 	defaultparam: {
 		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		crpix: [129, 129],
-		crval: [0.0, 0.0],										// (\delta_0, \alpha_0)
-//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
+		crval: [0.0, 0.0],							// (\delta_0, \alpha_0)
+		//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
 		cd: [[1.0, 0.0], [0.0, 1.0]],
-		natrval: [90.0, 0.0],										// (\theta_0. \phi_0)
-		natpole: [90.0, 999.0],								// (\theta_p, \phi_p)
+		natrval: [90.0, 0.0],						// (\theta_0. \phi_0)
+		natpole: [90.0, 999.0],						// (\theta_p, \phi_p)
 		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
 		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -138,13 +139,13 @@ WCSObj = extend({}, CRS, {
 	// convert celestial (angular) coordinates to equatorial
 	celsysToEq: function (latlng) {
 		var	cmat = this.projparam.celsysmat,
-		    deg = Math.PI / 180.0,
-				invdeg = 180.0 / Math.PI,
-			  a2 = latlng.lng * deg - cmat[1],
-			  d2 = latlng.lat * deg,
-				sd2 = Math.sin(d2),
-				cd2cp = Math.cos(d2) * cmat[2],
-				sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
+			deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a2 = latlng.lng * deg - cmat[1],
+			d2 = latlng.lat * deg,
+			sd2 = Math.sin(d2),
+			cd2cp = Math.cos(d2) * cmat[2],
+			sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
 		return latLng(Math.asin(sd) * invdeg,
 		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
 		                 cmat[0]) * invdeg + 360.0) % 360.0);
@@ -153,12 +154,12 @@ WCSObj = extend({}, CRS, {
 	// convert equatorial (angular) coordinates to celestial
 	eqToCelsys: function (latlng) {
 		var	cmat = this.projparam.celsysmat,
-		    deg = Math.PI / 180.0,
-				invdeg = 180.0 / Math.PI,
-			  a = latlng.lng * deg - cmat[0],
-			  sd = Math.sin(latlng.lat * deg),
-				cdcp = Math.cos(latlng.lat * deg) * cmat[2],
-				sd2 = sd * cmat[3] + cdcp * Math.cos(a);
+			deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a = latlng.lng * deg - cmat[0],
+			sd = Math.sin(latlng.lat * deg),
+			cdcp = Math.cos(latlng.lat * deg) * cmat[2],
+			sd2 = sd * cmat[3] + cdcp * Math.cos(a);
 		return latLng(Math.asin(sd2) * invdeg,
 		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
 		                 cmat[1]) * invdeg + 360.0) % 360.0);
@@ -175,11 +176,11 @@ WCSObj = extend({}, CRS, {
 
 	// return the raw pixel scale in degrees
 	rawPixelScale: function (latlng) {
-		var p0 = this.projection.project(latlng),
-		    latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
-		    latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
-				dlngdx = latlngdx.lng - latlng.lng,
-				dlngdy = latlngdy.lng - latlng.lng;
+		var	p0 = this.projection.project(latlng),
+			latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
+			latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
+			dlngdx = latlngdx.lng - latlng.lng,
+			dlngdy = latlngdy.lng - latlng.lng;
 
 		if (dlngdx > 180.0) { dlngdx -= 360.0; }
 		else if (dlngdx < -180.0) { dlngdx += 360.0; }
@@ -281,9 +282,9 @@ WCSObj = extend({}, CRS, {
 
 	// Generate a celestial coordinate system transformation matrix
 	_celsysmatInit: function (celcode) {
-		var	deg = Math.PI / 180.0,
-				corig, cpole,
-				cmat = [];
+		var deg = Math.PI / 180.0,
+			corig, cpole,
+			cmat = [];
 		switch (celcode) {
 		case 'galactic':
 			corig = latLng(-28.93617242, 266.40499625);
