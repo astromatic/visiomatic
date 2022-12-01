@@ -64,9 +64,9 @@ def create_app() -> FastAPI:
 
     # Provide an endpoint for static files (such as js and css)
     app.mount(
-        "/static",
-        StaticFiles(directory=os.path.join(package.root_dir, "static")),
-        name="static"
+        "/client",
+        StaticFiles(directory=os.path.join(package.root_dir, "client")),
+        name="client"
     )
 
     # Instantiate templates
