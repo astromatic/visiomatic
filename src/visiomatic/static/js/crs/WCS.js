@@ -50,7 +50,7 @@ WCSObj = extend({}, CRS, {
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
-	initialize: function (hdr, options) {
+	initialize: function (images, options) {
 		options = Util.setOptions(this, options);
 		var	defaultparam = this.defaultparam;
 
@@ -59,9 +59,11 @@ WCSObj = extend({}, CRS, {
 		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
 		this.naxis = point(defaultparam.naxis, true);
 		this.projparam = new this._paramInit(defaultparam);
-		if (hdr) {
-			this._readWCS(hdr);
+		header = images[0].header;
+		if (header) {
+			this._readWCS(header);
 		}
+		console.log(this.projparam);
 		this._paramInit(options, this.projparam);
 
 		// Identify the WCS projection type
@@ -312,28 +314,28 @@ WCSObj = extend({}, CRS, {
 	},
 
 	// Read WCS information from a FITS header
-	_readWCS: function (hdr) {
+	_readWCS: function (header) {
 		var key = VUtil.readFITSKey,
 		    projparam = this.projparam,
 		    v;
-		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
-		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
-		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
-		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = this.naxis.y = parseInt(v, 10); }
-		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
-		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
-		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
-		if ((v = key('CRVAL2', hdr))) { projparam.crval.lat = parseFloat(v, 10); }
-		if ((v = key('LONPOLE', hdr))) { projparam.natpole.lng = parseFloat(v, 10); }
-		if ((v = key('LATPOLE', hdr))) { projparam.natpol.lat = parseFloat(v, 10); }
-		if ((v = key('CD1_1', hdr))) { projparam.cd[0][0] = parseFloat(v, 10); }
-		if ((v = key('CD1_2', hdr))) { projparam.cd[0][1] = parseFloat(v, 10); }
-		if ((v = key('CD2_1', hdr))) { projparam.cd[1][0] = parseFloat(v, 10); }
-		if ((v = key('CD2_2', hdr))) { projparam.cd[1][1] = parseFloat(v, 10); }
+		if ((v = header['CTYPE1'])) { this.ctype.x = v; }
+		if ((v = header['CTYPE2'])) { this.ctype.y = v; }
+		if ((v = header['NAXIS1'])) { projparam.naxis.x = this.naxis.x = v; }
+		if ((v = header['NAXIS2'])) { projparam.naxis.y = this.naxis.y = v; }
+		if ((v = header['CRPIX1'])) { projparam.crpix.x = v; }
+		if ((v = header['CRPIX2'])) { projparam.crpix.y = v; }
+		if ((v = header['CRVAL1'])) { projparam.crval.lng = v; }
+		if ((v = header['CRVAL2'])) { projparam.crval.lat = v; }
+		if ((v = header['LONPOLE'])) { projparam.natpole.lng = v; }
+		if ((v = header['LATPOLE'])) { projparam.natpol.lat = v; }
+		if ((v = header['CD1_1'])) { projparam.cd[0][0] = v; }
+		if ((v = header['CD1_2'])) { projparam.cd[0][1] = v; }
+		if ((v = header['CD2_1'])) { projparam.cd[1][0] = v; }
+		if ((v = header['CD2_2'])) { projparam.cd[1][1] = v; }
 		for (var d = 0; d < 2; d++) {
 			for (var j = 0; j < 20; j++) {
-				if ((v = key('PV' + (d + 1) + '_' + j, hdr))) {
-					projparam.pv[d][j] = parseFloat(v, 10);
+				if ((v = header['PV' + (d + 1) + '_' + j])) {
+					projparam.pv[d][j] = v;
 				}
 			}
 		}

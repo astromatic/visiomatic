@@ -15,6 +15,7 @@ from simplejpeg import encode_jpeg
 from astropy.io import fits
 from tiler import Tiler
 
+from .. import package
 from .settings import app_settings 
 
 class ImageModel(BaseModel):
@@ -22,7 +23,7 @@ class ImageModel(BaseModel):
     datasec: List[int]
     detsec: List[int]
     min_max: List[List[float]]
-    header_dict: dict
+    header: dict
 
 
 class Image(object):
@@ -50,11 +51,12 @@ class Image(object):
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
         self.shape = [self.header["NAXIS1"], self.header["NAXIS2"]]
-        datasec = self.parse_2dslice(self.header.get("DATASEC", ""))
-        self.datasec = tuple(datasec) \
+        self.datasec = datasec \
             if (datasec := self.parse_2dslice(self.header.get("DATASEC", ""))) \
             else [1, self.shape[0], 1, self.shape[1]]
-        self.detsec = self.parse_2dslice(self.header.get("DETSEC",""))
+        self.detsec = detsec \
+        	if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
+        	else self.datasec
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
 
@@ -64,11 +66,11 @@ class Image(object):
             datasec=self.datasec,
             detsec=self.detsec,
             min_max=[list(self.minmax)],
-            header_dict=dict(self.header.items())
+            header=dict(self.header.items())
         )
 
 
-    def get_header(self) -> str:
+    def get_header_string(self) -> str:
         """
         Get the image header as a string.
         
@@ -82,7 +84,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> Tuple[Union[int, None]]:
+    def parse_2dslice(self, str: str) -> Tuple[Union[int], None]:
         """
         Parse a string representation of a 2D slice.
 
@@ -97,7 +99,7 @@ class Image(object):
             4-tuple representing the slice parameters or 4-tuple of Nones if not found.
         """
         coords = self.re_2dslice.findall(str)
-        return [int(s) for s in coords[0]] if coords else [None, None, None, None]
+        return [int(s) for s in coords[0]] if coords else None
 
 
     def compute_background(self, skip : int = 15) -> None:
@@ -148,6 +150,7 @@ class Image(object):
 
 
 class TiledModel(BaseModel):
+    type: str
     version: str
     full_size: List[int]
     tile_size: List[int]
@@ -221,6 +224,7 @@ class Tiled(object):
 
     def get_model(self) -> TiledModel:
         return TiledModel(
+            type=package.name,
             version="3.0",
             full_size=self.shape,
             tile_size=self.tilesize,
