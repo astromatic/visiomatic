@@ -15,6 +15,7 @@ from simplejpeg import encode_jpeg
 from astropy.io import fits
 from tiler import Tiler
 
+from .. import package
 from .settings import app_settings 
 
 class ImageModel(BaseModel):
@@ -22,7 +23,7 @@ class ImageModel(BaseModel):
     datasec: List[int]
     detsec: List[int]
     min_max: List[List[float]]
-    header_dict: dict
+    header: dict
 
 
 class Image(object):
@@ -65,7 +66,7 @@ class Image(object):
             datasec=self.datasec,
             detsec=self.detsec,
             min_max=[list(self.minmax)],
-            header_dict=dict(self.header.items())
+            header=dict(self.header.items())
         )
 
 
@@ -149,6 +150,7 @@ class Image(object):
 
 
 class TiledModel(BaseModel):
+    type: str
     version: str
     full_size: List[int]
     tile_size: List[int]
@@ -222,6 +224,7 @@ class Tiled(object):
 
     def get_model(self) -> TiledModel:
         return TiledModel(
+            type=package.name,
             version="3.0",
             full_size=self.shape,
             tile_size=self.tilesize,

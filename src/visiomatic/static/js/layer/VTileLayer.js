@@ -104,9 +104,9 @@ export const VTileLayer = TileLayer.extend({
 			options.subdomains = options.subdomains.split('');
 		}
 
-		this.iipTileSize = {x: 256, y: 256};
+		this.tileSize = {x: 256, y: 256};
 		this.iipImageSize = [];
-		this.iipImageSize[0] = this.iipTileSize;
+		this.iipImageSize[0] = this.tileSize;
 		this.iipGridSize = [];
 		this.iipGridSize[0] = {x: 1, y: 1};
 		this.iipBPP = 8;
@@ -133,7 +133,7 @@ export const VTileLayer = TileLayer.extend({
 
 		this._title = options.title.length > 0 ? options.title :
 		                this._url.match(/^.*\/(.*)\..*$/)[1];
-		this.getIIPMetaData(this._url);
+		this.getMetaData(this._url);
 
 		// for https://github.com/Leaflet/Leaflet/issues/137
 		if (!Browser.android) {
@@ -142,385 +142,164 @@ export const VTileLayer = TileLayer.extend({
 		return this;
 	},
 
-	getMetaData: function (url) {
-		VUtil.requestURL(
-			url +
-			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
-			'&obj=resolution-number&obj=bits-per-channel' +
-			'&obj=min-max-sample-values&obj=subject',
-			'getting IIP metadata',
-			this._parseMetadata,
-			this
-		);
-	},
+	getMetaData: async function (url) {
+		const res = await fetch(url + '&INFO', {method: 'GET'});
+		const meta = await res.json();
+		if (res.status == 200 && meta['type'] == 'visiomatic') {
+			var options = this.options,
+				iipdefault = this.iipdefault,
+				maxsize = {x: meta.full_size[1], y: meta.full_size[0]};
 
-	_parseMetadata: function (layer, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				var response = httpRequest.responseText,
-				 matches = layer._readIIPKey(response, 'IIP', VUtil.REG_PDEC);
-				if (!matches) {
-					alert('Error: Unexpected response from IIP server ' +
-					 layer._url.replace(/\?.*$/g, ''));
-				}
-				var options = layer.options,
-				    iipdefault = layer.iipdefault;
+			this.tileSize = {x: meta.tile_size[1], y: meta.tile_size[0]};
+			options.tileSize = this.tileSize.x;
 
-				matches = layer._readIIPKey(response, 'Max-size', '(\\d+)\\s+(\\d+)');
-				var maxsize = {
-					x: parseInt(matches[1], 10),
-					y: parseInt(matches[2], 10)
-				};
-				matches = layer._readIIPKey(response, 'Tile-size', '(\\d+)\\s+(\\d+)');
-				layer.iipTileSize = {
-					x: parseInt(matches[1], 10),
-					y: parseInt(matches[2], 10)
-				};
-
-				options.tileSize = layer.iipTileSize.x;
-
-				// Find the lowest and highest zoom levels
-				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
-				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-				if (layer.iipMinZoom > options.minZoom) {
-					options.minZoom = layer.iipMinZoom;
-				}
-				if (!options.maxZoom) {
-					options.maxZoom = layer.iipMaxZoom + 6;
-				}
-				options.maxNativeZoom = layer.iipMaxZoom;
-
-				// Set grid sizes
-				for (var z = 0; z <= layer.iipMaxZoom; z++) {
-					layer.iipImageSize[z] = {
-						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
-						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
-					};
-					layer.iipGridSize[z] = {
-						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
-						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
-					};
-				}
-				// (Virtual) grid sizes for extra zooming
-				for (z = layer.iipMaxZoom; z <= options.maxZoom; z++) {
-					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
-				}
-
-				// Set pixel bpp
-				matches = layer._readIIPKey(response, 'Bits-per-channel', '(\\d+)');
-				layer.iipBPP = parseInt(matches[1], 10);
-				// Only 32bit data are likely to be linearly quantized
-				if (layer.iipGamma === layer.iipdefault.gamma) {
-					layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
-				}
-
-				// Pre-computed min and max pixel values, as well as number of channels
-				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
-				 '\\s*(.*)');
-				var str = matches[1].split(/\s+/),
-				    nchannel = layer.iipNChannel = (str.length / 2),
-				    mmc = 0;
-				for (var c = 0; c < nchannel; c++) {
-					iipdefault.minValue[c] = parseFloat(str[mmc++]);
-					iipdefault.maxValue[c] = parseFloat(str[mmc++]);
-				}
-
-				// Override min and max pixel values based on user provided options
-				var minmax = options.minMaxValues;
-				if (minmax.length) {
-					for (c = 0; c < nchannel; c++) {
-						if (minmax[c] !== undefined && minmax[c].length) {
-							layer.iipMinValue[c] = minmax[c][0];
-							layer.iipMaxValue[c] = minmax[c][1];
-						} else {
-							layer.iipMinValue[c] = iipdefault.minValue[c];
-							layer.iipMaxValue[c] = iipdefault.maxValue[c];
-						}
-					}
-				} else {
-					for (c = 0; c < nchannel; c++) {
-						layer.iipMinValue[c] = iipdefault.minValue[c];
-						layer.iipMaxValue[c] = iipdefault.maxValue[c];
-					}
-				}
-
-				// Default channel
-				layer.iipChannel = options.defaultChannel;
-
-				// Channel labels
-				var inlabels = options.channelLabels,
-				    ninlabel = inlabels.length,
-				    labels = layer.iipChannelLabels,
-				    inunits = options.channelUnits,
-				    ninunits = inunits.length,
-				    units = layer.iipChannelUnits,
-					key = VUtil.readFITSKey,
-					numstr, value;
-
-				for (c = 0; c < nchannel; c++) {
-					if (c < ninlabel) {
-						labels[c] = inlabels[c];
-					} else {
-						numstr = (c + 1).toString();
-						value = key('CHAN' +
-						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
-						  response);
-						labels[c] = value ? value : 'Channel #' + numstr;
-					}
-				}
-
-				// Copy those units that have been provided
-				for (c = 0; c < ninunits; c++) {
-					units[c] = inunits[c];
-				}
-				// Fill out units that are not provided with a default string
-				for (c = ninunits; c < nchannel; c++) {
-					units[c] = 'ADUs';
-				}
-
-				// Initialize mixing matrix depending on arguments and the number of channels
-				var	cc = 0,
-					mix = layer.iipMix,
-					omix = options.channelColors,
-					rgb = layer.iipRGB,
-					re = new RegExp(options.channelLabelMatch),
-					nchanon = 0,
-					channelflags = layer.iipChannelFlags;
-
-				nchanon = 0;
-				for (c = 0; c < nchannel; c++) {
-					channelflags[c] = re.test(labels[c]);
-					if (channelflags[c]) {
-						nchanon++;
-					}
-				}
-				if (nchanon >= iipdefault.channelColors.length) {
-					nchanon = iipdefault.channelColors.length - 1;
-				}
-
-				for (c = 0; c < nchannel; c++) {
-					mix[c] = [];
-					var	col = 3;
-					if (omix.length && omix[c] && omix[c].length === 3) {
-						// Copy RGB triplet
-						rgb[c] = rgbin(omix[c][0], omix[c][1], omix[c][2]);
-					} else {
-						rgb[c] = rgbin(0.0, 0.0, 0.0);
-					}
-					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-						rgb[c] = rgbin(iipdefault.channelColors[nchanon][cc++]);
-					}
-					// Compute the current row of the mixing matrix
-					layer.rgbToMix(c);
-				}
-
-				if (options.bounds) {
-					options.bounds = latLngBounds(options.bounds);
-				}
-				layer.wcs = options.crs ? options.crs : new WCS(response, {
-					nativeCelsys: layer.options.nativeCelsys,
-					nzoom: layer.iipMaxZoom + 1,
-					tileSize: layer.iipTileSize
-				});
-				layer.iipMetaReady = true;
-				layer.fire('metaload');
-			} else {
-				alert('There was a problem with the IIP metadata request.');
+			this.iipMaxZoom = meta.tile_levels - 1;
+			if (this.iipMinZoom > options.minZoom) {
+				options.minZoom = this.iipMinZoom;
 			}
-		}
-	},
-
-
-	getIIPMetaData: function (url) {
-		VUtil.requestURL(
-			url +
-			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
-			'&obj=resolution-number&obj=bits-per-channel' +
-			'&obj=min-max-sample-values&obj=subject',
-			'getting IIP metadata',
-			this._parseIIPMetadata,
-			this
-		);
-	},
-
-	/**
-	* Parse Image metadata (old IIPImage style).
-	* @param {object} layer - IIP tile layer.
-	* @param {object} httpRequest - AJAX request.
-	*/
-	_parseIIPMetadata: function (layer, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				var response = httpRequest.responseText,
-				 matches = layer._readIIPKey(response, 'IIP', VUtil.REG_PDEC);
-				if (!matches) {
-					alert('Error: Unexpected response from IIP server ' +
-					 layer._url.replace(/\?.*$/g, ''));
-				}
-				var options = layer.options,
-				    iipdefault = layer.iipdefault;
-
-				matches = layer._readIIPKey(response, 'Max-size', '(\\d+)\\s+(\\d+)');
-				var maxsize = {
-					x: parseInt(matches[1], 10),
-					y: parseInt(matches[2], 10)
-				};
-				matches = layer._readIIPKey(response, 'Tile-size', '(\\d+)\\s+(\\d+)');
-				layer.iipTileSize = {
-					x: parseInt(matches[1], 10),
-					y: parseInt(matches[2], 10)
-				};
-
-				options.tileSize = layer.iipTileSize.x;
-
-				// Find the lowest and highest zoom levels
-				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
-				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-				if (layer.iipMinZoom > options.minZoom) {
-					options.minZoom = layer.iipMinZoom;
-				}
-				if (!options.maxZoom) {
-					options.maxZoom = layer.iipMaxZoom + 6;
-				}
-				options.maxNativeZoom = layer.iipMaxZoom;
-
-				// Set grid sizes
-				for (var z = 0; z <= layer.iipMaxZoom; z++) {
-					layer.iipImageSize[z] = {
-						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
-						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
-					};
-					layer.iipGridSize[z] = {
-						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
-						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
-					};
-				}
-				// (Virtual) grid sizes for extra zooming
-				for (z = layer.iipMaxZoom; z <= options.maxZoom; z++) {
-					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
-				}
-
-				// Set pixel bpp
-				matches = layer._readIIPKey(response, 'Bits-per-channel', '(\\d+)');
-				layer.iipBPP = parseInt(matches[1], 10);
-				// Only 32bit data are likely to be linearly quantized
-				if (layer.iipGamma === layer.iipdefault.gamma) {
-					layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
-				}
-
-				// Pre-computed min and max pixel values, as well as number of channels
-				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
-				 '\\s*(.*)');
-				var str = matches[1].split(/\s+/),
-				    nchannel = layer.iipNChannel = (str.length / 2),
-				    mmc = 0;
-				for (var c = 0; c < nchannel; c++) {
-					iipdefault.minValue[c] = parseFloat(str[mmc++]);
-					iipdefault.maxValue[c] = parseFloat(str[mmc++]);
-				}
-
-				// Override min and max pixel values based on user provided options
-				var minmax = options.minMaxValues;
-				if (minmax.length) {
-					for (c = 0; c < nchannel; c++) {
-						if (minmax[c] !== undefined && minmax[c].length) {
-							layer.iipMinValue[c] = minmax[c][0];
-							layer.iipMaxValue[c] = minmax[c][1];
-						} else {
-							layer.iipMinValue[c] = iipdefault.minValue[c];
-							layer.iipMaxValue[c] = iipdefault.maxValue[c];
-						}
-					}
-				} else {
-					for (c = 0; c < nchannel; c++) {
-						layer.iipMinValue[c] = iipdefault.minValue[c];
-						layer.iipMaxValue[c] = iipdefault.maxValue[c];
-					}
-				}
-
-				// Default channel
-				layer.iipChannel = options.defaultChannel;
-
-				// Channel labels
-				var inlabels = options.channelLabels,
-				    ninlabel = inlabels.length,
-				    labels = layer.iipChannelLabels,
-				    inunits = options.channelUnits,
-				    ninunits = inunits.length,
-				    units = layer.iipChannelUnits,
-					key = VUtil.readFITSKey,
-					numstr, value;
-
-				for (c = 0; c < nchannel; c++) {
-					if (c < ninlabel) {
-						labels[c] = inlabels[c];
-					} else {
-						numstr = (c + 1).toString();
-						value = key('CHAN' +
-						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
-						  response);
-						labels[c] = value ? value : 'Channel #' + numstr;
-					}
-				}
-
-				// Copy those units that have been provided
-				for (c = 0; c < ninunits; c++) {
-					units[c] = inunits[c];
-				}
-				// Fill out units that are not provided with a default string
-				for (c = ninunits; c < nchannel; c++) {
-					units[c] = 'ADUs';
-				}
-
-				// Initialize mixing matrix depending on arguments and the number of channels
-				var	cc = 0,
-					mix = layer.iipMix,
-					omix = options.channelColors,
-					rgb = layer.iipRGB,
-					re = new RegExp(options.channelLabelMatch),
-					nchanon = 0,
-					channelflags = layer.iipChannelFlags;
-
-				nchanon = 0;
-				for (c = 0; c < nchannel; c++) {
-					channelflags[c] = re.test(labels[c]);
-					if (channelflags[c]) {
-						nchanon++;
-					}
-				}
-				if (nchanon >= iipdefault.channelColors.length) {
-					nchanon = iipdefault.channelColors.length - 1;
-				}
-
-				for (c = 0; c < nchannel; c++) {
-					mix[c] = [];
-					var	col = 3;
-					if (omix.length && omix[c] && omix[c].length === 3) {
-						// Copy RGB triplet
-						rgb[c] = rgbin(omix[c][0], omix[c][1], omix[c][2]);
-					} else {
-						rgb[c] = rgbin(0.0, 0.0, 0.0);
-					}
-					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-						rgb[c] = rgbin(iipdefault.channelColors[nchanon][cc++]);
-					}
-					// Compute the current row of the mixing matrix
-					layer.rgbToMix(c);
-				}
-
-				if (options.bounds) {
-					options.bounds = latLngBounds(options.bounds);
-				}
-				layer.wcs = options.crs ? options.crs : new WCS(response, {
-					nativeCelsys: layer.options.nativeCelsys,
-					nzoom: layer.iipMaxZoom + 1,
-					tileSize: layer.iipTileSize
-				});
-				layer.iipMetaReady = true;
-				layer.fire('metaload');
-			} else {
-				alert('There was a problem with the IIP metadata request.');
+			if (!options.maxZoom) {
+				options.maxZoom = this.iipMaxZoom + 6;
 			}
+			options.maxNativeZoom = this.iipMaxZoom;
+
+			// Set grid sizes
+			for (var z = 0; z <= this.iipMaxZoom; z++) {
+				this.iipImageSize[z] = {
+					x: Math.floor(maxsize.x / Math.pow(2, this.iipMaxZoom - z)),
+					y: Math.floor(maxsize.y / Math.pow(2, this.iipMaxZoom - z))
+				};
+				this.iipGridSize[z] = {
+					x: Math.ceil(this.iipImageSize[z].x / this.tileSize.x),
+					y: Math.ceil(this.iipImageSize[z].y / this.tileSize.y)
+				};
+			}
+
+			// (Virtual) grid sizes for extra zooming
+			for (z = this.iipMaxZoom; z <= options.maxZoom; z++) {
+				this.iipGridSize[z] = this.iipGridSize[this.iipMaxZoom];
+			}
+
+			// Set pixel bpp
+			this.iipBPP = meta.bits_per_channel;
+			// Only 32bit data are likely to be linearly quantized
+			if (this.iipGamma === iipdefault.gamma) {
+				this.iipGamma = this.iipBPP >= 32 ? 2.2 : 1.0;
+			}
+
+			// Number of channels
+			nchannel = this.iipNChannel = meta.channels;
+
+			// Images
+			images = meta.images;
+			
+			// Min and max pixel values
+			for (var c = 0; c < nchannel; c++) {
+				iipdefault.minValue[c] = images[0].min_max[c][0];
+				iipdefault.maxValue[c] = images[0].min_max[c][1];
+			}
+
+			// Override min and max pixel values based on user provided options
+			var minmax = options.minMaxValues;
+			if (minmax.length) {
+				for (c = 0; c < nchannel; c++) {
+					if (minmax[c] !== undefined && minmax[c].length) {
+						this.iipMinValue[c] = minmax[c][0];
+						this.iipMaxValue[c] = minmax[c][1];
+					} else {
+						this.iipMinValue[c] = iipdefault.minValue[c];
+						this.iipMaxValue[c] = iipdefault.maxValue[c];
+					}
+				}
+			} else {
+				for (c = 0; c < nchannel; c++) {
+					this.iipMinValue[c] = iipdefault.minValue[c];
+					this.iipMaxValue[c] = iipdefault.maxValue[c];
+				}
+			}
+
+			// Default channel
+			this.iipChannel = options.defaultChannel;
+
+			// Channel labels
+			var inlabels = options.channelLabels,
+			    ninlabel = inlabels.length,
+			    labels = this.iipChannelLabels,
+			    inunits = options.channelUnits,
+			    ninunits = inunits.length,
+			    units = this.iipChannelUnits,
+				key = VUtil.readFITSKey,
+				numstr, value;
+
+			for (c = 0; c < nchannel; c++) {
+				if (c < ninlabel) {
+					labels[c] = inlabels[c];
+				} else {
+					numstr = (c + 1).toString();
+					value = images[0].header['FILTER'];
+					console.log(images[0].header);
+					labels[c] = value ? value : 'Channel #' + numstr;
+				}
+			}
+
+			// Copy those units that have been provided
+			for (c = 0; c < ninunits; c++) {
+				units[c] = inunits[c];
+			}
+			// Fill out units that are not provided with a default string
+			for (c = ninunits; c < nchannel; c++) {
+				units[c] = 'ADUs';
+			}
+
+			// Initialize mixing matrix depending on arguments and the number of channels
+			var	cc = 0,
+				mix = this.iipMix,
+				omix = options.channelColors,
+				rgb = this.iipRGB,
+				re = new RegExp(options.channelLabelMatch),
+				nchanon = 0,
+				channelflags = this.iipChannelFlags;
+
+			nchanon = 0;
+			for (c = 0; c < nchannel; c++) {
+				channelflags[c] = re.test(labels[c]);
+				if (channelflags[c]) {
+					nchanon++;
+				}
+			}
+			if (nchanon >= iipdefault.channelColors.length) {
+				nchanon = iipdefault.channelColors.length - 1;
+			}
+
+			for (c = 0; c < nchannel; c++) {
+				mix[c] = [];
+				var	col = 3;
+				if (omix.length && omix[c] && omix[c].length === 3) {
+					// Copy RGB triplet
+					rgb[c] = rgbin(omix[c][0], omix[c][1], omix[c][2]);
+				} else {
+					rgb[c] = rgbin(0.0, 0.0, 0.0);
+				}
+				if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+					rgb[c] = rgbin(iipdefault.channelColors[nchanon][cc++]);
+				}
+				// Compute the current row of the mixing matrix
+				this.rgbToMix(c);
+			}
+			if (options.bounds) {
+				options.bounds = latLngBounds(options.bounds);
+			}
+			this.wcs = options.crs ? options.crs : new WCS(
+				meta.images,
+				{
+					nativeCelsys: this.options.nativeCelsys,
+					nzoom: this.iipMaxZoom + 1,
+					tileSize: this.tileSize
+				}
+			);
+			this.iipMetaReady = true;
+			this.fire('metaload');
+		} else {
+			alert('There was a problem with the VisiOmatic metadata request.');
 		}
 	},
 

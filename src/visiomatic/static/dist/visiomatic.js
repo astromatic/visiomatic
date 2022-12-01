@@ -29778,7 +29778,12 @@
       var map = this._map, crs = map.options.crs;
       this._point = map.latLngToLayerPoint(this._latlng);
       if (!this._majAxis1) {
-        var lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet6.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project((0, import_leaflet6.latLng)(lat, lng + dl * 1 / (clat > dl ? clat : dl))).subtract(point7), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl, mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 + 2 * c11 * c12 * this._mLatLng, my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 + 2 * c21 * c22 * this._mLatLng, mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 + (c11 * c22 + c12 * c21) * this._mLatLng, a1 = 0.5 * (mx2 + my2), a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy), a3 = mx2 * my2 - mxy * mxy;
+        var lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet6.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
+          (0, import_leaflet6.latLng)(
+            lat,
+            lng + dl * 1 / (clat > dl ? clat : dl)
+          )
+        ).subtract(point7), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl, mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 + 2 * c11 * c12 * this._mLatLng, my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 + 2 * c21 * c22 * this._mLatLng, mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 + (c11 * c22 + c12 * c21) * this._mLatLng, a1 = 0.5 * (mx2 + my2), a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy), a3 = mx2 * my2 - mxy * mxy;
         this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
         this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0;
         this._posAngle = 0.5 * Math.atan2(2 * mxy, mx2 - my2) / deg;
@@ -32211,8 +32216,8 @@
       }, "Reset image settings");
     },
     _updateMix: function(layer) {
-      var nchannel = layer.iipNChannel;
-      for (var c = 0; c < nchannel; c++) {
+      var nchannel2 = layer.iipNChannel;
+      for (var c = 0; c < nchannel2; c++) {
         layer.rgbToMix(c);
       }
       return;
@@ -32311,11 +32316,14 @@
           this._profileLine.spliceLatLngs(0, 1, this._map.getCenter());
           this._profileLine.redraw();
         } else {
-          var map = this._map, point7 = map.getCenter(), line = this._profileLine = (0, import_leaflet31.polyline)([point7, point7], {
-            color: profcolpick.value,
-            weight: 7,
-            opacity: 0.5
-          });
+          var map = this._map, point7 = map.getCenter(), line = this._profileLine = (0, import_leaflet31.polyline)(
+            [point7, point7],
+            {
+              color: profcolpick.value,
+              weight: 7,
+              opacity: 0.5
+            }
+          );
           line.nameColor = profcolpick.value;
           line.addTo(map);
           map.on("drag", this._updateLine, this);
@@ -32368,21 +32376,27 @@
     _loadCatalog: function(catalog, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet31.geoJson)(geo, {
-            onEachFeature: function(feature, layer) {
-              if (feature.properties && feature.properties.mags) {
-                layer.bindPopup(catalog._popup(feature));
+          var response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet31.geoJson)(
+            geo,
+            {
+              onEachFeature: function(feature, layer) {
+                if (feature.properties && feature.properties.mags) {
+                  layer.bindPopup(catalog._popup(feature));
+                }
+              },
+              pointToLayer: function(feature, latlng) {
+                return (0, import_leaflet31.circleMarker)(
+                  latlng,
+                  {
+                    radius: feature.properties.mags[0] ? 8 + catalog.maglim - feature.properties.mags[0] : 8
+                  }
+                );
+              },
+              style: function(feature) {
+                return { color: catalog.color, weight: 2 };
               }
-            },
-            pointToLayer: function(feature, latlng) {
-              return (0, import_leaflet31.circleMarker)(latlng, {
-                radius: feature.properties.mags[0] ? 8 + catalog.maglim - feature.properties.mags[0] : 8
-              });
-            },
-            style: function(feature) {
-              return { color: catalog.color, weight: 2 };
             }
-          });
+          );
           geocatalog.nameColor = catalog.color;
           geocatalog.addTo(_this._map);
           var layercontrol = _this._map._layerControl;
@@ -32538,11 +32552,14 @@
           if (this._currProfileLine) {
             this._updateLine();
           } else {
-            var map = _this._map, point7 = map.getCenter(), line2 = this._currProfileLine = (0, import_leaflet32.polyline)([point7, point7], {
-              color: linecolpick.value,
-              weight: 7,
-              opacity: 0.5
-            });
+            var map = _this._map, point7 = map.getCenter(), line2 = this._currProfileLine = (0, import_leaflet32.polyline)(
+              [point7, point7],
+              {
+                color: linecolpick.value,
+                weight: 7,
+                opacity: 0.5
+              }
+            );
             line2.nameColor = linecolpick.value;
             line2.addTo(map);
             map.on("drag", this._updateLine, this);
@@ -32889,29 +32906,32 @@
     _loadRegion: function(region, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet33.geoJson)(JSON.parse(response), {
-            onEachFeature: function(feature, layer) {
-              if (feature.properties && feature.properties.description) {
-                layer.bindPopup(feature.properties.description);
-              } else if (region.description) {
-                layer.bindPopup(region.description);
+          var wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet33.geoJson)(
+            JSON.parse(response),
+            {
+              onEachFeature: function(feature, layer) {
+                if (feature.properties && feature.properties.description) {
+                  layer.bindPopup(feature.properties.description);
+                } else if (region.description) {
+                  layer.bindPopup(region.description);
+                }
+              },
+              coordsToLatLng: function(coords2) {
+                if (wcs.forceNativeCelsys) {
+                  var latLng10 = wcs.eqToCelsys(latLng10(coords2[1], coords2[0]));
+                  return new import_leaflet33.LatLng(latLng10.lat, latLng10.lng, coords2[2]);
+                } else {
+                  return new import_leaflet33.LatLng(coords2[1], coords2[0], coords2[2]);
+                }
+              },
+              style: function(feature) {
+                return { color: region.color, weight: 2 };
+              },
+              pointToLayer: function(feature, latlng) {
+                return region.drawPoint ? region.drawPoint(feature, latlng) : (0, import_leaflet33.marker)(latlng);
               }
-            },
-            coordsToLatLng: function(coords2) {
-              if (wcs.forceNativeCelsys) {
-                var latLng10 = wcs.eqToCelsys(latLng10(coords2[1], coords2[0]));
-                return new import_leaflet33.LatLng(latLng10.lat, latLng10.lng, coords2[2]);
-              } else {
-                return new import_leaflet33.LatLng(coords2[1], coords2[0], coords2[2]);
-              }
-            },
-            style: function(feature) {
-              return { color: region.color, weight: 2 };
-            },
-            pointToLayer: function(feature, latlng) {
-              return region.drawPoint ? region.drawPoint(feature, latlng) : (0, import_leaflet33.marker)(latlng);
             }
-          });
+          );
           geoRegion.nameColor = region.color;
           geoRegion.addTo(_this._map);
           _this.removeLayer(templayer);
@@ -33997,9 +34017,9 @@
       if (typeof options.subdomains === "string") {
         options.subdomains = options.subdomains.split("");
       }
-      this.iipTileSize = { x: 256, y: 256 };
+      this.tileSize = { x: 256, y: 256 };
       this.iipImageSize = [];
-      this.iipImageSize[0] = this.iipTileSize;
+      this.iipImageSize[0] = this.tileSize;
       this.iipGridSize = [];
       this.iipGridSize[0] = { x: 1, y: 1 };
       this.iipBPP = 8;
@@ -34024,150 +34044,124 @@
       this.iipChannelUnits = [];
       this.iipQuality = options.quality;
       this._title = options.title.length > 0 ? options.title : this._url.match(/^.*\/(.*)\..*$/)[1];
-      this.getIIPMetaData(this._url);
+      this.getMetaData(this._url);
       if (!import_leaflet44.Browser.android) {
         this.on("tileunload", this._onTileRemove);
       }
       return this;
     },
-    getIIPMetaData: function(url) {
-      VUtil.requestURL(
-        url + "&obj=IIP,1.0&obj=max-size&obj=tile-size&obj=resolution-number&obj=bits-per-channel&obj=min-max-sample-values&obj=subject",
-        "getting IIP metadata",
-        this._parseIIPMetadata,
-        this
-      );
-    },
-    _parseIIPMetadata: function(layer, httpRequest) {
-      if (httpRequest.readyState === 4) {
-        if (httpRequest.status === 200) {
-          var response = httpRequest.responseText, matches = layer._readIIPKey(response, "IIP", VUtil.REG_PDEC);
-          if (!matches) {
-            alert("Error: Unexpected response from IIP server " + layer._url.replace(/\?.*$/g, ""));
-          }
-          var options = layer.options, iipdefault = layer.iipdefault;
-          matches = layer._readIIPKey(response, "Max-size", "(\\d+)\\s+(\\d+)");
-          var maxsize = {
-            x: parseInt(matches[1], 10),
-            y: parseInt(matches[2], 10)
-          };
-          matches = layer._readIIPKey(response, "Tile-size", "(\\d+)\\s+(\\d+)");
-          layer.iipTileSize = {
-            x: parseInt(matches[1], 10),
-            y: parseInt(matches[2], 10)
-          };
-          options.tileSize = layer.iipTileSize.x;
-          matches = layer._readIIPKey(response, "Resolution-number", "(\\d+)");
-          layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
-          if (layer.iipMinZoom > options.minZoom) {
-            options.minZoom = layer.iipMinZoom;
-          }
-          if (!options.maxZoom) {
-            options.maxZoom = layer.iipMaxZoom + 6;
-          }
-          options.maxNativeZoom = layer.iipMaxZoom;
-          for (var z = 0; z <= layer.iipMaxZoom; z++) {
-            layer.iipImageSize[z] = {
-              x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
-              y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
-            };
-            layer.iipGridSize[z] = {
-              x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
-              y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
-            };
-          }
-          for (z = layer.iipMaxZoom; z <= options.maxZoom; z++) {
-            layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
-          }
-          matches = layer._readIIPKey(response, "Bits-per-channel", "(\\d+)");
-          layer.iipBPP = parseInt(matches[1], 10);
-          if (layer.iipGamma === layer.iipdefault.gamma) {
-            layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1;
-          }
-          matches = layer._readIIPKey(
-            response,
-            "Min-Max-sample-values",
-            "\\s*(.*)"
-          );
-          var str = matches[1].split(/\s+/), nchannel = layer.iipNChannel = str.length / 2, mmc = 0;
-          for (var c = 0; c < nchannel; c++) {
-            iipdefault.minValue[c] = parseFloat(str[mmc++]);
-            iipdefault.maxValue[c] = parseFloat(str[mmc++]);
-          }
-          var minmax = options.minMaxValues;
-          if (minmax.length) {
-            for (c = 0; c < nchannel; c++) {
-              if (minmax[c] !== void 0 && minmax[c].length) {
-                layer.iipMinValue[c] = minmax[c][0];
-                layer.iipMaxValue[c] = minmax[c][1];
-              } else {
-                layer.iipMinValue[c] = iipdefault.minValue[c];
-                layer.iipMaxValue[c] = iipdefault.maxValue[c];
-              }
-            }
-          } else {
-            for (c = 0; c < nchannel; c++) {
-              layer.iipMinValue[c] = iipdefault.minValue[c];
-              layer.iipMaxValue[c] = iipdefault.maxValue[c];
-            }
-          }
-          layer.iipChannel = options.defaultChannel;
-          var inlabels = options.channelLabels, ninlabel = inlabels.length, labels = layer.iipChannelLabels, inunits = options.channelUnits, ninunits = inunits.length, units = layer.iipChannelUnits, key = VUtil.readFITSKey, numstr, value;
-          for (c = 0; c < nchannel; c++) {
-            if (c < ninlabel) {
-              labels[c] = inlabels[c];
-            } else {
-              numstr = (c + 1).toString();
-              value = key(
-                "CHAN" + (c < 9 ? "000" : c < 99 ? "00" : c < 999 ? "0" : "") + numstr,
-                response
-              );
-              labels[c] = value ? value : "Channel #" + numstr;
-            }
-          }
-          for (c = 0; c < ninunits; c++) {
-            units[c] = inunits[c];
-          }
-          for (c = ninunits; c < nchannel; c++) {
-            units[c] = "ADUs";
-          }
-          var cc = 0, mix = layer.iipMix, omix = options.channelColors, rgb3 = layer.iipRGB, re = new RegExp(options.channelLabelMatch), nchanon = 0, channelflags = layer.iipChannelFlags;
-          nchanon = 0;
-          for (c = 0; c < nchannel; c++) {
-            channelflags[c] = re.test(labels[c]);
-            if (channelflags[c]) {
-              nchanon++;
-            }
-          }
-          if (nchanon >= iipdefault.channelColors.length) {
-            nchanon = iipdefault.channelColors.length - 1;
-          }
-          for (c = 0; c < nchannel; c++) {
-            mix[c] = [];
-            var col = 3;
-            if (omix.length && omix[c] && omix[c].length === 3) {
-              rgb3[c] = rgb2(omix[c][0], omix[c][1], omix[c][2]);
-            } else {
-              rgb3[c] = rgb2(0, 0, 0);
-            }
-            if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-              rgb3[c] = rgb2(iipdefault.channelColors[nchanon][cc++]);
-            }
-            layer.rgbToMix(c);
-          }
-          if (options.bounds) {
-            options.bounds = (0, import_leaflet44.latLngBounds)(options.bounds);
-          }
-          layer.wcs = options.crs ? options.crs : new WCS(response, {
-            nativeCelsys: layer.options.nativeCelsys,
-            nzoom: layer.iipMaxZoom + 1,
-            tileSize: layer.iipTileSize
-          });
-          layer.iipMetaReady = true;
-          layer.fire("metaload");
-        } else {
-          alert("There was a problem with the IIP metadata request.");
+    getMetaData: async function(url) {
+      const res = await fetch(url + "&INFO", { method: "GET" });
+      const meta = await res.json();
+      if (res.status == 200 && meta["type"] == "visiomatic") {
+        var options = this.options, iipdefault = this.iipdefault, maxsize = { x: meta.full_size[1], y: meta.full_size[0] };
+        this.tileSize = { x: meta.tile_size[1], y: meta.tile_size[0] };
+        options.tileSize = this.tileSize.x;
+        this.iipMaxZoom = meta.tile_levels - 1;
+        if (this.iipMinZoom > options.minZoom) {
+          options.minZoom = this.iipMinZoom;
         }
+        if (!options.maxZoom) {
+          options.maxZoom = this.iipMaxZoom + 6;
+        }
+        options.maxNativeZoom = this.iipMaxZoom;
+        for (var z = 0; z <= this.iipMaxZoom; z++) {
+          this.iipImageSize[z] = {
+            x: Math.floor(maxsize.x / Math.pow(2, this.iipMaxZoom - z)),
+            y: Math.floor(maxsize.y / Math.pow(2, this.iipMaxZoom - z))
+          };
+          this.iipGridSize[z] = {
+            x: Math.ceil(this.iipImageSize[z].x / this.tileSize.x),
+            y: Math.ceil(this.iipImageSize[z].y / this.tileSize.y)
+          };
+        }
+        for (z = this.iipMaxZoom; z <= options.maxZoom; z++) {
+          this.iipGridSize[z] = this.iipGridSize[this.iipMaxZoom];
+        }
+        this.iipBPP = meta.bits_per_channel;
+        if (this.iipGamma === iipdefault.gamma) {
+          this.iipGamma = this.iipBPP >= 32 ? 2.2 : 1;
+        }
+        nchannel = this.iipNChannel = meta.channels;
+        images = meta.images;
+        for (var c = 0; c < nchannel; c++) {
+          iipdefault.minValue[c] = images[0].min_max[c][0];
+          iipdefault.maxValue[c] = images[0].min_max[c][1];
+        }
+        var minmax = options.minMaxValues;
+        if (minmax.length) {
+          for (c = 0; c < nchannel; c++) {
+            if (minmax[c] !== void 0 && minmax[c].length) {
+              this.iipMinValue[c] = minmax[c][0];
+              this.iipMaxValue[c] = minmax[c][1];
+            } else {
+              this.iipMinValue[c] = iipdefault.minValue[c];
+              this.iipMaxValue[c] = iipdefault.maxValue[c];
+            }
+          }
+        } else {
+          for (c = 0; c < nchannel; c++) {
+            this.iipMinValue[c] = iipdefault.minValue[c];
+            this.iipMaxValue[c] = iipdefault.maxValue[c];
+          }
+        }
+        this.iipChannel = options.defaultChannel;
+        var inlabels = options.channelLabels, ninlabel = inlabels.length, labels = this.iipChannelLabels, inunits = options.channelUnits, ninunits = inunits.length, units = this.iipChannelUnits, key = VUtil.readFITSKey, numstr, value;
+        for (c = 0; c < nchannel; c++) {
+          if (c < ninlabel) {
+            labels[c] = inlabels[c];
+          } else {
+            numstr = (c + 1).toString();
+            value = images[0].header["FILTER"];
+            console.log(images[0].header);
+            labels[c] = value ? value : "Channel #" + numstr;
+          }
+        }
+        for (c = 0; c < ninunits; c++) {
+          units[c] = inunits[c];
+        }
+        for (c = ninunits; c < nchannel; c++) {
+          units[c] = "ADUs";
+        }
+        var cc = 0, mix = this.iipMix, omix = options.channelColors, rgb3 = this.iipRGB, re = new RegExp(options.channelLabelMatch), nchanon = 0, channelflags = this.iipChannelFlags;
+        nchanon = 0;
+        for (c = 0; c < nchannel; c++) {
+          channelflags[c] = re.test(labels[c]);
+          if (channelflags[c]) {
+            nchanon++;
+          }
+        }
+        if (nchanon >= iipdefault.channelColors.length) {
+          nchanon = iipdefault.channelColors.length - 1;
+        }
+        for (c = 0; c < nchannel; c++) {
+          mix[c] = [];
+          var col = 3;
+          if (omix.length && omix[c] && omix[c].length === 3) {
+            rgb3[c] = rgb2(omix[c][0], omix[c][1], omix[c][2]);
+          } else {
+            rgb3[c] = rgb2(0, 0, 0);
+          }
+          if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+            rgb3[c] = rgb2(iipdefault.channelColors[nchanon][cc++]);
+          }
+          this.rgbToMix(c);
+        }
+        if (options.bounds) {
+          options.bounds = (0, import_leaflet44.latLngBounds)(options.bounds);
+        }
+        this.wcs = options.crs ? options.crs : new WCS(
+          meta.images,
+          {
+            nativeCelsys: this.options.nativeCelsys,
+            nzoom: this.iipMaxZoom + 1,
+            tileSize: this.tileSize
+          }
+        );
+        this.iipMetaReady = true;
+        this.fire("metaload");
+      } else {
+        alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
     rgbToMix: function(chan, rgb3) {
@@ -34186,9 +34180,9 @@
       this.iipMode = "mono";
     },
     updateMix: function() {
-      var nchannel = this.iipNChannel;
+      var nchannel2 = this.iipNChannel;
       this.iipMode = "color";
-      for (var c = 0; c < nchannel; c++) {
+      for (var c = 0; c < nchannel2; c++) {
         this.rgbToMix(c, this.iipRGB[c]);
       }
     },
@@ -34308,7 +34302,7 @@
           str += "&MINMAX=" + (c + 1).toString() + ":" + this.iipMinValue[c].toString() + "," + this.iipMaxValue[c].toString();
         }
       }
-      var nchannel = this.iipNChannel, mix = this.iipMix, m, n;
+      var nchannel2 = this.iipNChannel, mix = this.iipMix, m, n;
       str += "&CTW=";
       if (this.iipMode === "color") {
         for (n = 0; n < 3; n++) {
@@ -34316,7 +34310,7 @@
             str += ";";
           }
           str += mix[0][n].toString();
-          for (m = 1; m < nchannel; m++) {
+          for (m = 1; m < nchannel2; m++) {
             if (mix[m][n] !== void 0) {
               str += "," + mix[m][n].toString();
             }
@@ -34324,18 +34318,18 @@
         }
       } else {
         var cc = this.iipChannel;
-        if (cc >= nchannel) {
+        if (cc >= nchannel2) {
           cc = 0;
         }
-        if (cc < nchannel) {
-          nchannel = cc + 1;
+        if (cc < nchannel2) {
+          nchannel2 = cc + 1;
         }
         for (n = 0; n < 3; n++) {
           if (n) {
             str += ";";
           }
           str += cc === 0 ? "1" : "0";
-          for (m = 1; m < nchannel; m++) {
+          for (m = 1; m < nchannel2; m++) {
             str += "," + (cc === m ? "1" : "0");
           }
         }
