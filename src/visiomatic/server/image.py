@@ -70,7 +70,7 @@ class Image(object):
         )
 
 
-    def get_header(self) -> str:
+    def get_header_string(self) -> str:
         """
         Get the image header as a string.
         
