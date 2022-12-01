@@ -33164,9 +33164,9 @@
       import_leaflet36.DomEvent.on(button, "click", this._onClick, item);
       item.sideClass = sideClass;
       this._tabitems.push(item);
-      var pane = import_leaflet36.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet36.DomUtil.create("h1", "sidebar-header", pane);
-      header.innerHTML = title;
-      var closeButton = import_leaflet36.DomUtil.create("div", "sidebar-close", header);
+      var pane = import_leaflet36.DomUtil.create("div", "sidebar-pane", this._container), header2 = import_leaflet36.DomUtil.create("h1", "sidebar-header", pane);
+      header2.innerHTML = title;
+      var closeButton = import_leaflet36.DomUtil.create("div", "sidebar-close", header2);
       this._closeButtons.push(closeButton);
       import_leaflet36.DomEvent.on(closeButton, "click", this._onCloseClick, this);
       pane.id = id;
@@ -33684,7 +33684,7 @@
         ]
       ]
     },
-    initialize: function(hdr, options) {
+    initialize: function(images2, options) {
       options = import_leaflet43.Util.setOptions(this, options);
       var defaultparam = this.defaultparam;
       this.tileSize = (0, import_leaflet43.point)(options.tileSize);
@@ -33692,9 +33692,11 @@
       this.ctype = { x: defaultparam.ctype.x, y: defaultparam.ctype.y };
       this.naxis = (0, import_leaflet43.point)(defaultparam.naxis, true);
       this.projparam = new this._paramInit(defaultparam);
-      if (hdr) {
-        this._readWCS(hdr);
+      header = images2[0].header;
+      if (header) {
+        this._readWCS(header);
       }
+      console.log(this.projparam);
       this._paramInit(options, this.projparam);
       switch (this.ctype.x.substr(5, 3)) {
         case "ZEA":
@@ -33891,54 +33893,54 @@
       cmat[3] = Math.sin(cpole.lat * deg);
       return cmat;
     },
-    _readWCS: function(hdr) {
+    _readWCS: function(header2) {
       var key = VUtil.readFITSKey, projparam = this.projparam, v;
-      if (v = key("CTYPE1", hdr)) {
+      if (v = header2["CTYPE1"]) {
         this.ctype.x = v;
       }
-      if (v = key("CTYPE2", hdr)) {
+      if (v = header2["CTYPE2"]) {
         this.ctype.y = v;
       }
-      if (v = key("NAXIS1", hdr)) {
-        projparam.naxis.x = this.naxis.x = parseInt(v, 10);
+      if (v = header2["NAXIS1"]) {
+        projparam.naxis.x = this.naxis.x = v;
       }
-      if (v = key("NAXIS2", hdr)) {
-        projparam.naxis.y = this.naxis.y = parseInt(v, 10);
+      if (v = header2["NAXIS2"]) {
+        projparam.naxis.y = this.naxis.y = v;
       }
-      if (v = key("CRPIX1", hdr)) {
-        projparam.crpix.x = parseFloat(v, 10);
+      if (v = header2["CRPIX1"]) {
+        projparam.crpix.x = v;
       }
-      if (v = key("CRPIX2", hdr)) {
-        projparam.crpix.y = parseFloat(v, 10);
+      if (v = header2["CRPIX2"]) {
+        projparam.crpix.y = v;
       }
-      if (v = key("CRVAL1", hdr)) {
-        projparam.crval.lng = parseFloat(v, 10);
+      if (v = header2["CRVAL1"]) {
+        projparam.crval.lng = v;
       }
-      if (v = key("CRVAL2", hdr)) {
-        projparam.crval.lat = parseFloat(v, 10);
+      if (v = header2["CRVAL2"]) {
+        projparam.crval.lat = v;
       }
-      if (v = key("LONPOLE", hdr)) {
-        projparam.natpole.lng = parseFloat(v, 10);
+      if (v = header2["LONPOLE"]) {
+        projparam.natpole.lng = v;
       }
-      if (v = key("LATPOLE", hdr)) {
-        projparam.natpol.lat = parseFloat(v, 10);
+      if (v = header2["LATPOLE"]) {
+        projparam.natpol.lat = v;
       }
-      if (v = key("CD1_1", hdr)) {
-        projparam.cd[0][0] = parseFloat(v, 10);
+      if (v = header2["CD1_1"]) {
+        projparam.cd[0][0] = v;
       }
-      if (v = key("CD1_2", hdr)) {
-        projparam.cd[0][1] = parseFloat(v, 10);
+      if (v = header2["CD1_2"]) {
+        projparam.cd[0][1] = v;
       }
-      if (v = key("CD2_1", hdr)) {
-        projparam.cd[1][0] = parseFloat(v, 10);
+      if (v = header2["CD2_1"]) {
+        projparam.cd[1][0] = v;
       }
-      if (v = key("CD2_2", hdr)) {
-        projparam.cd[1][1] = parseFloat(v, 10);
+      if (v = header2["CD2_2"]) {
+        projparam.cd[1][1] = v;
       }
       for (var d = 0; d < 2; d++) {
         for (var j = 0; j < 20; j++) {
-          if (v = key("PV" + (d + 1) + "_" + j, hdr)) {
-            projparam.pv[d][j] = parseFloat(v, 10);
+          if (v = header2["PV" + (d + 1) + "_" + j]) {
+            projparam.pv[d][j] = v;
           }
         }
       }
@@ -34113,7 +34115,6 @@
           } else {
             numstr = (c + 1).toString();
             value = images[0].header["FILTER"];
-            console.log(images[0].header);
             labels[c] = value ? value : "Channel #" + numstr;
           }
         }

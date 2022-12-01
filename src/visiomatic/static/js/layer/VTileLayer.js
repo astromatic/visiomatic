@@ -236,7 +236,6 @@ export const VTileLayer = TileLayer.extend({
 				} else {
 					numstr = (c + 1).toString();
 					value = images[0].header['FILTER'];
-					console.log(images[0].header);
 					labels[c] = value ? value : 'Channel #' + numstr;
 				}
 			}
