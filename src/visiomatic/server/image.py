@@ -19,9 +19,23 @@ from .. import package
 from .settings import app_settings 
 
 class ImageModel(BaseModel):
+    """
+    Pydantic image model class
+
     size: List[int]
-    datasec: List[int]
-    detsec: List[int]
+        Image shape, FITS style (x comes first)
+    dataslice: List[List[int]]
+        Active area slice parameters, FITS style
+    detslice: List[List[int]]
+        Mosaic area slice parameters, FITS style
+    min_max: List[List[float]]
+        Lower and upper intensity cuts for each channel
+    header: dict
+        FITS header dictionary
+    """
+    size: List[int]
+    dataslice: List[List[int]]
+    detslice: List[List[int]]
     min_max: List[List[float]]
     header: dict
 
@@ -50,10 +64,15 @@ class Image(object):
         self.data = hdu.data.astype(np.float32)
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
-        self.shape = [self.header["NAXIS1"], self.header["NAXIS2"]]
+        # Full image shape, Python style
+        # (y comes first, first pixel has coordinate 0)
+        self.shape = [self.header["NAXIS2"], self.header["NAXIS1"]]
+        # Section of the image that contains data, FITS style
+        # (x comes first, first pixel has coordinate 1)
         self.datasec = datasec \
             if (datasec := self.parse_2dslice(self.header.get("DATASEC", ""))) \
-            else [1, self.shape[0], 1, self.shape[1]]
+            else [1, self.shape[1], 1, self.shape[0]]
+        # Section of the mosaic that contains the detector, FITS style
         self.detsec = detsec \
         	if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
         	else self.datasec
@@ -61,10 +80,31 @@ class Image(object):
 
 
     def get_model(self) -> ImageModel:
+        """
+        Return a Pydantic model of the image
+        
+        Returns
+        -------
+        model: TiledModel
+            Pydantic model instance of the image
+        """
+        # Convert data style to FITS format (x first, starts at 1)
+        dax = self.dataslice[1].indices(self.shape[1])
+        day = self.dataslice[0].indices(self.shape[0])
+        dex = self.detslice[1].indices(self.fullshape[1])
+        dey = self.detslice[0].indices(self.fullshape[0])
         return ImageModel(
-            size=self.shape,
-            datasec=self.datasec,
-            detsec=self.detsec,
+            size=self.shape[::-1],
+			# Active area slice parameters, FITS style
+            dataslice=[
+            	[dax[0] + 1, dax[1] + 1, dax[2]],
+            	[day[0] + 1, day[1] + 1, day[2]]
+            ],
+			# Mosaic area slice parameters, FITS style
+            detslice=[
+            	[dex[0] + 1, dex[1] + 1, dex[2]],
+            	[dey[0] + 1, dey[1] + 1, dey[2]]
+            ],
             min_max=[list(self.minmax)],
             header=dict(self.header.items())
         )
@@ -150,6 +190,26 @@ class Image(object):
 
 
 class TiledModel(BaseModel):
+    """
+    Pydantic tiled model class
+
+    type: str
+        Name of the web service
+    version: str
+        Version of the web service
+    full_size: List[int]
+        Full raster size, FITS style (x comes first)
+    tile_size: List[int]
+        Tile size, FITS style
+    tile_levels: int
+        Number of levels in the image pyramid
+    channels: int
+        Number of channels
+    bits_per_channel: int 
+        Number of bits per pixel
+    images: List[ImageModel]
+        List of image model objects
+    """
     type: str
     version: str
     full_size: List[int]
@@ -223,11 +283,19 @@ class Tiled(object):
 
 
     def get_model(self) -> TiledModel:
+        """
+        Return a Pydantic model of the tiled object
+        
+        Returns
+        -------
+        model: TiledModel
+            Pydantic model instance of the tiled object
+        """
         return TiledModel(
             type=package.name,
             version="3.0",
-            full_size=self.shape,
-            tile_size=self.tilesize,
+            full_size=self.shape[::-1],
+            tile_size=self.tilesize[::-1],
             tile_levels=self.nlevels,
             channels=1,
             bits_per_channel=32,
@@ -277,6 +345,7 @@ class Tiled(object):
                         slice(image.datasec[2] - 1, image.datasec[3]), \
                         slice(image.datasec[0] - 1, image.datasec[1])
                 self.data[image.detslice] = image.data[image.dataslice]
+                image.fullshape = [sizey, sizex]
             self.headers = [image.header for image in images]
             self.shape = self.data.shape
             self.minmax =  np.median(

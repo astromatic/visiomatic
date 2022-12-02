@@ -148,9 +148,9 @@ export const VTileLayer = TileLayer.extend({
 		if (res.status == 200 && meta['type'] == 'visiomatic') {
 			var options = this.options,
 				iipdefault = this.iipdefault,
-				maxsize = {x: meta.full_size[1], y: meta.full_size[0]};
+				maxsize = {x: meta.full_size[0], y: meta.full_size[1]};
 
-			this.tileSize = {x: meta.tile_size[1], y: meta.tile_size[0]};
+			this.tileSize = {x: meta.tile_size[0], y: meta.tile_size[1]};
 			options.tileSize = this.tileSize.x;
 
 			this.iipMaxZoom = meta.tile_levels - 1;
