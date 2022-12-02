@@ -33696,7 +33696,6 @@
       if (header) {
         this._readWCS(header);
       }
-      console.log(this.projparam);
       this._paramInit(options, this.projparam);
       switch (this.ctype.x.substr(5, 3)) {
         case "ZEA":

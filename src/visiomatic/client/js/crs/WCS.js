@@ -63,7 +63,6 @@ WCSObj = extend({}, CRS, {
 		if (header) {
 			this._readWCS(header);
 		}
-		console.log(this.projparam);
 		this._paramInit(options, this.projparam);
 
 		// Identify the WCS projection type
