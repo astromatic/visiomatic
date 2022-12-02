@@ -97,13 +97,13 @@ class Image(object):
             size=self.shape[::-1],
 			# Active area slice parameters, FITS style
             dataslice=[
-            	[dax[0] + 1, dax[1] + 1, dax[2]],
-            	[day[0] + 1, day[1] + 1, day[2]]
+            	[dax[0] + 1, dax[1], dax[2]],
+            	[day[0] + 1, day[1], day[2]]
             ],
 			# Mosaic area slice parameters, FITS style
             detslice=[
-            	[dex[0] + 1, dex[1] + 1, dex[2]],
-            	[dey[0] + 1, dey[1] + 1, dey[2]]
+            	[dex[0] + 1, dex[1] + (2 if dex[2] < 0 else 0), dex[2]],
+            	[dey[0] + 1, dey[1] + (2 if dey[2] < 0 else 0), dey[2]]
             ],
             min_max=[list(self.minmax)],
             header=dict(self.header.items())

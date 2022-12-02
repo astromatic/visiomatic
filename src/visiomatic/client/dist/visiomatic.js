@@ -33696,6 +33696,7 @@
       if (header) {
         this._readWCS(header);
       }
+      this._shiftWCS(images2[0]);
       this._paramInit(options, this.projparam);
       switch (this.ctype.x.substr(5, 3)) {
         case "ZEA":
@@ -33943,6 +33944,15 @@
           }
         }
       }
+    },
+    _shiftWCS: function(image) {
+      var projparam = this.projparam, crpix = projparam.crpix, cd = projparam.cd, detslice = image.detslice, dataslice = image.dataslice;
+      crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
+      crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
+      cd[0][0] *= detslice[0][2];
+      cd[0][1] *= detslice[1][2];
+      cd[1][0] *= detslice[0][2];
+      cd[1][1] *= detslice[1][2];
     },
     _deltaLng: function(latLng10, latLng0) {
       var dlng = latLng10.lng - latLng0.lng;
