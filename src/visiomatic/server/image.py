@@ -308,15 +308,7 @@ class Tiled(object):
             raise(LookupError(f"No 2D+ data found in {filename}"))
             return
         self.tilesize = tilesize;
-        if self.nimages > 1:
-            self.make_mosaic(self.images)
-        else:
-            image = self.images[0]
-            self.bitdepth = image.bitdepth
-            self.headers = [image.header]
-            self.data = image.data
-            self.shape = image.shape
-            self.minmax = image.minmax
+        self.make_mosaic(self.images)
         self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
                         (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
         self.gamma = gamma
@@ -501,7 +493,7 @@ class Tiled(object):
                 dsize=(ima.shape[1]//2, ima.shape[0]//2),
                 interpolation=cv2.INTER_AREA
             )
-
+        del ima
 
     def get_tile(
             self,
