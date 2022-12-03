@@ -14,11 +14,25 @@ import {Projection} from './Projection';
 export const Pixel = Projection.extend({
 	code: 'PIX',
 
-	_paramInit: function (projparam) {
-		this.projparam = projparam;
+	_projInit: function () {
+		var	projparam = this.projparam;
+
+		if (!options.crval) {
+			projparam.crval = latLng(
+				(projparam.naxis.y + 1.0) / 2.0,
+				(projparam.naxis.x + 1.0) / 2.0
+			);
+		}
+		projparam.wrapLng = [0.5, projparam.naxis.x - 0.5];
+		projparam.wrapLat = [this.projparam.y - 0.5, 0.5];
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.cpole = projparam.crval;
-		this.bounds = bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
+		this.bounds = bounds(
+			[0.5, this.projparam.naxis.y - 0.5],
+			[this.projparam.naxis.x - 0.5, 0.5]
+		);
+		projparam.pixelFlag = true;
+		projparam.infinite = false;
 	},
 
 	project: function (latlng) {

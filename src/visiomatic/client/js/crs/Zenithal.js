@@ -14,12 +14,15 @@ import {Projection} from './Projection';
 
 Zenithal = Projection.extend({
 
-	_paramInit: function (projparam) {
-		this.projparam = projparam;
+	_projInit: function () {
+		var	projparam = this.projparam;
+
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.natrval = latLng(90.0, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
+		projparam.infinite = true;
+		projparam.pixelFlag = false;
 	},
 
 	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.

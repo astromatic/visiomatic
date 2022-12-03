@@ -14,15 +14,18 @@ import {Projection} from './Projection';
 
 Cylindrical = Projection.extend({
 
-	_paramInit: function (projparam) {
+	_projInit: function () {
 		var	deg = Math.PI / 180.0;
-		this.projparam = projparam;
+		var	projparam = this.projparam;
+
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.lambda = projparam.pv[1][1];
 		if (projparam.lambda === 0.0) { projparam.lambda = 1.0; }
 		projparam.natrval = latLng(0.0, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
+		projparam.infinite = true;
+		projparam.pixelFlag = false;
 	},
 
 	_rToTheta: function (r) {

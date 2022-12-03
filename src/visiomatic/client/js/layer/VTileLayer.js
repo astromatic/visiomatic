@@ -421,11 +421,11 @@ export const VTileLayer = TileLayer.extend({
 									}
 									map.setView(latlng, zoom, {reset: true, animate: false});
 								} else {
-									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 									alert(str + ': Unknown location');
 								}
 							} else {
-								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 								alert('There was a problem with the request to the Sesame service at CDS');
 							}
 						}
@@ -433,7 +433,7 @@ export const VTileLayer = TileLayer.extend({
 				);
 			}
 		} else {
-			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+			map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 		}
 	},
 
