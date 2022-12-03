@@ -50,7 +50,7 @@ WCSObj = extend({}, CRS, {
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
-	initialize: function (images, options) {
+	initialize: function (header, images, options) {
 		options = Util.setOptions(this, options);
 		var	defaultparam = this.defaultparam;
 
@@ -59,11 +59,9 @@ WCSObj = extend({}, CRS, {
 		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
 		this.naxis = point(defaultparam.naxis, true);
 		this.projparam = new this._paramInit(defaultparam);
-		header = images[0].header;
 		if (header) {
 			this._readWCS(header);
 		}
-		this._shiftWCS(images[0]);
 		this._paramInit(options, this.projparam);
 
 		// Identify the WCS projection type
@@ -339,20 +337,6 @@ WCSObj = extend({}, CRS, {
 				}
 			}
 		}
-	},
-
-	_shiftWCS: function (image) {
-		var projparam = this.projparam,
-			crpix = projparam.crpix,
-			cd = projparam.cd,
-			detslice = image.detslice,
-			dataslice = image.dataslice;
-		crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
-		crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
-		cd[0][0] *= detslice[0][2];
-		cd[0][1] *= detslice[1][2];
-		cd[1][0] *= detslice[0][2];
-		cd[1][1] *= detslice[1][2];
 	},
 
 	_deltaLng: function (latLng, latLng0) {

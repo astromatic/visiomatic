@@ -33164,9 +33164,9 @@
       import_leaflet36.DomEvent.on(button, "click", this._onClick, item);
       item.sideClass = sideClass;
       this._tabitems.push(item);
-      var pane = import_leaflet36.DomUtil.create("div", "sidebar-pane", this._container), header2 = import_leaflet36.DomUtil.create("h1", "sidebar-header", pane);
-      header2.innerHTML = title;
-      var closeButton = import_leaflet36.DomUtil.create("div", "sidebar-close", header2);
+      var pane = import_leaflet36.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet36.DomUtil.create("h1", "sidebar-header", pane);
+      header.innerHTML = title;
+      var closeButton = import_leaflet36.DomUtil.create("div", "sidebar-close", header);
       this._closeButtons.push(closeButton);
       import_leaflet36.DomEvent.on(closeButton, "click", this._onCloseClick, this);
       pane.id = id;
@@ -33684,7 +33684,7 @@
         ]
       ]
     },
-    initialize: function(images2, options) {
+    initialize: function(header, images2, options) {
       options = import_leaflet43.Util.setOptions(this, options);
       var defaultparam = this.defaultparam;
       this.tileSize = (0, import_leaflet43.point)(options.tileSize);
@@ -33692,11 +33692,9 @@
       this.ctype = { x: defaultparam.ctype.x, y: defaultparam.ctype.y };
       this.naxis = (0, import_leaflet43.point)(defaultparam.naxis, true);
       this.projparam = new this._paramInit(defaultparam);
-      header = images2[0].header;
       if (header) {
         this._readWCS(header);
       }
-      this._shiftWCS(images2[0]);
       this._paramInit(options, this.projparam);
       switch (this.ctype.x.substr(5, 3)) {
         case "ZEA":
@@ -33893,66 +33891,57 @@
       cmat[3] = Math.sin(cpole.lat * deg);
       return cmat;
     },
-    _readWCS: function(header2) {
+    _readWCS: function(header) {
       var key = VUtil.readFITSKey, projparam = this.projparam, v;
-      if (v = header2["CTYPE1"]) {
+      if (v = header["CTYPE1"]) {
         this.ctype.x = v;
       }
-      if (v = header2["CTYPE2"]) {
+      if (v = header["CTYPE2"]) {
         this.ctype.y = v;
       }
-      if (v = header2["NAXIS1"]) {
+      if (v = header["NAXIS1"]) {
         projparam.naxis.x = this.naxis.x = v;
       }
-      if (v = header2["NAXIS2"]) {
+      if (v = header["NAXIS2"]) {
         projparam.naxis.y = this.naxis.y = v;
       }
-      if (v = header2["CRPIX1"]) {
+      if (v = header["CRPIX1"]) {
         projparam.crpix.x = v;
       }
-      if (v = header2["CRPIX2"]) {
+      if (v = header["CRPIX2"]) {
         projparam.crpix.y = v;
       }
-      if (v = header2["CRVAL1"]) {
+      if (v = header["CRVAL1"]) {
         projparam.crval.lng = v;
       }
-      if (v = header2["CRVAL2"]) {
+      if (v = header["CRVAL2"]) {
         projparam.crval.lat = v;
       }
-      if (v = header2["LONPOLE"]) {
+      if (v = header["LONPOLE"]) {
         projparam.natpole.lng = v;
       }
-      if (v = header2["LATPOLE"]) {
+      if (v = header["LATPOLE"]) {
         projparam.natpol.lat = v;
       }
-      if (v = header2["CD1_1"]) {
+      if (v = header["CD1_1"]) {
         projparam.cd[0][0] = v;
       }
-      if (v = header2["CD1_2"]) {
+      if (v = header["CD1_2"]) {
         projparam.cd[0][1] = v;
       }
-      if (v = header2["CD2_1"]) {
+      if (v = header["CD2_1"]) {
         projparam.cd[1][0] = v;
       }
-      if (v = header2["CD2_2"]) {
+      if (v = header["CD2_2"]) {
         projparam.cd[1][1] = v;
       }
       for (var d = 0; d < 2; d++) {
         for (var j = 0; j < 20; j++) {
-          if (v = header2["PV" + (d + 1) + "_" + j]) {
+          if (v = header["PV" + (d + 1) + "_" + j]) {
             projparam.pv[d][j] = v;
           }
         }
       }
-    },
-    _shiftWCS: function(image) {
-      var projparam = this.projparam, crpix = projparam.crpix, cd = projparam.cd, detslice = image.detslice, dataslice = image.dataslice;
-      crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
-      crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
-      cd[0][0] *= detslice[0][2];
-      cd[0][1] *= detslice[1][2];
-      cd[1][0] *= detslice[0][2];
-      cd[1][1] *= detslice[1][2];
     },
     _deltaLng: function(latLng10, latLng0) {
       var dlng = latLng10.lng - latLng0.lng;
@@ -34161,6 +34150,7 @@
           options.bounds = (0, import_leaflet44.latLngBounds)(options.bounds);
         }
         this.wcs = options.crs ? options.crs : new WCS(
+          meta.header,
           meta.images,
           {
             nativeCelsys: this.options.nativeCelsys,

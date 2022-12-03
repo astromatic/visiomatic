@@ -74,8 +74,8 @@ class Image(object):
             else [1, self.shape[1], 1, self.shape[0]]
         # Section of the mosaic that contains the detector, FITS style
         self.detsec = detsec \
-        	if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
-        	else self.datasec
+            if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
+            else self.datasec
         self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
 
 
@@ -88,23 +88,10 @@ class Image(object):
         model: TiledModel
             Pydantic model instance of the image
         """
-        # Convert data style to FITS format (x first, starts at 1)
-        dax = self.dataslice[1].indices(self.shape[1])
-        day = self.dataslice[0].indices(self.shape[0])
-        dex = self.detslice[1].indices(self.fullshape[1])
-        dey = self.detslice[0].indices(self.fullshape[0])
         return ImageModel(
             size=self.shape[::-1],
-			# Active area slice parameters, FITS style
-            dataslice=[
-            	[dax[0] + 1, dax[1], dax[2]],
-            	[day[0] + 1, day[1], day[2]]
-            ],
-			# Mosaic area slice parameters, FITS style
-            detslice=[
-            	[dex[0] + 1, dex[1] + (2 if dex[2] < 0 else 0), dex[2]],
-            	[dey[0] + 1, dey[1] + (2 if dey[2] < 0 else 0), dey[2]]
-            ],
+            dataslice=self.datasliceinfo,
+            detslice=self.detsliceinfo,
             min_max=[list(self.minmax)],
             header=dict(self.header.items())
         )
@@ -140,6 +127,60 @@ class Image(object):
         """
         coords = self.re_2dslice.findall(str)
         return [int(s) for s in coords[0]] if coords else None
+
+
+    def compute_geometry(
+            self,
+            start: Tuple[Union[int]],
+            shape: Tuple[Union[int]]
+        ) -> None:
+        """
+        Compute geometry parameters related to the image position in a mosaic.
+        
+        Parameters
+        ----------
+        start: Tuple[int]
+            Position of starting point in mosaic (Python style).
+        shape: Tuple[int]
+            Shape of the mosaic (Python style).
+        """
+        
+        # Compute signs of the pixel steps in x and 1
+        xsign = 1 if self.detsec[0] < self.detsec[1] else -1
+        ysign = 1 if self.detsec[2] < self.detsec[3] else -1
+
+        # Compute data and mosaic slices in Python format (y first, starts at 0)
+        self.dataslice = \
+            slice(self.datasec[2] - 1, self.datasec[3]), \
+            slice(self.datasec[0] - 1, self.datasec[1])
+        self.detslice = \
+            slice(
+                self.detsec[2] - start[0] - 1,
+                None if (endy:=self.detsec[3] - start[0] - 1 + ysign) < 0 \
+                    else endy,
+                ysign
+            ), \
+              slice(
+                self.detsec[0] - start[1] - 1,
+                   None if (endx:=self.detsec[1] - start[1] - 1 + xsign) < 0 \
+                    else endx,
+                xsign
+            )
+
+        # Compute data slice info, FITS style (x first, starts at 1)
+        dax = self.dataslice[1].indices(self.shape[1])
+        day = self.dataslice[0].indices(self.shape[0])
+        self.datasliceinfo = [
+                [dax[0] + 1, dax[1], dax[2]],
+                [day[0] + 1, day[1], day[2]]
+        ]
+        dex = self.detslice[1].indices(shape[1])
+        dey = self.detslice[0].indices(shape[0])
+        # Compute mosaic slice info, FITS style
+        self.detsliceinfo=[
+                [dex[0] + 1, dex[1] + (2 if dex[2] < 0 else 0), dex[2]],
+                [dey[0] + 1, dey[1] + (2 if dey[2] < 0 else 0), dey[2]]
+        ]
 
 
     def compute_background(self, skip : int = 15) -> None:
@@ -217,6 +258,7 @@ class TiledModel(BaseModel):
     tile_levels: int
     channels: int
     bits_per_channel: int 
+    header: dict
     images: List[ImageModel]
 
 
@@ -299,6 +341,7 @@ class Tiled(object):
             tile_levels=self.nlevels,
             channels=1,
             bits_per_channel=32,
+            header=dict(self.header.items()),
             images=[image.get_model() for image in self.images]
         )
 
@@ -312,47 +355,62 @@ class Tiled(object):
         images: list[Image]
             list of input images.
         """
-        x = [image.detsec[0] for image in images] + [image.detsec[1] for image in images]
-        y = [image.detsec[2] for image in images] + [image.detsec[3] for image in images]
+        x = [image.detsec[0] for image in images] \
+            + [image.detsec[1] for image in images]
+        y = [image.detsec[2] for image in images] \
+            + [image.detsec[3] for image in images]
         if None in x or None in y:
             pass
         else:
-            # Compute the min and max chip corner coordinates on the mosaic
-            minx = min(x) 
-            miny = min(y)
-            sizex = max(x) - minx + 1
-            sizey = max(y) - miny + 1
-            self.data = np.zeros((sizey, sizex), dtype=images[0].data.dtype)
+            # Compute the chip corner position in the mosaic, Python style
+            start = [min(y) - 1, min(x) -1]
+            # Compute the mosaic shape
+            shape = [max(y) - start[0] + 1,  max(x) - start[1] + 1]
+            self.data = np.zeros(shape, dtype=images[0].data.dtype)
             for image in images:
-                # Add +/-1 to end at pos +/- 1 (Python convention)
-                xsign = 1 if image.detsec[0] < image.detsec[1] else -1
-                ysign = 1 if image.detsec[2] < image.detsec[3] else -1
-                image.detslice = \
-                        slice(
-                            image.detsec[2] - miny,
-                            None if (endy:=image.detsec[3] - miny + ysign) < 0 \
-                                else endy,
-                            ysign
-                        ), \
-                        slice(
-                            image.detsec[0] - minx,
-                            None if (endx:=image.detsec[1] - minx + xsign) < 0 \
-                                else endx,
-                            xsign
-                        )
-                # Subtract 1 to start at 0 (Python convention)
-                image.dataslice = \
-                        slice(image.datasec[2] - 1, image.datasec[3]), \
-                        slice(image.datasec[0] - 1, image.datasec[1])
+                image.compute_geometry(start, shape)
                 self.data[image.detslice] = image.data[image.dataslice]
-                image.fullshape = [sizey, sizex]
-            self.headers = [image.header for image in images]
             self.shape = self.data.shape
             self.minmax =  np.median(
                 np.array([image.minmax for image in images]),
                 axis=0
             )
             self.bitdepth = images[0].bitdepth
+            self.header = self.make_header()
+
+
+    def make_header(self) -> fits.header:
+        """
+        Generate a FITS header with a global WCS for the mosaic.
+
+        Returns
+        -------
+        header: ~astropy.io.fits.Header
+            FITS header for the mosaic.
+        """
+        images = self.images
+        image = images[0]
+        header = image.header.copy()
+        # Update parameters so that they apply to the mosaic
+        header["NAXIS1"] = self.shape[1]
+        header["NAXIS2"] = self.shape[0]
+        datainfo = image.datasliceinfo
+        detinfo = image.detsliceinfo
+        crpix1 = header.get("CRPIX1", 1)
+        crpix2 = header.get("CRPIX2", 1)
+        header["CRPIX1"] = detinfo[0][0] \
+            + detinfo[0][2] * (header["CRPIX1"] - datainfo[0][0]);
+        header["CRPIX2"] = detinfo[1][0] \
+            + detinfo[1][2] * (header["CRPIX2"] - datainfo[1][0]);
+        cd1_1 = header.get("CD1_1", 1.0)
+        cd1_2 = header.get("CD1_2", 0.0)
+        cd2_1 = header.get("CD2_1", 0.0)
+        cd2_2 = header.get("CD2_2", 1.0)
+        header["CD1_1"] = detinfo[0][2] * cd1_1;
+        header["CD1_2"] = detinfo[1][2] * cd1_2;
+        header["CD2_1"] = detinfo[0][2] * cd2_1;
+        header["CD2_2"] = detinfo[1][2] * cd2_2;
+        return header
 
 
     def get_iipheaderstr(self) -> str:

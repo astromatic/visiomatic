@@ -288,6 +288,7 @@ export const VTileLayer = TileLayer.extend({
 				options.bounds = latLngBounds(options.bounds);
 			}
 			this.wcs = options.crs ? options.crs : new WCS(
+				meta.header,
 				meta.images,
 				{
 					nativeCelsys: this.options.nativeCelsys,
