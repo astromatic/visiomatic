@@ -17,6 +17,7 @@ export const Pixel = Projection.extend({
 	_projInit: function () {
 		var	projparam = this.projparam;
 
+		// Center on image
 		if (!options.crval) {
 			projparam.crval = latLng(
 				(projparam.naxis.y + 1.0) / 2.0,

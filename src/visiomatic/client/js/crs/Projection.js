@@ -37,11 +37,18 @@ export const Projection = Class.extend({
 	},
 
 	initialize: function (header, options) {
+		const	projparam = this._paramUpdate(this.defaultparam);
+
 		this.options = options;
-		var	projparam = this._paramUpdate(this.defaultparam);
+
 		this._readWCS(header);
 		// Override selected WCS parameters with options
 		if (options) {
+			if (options.dataslice && options.detslice) {
+				projparam.dataslice = options.dataslice;
+				projparam.detslice = options.detslice;
+				this._shiftWCS();
+			}
 			this._paramUpdate(options);
 		}
 		this._projInit();
@@ -138,6 +145,21 @@ export const Projection = Class.extend({
 		}
 	},
 
+	_shiftWCS: function (dataslice, detslice) {
+		var projparam = this.projparam,
+			crpix = projparam.crpix,
+			cd = projparam.cd,
+			dataslice = projparam.dataslice,
+			detslice = projparam.detslice;
+
+		crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
+		crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
+		cd[0][0] *= detslice[0][2];
+		cd[0][1] *= detslice[1][2];
+		cd[1][0] *= detslice[0][2];
+		cd[1][1] *= detslice[1][2];
+	},
+
 	// Generate a celestial coordinate system transformation matrix
 	_celsysmatInit: function (celcode) {
 		var deg = Math.PI / 180.0,
@@ -188,7 +210,14 @@ export const Projection = Class.extend({
 		return this.celsysflag ? this.celsysToEq(latlng) : latlng;
 	},
 
-	_getBounds(projection) {
+	_getCenter(projection) {
+		const	projparam = this.projparam,
+			detslice = projparam.detslice;
+		this.centerPnt = projection.project(
+			this.unproject(point(detslice[0][0], detslice[1][0]))
+		)._add(projection.project(
+			this.unproject(point(detslice[0][1], detslice[1][1]))))
+			._divideBy(2.0);
 	},
 
 

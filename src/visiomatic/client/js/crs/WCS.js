@@ -45,8 +45,13 @@ WCSObj = extend({}, CRS, {
 		if (nimages > 1) {
 			this.projections = new Array(nimages);
 			for (const [i, image] of images.entries()) {
-				projection = this.getProjection(image.header, options);
-				projection._getBounds(this.projection);
+				imOptions = {
+					naticeCelsys: options.nativeCelsys,
+					dataslice: image.dataslice,
+					detslice: image.detslice
+				};
+				projection = this.getProjection(image.header, imOptions);
+				projection._getCenter(this.projection);
 				this.projections[i] = projection;
 			}
 
@@ -79,38 +84,50 @@ WCSObj = extend({}, CRS, {
 	},
 
 	multiProject(latlng) {
-		pnt1 = this.projection.project(latlng);
-		for (projection of this.projections) {
-			pnt = projection.project(latlng);
+		dc = 1e+30;
+		pc = -1;
+		pnt = this.projection.project(latlng);
+		for (const [p, projection] of this.projections.entries()) {
+			pntc = projection.centerPnt;
+			if ((d = pnt.distanceTo(pntc)) < dc) {
+				pc = p;
+				dc = d;
+			}
 		}
-		return this.projection.project(latlng);
+		return this.projections[pc].project(latlng);
 	},
 	
 	multiUnproject(pnt) {
-		return this.projection.unproject(pnt);
+		for (const [p, projection] of this.projections.entries()) {
+			pntc = projection.centerPnt;
+			if ((d = pnt.distanceTo(pntc)) < dc) {
+				pc = p;
+				dc = d;
+			}
+		}
+		return this.projections[pc].unproject(pnt);
 	},
 
     getProjection: function (header, options) {
     	ctype1 = header['CTYPE1'] || 'PIXEL';
     	switch (ctype1.substr(5, 3)) {
 			case 'ZEA':
-				projection = new ZEA(header);
+				projection = new ZEA(header, options);
 				break;
 			case 'TAN':
-				projection = new TAN(header);
+				projection = new TAN(header, options);
 				break;
 			case 'CAR':
-				projection = new CAR(header);
+				projection = new CAR(header, options);
 				break;
 			case 'CEA':
-				projection = new CEA(header);
+				projection = new CEA(header, options);
 				break;
 			case 'COE':
-				projection = new COE(header);
+				projection = new COE(header, options);
 				break;
 			default:
-				projection = new Pixel(header);
-				// Center on image if WCS is in pixels
+				projection = new Pixel(header, options);
 				break;
 		}
 		return projection;

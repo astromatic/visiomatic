@@ -89,8 +89,8 @@
           return wrapperFn;
         }
         function wrapNum(x, range, includeMax) {
-          var max = range[1], min = range[0], d = max - min;
-          return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
+          var max = range[1], min = range[0], d2 = max - min;
+          return x === max && includeMax ? x : ((x - min) % d2 + d2) % d2 + min;
         }
         function falseFn() {
           return false;
@@ -934,25 +934,25 @@
           R: earthRadius,
           MAX_LATITUDE: 85.0511287798,
           project: function(latlng) {
-            var d = Math.PI / 180, max = this.MAX_LATITUDE, lat = Math.max(Math.min(max, latlng.lat), -max), sin = Math.sin(lat * d);
+            var d2 = Math.PI / 180, max = this.MAX_LATITUDE, lat = Math.max(Math.min(max, latlng.lat), -max), sin = Math.sin(lat * d2);
             return new Point2(
-              this.R * latlng.lng * d,
+              this.R * latlng.lng * d2,
               this.R * Math.log((1 + sin) / (1 - sin)) / 2
             );
           },
           unproject: function(point8) {
-            var d = 180 / Math.PI;
+            var d2 = 180 / Math.PI;
             return new LatLng2(
-              (2 * Math.atan(Math.exp(point8.y / this.R)) - Math.PI / 2) * d,
-              point8.x * d / this.R
+              (2 * Math.atan(Math.exp(point8.y / this.R)) - Math.PI / 2) * d2,
+              point8.x * d2 / this.R
             );
           },
           bounds: function() {
-            var d = earthRadius * Math.PI;
-            return new Bounds2([-d, -d], [d, d]);
+            var d2 = earthRadius * Math.PI;
+            return new Bounds2([-d2, -d2], [d2, d2]);
           }()
         };
-        function Transformation2(a, b, c, d) {
+        function Transformation2(a, b, c, d2) {
           if (isArray(a)) {
             this._a = a[0];
             this._b = a[1];
@@ -963,7 +963,7 @@
           this._a = a;
           this._b = b;
           this._c = c;
-          this._d = d;
+          this._d = d2;
         }
         Transformation2.prototype = {
           transform: function(point8, scale3) {
@@ -983,8 +983,8 @@
             );
           }
         };
-        function toTransformation(a, b, c, d) {
-          return new Transformation2(a, b, c, d);
+        function toTransformation(a, b, c, d2) {
+          return new Transformation2(a, b, c, d2);
         }
         var EPSG3857 = extend16({}, Earth, {
           code: "EPSG:3857",
@@ -3178,9 +3178,9 @@
             scale3.innerHTML = text;
           },
           _getRoundNum: function(num) {
-            var pow10 = Math.pow(10, (Math.floor(num) + "").length - 1), d = num / pow10;
-            d = d >= 10 ? 10 : d >= 5 ? 5 : d >= 3 ? 3 : d >= 2 ? 2 : 1;
-            return pow10 * d;
+            var pow10 = Math.pow(10, (Math.floor(num) + "").length - 1), d2 = num / pow10;
+            d2 = d2 >= 10 ? 10 : d2 >= 5 ? 5 : d2 >= 3 ? 3 : d2 >= 2 ? 2 : 1;
+            return pow10 * d2;
           }
         });
         var scale2 = function(options2) {
@@ -3706,20 +3706,20 @@
           R_MINOR: 6356752314245179e-9,
           bounds: new Bounds2([-2003750834279e-5, -1549657073972e-5], [2003750834279e-5, 1876465623138e-5]),
           project: function(latlng) {
-            var d = Math.PI / 180, r = this.R, y = latlng.lat * d, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), con = e * Math.sin(y);
+            var d2 = Math.PI / 180, r = this.R, y = latlng.lat * d2, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), con = e * Math.sin(y);
             var ts = Math.tan(Math.PI / 4 - y / 2) / Math.pow((1 - con) / (1 + con), e / 2);
             y = -r * Math.log(Math.max(ts, 1e-10));
-            return new Point2(latlng.lng * d * r, y);
+            return new Point2(latlng.lng * d2 * r, y);
           },
           unproject: function(point8) {
-            var d = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point8.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
+            var d2 = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point8.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
             for (var i = 0, dphi = 0.1, con; i < 15 && Math.abs(dphi) > 1e-7; i++) {
               con = e * Math.sin(phi);
               con = Math.pow((1 - con) / (1 + con), e / 2);
               dphi = Math.PI / 2 - 2 * Math.atan(ts * con) - phi;
               phi += dphi;
             }
-            return new LatLng2(phi * d, point8.x * d / r);
+            return new LatLng2(phi * d2, point8.x * d2 / r);
           }
         };
         var index = {
@@ -4581,7 +4581,7 @@
           _project: function() {
             var lng = this._latlng.lng, lat = this._latlng.lat, map = this._map, crs = map.options.crs;
             if (crs.distance === Earth.distance) {
-              var d = Math.PI / 180, latR = this._mRadius / Earth.R / d, top = map.project([lat + latR, lng]), bottom = map.project([lat - latR, lng]), p = top.add(bottom).divideBy(2), lat2 = map.unproject(p).lat, lngR = Math.acos((Math.cos(latR * d) - Math.sin(lat * d) * Math.sin(lat2 * d)) / (Math.cos(lat * d) * Math.cos(lat2 * d))) / d;
+              var d2 = Math.PI / 180, latR = this._mRadius / Earth.R / d2, top = map.project([lat + latR, lng]), bottom = map.project([lat - latR, lng]), p = top.add(bottom).divideBy(2), lat2 = map.unproject(p).lat, lngR = Math.acos((Math.cos(latR * d2) - Math.sin(lat * d2) * Math.sin(lat2 * d2)) / (Math.cos(lat * d2) * Math.cos(lat2 * d2))) / d2;
               if (isNaN(lngR) || lngR === 0) {
                 lngR = latR / Math.cos(Math.PI / 180 * lat);
               }
@@ -7412,8 +7412,8 @@
           },
           _updateCircle: function(layer) {
             var p = layer._point, r = Math.max(Math.round(layer._radius), 1), r2 = Math.max(Math.round(layer._radiusY), 1) || r, arc = "a" + r + "," + r2 + " 0 1,0 ";
-            var d = layer._empty() ? "M0 0" : "M" + (p.x - r) + "," + p.y + arc + r * 2 + ",0 " + arc + -r * 2 + ",0 ";
-            this._setPath(layer, d);
+            var d2 = layer._empty() ? "M0 0" : "M" + (p.x - r) + "," + p.y + arc + r * 2 + ",0 " + arc + -r * 2 + ",0 ";
+            this._setPath(layer, d2);
           },
           _setPath: function(layer, path) {
             layer._path.setAttribute("d", path);
@@ -14781,17 +14781,17 @@
             if (max == min) {
               h = s = 0;
             } else {
-              var d = max - min;
-              s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+              var d2 = max - min;
+              s = l > 0.5 ? d2 / (2 - max - min) : d2 / (max + min);
               switch (max) {
                 case r:
-                  h = (g - b) / d + (g < b ? 6 : 0);
+                  h = (g - b) / d2 + (g < b ? 6 : 0);
                   break;
                 case g:
-                  h = (b - r) / d + 2;
+                  h = (b - r) / d2 + 2;
                   break;
                 case b:
-                  h = (r - g) / d + 4;
+                  h = (r - g) / d2 + 4;
                   break;
               }
               h /= 6;
@@ -14833,20 +14833,20 @@
             b = bound01(b, 255);
             var max = mathMax(r, g, b), min = mathMin(r, g, b);
             var h, s, v = max;
-            var d = max - min;
-            s = max === 0 ? 0 : d / max;
+            var d2 = max - min;
+            s = max === 0 ? 0 : d2 / max;
             if (max == min) {
               h = 0;
             } else {
               switch (max) {
                 case r:
-                  h = (g - b) / d + (g < b ? 6 : 0);
+                  h = (g - b) / d2 + (g < b ? 6 : 0);
                   break;
                 case g:
-                  h = (b - r) / d + 2;
+                  h = (b - r) / d2 + 2;
                   break;
                 case b:
-                  h = (r - g) / d + 4;
+                  h = (r - g) / d2 + 4;
                   break;
               }
               h /= 6;
@@ -15254,8 +15254,8 @@
             }
             return n;
           }
-          function convertDecimalToHex(d) {
-            return Math.round(parseFloat(d) * 255).toString(16);
+          function convertDecimalToHex(d2) {
+            return Math.round(parseFloat(d2) * 255).toString(16);
           }
           function convertHexToDecimal(h) {
             return parseIntFromHex(h) / 255;
@@ -21886,34 +21886,34 @@
         var db = this._dataBounds;
         db.min = null;
         db.max = null;
-        var l, s, d;
+        var l, s, d2;
         var doforce = this.show ? true : false;
         for (var i = 0; i < this._series.length; i++) {
           s = this._series[i];
           if (s.show || this.scaleToHiddenSeries) {
-            d = s._plotData;
+            d2 = s._plotData;
             if (s._type === "line" && s.renderer.bands.show && this.name.charAt(0) !== "x") {
-              d = [[0, s.renderer.bands._min], [1, s.renderer.bands._max]];
+              d2 = [[0, s.renderer.bands._min], [1, s.renderer.bands._max]];
             }
             var minyidx = 1, maxyidx = 1;
             if (s._type != null && s._type == "ohlc") {
               minyidx = 3;
               maxyidx = 2;
             }
-            for (var j = 0, l = d.length; j < l; j++) {
+            for (var j = 0, l = d2.length; j < l; j++) {
               if (this.name == "xaxis" || this.name == "x2axis") {
-                if (d[j][0] != null && d[j][0] < db.min || db.min == null) {
-                  db.min = d[j][0];
+                if (d2[j][0] != null && d2[j][0] < db.min || db.min == null) {
+                  db.min = d2[j][0];
                 }
-                if (d[j][0] != null && d[j][0] > db.max || db.max == null) {
-                  db.max = d[j][0];
+                if (d2[j][0] != null && d2[j][0] > db.max || db.max == null) {
+                  db.max = d2[j][0];
                 }
               } else {
-                if (d[j][minyidx] != null && d[j][minyidx] < db.min || db.min == null) {
-                  db.min = d[j][minyidx];
+                if (d2[j][minyidx] != null && d2[j][minyidx] < db.min || db.min == null) {
+                  db.min = d2[j][minyidx];
                 }
-                if (d[j][maxyidx] != null && d[j][maxyidx] > db.max || db.max == null) {
-                  db.max = d[j][maxyidx];
+                if (d2[j][maxyidx] != null && d2[j][maxyidx] > db.max || db.max == null) {
+                  db.max = d2[j][maxyidx];
                 }
               }
             }
@@ -22167,17 +22167,17 @@
       Series.prototype.init = function(index, gridbw, plot) {
         this.index = index;
         this.gridBorderWidth = gridbw;
-        var d = this.data;
+        var d2 = this.data;
         var temp = [], i, l;
-        for (i = 0, l = d.length; i < l; i++) {
+        for (i = 0, l = d2.length; i < l; i++) {
           if (!this.breakOnNull) {
-            if (d[i] == null || d[i][0] == null || d[i][1] == null) {
+            if (d2[i] == null || d2[i][0] == null || d2[i][1] == null) {
               continue;
             } else {
-              temp.push(d[i]);
+              temp.push(d2[i]);
             }
           } else {
-            temp.push(d[i]);
+            temp.push(d2[i]);
           }
         }
         this.data = temp;
@@ -22902,34 +22902,34 @@
           this.legend._series = this.series;
         };
         function sortData(series) {
-          var d, sd, pd, ppd, ret;
+          var d2, sd, pd, ppd, ret;
           for (var i = 0; i < series.length; i++) {
             var check;
             var bat = [series[i].data, series[i]._stackData, series[i]._plotData, series[i]._prevPlotData];
             for (var n = 0; n < 4; n++) {
               check = true;
-              d = bat[n];
+              d2 = bat[n];
               if (series[i]._stackAxis == "x") {
-                for (var j = 0; j < d.length; j++) {
-                  if (typeof d[j][1] != "number") {
+                for (var j = 0; j < d2.length; j++) {
+                  if (typeof d2[j][1] != "number") {
                     check = false;
                     break;
                   }
                 }
                 if (check) {
-                  d.sort(function(a, b) {
+                  d2.sort(function(a, b) {
                     return a[1] - b[1];
                   });
                 }
               } else {
-                for (var j = 0; j < d.length; j++) {
-                  if (typeof d[j][0] != "number") {
+                for (var j = 0; j < d2.length; j++) {
+                  if (typeof d2[j][0] != "number") {
                     check = false;
                     break;
                   }
                 }
                 if (check) {
-                  d.sort(function(a, b) {
+                  d2.sort(function(a, b) {
                     return a[0] - b[0];
                   });
                 }
@@ -23523,7 +23523,7 @@
         function checkIntersection(gridpos, plot) {
           var series = plot.series;
           var i, j, k, s, r, x, y, theta, sm, sa, minang, maxang;
-          var d0, d, p, pp, points, bw, hp;
+          var d0, d2, p, pp, points, bw, hp;
           var threshold, t;
           for (k = plot.seriesStack.length - 1; k >= 0; k--) {
             i = plot.seriesStack[k];
@@ -23633,9 +23633,9 @@
                 if (s.show) {
                   for (var j = 0; j < s.gridData.length; j++) {
                     p = s.gridData[j];
-                    d = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
-                    if (d <= p[2] && (d <= d0 || d0 == null)) {
-                      d0 = d;
+                    d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
+                    if (d2 <= p[2] && (d2 <= d0 || d0 == null)) {
+                      d0 = d2;
                       ret = { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
                     }
                   }
@@ -23712,9 +23712,9 @@
                           }
                         }
                       } else if (p[0] != null && p[1] != null) {
-                        d = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
-                        if (d <= threshold && (d <= d0 || d0 == null)) {
-                          d0 = d;
+                        d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
+                        if (d2 <= threshold && (d2 <= d0 || d0 == null)) {
+                          d0 = d2;
                           return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
                         }
                       }
@@ -23749,9 +23749,9 @@
                         }
                       }
                     } else {
-                      d = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
-                      if (d <= threshold && (d <= d0 || d0 == null)) {
-                        d0 = d;
+                      d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
+                      if (d2 <= threshold && (d2 <= d0 || d0 == null)) {
+                        d0 = d2;
                         return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
                       }
                     }
@@ -25156,8 +25156,8 @@
           bands.fillColor = "rgba(" + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ")";
         }
       };
-      function getSteps(d, f) {
-        return (3.4182054 + f) * Math.pow(d, -0.3534992);
+      function getSteps(d2, f) {
+        return (3.4182054 + f) * Math.pow(d2, -0.3534992);
       }
       function tanh(x) {
         var a = (Math.exp(2 * x) - 1) / (Math.exp(2 * x) + 1);
@@ -28193,19 +28193,19 @@
         return dow === 0 ? 7 : dow;
       };
       jsDate.prototype.getDayOfYear = function() {
-        var d = this.proxy;
-        var ms = d - new Date("" + d.getFullYear() + "/1/1 GMT");
-        ms += d.getTimezoneOffset() * 6e4;
-        d = null;
+        var d2 = this.proxy;
+        var ms = d2 - new Date("" + d2.getFullYear() + "/1/1 GMT");
+        ms += d2.getTimezoneOffset() * 6e4;
+        d2 = null;
         return parseInt(ms / 6e4 / 60 / 24, 10) + 1;
       };
       jsDate.prototype.getDayName = function() {
         return jsDate.regional[this.locale]["dayNames"][this.proxy.getDay()];
       };
       jsDate.prototype.getFullWeekOfYear = function() {
-        var d = this.proxy;
+        var d2 = this.proxy;
         var doy = this.getDayOfYear();
-        var rdow = 6 - d.getDay();
+        var rdow = 6 - d2.getDay();
         var woy = parseInt((doy + rdow) / 7, 10);
         return woy;
       };
@@ -28226,17 +28226,17 @@
         return hours > 12 ? hours - 12 : hours == 0 ? 12 : hours;
       };
       jsDate.prototype.getIsoWeek = function() {
-        var d = this.proxy;
+        var d2 = this.proxy;
         var woy = this.getWeekOfYear();
-        var dow1_1 = new Date("" + d.getFullYear() + "/1/1").getDay();
+        var dow1_1 = new Date("" + d2.getFullYear() + "/1/1").getDay();
         var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
-        if (idow == 53 && new Date("" + d.getFullYear() + "/12/31").getDay() < 4) {
+        if (idow == 53 && new Date("" + d2.getFullYear() + "/12/31").getDay() < 4) {
           idow = 1;
         } else if (idow === 0) {
-          d = new jsDate(new Date("" + (d.getFullYear() - 1) + "/12/31"));
-          idow = d.getIsoWeek();
+          d2 = new jsDate(new Date("" + (d2.getFullYear() - 1) + "/12/31"));
+          idow = d2.getIsoWeek();
         }
-        d = null;
+        d2 = null;
         return idow;
       };
       jsDate.prototype.getMilliseconds = function() {
@@ -28476,17 +28476,17 @@
         day,
         week: 7 * day,
         month: {
-          add: function add(d, number) {
-            multipliers.year.add(d, Math[number > 0 ? "floor" : "ceil"](number / 12));
-            var prevMonth = d.getMonth() + number % 12;
+          add: function add(d2, number) {
+            multipliers.year.add(d2, Math[number > 0 ? "floor" : "ceil"](number / 12));
+            var prevMonth = d2.getMonth() + number % 12;
             if (prevMonth == 12) {
               prevMonth = 0;
-              d.setYear(d.getFullYear() + 1);
+              d2.setYear(d2.getFullYear() + 1);
             } else if (prevMonth == -1) {
               prevMonth = 11;
-              d.setYear(d.getFullYear() - 1);
+              d2.setYear(d2.getFullYear() - 1);
             }
-            d.setMonth(prevMonth);
+            d2.setMonth(prevMonth);
           },
           diff: function diff(d1, d2) {
             var diffYears = d1.getFullYear() - d2.getFullYear();
@@ -28496,8 +28496,8 @@
           }
         },
         year: {
-          add: function add(d, number) {
-            d.setYear(d.getFullYear() + Math[number > 0 ? "floor" : "ceil"](number));
+          add: function add(d2, number) {
+            d2.setYear(d2.getFullYear() + Math[number > 0 ? "floor" : "ceil"](number));
           },
           diff: function diff(d1, d2) {
             return multipliers.month.diff(d1, d2) / 12;
@@ -28510,19 +28510,19 @@
         }
       }
       var unit;
-      var format = function format2(d, code, syntax) {
+      var format = function format2(d2, code, syntax) {
         if (jsDate.formats[syntax]["shortcuts"][code]) {
-          return jsDate.strftime(d, jsDate.formats[syntax]["shortcuts"][code], syntax);
+          return jsDate.strftime(d2, jsDate.formats[syntax]["shortcuts"][code], syntax);
         } else {
           var getter = (jsDate.formats[syntax]["codes"][code] || "").split(".");
-          var nbr = d["get" + getter[0]] ? d["get" + getter[0]]() : "";
+          var nbr = d2["get" + getter[0]] ? d2["get" + getter[0]]() : "";
           if (getter[1]) {
             nbr = addZeros(nbr, getter[1]);
           }
           return nbr;
         }
       };
-      jsDate.strftime = function(d, formatString, syntax, locale) {
+      jsDate.strftime = function(d2, formatString, syntax, locale) {
         var syn = "perl";
         var loc = jsDate.regional.getLocale();
         if (syntax && jsDate.formats.hasOwnProperty(syntax)) {
@@ -28535,18 +28535,18 @@
         } else if (locale && jsDate.regional.hasOwnProperty(locale)) {
           loc = locale;
         }
-        if (get_type(d) != "[object Object]" || d._type != "jsDate") {
-          d = new jsDate(d);
-          d.locale = loc;
+        if (get_type(d2) != "[object Object]" || d2._type != "jsDate") {
+          d2 = new jsDate(d2);
+          d2.locale = loc;
         }
         if (!formatString) {
-          formatString = d.formatString || jsDate.regional[loc]["formatString"];
+          formatString = d2.formatString || jsDate.regional[loc]["formatString"];
         }
         var source = formatString || "%Y-%m-%d", result = "", match;
         while (source.length > 0) {
           if (match = source.match(jsDate.formats[syn].codes.matcher)) {
             result += source.slice(0, match.index);
-            result += (match[1] || "") + format(d, match[2], syn);
+            result += (match[1] || "") + format(d2, match[2], syn);
             source = source.slice(match.index + match[0].length);
           } else {
             result += source;
@@ -28730,20 +28730,20 @@
           var match = str.match(/^(?:(.+)\s+)?([012]?\d)(?:\s*\:\s*(\d\d))?(?:\s*\:\s*(\d\d(\.\d*)?))?\s*(am|pm)?\s*$/i);
           if (match) {
             if (match[1]) {
-              var d = this.createDate(match[1]);
-              if (isNaN(d)) {
+              var d2 = this.createDate(match[1]);
+              if (isNaN(d2)) {
                 return;
               }
             } else {
-              var d = new Date();
-              d.setMilliseconds(0);
+              var d2 = new Date();
+              d2.setMilliseconds(0);
             }
             var hour = parseFloat(match[2]);
             if (match[6]) {
               hour = match[6].toLowerCase() == "am" ? hour == 12 ? 0 : hour : hour == 12 ? 12 : hour + 12;
             }
-            d.setHours(hour, parseInt(match[3] || 0, 10), parseInt(match[4] || 0, 10), (parseFloat(match[5] || 0) || 0) * 1e3);
-            return d;
+            d2.setHours(hour, parseInt(match[3] || 0, 10), parseInt(match[4] || 0, 10), (parseFloat(match[5] || 0) || 0) * 1e3);
+            return d2;
           } else {
             return str;
           }
@@ -28752,17 +28752,17 @@
           var match = str.match(/^(?:(.+))[T|\s+]([012]\d)(?:\:(\d\d))(?:\:(\d\d))(?:\.\d+)([\+\-]\d\d\:\d\d)$/i);
           if (match) {
             if (match[1]) {
-              var d = this.createDate(match[1]);
-              if (isNaN(d)) {
+              var d2 = this.createDate(match[1]);
+              if (isNaN(d2)) {
                 return;
               }
             } else {
-              var d = new Date();
-              d.setMilliseconds(0);
+              var d2 = new Date();
+              d2.setMilliseconds(0);
             }
             var hour = parseFloat(match[2]);
-            d.setHours(hour, parseInt(match[3], 10), parseInt(match[4], 10), parseFloat(match[5]) * 1e3);
-            return d;
+            d2.setHours(hour, parseInt(match[3], 10), parseInt(match[4], 10), parseFloat(match[5]) * 1e3);
+            return d2;
           } else {
             return str;
           }
@@ -28770,7 +28770,7 @@
         function(str) {
           var match = str.match(/^([0-3]?\d)\s*[-\/.\s]{1}\s*([a-zA-Z]{3,9})\s*[-\/.\s]{1}\s*([0-3]?\d)$/);
           if (match) {
-            var d = new Date();
+            var d2 = new Date();
             var cent = jsDate.config.defaultCentury;
             var m1 = parseFloat(match[1]);
             var m3 = parseFloat(match[3]);
@@ -28786,9 +28786,9 @@
             if (nm == -1) {
               nm = inArray(match[2], jsDate.regional[jsDate.regional.getLocale()]["monthNames"]);
             }
-            d.setFullYear(ny, nm, nd);
-            d.setHours(0, 0, 0, 0);
-            return d;
+            d2.setFullYear(ny, nm, nd);
+            d2.setHours(0, 0, 0, 0);
+            return d2;
           } else {
             return str;
           }
@@ -29749,8 +29749,8 @@
   import_leaflet5.SVG.include({
     _updateEllipse: function(layer) {
       var deg = Math.PI / 180, p = layer._point, r = layer._minAxis, r2 = layer._majAxis, dx = r * Math.cos(layer._posAngle * deg), dy = r * Math.sin(layer._posAngle * deg), arc = "a" + r + "," + r2 + " " + layer._posAngle + " 1,0 ";
-      var d = layer._empty() ? "M0 0" : "M" + (p.x - dx) + "," + (p.y - dy) + arc + dx * 2 + "," + dy * 2 + " " + arc + -dx * 2 + "," + -dy * 2 + " ";
-      this._setPath(layer, d);
+      var d2 = layer._empty() ? "M0 0" : "M" + (p.x - dx) + "," + (p.y - dy) + arc + dx * 2 + "," + dy * 2 + " " + arc + -dx * 2 + "," + -dy * 2 + " ";
+      this._setPath(layer, d2);
     }
   });
 
@@ -30292,8 +30292,8 @@
         h++;
         m = 0;
       }
-      var str = (h < 10 ? "0" : "") + h.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(3), lat = Math.abs(latlng.lat), sgn = latlng.lat < 0 ? "-" : "+", d = Math.floor(lat);
-      mf = (lat - d) * 60;
+      var str = (h < 10 ? "0" : "") + h.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(3), lat = Math.abs(latlng.lat), sgn = latlng.lat < 0 ? "-" : "+", d2 = Math.floor(lat);
+      mf = (lat - d2) * 60;
       m = Math.floor(mf);
       sf = (mf - m) * 60;
       if (sf >= 60) {
@@ -30304,7 +30304,7 @@
         h++;
         m = 0;
       }
-      return str + " " + sgn + (d < 10 ? "0" : "") + d.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(2);
+      return str + " " + sgn + (d2 < 10 ? "0" : "") + d2.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(2);
     },
     hmsDMSToLatLng: function(str) {
       var result;
@@ -33423,10 +33423,15 @@
       ]
     },
     initialize: function(header, options2) {
+      const projparam = this._paramUpdate(this.defaultparam);
       this.options = options2;
-      var projparam = this._paramUpdate(this.defaultparam);
       this._readWCS(header);
       if (options2) {
+        if (options2.dataslice && options2.detslice) {
+          projparam.dataslice = options2.dataslice;
+          projparam.detslice = options2.detslice;
+          this._shiftWCS();
+        }
         this._paramUpdate(options2);
       }
       this._projInit();
@@ -33534,13 +33539,22 @@
       if (v = header["CD2_2"]) {
         projparam.cd[1][1] = v;
       }
-      for (var d = 0; d < 2; d++) {
+      for (var d2 = 0; d2 < 2; d2++) {
         for (var j = 0; j < 20; j++) {
-          if (v = header["PV" + (d + 1) + "_" + j]) {
-            projparam.pv[d][j] = v;
+          if (v = header["PV" + (d2 + 1) + "_" + j]) {
+            projparam.pv[d2][j] = v;
           }
         }
       }
+    },
+    _shiftWCS: function(dataslice, detslice) {
+      var projparam = this.projparam, crpix = projparam.crpix, cd = projparam.cd, dataslice = projparam.dataslice, detslice = projparam.detslice;
+      crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
+      crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
+      cd[0][0] *= detslice[0][2];
+      cd[0][1] *= detslice[1][2];
+      cd[1][0] *= detslice[0][2];
+      cd[1][1] *= detslice[1][2];
     },
     _celsysmatInit: function(celcode) {
       var deg = Math.PI / 180, corig, cpole, cmat = [];
@@ -33582,7 +33596,13 @@
       }
       return this.celsysflag ? this.celsysToEq(latlng) : latlng;
     },
-    _getBounds(projection2) {
+    _getCenter(projection2) {
+      const projparam = this.projparam, detslice = projparam.detslice;
+      this.centerPnt = projection2.project(
+        this.unproject((0, import_leaflet38.point)(detslice[0][0], detslice[1][0]))
+      )._add(projection2.project(
+        this.unproject((0, import_leaflet38.point)(detslice[0][1], detslice[1][1]))
+      ))._divideBy(2);
     },
     _natpole: function() {
       var deg = Math.PI / 180, projparam = this.projparam, natpole = (0, import_leaflet38.latLng)(90, 180);
@@ -33637,7 +33657,7 @@
       );
     },
     _raDecToPhiTheta: function(raDec) {
-      var projparam = this.projparam, deg = Math.PI / 180, rad = 180 / Math.PI, da = (raDec.lng - projparam.cpole.lng) * deg, cda = Math.cos(da), sda = Math.sin(da), d = raDec.lat * deg, cd = Math.cos(d), sd = Math.sin(d), dp = projparam.cpole.lat * deg, cdp = Math.cos(dp), sdp = Math.sin(dp), asinarg = sd * sdp + cd * cdp * cda, phitheta = (0, import_leaflet38.latLng)(
+      var projparam = this.projparam, deg = Math.PI / 180, rad = 180 / Math.PI, da = (raDec.lng - projparam.cpole.lng) * deg, cda = Math.cos(da), sda = Math.sin(da), d2 = raDec.lat * deg, cd = Math.cos(d2), sd = Math.sin(d2), dp = projparam.cpole.lat * deg, cdp = Math.cos(dp), sdp = Math.sin(dp), asinarg = sd * sdp + cd * cdp * cda, phitheta = (0, import_leaflet38.latLng)(
         Math.asin(asinarg > 1 ? 1 : asinarg < -1 ? -1 : asinarg) * rad,
         projparam.natpole.lng + Math.atan2(
           -cd * sda,
@@ -33860,8 +33880,13 @@
       if (nimages > 1) {
         this.projections = new Array(nimages);
         for (const [i, image] of images2.entries()) {
-          projection = this.getProjection(image.header, options2);
-          projection._getBounds(this.projection);
+          imOptions = {
+            naticeCelsys: options2.nativeCelsys,
+            dataslice: image.dataslice,
+            detslice: image.detslice
+          };
+          projection = this.getProjection(image.header, imOptions);
+          projection._getCenter(this.projection);
           this.projections[i] = projection;
         }
         this.latLngToPoint = this.multiLatLngToPoint;
@@ -33885,35 +33910,48 @@
       return this.multiUnproject(untransformedPoint);
     },
     multiProject(latlng) {
-      pnt1 = this.projection.project(latlng);
-      for (projection of this.projections) {
-        pnt = projection.project(latlng);
+      dc = 1e30;
+      pc = -1;
+      pnt = this.projection.project(latlng);
+      for (const [p, projection2] of this.projections.entries()) {
+        pntc = projection2.centerPnt;
+        if ((d = pnt.distanceTo(pntc)) < dc) {
+          pc = p;
+          dc = d;
+        }
       }
-      return this.projection.project(latlng);
+      return this.projections[pc].project(latlng);
     },
     multiUnproject(pnt2) {
-      return this.projection.unproject(pnt2);
+      for (const [p, projection2] of this.projections.entries()) {
+        pntc = projection2.centerPnt;
+        if ((d = pnt2.distanceTo(pntc)) < dc) {
+          pc = p;
+          dc = d;
+        }
+      }
+      return this.projections[pc].unproject(pnt2);
     },
     getProjection: function(header, options2) {
       ctype1 = header["CTYPE1"] || "PIXEL";
       switch (ctype1.substr(5, 3)) {
         case "ZEA":
-          projection = new ZEA(header);
+          projection = new ZEA(header, options2);
           break;
         case "TAN":
-          projection = new TAN(header);
+          projection = new TAN(header, options2);
           break;
         case "CAR":
-          projection = new CAR(header);
+          projection = new CAR(header, options2);
           break;
         case "CEA":
-          projection = new CEA(header);
+          projection = new CEA(header, options2);
           break;
         case "COE":
-          projection = new COE(header);
+          projection = new COE(header, options2);
           break;
         default:
-          projection = new Pixel(header);
+          projection = new Pixel(header, options2);
           break;
       }
       return projection;
