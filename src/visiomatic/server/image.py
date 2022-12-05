@@ -357,7 +357,7 @@ class Tiled(object):
             # Compute the chip corner position in the mosaic, Python style
             start = [min(y) - 1, min(x) -1]
             # Compute the mosaic shape
-            shape = [max(y) - start[0] + 1,  max(x) - start[1] + 1]
+            shape = [max(y) - start[0],  max(x) - start[1]]
             self.data = np.zeros(shape, dtype=images[0].data.dtype)
             for image in images:
                 image.compute_geometry(start, shape)
