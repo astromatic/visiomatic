@@ -36,16 +36,58 @@ WCSObj = extend({}, CRS, {
 	},
 
 	initialize: function (header, images, options) {
+		var	nimages = images.length;
+
 		options = Util.setOptions(this, options);
 		this.tileSize = point(options.tileSize);
 		this.nzoom = options.nzoom;
 		this.projection = this.getProjection(header, options);
+		if (nimages > 1) {
+			this.projections = new Array(nimages);
+			for (const [i, image] of images.entries()) {
+				projection = this.getProjection(image.header, options);
+				projection._getBounds(this.projection);
+				this.projections[i] = projection;
+			}
+
+			this.latLngToPoint = this.multiLatLngToPoint
+			this.pointToLatLng = this.multiPointToLatLng
+			this.project = this.multiProject;
+			this.unproject = this.multiUnproject;
+		}
+
 		this.naxis = this.projection.projparam.naxis;
 		this.crval = this.projection.projparam.crval;
 		this.wrapLng = [0.5, this.naxis.x - 0.5];
 		this.wrapLat = [this.naxis.y - 0.5, 0.5];
 		this.transformation = new Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
 		this.code += ':' + this.projection.code;					
+	},
+
+	multiLatLngToPoint(latlng, zoom) {
+		const projectedPoint = this.multiProject(latlng),
+		    scale = this.scale(zoom);
+
+		return this.transformation._transform(projectedPoint, scale);
+	},
+
+	multiPointToLatLng(pnt, zoom) {
+		const scale = this.scale(zoom),
+		    untransformedPoint = this.transformation.untransform(pnt, scale);
+
+		return this.multiUnproject(untransformedPoint);
+	},
+
+	multiProject(latlng) {
+		pnt1 = this.projection.project(latlng);
+		for (projection of this.projections) {
+			pnt = projection.project(latlng);
+		}
+		return this.projection.project(latlng);
+	},
+	
+	multiUnproject(pnt) {
+		return this.projection.unproject(pnt);
 	},
 
     getProjection: function (header, options) {

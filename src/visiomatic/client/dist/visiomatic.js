@@ -33573,14 +33573,16 @@
       phiTheta.lat = this._thetaToR(phiTheta.lat);
       return this._redToPix(this._phiRToRed(phiTheta));
     },
-    unproject: function(pnt) {
-      var phiTheta = this._redToPhiR(this._pixToRed(pnt));
+    unproject: function(pnt2) {
+      var phiTheta = this._redToPhiR(this._pixToRed(pnt2));
       phiTheta.lat = this._rToTheta(phiTheta.lat);
       var latlng = this._phiThetaToRADec(phiTheta);
       if (latlng.lng < -180) {
         latlng.lng += 360;
       }
       return this.celsysflag ? this.celsysToEq(latlng) : latlng;
+    },
+    _getBounds(projection2) {
     },
     _natpole: function() {
       var deg = Math.PI / 180, projparam = this.projparam, natpole = (0, import_leaflet38.latLng)(90, 180);
@@ -33850,16 +33852,47 @@
       nativeCelsys: false
     },
     initialize: function(header, images2, options2) {
+      var nimages = images2.length;
       options2 = import_leaflet43.Util.setOptions(this, options2);
       this.tileSize = (0, import_leaflet43.point)(options2.tileSize);
       this.nzoom = options2.nzoom;
       this.projection = this.getProjection(header, options2);
+      if (nimages > 1) {
+        this.projections = new Array(nimages);
+        for (const [i, image] of images2.entries()) {
+          projection = this.getProjection(image.header, options2);
+          projection._getBounds(this.projection);
+          this.projections[i] = projection;
+        }
+        this.latLngToPoint = this.multiLatLngToPoint;
+        this.pointToLatLng = this.multiPointToLatLng;
+        this.project = this.multiProject;
+        this.unproject = this.multiUnproject;
+      }
       this.naxis = this.projection.projparam.naxis;
       this.crval = this.projection.projparam.crval;
       this.wrapLng = [0.5, this.naxis.x - 0.5];
       this.wrapLat = [this.naxis.y - 0.5, 0.5];
       this.transformation = new import_leaflet43.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
       this.code += ":" + this.projection.code;
+    },
+    multiLatLngToPoint(latlng, zoom) {
+      const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
+      return this.transformation._transform(projectedPoint, scale2);
+    },
+    multiPointToLatLng(pnt2, zoom) {
+      const scale2 = this.scale(zoom), untransformedPoint = this.transformation.untransform(pnt2, scale2);
+      return this.multiUnproject(untransformedPoint);
+    },
+    multiProject(latlng) {
+      pnt1 = this.projection.project(latlng);
+      for (projection of this.projections) {
+        pnt = projection.project(latlng);
+      }
+      return this.projection.project(latlng);
+    },
+    multiUnproject(pnt2) {
+      return this.projection.unproject(pnt2);
     },
     getProjection: function(header, options2) {
       ctype1 = header["CTYPE1"] || "PIXEL";

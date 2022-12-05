@@ -16,6 +16,7 @@ import {
 
 import {VUtil} from '../util';
 
+
 export const Projection = Class.extend({
 
 	bounds: bounds([-0.5, -0.5], [0.5, 0.5]),
@@ -186,6 +187,10 @@ export const Projection = Class.extend({
 		}
 		return this.celsysflag ? this.celsysToEq(latlng) : latlng;
 	},
+
+	_getBounds(projection) {
+	},
+
 
 	// Set up native pole
 	_natpole: function () {
