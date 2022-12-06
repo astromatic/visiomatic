@@ -356,7 +356,13 @@ export const VTileLayer = TileLayer.extend({
 		}
 		else {
 			// Wait for metadata request to complete
+			this._loadActivity = DomUtil.create(
+				'div',
+				'leaflet-layer-iip-activity',
+				map._controlContainer
+			);
 			this.once('metaload', function () {
+				map._controlContainer.removeChild(this._loadActivity);
 				this._addToMap(map);
 			}, this);
 		}

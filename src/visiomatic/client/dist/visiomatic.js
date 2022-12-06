@@ -34368,7 +34368,13 @@
       if (this.iipMetaReady) {
         this._addToMap(map2);
       } else {
+        this._loadActivity = import_leaflet44.DomUtil.create(
+          "div",
+          "leaflet-layer-iip-activity",
+          map2._controlContainer
+        );
         this.once("metaload", function() {
+          map2._controlContainer.removeChild(this._loadActivity);
           this._addToMap(map2);
         }, this);
       }
