@@ -17,7 +17,7 @@ import {VUtil} from '../util'
 
 export const Coords = Control.extend({
 	options: {
-		position: 'bottomleft',
+		position: 'topright',
 		title: 'Center coordinates. Click to change',
 		coordinates: [{
 			label: 'RA, Dec',
@@ -31,28 +31,89 @@ export const Coords = Control.extend({
 
 	onAdd: function (map) {
 		// Create coordinate input/display box
-		var _this = this,
-			  className = 'leaflet-control-coords',
-			  dialog = this._wcsdialog =  DomUtil.create('div', className + '-dialog'),
-			  coordSelect = DomUtil.create('select', className + '-select', dialog),
-			  choose = document.createElement('option'),
-			  coords = this.options.coordinates,
-			  opt = [],
-			  coordIndex;
+		var	_this = this,
+			className = 'leaflet-control-coords';
+
+		this._wcsdialog =  DomUtil.create('div', className + '-dialog');
+		this._map.on('layeradd', this._checkIIP, this);
+		return	this._wcsdialog;
+	},
+
+	_checkIIP: function (e) {
+		var layer = e.layer;
+
+		// Exit if not an IIP layer
+		if (!layer || !layer.iipdefault) {
+			return;
+		}
+		this._layer = layer;
+		if (this._reloadFlag) {
+			layer.once('load', this._resetDialog, this);
+		} else {
+			this._initDialog();
+			this._reloadFlag = true;
+		}
+	},
+
+	_initDialog: function () {
+		var	_this = this,
+			wcs = this._map.options.crs,
+			coords = this.options.coordinates,
+			className = 'leaflet-control-coords',
+			dialog = this._wcsdialog;
+
+		if ((projections=wcs.projections)) {
+			var	extSelect = this._wcsext = DomUtil.create(
+					'select',
+					className + '-ext',
+					dialog
+				),
+				extOpt = [],
+				extIndex;
+
+			DomEvent.disableClickPropagation(extSelect);
+			extSelect.id = 'leaflet-ext-select';
+			extSelect.title = 'Switch detector';
+			for (var p in projections) {
+				extOpt[p] = document.createElement('option');
+				extOpt[p].text = projections[p].name;
+				extIndex = parseInt(p, 10);
+				extOpt[p].value = extIndex;
+				if (extIndex === 0) {
+					extOpt[p].selected = true;
+				}
+				extSelect.add(extOpt[p], null);
+			}
+			DomEvent.on(extSelect, 'change', function (e) {
+				var	map = _this._map,
+					wcs = map.options.crs;
+
+				map.panTo(wcs.unproject(
+					wcs.projections[extSelect.value].centerPnt));
+			});
+		}
+
+		var	coordSelect = DomUtil.create(
+				'select',
+				className + '-select',
+				dialog
+			),
+			coordOpt = [],
+			coordIndex;
 
 		DomEvent.disableClickPropagation(coordSelect);
 		this._currentCoord = 0;
 		coordSelect.id = 'leaflet-coord-select';
 		coordSelect.title = 'Switch coordinate system';
 		for (var c in coords) {
-			opt[c] = document.createElement('option');
-			opt[c].text = coords[c].label;
+			coordOpt[c] = document.createElement('option');
+			coordOpt[c].text = coords[c].label;
 			coordIndex = parseInt(c, 10);
-			opt[c].value = coordIndex;
+			coordOpt[c].value = coordIndex;
 			if (coordIndex === 0) {
-				opt[c].selected = true;
+				coordOpt[c].selected = true;
 			}
-			coordSelect.add(opt[c], null);
+			coordSelect.add(coordOpt[c], null);
 		}
 
 		DomEvent.on(coordSelect, 'change', function (e) {
@@ -60,7 +121,16 @@ export const Coords = Control.extend({
 			_this._onDrag();
 		});
 
-		var	input = this._wcsinput = DomUtil.create('input', className + '-input', dialog);
+		// Remove widget rounded corner if not first from left
+		if ((projections)) {
+			coordSelect.style['border-radius'] = '0px';
+		}
+
+		var input = this._wcsinput = DomUtil.create(
+			'input',
+			className + '-input',
+			dialog
+		);
 
 		DomEvent.disableClickPropagation(input);
 		input.type = 'text';
@@ -84,7 +154,6 @@ export const Coords = Control.extend({
 		DomEvent.on(clipboardbutton, 'click', function () {
 			var stateObj = {},
 				url = location.href,
-				wcs = this._map.options.crs,
 				latlng = map.getCenter();
 			VUtil.flashElement(this._wcsinput);
 			url = VUtil.updateURL(url, this.options.centerQueryKey,
@@ -94,8 +163,8 @@ export const Coords = Control.extend({
 			history.pushState(stateObj, '', url);
 			VUtil.copyToClipboard(url);
 		}, this);
-
-		return this._wcsdialog;
+		// Pretend there was a drag event to update coordinate display
+		this._onDrag();
 	},
 
 	onRemove: function (map) {
@@ -107,6 +176,9 @@ export const Coords = Control.extend({
 			wcs = this._map.options.crs,
 			coord = this.options.coordinates[this._currentCoord];
 
+		if (wcs.projections) {
+			this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true; 
+		}
 		if (wcs.pixelFlag) {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
 		} else {

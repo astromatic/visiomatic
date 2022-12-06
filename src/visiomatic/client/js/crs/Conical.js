@@ -34,9 +34,10 @@ Conical = Projection.extend({
 
 export const COE = Conical.extend({
 
-	_paramInit: function (projparam) {
+	_projInit: function () {
 		var	deg = Math.PI / 180.0;
-		this.projparam = projparam;
+		var	projparam = this.projparam;
+
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.thetaA = projparam.pv[1][1];
 		projparam.eta = projparam.pv[1][2];
@@ -53,6 +54,8 @@ export const COE = Conical.extend({
 		projparam.natrval = latLng(projparam.thetaA, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
+		projparam.infinite = true;
+		projparam.pixelFlag = false;
 	},
 
 	_rToTheta: function (r) {

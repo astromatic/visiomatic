@@ -148,9 +148,9 @@ export const VTileLayer = TileLayer.extend({
 		if (res.status == 200 && meta['type'] == 'visiomatic') {
 			var options = this.options,
 				iipdefault = this.iipdefault,
-				maxsize = {x: meta.full_size[1], y: meta.full_size[0]};
+				maxsize = {x: meta.full_size[0], y: meta.full_size[1]};
 
-			this.tileSize = {x: meta.tile_size[1], y: meta.tile_size[0]};
+			this.tileSize = {x: meta.tile_size[0], y: meta.tile_size[1]};
 			options.tileSize = this.tileSize.x;
 
 			this.iipMaxZoom = meta.tile_levels - 1;
@@ -288,6 +288,7 @@ export const VTileLayer = TileLayer.extend({
 				options.bounds = latLngBounds(options.bounds);
 			}
 			this.wcs = options.crs ? options.crs : new WCS(
+				meta.header,
 				meta.images,
 				{
 					nativeCelsys: this.options.nativeCelsys,
@@ -420,11 +421,11 @@ export const VTileLayer = TileLayer.extend({
 									}
 									map.setView(latlng, zoom, {reset: true, animate: false});
 								} else {
-									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 									alert(str + ': Unknown location');
 								}
 							} else {
-								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 								alert('There was a problem with the request to the Sesame service at CDS');
 							}
 						}
@@ -432,7 +433,7 @@ export const VTileLayer = TileLayer.extend({
 				);
 			}
 		} else {
-			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+			map.setView(newcrs.crval, zoom, {reset: true, animate: false});
 		}
 	},
 
