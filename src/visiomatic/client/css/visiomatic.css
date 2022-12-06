@@ -902,6 +902,20 @@ iframe.leaflet-control-iip-doc {
 }
 
 
+.leaflet-control-coords-ext {
+	height: 32px;
+	background-color: #F4F4F4;
+	vertical-align: top;
+	margin: 0px;
+	padding: 4px 0px;
+	border-width: 0px;
+	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-coords-ext:hover,.leaflet-control-coords-ext:focus {
+	background-color: #E4E4E4;
+}
 .leaflet-control-coords-input {
 	font-weight: 500;
 	font-size: 14px;
@@ -920,6 +934,7 @@ iframe.leaflet-control-iip-doc {
 .leaflet-control-coords-input:hover {
 	background-color: #E4E4E4;
 }
+
 .leaflet-control-coords-clipboard {
 	position: absolute;
 	right: 2px;

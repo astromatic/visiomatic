@@ -22,6 +22,7 @@ export const Projection = Class.extend({
 	bounds: bounds([-0.5, -0.5], [0.5, 0.5]),
 
 	defaultparam: {
+		name: '',
 		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		crpix: [129, 129],
@@ -122,6 +123,9 @@ export const Projection = Class.extend({
 		var projparam = this.projparam,
 			key = VUtil.readFITSKey,
 		    v;
+
+		this.name = projparam.name;
+		if ((v = header['EXTNAME'])) { this.name = v; }
 		if ((v = header['CTYPE1'])) { projparam.ctype.x = v; }
 		if ((v = header['CTYPE2'])) { projparam.ctype.y = v; }
 		if ((v = header['NAXIS1'])) { projparam.naxis.x = v; }

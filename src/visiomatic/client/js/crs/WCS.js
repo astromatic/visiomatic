@@ -51,6 +51,9 @@ WCSObj = extend({}, CRS, {
 					detslice: image.detslice
 				};
 				projection = this.getProjection(image.header, imOptions);
+				if (projection.name === '') {
+					projection.name = '#' + str(i+1);
+				}
 				projection._getCenter(this.projection);
 				this.projections[i] = projection;
 			}
@@ -87,8 +90,8 @@ WCSObj = extend({}, CRS, {
 		dc = 1e+30;
 		pc = -1;
 		pnt = this.projection.project(latlng);
-		for (const [p, projection] of this.projections.entries()) {
-			pntc = projection.centerPnt;
+		for (const p in this.projections) {
+			pntc = this.projections[p].centerPnt;
 			if ((d = pnt.distanceTo(pntc)) < dc) {
 				pc = p;
 				dc = d;
@@ -98,8 +101,8 @@ WCSObj = extend({}, CRS, {
 	},
 	
 	multiUnproject(pnt) {
-		for (const [p, projection] of this.projections.entries()) {
-			pntc = projection.centerPnt;
+		for (const p in this.projections) {
+			pntc = this.projections[p].centerPnt;
 			if ((d = pnt.distanceTo(pntc)) < dc) {
 				pc = p;
 				dc = d;
@@ -108,6 +111,20 @@ WCSObj = extend({}, CRS, {
 		return this.projections[pc].unproject(pnt);
 	},
 
+	multiLatLngToIndex(latlng) {
+		dc = 1e+30;
+		pc = -1;
+		pnt = this.projection.project(latlng);
+		for (const p in this.projections) {
+			pntc = this.projections[p].centerPnt;
+			if ((d = pnt.distanceTo(pntc)) < dc) {
+				pc = p;
+				dc = d;
+			}
+		}
+		return pc;
+	},
+	
     getProjection: function (header, options) {
     	ctype1 = header['CTYPE1'] || 'PIXEL';
     	switch (ctype1.substr(5, 3)) {
