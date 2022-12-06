@@ -417,6 +417,20 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 	margin: 2px;
 }
 
+.leaflet-layer-iip-activity {
+	background-image: url(../images/activity.svg);
+	position: absolute;
+	left: 50%;
+	bottom: 50%;
+	text-align: center;
+	vertical-align: middle;
+	background-size: 100%;
+	width: 48px;
+	height: 48px;
+	transform: translate(-50%, 50%);
+	pointer-events:= none;
+}
+
 /*-------------------------------- Trash button -----------------------------*/
 
 .leaflet-control-iip-trash {

@@ -17,13 +17,13 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {Gaia_DR2, TwoMASS, SDSS, PPMXL, Abell} from '../catalog';
+import {Gaia_DR3, TwoMASS, SDSS, PPMXL, Abell} from '../catalog';
 
 
 export const CatalogUI = UI.extend({
 
 	defaultCatalogs: [
-		Gaia_DR2,
+		Gaia_DR3,
 		TwoMASS,
 		SDSS,
 		PPMXL,
