@@ -152,8 +152,8 @@ export const Projection = Class.extend({
 			dataslice = projparam.dataslice,
 			detslice = projparam.detslice;
 
-		crpix.x = detslice[0][0] + (detslice[0][2] * crpix.x - dataslice[0][0]);
-		crpix.y = detslice[1][0] + (detslice[1][2] * crpix.y - dataslice[1][0]);
+		crpix.x = detslice[0][0] + detslice[0][2] * (crpix.x - dataslice[0][0]);
+		crpix.y = detslice[1][0] + detslice[1][2] * (crpix.y - dataslice[1][0]);
 		cd[0][0] *= detslice[0][2];
 		cd[0][1] *= detslice[1][2];
 		cd[1][0] *= detslice[0][2];
