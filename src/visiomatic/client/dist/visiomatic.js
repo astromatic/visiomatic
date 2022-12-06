@@ -31487,7 +31487,8 @@
     },
     onAdd: function(map2) {
       var _this = this, className = "leaflet-control-coords";
-      this._wcsdialog = import_leaflet26.DomUtil.create("div", className + "-dialog"), this._map.on("layeradd", this._checkIIP, this);
+      this._wcsdialog = import_leaflet26.DomUtil.create("div", className + "-dialog");
+      this._map.on("layeradd", this._checkIIP, this);
       return this._wcsdialog;
     },
     _checkIIP: function(e) {
@@ -31512,7 +31513,6 @@
           dialog
         ), extOpt = [], extIndex;
         import_leaflet26.DomEvent.disableClickPropagation(extSelect);
-        this._currentExt = 0;
         extSelect.id = "leaflet-ext-select";
         extSelect.title = "Switch detector";
         for (var p in projections) {
@@ -31527,7 +31527,6 @@
         }
         import_leaflet26.DomEvent.on(extSelect, "change", function(e) {
           var map2 = _this._map, wcs2 = map2.options.crs;
-          _this._currentExt = extSelect.value;
           map2.panTo(wcs2.unproject(
             wcs2.projections[extSelect.value].centerPnt
           ));

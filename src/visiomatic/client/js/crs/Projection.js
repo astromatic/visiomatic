@@ -56,18 +56,18 @@ export const Projection = Class.extend({
 		if (!projparam.pixelFlag) {
 			// Identify the native celestial coordinate system
 			switch (projparam.ctype.x.substr(0, 1)) {
-				case 'G':
-					projparam.celsyscode = 'galactic';
-					break;
-				case 'E':
-					projparam.celsyscode = 'ecliptic';
-					break;
-				case 'S':
-					projparam.celsyscode = 'supergalactic';
-					break;
-				default:
-					projparam.celsyscode = 'equatorial';
-					break;
+			case 'G':
+				projparam.celsyscode = 'galactic';
+				break;
+			case 'E':
+				projparam.celsyscode = 'ecliptic';
+				break;
+			case 'S':
+				projparam.celsyscode = 'supergalactic';
+				break;
+			default:
+				projparam.celsyscode = 'equatorial';
+				break;
 			}
 
 			if (projparam.celsyscode !== 'equatorial') {
@@ -170,22 +170,22 @@ export const Projection = Class.extend({
 			corig, cpole,
 			cmat = [];
 		switch (celcode) {
-			case 'galactic':
-				corig = latLng(-28.93617242, 266.40499625);
-				cpole = latLng(27.12825120, 192.85948123);
-				break;
-			case 'ecliptic':
-				corig = latLng(0.0, 0.0);
-				cpole = latLng(66.99111111, 273.85261111);
-				break;
-			case 'supergalactic':
-				corig = latLng(59.52315, 42.29235);
-				cpole = latLng(15.70480, 283.7514);
-				break;
-			default:
-				corig = latLng(0.0, 0.0);
-				cpole = latLng(0.0, 0.0);
-				break;
+		case 'galactic':
+			corig = latLng(-28.93617242, 266.40499625);
+			cpole = latLng(27.12825120, 192.85948123);
+			break;
+		case 'ecliptic':
+			corig = latLng(0.0, 0.0);
+			cpole = latLng(66.99111111, 273.85261111);
+			break;
+		case 'supergalactic':
+			corig = latLng(59.52315, 42.29235);
+			cpole = latLng(15.70480, 283.7514);
+			break;
+		default:
+			corig = latLng(0.0, 0.0);
+			cpole = latLng(0.0, 0.0);
+			break;
 		}
 		cmat[0] = cpole.lng * deg;
 		cmat[1] = Math.asin(Math.cos(corig.lat * deg) * Math.sin((cpole.lng - corig.lng) * deg));

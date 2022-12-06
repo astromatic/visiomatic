@@ -33,8 +33,8 @@ export const Coords = Control.extend({
 		// Create coordinate input/display box
 		var	_this = this,
 			className = 'leaflet-control-coords';
-		this._wcsdialog =  DomUtil.create('div', className + '-dialog'),
 
+		this._wcsdialog =  DomUtil.create('div', className + '-dialog');
 		this._map.on('layeradd', this._checkIIP, this);
 		return	this._wcsdialog;
 	},
@@ -72,7 +72,6 @@ export const Coords = Control.extend({
 				extIndex;
 
 			DomEvent.disableClickPropagation(extSelect);
-			this._currentExt = 0;
 			extSelect.id = 'leaflet-ext-select';
 			extSelect.title = 'Switch detector';
 			for (var p in projections) {
@@ -89,7 +88,6 @@ export const Coords = Control.extend({
 				var	map = _this._map,
 					wcs = map.options.crs;
 
-				_this._currentExt = extSelect.value;
 				map.panTo(wcs.unproject(
 					wcs.projections[extSelect.value].centerPnt));
 			});
@@ -129,10 +127,10 @@ export const Coords = Control.extend({
 		}
 
 		var input = this._wcsinput = DomUtil.create(
-				'input',
-				className + '-input',
-				dialog
-			);
+			'input',
+			className + '-input',
+			dialog
+		);
 
 		DomEvent.disableClickPropagation(input);
 		input.type = 'text';

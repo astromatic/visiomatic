@@ -125,30 +125,30 @@ WCSObj = extend({}, CRS, {
 		return pc;
 	},
 	
-    getProjection: function (header, options) {
-    	ctype1 = header['CTYPE1'] || 'PIXEL';
-    	switch (ctype1.substr(5, 3)) {
-			case 'ZEA':
-				projection = new ZEA(header, options);
-				break;
-			case 'TAN':
-				projection = new TAN(header, options);
-				break;
-			case 'CAR':
-				projection = new CAR(header, options);
-				break;
-			case 'CEA':
-				projection = new CEA(header, options);
-				break;
-			case 'COE':
-				projection = new COE(header, options);
-				break;
-			default:
-				projection = new Pixel(header, options);
-				break;
+	getProjection: function (header, options) {
+		ctype1 = header['CTYPE1'] || 'PIXEL';
+		switch (ctype1.substr(5, 3)) {
+		case 'ZEA':
+			projection = new ZEA(header, options);
+			break;
+		case 'TAN':
+			projection = new TAN(header, options);
+			break;
+		case 'CAR':
+			projection = new CAR(header, options);
+			break;
+		case 'CEA':
+			projection = new CEA(header, options);
+			break;
+		case 'COE':
+			projection = new COE(header, options);
+			break;
+		default:
+			projection = new Pixel(header, options);
+			break;
 		}
 		return projection;
-    },
+	},
 
 
 	scale: function (zoom) {
