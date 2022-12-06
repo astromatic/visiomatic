@@ -31526,8 +31526,11 @@
           extSelect.add(extOpt[p], null);
         }
         import_leaflet26.DomEvent.on(extSelect, "change", function(e) {
+          var map2 = _this._map, wcs2 = map2.options.crs;
           _this._currentExt = extSelect.value;
-          _this._onDrag();
+          map2.panTo(wcs2.unproject(
+            wcs2.projections[extSelect.value].centerPnt
+          ));
         });
       }
       var coordSelect = import_leaflet26.DomUtil.create(
@@ -31553,6 +31556,9 @@
         _this._currentCoord = coordSelect.value;
         _this._onDrag();
       });
+      if (projections) {
+        coordSelect.style["border-radius"] = "0px";
+      }
       var input = this._wcsinput = import_leaflet26.DomUtil.create(
         "input",
         className + "-input",

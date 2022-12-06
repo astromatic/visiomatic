@@ -86,8 +86,12 @@ export const Coords = Control.extend({
 				extSelect.add(extOpt[p], null);
 			}
 			DomEvent.on(extSelect, 'change', function (e) {
+				var	map = _this._map,
+					wcs = map.options.crs;
+
 				_this._currentExt = extSelect.value;
-				_this._onDrag();
+				map.panTo(wcs.unproject(
+					wcs.projections[extSelect.value].centerPnt));
 			});
 		}
 
@@ -118,6 +122,11 @@ export const Coords = Control.extend({
 			_this._currentCoord = coordSelect.value;
 			_this._onDrag();
 		});
+
+		// Remove widget rounded corner if not first from left
+		if ((projections)) {
+			coordSelect.style['border-radius'] = '0px';
+		}
 
 		var input = this._wcsinput = DomUtil.create(
 				'input',
