@@ -30854,7 +30854,7 @@
       }
     },
     _spinboxStep: function(min, max) {
-      var step = parseFloat((Math.abs(max === min ? max : max - min) * 0.01).toPrecision(1));
+      var step = parseFloat((Math.abs(max === min ? max : max - min) * 1e-3).toPrecision(1));
       return step === 0 ? 1 : step;
     },
     _onInputChange: function(layer, pname, value, func) {

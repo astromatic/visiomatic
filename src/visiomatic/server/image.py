@@ -206,7 +206,7 @@ class Image(object):
         self.background_mad = mad
 
 
-    def compute_minmax(self, nmadmin: float = -3.0, nmadmax: float = 1000.0) -> np.ndarray:
+    def compute_minmax(self, nmadmin: float = -2.0, nmadmax: float = 400.0) -> np.ndarray:
         """
         Compute "appropriate" intensity cuts for displaying the image.
         

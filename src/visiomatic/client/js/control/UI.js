@@ -363,7 +363,7 @@ export const UI = Control.extend({
 
 	_spinboxStep: function (min, max) {
 		var step = parseFloat((Math.abs(max === min ? max : max - min) *
-			         0.01).toPrecision(1));
+			         0.001).toPrecision(1));
 
 		return step === 0.0 ? 1.0 : step;
 	},
