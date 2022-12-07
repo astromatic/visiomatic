@@ -447,6 +447,7 @@ class Tiled(object):
     def convert_tile(
             self,
             tile: np.ndarray,
+            channel: int=1,
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.45,
@@ -459,6 +460,8 @@ class Tiled(object):
         ----------
         tile:  ~numpy.ndarray
             Input tile.
+        channel: int, optional
+            Image channel
         minmax: tuple[float, float], optional
             Tile intensity cuts.
         contrast:  float, optional
@@ -475,9 +478,10 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        fac = minmax[0][1] - minmax[0][0]
+        chan = channel - 1
+        fac = minmax[chan][1] - minmax[chan][0]
         fac = contrast / fac if fac > 0.0 else self.maxfac
-        tile = (tile - minmax[0][0]) * fac
+        tile = (tile[chan] - minmax[chan][0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
@@ -567,7 +571,8 @@ class Tiled(object):
             channel = 1
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[tileres][tileindex][channel - 1],
+                self.tiles[tileres][tileindex],
+				channel=channel,
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
@@ -577,7 +582,8 @@ class Tiled(object):
             colorspace='Gray'
         ) if colormap=='grey' else encode_jpeg(
             self.convert_tile(
-                self.tiles[tileres][tileindex][channel - 1],
+                self.tiles[tileres][tileindex],
+				channel=channel,
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
