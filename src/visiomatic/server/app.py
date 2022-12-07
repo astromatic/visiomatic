@@ -79,13 +79,7 @@ def create_app() -> FastAPI:
 
 
     # Test endpoint
-    a = np.random.random(1)[0]
-    @app.get("/test", response_class=responses.HTMLResponse)
-    async def read_test():
-        return f"a={a}"
-
-    # Test endpoint
-    @app.get("/random")
+    @app.get("/random", tags=["services"])
     async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
         """
         Test endpoint of the web API that simply returns an image with white noise.
@@ -94,13 +88,14 @@ def create_app() -> FastAPI:
         ----------
         w:  int, optional
             Image width.
+
         h:  int, optional
             Image height.
 
         Returns
         -------
         response: byte stream
-            `Streaming response <https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>`_
+            [Streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>)
             containing the JPEG image.
         """
         a = np.random.random((h,w)) * 255.0
@@ -108,12 +103,12 @@ def create_app() -> FastAPI:
         return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
-    @app.get(tiles_url, tags=["UI"])
+    @app.get(tiles_url, tags=["services"])
     async def read_visio(
             request: Request,
-            FIF: str = None,
-            obj: str = Query(None, title="Get image information instead of a tile",
-            max_length=200),
+            FIF: str = Query(None, title="Image filename"),
+            obj: str = Query(None, title="Get image information instead of a tile"),
+            CHAN: int =  Query(90, title="Channel index (mono-channel mode)", ge=0),
             CMP: Literal[tuple(colordict.keys())] = Query('grey', title="Name of the colormap"),
             CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
             GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
@@ -127,33 +122,10 @@ def create_app() -> FastAPI:
         """
         Tile endpoint of the web API: returns a JPEG tile at the requested position.
 
-        Parameters
-        ----------
-        FIF: str
-            Image filename.
-        obj: str or None
-            Query parameter to return image information instead of a tile.
-        CMP: str, optional
-            Query parameter for colormaps.
-        CNT:  float, optional
-            Query parameter controlling the relative tile contrast.
-        GAM:  float, optional
-            Query parameter controlling the inverse display gamma.
-        INFO: str or None
-            Query parameter to return extended image information (as JSON) instead of a tile.
-        INV: bool, optional
-            Query parameter to invert the colormap.
-        JTL: str
-            Query parameters controlling the tile level and coordinates.
-        MINMAX: str, optional
-            Query parameters controlling the tile intensity cuts.
-        QLT: int, optional
-            Query parameter controlling the JPEG quality
-
         Returns
         -------
         response: byte stream
-            `Streaming response <https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>`_
+            [Streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>)
             containing the JPEG image.
         """
         if FIF == None:
@@ -189,6 +161,7 @@ def create_app() -> FastAPI:
         pix = tiled.get_tile(
             r,
             t,
+            channel=CHAN,
             minmax=minmax,
             contrast=CNT,
             gamma=GAM,

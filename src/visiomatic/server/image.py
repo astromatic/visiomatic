@@ -72,22 +72,22 @@ class Image(object):
             minmax : Union[Tuple[int], None] = None):
 
         self.header = hdu.header
-        self.data = hdu.data.astype(np.float32)
+        shape = hdu.data.shape
+        self.data = hdu.data.astype(np.float32).reshape(-1,shape[-2], shape[-1])
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
-        # Full image shape, Python style
-        # (y comes first, first pixel has coordinate 0)
-        self.shape = [self.header["NAXIS2"], self.header["NAXIS1"]]
+        self.nchannels = self.data.shape[0]
         # Section of the image that contains data, FITS style
         # (x comes first, first pixel has coordinate 1)
         self.datasec = datasec \
             if (datasec := self.parse_2dslice(self.header.get("DATASEC", ""))) \
-            else [1, self.shape[1], 1, self.shape[0]]
+            else [1, self.data.shape[2], 1, self.data.shape[1]]
         # Section of the mosaic that contains the detector, FITS style
         self.detsec = detsec \
             if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
             else self.datasec
-        self.minmax = self.compute_minmax() if minmax == None else np.array(minmax, dtype=np.float32)
+        self.minmax = self.compute_minmax() if minmax == None \
+            else np.array(minmax, dtype=np.float32)
 
 
     def get_model(self) -> ImageModel:
@@ -100,10 +100,10 @@ class Image(object):
             Pydantic model instance of the image
         """
         return ImageModel(
-            size=self.shape[::-1],
+            size=self.data.shape[::-1],
             dataslice=self.datasliceinfo,
             detslice=self.detsliceinfo,
-            min_max=[list(self.minmax)],
+            min_max=[list(minmax) for minmax in self.minmax],
             header=dict(self.header.items())
         )
 
@@ -162,9 +162,11 @@ class Image(object):
 
         # Compute data and mosaic slices in Python format (y first, starts at 0)
         self.dataslice = \
+            slice(0, self.data.shape[0]), \
             slice(self.datasec[2] - 1, self.datasec[3]), \
             slice(self.datasec[0] - 1, self.datasec[1])
         self.detslice = \
+            slice(0, self.data.shape[0]), \
             slice(
                 self.detsec[2] - start[0] - 1,
                 None if (endy:=self.detsec[3] - start[0] - 1 + ysign) < 0 \
@@ -179,14 +181,14 @@ class Image(object):
             )
 
         # Compute data slice info, FITS style (x first, starts at 1)
-        dax = self.dataslice[1].indices(self.shape[1])
-        day = self.dataslice[0].indices(self.shape[0])
+        dax = self.dataslice[2].indices(self.data.shape[2])
+        day = self.dataslice[1].indices(self.data.shape[1])
         self.datasliceinfo = [
                 [dax[0] + 1, dax[1], dax[2]],
                 [day[0] + 1, day[1], day[2]]
         ]
-        dex = self.detslice[1].indices(shape[1])
-        dey = self.detslice[0].indices(shape[0])
+        dex = self.detslice[2].indices(shape[2])
+        dey = self.detslice[1].indices(shape[1])
         # Compute mosaic slice info, FITS style
         self.detsliceinfo=[
                 [dex[0] + 1, dex[1] + (2 if dex[2] < 0 else 0), dex[2]],
@@ -205,15 +207,15 @@ class Image(object):
         """
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
-        x = self.data[::(skip + 1), :].flatten().copy()
-        med = np.nanmedian(x)
+        x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
+        med = np.nanmedian(x, axis=1, keepdims=True)
         ax = np.abs(x-med)
-        mad = np.nanmedian(ax)
+        mad = np.nanmedian(ax, axis=1, keepdims=True)
         x[ax > 3.0 * mad] = np.nan
-        med = np.nanmedian(x)
+        med = np.nanmedian(x, axis=1, keepdims=True)
         ax = np.abs(x-med)
-        mad = np.nanmedian(ax)
-        self.background_level = 3.5*med - 2.5*np.nanmean(x)
+        mad = np.nanmedian(ax, axis=1)
+        self.background_level = np.nanmean(3.5*med - 2.5*x, axis=1)
         self.background_mad = mad
 
 
@@ -234,9 +236,9 @@ class Image(object):
             Intensity cuts for displaying the image.
         """
         self.compute_background()
-        high = self.background_level + nmadmax * self.background_mad
         low = self.background_level + nmadmin * self.background_mad
-        return np.array([low, high])
+        high = self.background_level + nmadmax * self.background_mad
+        return np.array([low, high]).T
 
         return self.minmax
 
@@ -298,7 +300,7 @@ class Tiled(object):
             self,
             filename,
             extnum : Union[int, None] = None,
-            tilesize : Tuple[int, int] = [256,256],
+            tilesize : Tuple[int, int] = [1, 256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
             nthreads : int = os.cpu_count() // 2):
@@ -320,10 +322,13 @@ class Tiled(object):
         if self.nimages == 0:
             raise(LookupError(f"No 2D+ data found in {filename}"))
             return
+        # Number of image dimensions
+        self.nchannels = self.images[0].data.shape[0]
         self.tilesize = tilesize;
+        self.tilesize[0] = self.nchannels
         self.make_mosaic(self.images)
-        self.nlevels = max((self.shape[0] // (self.tilesize[0] + 1) + 1).bit_length() + 1, \
-                        (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1)
+        self.nlevels = max((self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1, \
+                        (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1)
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.make_tiles()
@@ -341,10 +346,10 @@ class Tiled(object):
         return TiledModel(
             type=package.name,
             version="3.0",
-            full_size=self.shape[::-1],
-            tile_size=self.tilesize[::-1],
+            full_size=self.shape[2:0:-1],
+            tile_size=self.tilesize[2:0:-1],
             tile_levels=self.nlevels,
-            channels=1,
+            channels=self.shape[0],
             bits_per_channel=32,
             header=dict(self.header.items()),
             images=[image.get_model() for image in self.images]
@@ -370,7 +375,7 @@ class Tiled(object):
             # Compute the chip corner position in the mosaic, Python style
             start = [min(y) - 1, min(x) -1]
             # Compute the mosaic shape
-            shape = [max(y) - start[0],  max(x) - start[1]]
+            shape = [self.nchannels, max(y) - start[0],  max(x) - start[1]]
             self.data = np.zeros(shape, dtype=images[0].data.dtype)
             for image in images:
                 image.compute_geometry(start, shape)
@@ -397,8 +402,9 @@ class Tiled(object):
         image = images[0]
         header = image.header.copy()
         # Update parameters so that they apply to the mosaic
-        header["NAXIS1"] = self.shape[1]
-        header["NAXIS2"] = self.shape[0]
+        header["NAXIS1"] = self.shape[2]
+        header["NAXIS2"] = self.shape[1]
+        header["NAXIS3"] = self.shape[0]
         datainfo = image.datasliceinfo
         detinfo = image.detsliceinfo
         crpix1 = header.get("CRPIX1", 1)
@@ -428,7 +434,7 @@ class Tiled(object):
             IIP image header.
         """
         string = "IIP:1.0\n"
-        string += f"Max-size:{self.shape[1]} {self.shape[0]}\n"
+        string += f"Max-size:{self.shape[2]} {self.shape[1]}\n"
         string += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
         string += f"Resolution-number:{self.nlevels}\n"
         string += f"Bits-per-channel:{self.bitdepth}\n"
@@ -441,6 +447,7 @@ class Tiled(object):
     def convert_tile(
             self,
             tile: np.ndarray,
+            channel: int=1,
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.45,
@@ -453,6 +460,8 @@ class Tiled(object):
         ----------
         tile:  ~numpy.ndarray
             Input tile.
+        channel: int, optional
+            Image channel
         minmax: tuple[float, float], optional
             Tile intensity cuts.
         contrast:  float, optional
@@ -469,9 +478,10 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        fac = minmax[1] - minmax[0]
+        chan = channel - 1
+        fac = minmax[chan][1] - minmax[chan][0]
         fac = contrast / fac if fac > 0.0 else self.maxfac
-        tile = (tile - minmax[0]) * fac
+        tile = (tile[chan] - minmax[chan][0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
@@ -488,37 +498,40 @@ class Tiled(object):
         """
         self.levels = []
         self.tiles = []
-        ima = np.flipud(self.data)
+        ima = np.flip(self.data, axis=1)
         for r in range(self.nlevels):
             tiles = []
             tiler = Tiler(
                 data_shape = ima.shape,
-                tile_shape = (self.tilesize[0], self.tilesize[1]),
+                tile_shape = self.tilesize,
                 mode='irregular'
             )
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
             self.tiles.append(tiles)
-            '''
-            # Pure NumPy approach (slower)
-            ima = ima[:(-1 if ima.shape[0]%2 else None),
-                :(-1 if ima.shape[1]%2 else None)].reshape(
-                    ima.shape[0]//2, 2, -1, 2
-                ).mean(axis=1).mean(axis=2)
-            '''
-            ima = cv2.resize(
-                ima,
+            # Pure NumPy approach if in multichannel mode
+            # else use OpenCV (faster but does not work with multiplanar data)
+            ima = ima[
+                :,
+                :(-1 if ima.shape[1]%2 else None),
+                :(-1 if ima.shape[2]%2 else None)
+            ].reshape(
+                ima.shape[0], ima.shape[1]//2, 2, -1, 2
+            ).mean(axis=2).mean(axis=3) if self.nchannels > 1 else \
+            cv2.resize(
+                ima[0].squeeze(),
                 fx=0.5,
                 fy=0.5,
                 dsize=(ima.shape[1]//2, ima.shape[0]//2),
                 interpolation=cv2.INTER_AREA
-            )
+            )[None,:,:]
         del ima
 
     def get_tile(
             self,
-            r: int,
-            t: int,
+            tileres: int,
+            tileindex: int,
+            channel: 1,
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.4545,
@@ -530,10 +543,12 @@ class Tiled(object):
         
         Parameters
         ----------
-        r:  int
+        tileres:  int
             Tile resolution level.
-        t:  int
-            Tile number.
+        tileindex:  int
+            Tile index.
+        channel: int
+            Data channel (first channel is 1)
         minmax: tuple[float, float], optional
             Tile intensity cuts.
         contrast:  float, optional
@@ -552,9 +567,12 @@ class Tiled(object):
         tile: bytes
             JPEG bytestream of the tile.
         """
+        if channel > self.tiles[0][0].shape[0]:
+            channel = 1
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[r][t],
+                self.tiles[tileres][tileindex],
+				channel=channel,
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
@@ -564,7 +582,8 @@ class Tiled(object):
             colorspace='Gray'
         ) if colormap=='grey' else encode_jpeg(
             self.convert_tile(
-                self.tiles[r][t],
+                self.tiles[tileres][tileindex],
+				channel=channel,
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
