@@ -325,6 +325,7 @@ class Tiled(object):
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
         self.tilesize = tilesize;
+        self.tilesize[0] = self.nchannels
         self.make_mosaic(self.images)
         self.nlevels = max((self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1, \
                         (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1)
@@ -525,8 +526,9 @@ class Tiled(object):
 
     def get_tile(
             self,
-            r: int,
-            t: int,
+            tileres: int,
+            tileindex: int,
+            channel: 1,
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.4545,
@@ -538,10 +540,12 @@ class Tiled(object):
         
         Parameters
         ----------
-        r:  int
+        tileres:  int
             Tile resolution level.
-        t:  int
-            Tile number.
+        tileindex:  int
+            Tile index.
+        channel: int
+            Data channel (first channel is 1)
         minmax: tuple[float, float], optional
             Tile intensity cuts.
         contrast:  float, optional
@@ -560,9 +564,11 @@ class Tiled(object):
         tile: bytes
             JPEG bytestream of the tile.
         """
+        if channel > self.tiles[0][0].shape[0]:
+            channel = 1
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[r][t][0],
+                self.tiles[tileres][tileindex][channel - 1],
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,
@@ -572,7 +578,7 @@ class Tiled(object):
             colorspace='Gray'
         ) if colormap=='grey' else encode_jpeg(
             self.convert_tile(
-                self.tiles[r][t][0],
+                self.tiles[tileres][tileindex][channel - 1],
                 minmax=minmax,
                 contrast=contrast,
                 gamma=gamma,

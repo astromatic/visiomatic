@@ -108,6 +108,7 @@ def create_app() -> FastAPI:
             request: Request,
             FIF: str = Query(None, title="Image filename"),
             obj: str = Query(None, title="Get image information instead of a tile"),
+            CHAN: int =  Query(90, title="Channel index (mono-channel mode)", ge=0),
             CMP: Literal[tuple(colordict.keys())] = Query('grey', title="Name of the colormap"),
             CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
             GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
@@ -160,6 +161,7 @@ def create_app() -> FastAPI:
         pix = tiled.get_tile(
             r,
             t,
+            channel=CHAN,
             minmax=minmax,
             contrast=CNT,
             gamma=GAM,
