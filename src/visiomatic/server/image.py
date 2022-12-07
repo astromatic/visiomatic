@@ -505,23 +505,22 @@ class Tiled(object):
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
             self.tiles.append(tiles)
-            # Pure NumPy approach (slower)
+            # Pure NumPy approach if in multichannel mode
+            # else use OpenCV (faster but does not work with multiplanar data)
             ima = ima[
                 :,
                 :(-1 if ima.shape[1]%2 else None),
                 :(-1 if ima.shape[2]%2 else None)
             ].reshape(
                 ima.shape[0], ima.shape[1]//2, 2, -1, 2
-            ).mean(axis=2).mean(axis=3)
-            '''
-            ima = cv2.resize(
-                ima,
+            ).mean(axis=2).mean(axis=3) if self.nchannels > 1 else \
+            cv2.resize(
+                ima[0].squeeze(),
                 fx=0.5,
                 fy=0.5,
                 dsize=(ima.shape[1]//2, ima.shape[0]//2),
                 interpolation=cv2.INTER_AREA
-            )
-            '''
+            )[None,:,:]
         del ima
 
     def get_tile(
