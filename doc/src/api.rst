@@ -8,4 +8,4 @@ API reference
    :caption: Contents:
 
    modules/server
-
+   modules/client
