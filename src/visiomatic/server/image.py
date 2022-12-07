@@ -18,6 +18,16 @@ from tiler import Tiler
 from .. import package
 from .settings import app_settings 
 
+
+colordict = {
+    'grey': None,
+    'jet': cv2.COLORMAP_JET,
+    'cold': cv2.COLORMAP_COOL,  # cold actually corresponds to COOL
+    'cool': cv2.COLORMAP_COOL,
+    'hot': cv2.COLORMAP_HOT
+}
+
+
 class ImageModel(BaseModel):
     """
     Pydantic image model class
@@ -38,6 +48,7 @@ class ImageModel(BaseModel):
     detslice: List[List[int]]
     min_max: List[List[float]]
     header: dict
+
 
 
 class Image(object):
@@ -228,6 +239,8 @@ class Image(object):
         return np.array([low, high])
 
         return self.minmax
+
+
 
 
 class TiledModel(BaseModel):
@@ -425,13 +438,14 @@ class Tiled(object):
         return string
 
 
-    def scale_tile(
+    def convert_tile(
             self,
-            tile,
+            tile: np.ndarray,
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.45,
-            invert: bool = False) -> None:
+            colormap: str = 'grey',
+            invert: bool = False) -> np.ndarray:
         """
         Process the dynamic range of a tile.
         
@@ -445,6 +459,8 @@ class Tiled(object):
             Relative tile contrast.
         gamma:  float, optional
             Inverse tile display gamma.
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
         invert: bool, optional
             Invert the colormap.
 
@@ -459,7 +475,11 @@ class Tiled(object):
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
-        return 255 - tile if invert else tile
+        if invert:
+            tile = 255 - tile
+        if (colormap != 'grey'):
+            tile = cv2.applyColorMap(tile, colordict[colormap])
+        return tile
 
 
     def make_tiles(self) -> None:
@@ -502,6 +522,7 @@ class Tiled(object):
             minmax: Tuple[float, float] = [0.0, 65535.0],
             contrast: float = 1.0,
             gamma: float = 0.4545,
+            colormap: str = 'grey',
             invert: bool = False,
             quality: int = 90) -> bytes:
         """
@@ -519,6 +540,8 @@ class Tiled(object):
             Relative tile contrast.
         gamma:  float, optional
             Inverse tile display gamma.
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
         invert: bool, optional
             Invert the colormap.
         quality: int, optional
@@ -530,7 +553,7 @@ class Tiled(object):
             JPEG bytestream of the tile.
         """
         return encode_jpeg(
-            self.scale_tile(
+            self.convert_tile(
                 self.tiles[r][t],
                 minmax=minmax,
                 contrast=contrast,
@@ -539,5 +562,16 @@ class Tiled(object):
             )[:,:, None],
             quality=quality,
             colorspace='Gray'
+        ) if colormap=='grey' else encode_jpeg(
+            self.convert_tile(
+                self.tiles[r][t],
+                minmax=minmax,
+                contrast=contrast,
+                gamma=gamma,
+                invert=invert,
+                colormap=colormap
+            ),
+            quality=quality,
+            colorspace='BGR'
         )
 

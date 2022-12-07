@@ -34374,8 +34374,8 @@
           map2._controlContainer
         );
         this.once("metaload", function() {
-          map2._controlContainer.removeChild(this._loadActivity);
           this._addToMap(map2);
+          map2._controlContainer.removeChild(this._loadActivity);
         }, this);
       }
       return this;

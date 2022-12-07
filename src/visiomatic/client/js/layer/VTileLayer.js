@@ -362,8 +362,8 @@ export const VTileLayer = TileLayer.extend({
 				map._controlContainer
 			);
 			this.once('metaload', function () {
-				map._controlContainer.removeChild(this._loadActivity);
 				this._addToMap(map);
+				map._controlContainer.removeChild(this._loadActivity);
 			}, this);
 		}
 		return this;

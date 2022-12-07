@@ -6,7 +6,7 @@ Application module
 
 import io, os, re
 import numpy as np
-from typing import List, Optional
+from typing import List, Literal, Optional
 from fastapi import FastAPI, Query, Request
 from fastapi import responses
 from fastapi.staticfiles import StaticFiles
@@ -16,7 +16,7 @@ from fastapi.encoders import jsonable_encoder
 
 from .. import package
 from .settings import app_settings 
-from .image import Tiled
+from .image import colordict, Tiled
 
 
 def create_app() -> FastAPI:
@@ -114,6 +114,7 @@ def create_app() -> FastAPI:
             FIF: str = None,
             obj: str = Query(None, title="Get image information instead of a tile",
             max_length=200),
+            CMP: Literal[tuple(colordict.keys())] = Query('grey', title="Name of the colormap"),
             CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
             GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
             INFO: str = Query(None, title="Get advanced image information instead of a tile"),
@@ -131,21 +132,23 @@ def create_app() -> FastAPI:
         FIF: str
             Image filename.
         obj: str or None
-          Query parameter to return image information instead of a tile.
+            Query parameter to return image information instead of a tile.
+        CMP: str, optional
+            Query parameter for colormaps.
         CNT:  float, optional
-          Query parameter controlling the relative tile contrast.
+            Query parameter controlling the relative tile contrast.
         GAM:  float, optional
-          Query parameter controlling the inverse display gamma.
+            Query parameter controlling the inverse display gamma.
         INFO: str or None
-          Query parameter to return extended image information (as JSON) instead of a tile.
+            Query parameter to return extended image information (as JSON) instead of a tile.
         INV: bool, optional
-          Query parameter to invert the colormap.
+            Query parameter to invert the colormap.
         JTL: str
-          Query parameters controlling the tile level and coordinates.
+            Query parameters controlling the tile level and coordinates.
         MINMAX: str, optional
-          Query parameters controlling the tile intensity cuts.
+            Query parameters controlling the tile intensity cuts.
         QLT: int, optional
-          Query parameter controlling the JPEG quality
+            Query parameter controlling the JPEG quality
 
         Returns
         -------
@@ -189,6 +192,7 @@ def create_app() -> FastAPI:
             minmax=minmax,
             contrast=CNT,
             gamma=GAM,
+            colormap=CMP,
             invert=(INV!=None),
             quality=QLT
         )
