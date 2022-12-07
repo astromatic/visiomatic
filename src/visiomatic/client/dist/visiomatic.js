@@ -34496,7 +34496,6 @@
         }
       } else {
         var cc = this.iipChannel + 1;
-        console.log(cc);
         if (cc > nchannel2) {
           cc = 1;
         }
