@@ -106,9 +106,8 @@ def create_app() -> FastAPI:
     @app.get(tiles_url, tags=["services"])
     async def read_visio(
             request: Request,
-            FIF: str = None,
-            obj: str = Query(None, title="Get image information instead of a tile",
-            max_length=200),
+            FIF: str = Query(None, title="Image filename"),
+            obj: str = Query(None, title="Get image information instead of a tile"),
             CMP: Literal[tuple(colordict.keys())] = Query('grey', title="Name of the colormap"),
             CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
             GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
