@@ -22,6 +22,6 @@ export const PanSTARRS1 = extend({}, Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
 	properties: ['g', 'r', 'i', 'z', 'y'],
 	units: ['', '', '', '', ''],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 

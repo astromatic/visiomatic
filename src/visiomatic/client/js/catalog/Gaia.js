@@ -23,7 +23,7 @@ export const Gaia_DR1 = extend({}, Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
 export const Gaia_DR2 = extend({}, Catalog, {
@@ -40,7 +40,7 @@ export const Gaia_DR2 = extend({}, Catalog, {
 	properties: ['G', 'B<sub>P</sub>', 'R<sub>P</sub>',
 	 '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', '', '', 'mas/yr', 'mas/yr'],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
 export const Gaia_DR3 = extend({}, Catalog, {
@@ -57,6 +57,6 @@ export const Gaia_DR3 = extend({}, Catalog, {
 	properties: ['G', 'B<sub>P</sub>', 'R<sub>P</sub>',
 	 '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', '', '', 'mas/yr', 'mas/yr'],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 

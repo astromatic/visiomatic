@@ -24,6 +24,6 @@ export const TwoMASS = extend({}, Catalog, {
 	 '-out.max={nmax}&-sort=Jmag',
 	properties: ['J', 'H', 'K'],
 	units: ['', '', ''],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 

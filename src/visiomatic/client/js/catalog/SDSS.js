@@ -23,6 +23,6 @@ export const SDSS = extend({}, Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
-	objurl: Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 

@@ -29849,7 +29849,7 @@
     url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/337/gaia&-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>",
     properties: ["G", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
     units: ["", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
   var Gaia_DR2 = (0, import_leaflet8.extend)({}, Catalog, {
     service: "Vizier@CDS",
@@ -29868,7 +29868,7 @@
       "&#956;<sub>&#948;</sub>"
     ],
     units: ["", "", "", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
   var Gaia_DR3 = (0, import_leaflet8.extend)({}, Catalog, {
     service: "Vizier@CDS",
@@ -29887,7 +29887,7 @@
       "&#956;<sub>&#948;</sub>"
     ],
     units: ["", "", "", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/catalog/GALEX.js
@@ -29965,7 +29965,7 @@
     url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/349&-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["g", "r", "i", "z", "y"],
     units: ["", "", "", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/catalog/PPMXL.js
@@ -30008,7 +30008,7 @@
     url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=V/147&-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["u", "g", "r", "i", "z"],
     units: ["", "", "", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/catalog/TGSS.js
@@ -30047,7 +30047,7 @@
     url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/246&-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
     properties: ["J", "H", "K"],
     units: ["", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/catalog/URAT.js
@@ -30063,7 +30063,7 @@
     url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/329&-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag",
     properties: ["f<sub>mag</sub>", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
     units: ["", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/control/index.js
