@@ -521,7 +521,6 @@ export const VTileLayer = TileLayer.extend({
 		} else {
 			var	cc = this.iipChannel + 1;
 
-			console.log(cc);
 			if (cc > nchannel) { cc = 1; }
 			str += '&CHAN=' + cc.toString();
 		}
