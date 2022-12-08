@@ -117,7 +117,7 @@ def create_app() -> FastAPI:
             QLT: int = Query(90, title="JPEG quality", ge=0, le=100),
             JTL: str = Query(None, title="Tile coordinates",
                 min_length=3, max_length=11, regex="^\d+,\d+$"),
-            MINMAX: str = Query(None, title="Minimum and Maximum intensity range",
+            MINMAX: str = Query(None, title="Modified minimum and Maximum intensity ranges",
             min_length=5, max_length=48, regex="^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")):
         """
         Tile endpoint of the web API: returns a JPEG tile at the requested position.
@@ -147,12 +147,12 @@ def create_app() -> FastAPI:
             return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
         if JTL == None:
             return
+        # Update intensity cuts only if they correspond to the current channel
+        minmax = None
         if MINMAX != None:
-            #print(MINMAX)
             resp = app.parse_minmax.findall(MINMAX)[0]
-            minmax = float(resp[1]), float(resp[2])
-        else:
-            minmax = tiled.minmax
+            if resp[0] == CHAN:
+                minmax = float(resp[1]), float(resp[2])
         resp = app.parse_jtl.findall(JTL)[0]
         r = tiled.nlevels - 1 - int(resp[0])
         if r < 0:

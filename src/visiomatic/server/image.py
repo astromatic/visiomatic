@@ -69,7 +69,7 @@ class Image(object):
     def __init__(
             self,
             hdu : fits.ImageHDU,
-            minmax : Union[Tuple[int], None] = None):
+            minmax : Union[Tuple[float], None] = None):
 
         self.header = hdu.header
         shape = hdu.data.shape
@@ -239,9 +239,6 @@ class Image(object):
         low = self.background_level + nmadmin * self.background_mad
         high = self.background_level + nmadmax * self.background_mad
         return np.array([low, high]).T
-
-        return self.minmax
-
 
 
 
@@ -448,7 +445,7 @@ class Tiled(object):
             self,
             tile: np.ndarray,
             channel: int=1,
-            minmax: Tuple[float, float] = [0.0, 65535.0],
+            minmax: Union[Tuple[float, float], None] = None,
             contrast: float = 1.0,
             gamma: float = 0.45,
             colormap: str = 'grey',
@@ -479,9 +476,11 @@ class Tiled(object):
             Processed tile.
         """
         chan = channel - 1
-        fac = minmax[chan][1] - minmax[chan][0]
+        if not minmax:
+            minmax = self.minmax[chan]
+        fac = minmax[1] - minmax[0]
         fac = contrast / fac if fac > 0.0 else self.maxfac
-        tile = (tile[chan] - minmax[chan][0]) * fac
+        tile = (tile[chan] - minmax[0]) * fac
         tile[tile < 0.0] = 0.0
         tile[tile > 1.0] = 1.0
         tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
@@ -532,7 +531,7 @@ class Tiled(object):
             tileres: int,
             tileindex: int,
             channel: 1,
-            minmax: Tuple[float, float] = [0.0, 65535.0],
+            minmax: Union[Tuple[float, float], None] = None,
             contrast: float = 1.0,
             gamma: float = 0.4545,
             colormap: str = 'grey',
