@@ -135,7 +135,7 @@ export const Projection = Class.extend({
 		if ((v = header['CRVAL1'])) { projparam.crval.lng = v; }
 		if ((v = header['CRVAL2'])) { projparam.crval.lat = v; }
 		if ((v = header['LONPOLE'])) { projparam.natpole.lng = v; }
-		if ((v = header['LATPOLE'])) { projparam.natpol.lat = v; }
+		if ((v = header['LATPOLE'])) { projparam.natpole.lat = v; }
 		if ((v = header['CD1_1'])) { projparam.cd[0][0] = v; }
 		if ((v = header['CD1_2'])) { projparam.cd[0][1] = v; }
 		if ((v = header['CD2_1'])) { projparam.cd[1][0] = v; }

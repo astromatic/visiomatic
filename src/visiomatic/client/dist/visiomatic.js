@@ -33610,7 +33610,7 @@
         projparam.natpole.lng = v;
       }
       if (v = header["LATPOLE"]) {
-        projparam.natpol.lat = v;
+        projparam.natpole.lat = v;
       }
       if (v = header["CD1_1"]) {
         projparam.cd[0][0] = v;
