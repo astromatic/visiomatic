@@ -151,7 +151,7 @@ def create_app() -> FastAPI:
         minmax = None
         if MINMAX != None:
             resp = app.parse_minmax.findall(MINMAX)[0]
-            if resp[0] == CHAN:
+            if int(resp[0]) == CHAN:
                 minmax = float(resp[1]), float(resp[2])
         resp = app.parse_jtl.findall(JTL)[0]
         r = tiled.nlevels - 1 - int(resp[0])
