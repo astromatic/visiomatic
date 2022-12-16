@@ -230,13 +230,15 @@ export const VTileLayer = TileLayer.extend({
 				key = VUtil.readFITSKey,
 				numstr, value;
 
+			if (!(filter = images[0].header['FILTER'])) {
+				filter = 'Channel'
+			}
 			for (c = 0; c < nchannel; c++) {
 				if (c < ninlabel) {
 					labels[c] = inlabels[c];
 				} else {
-					numstr = (c + 1).toString();
-					value = images[0].header['FILTER'];
-					labels[c] = value ? value : 'Channel #' + numstr;
+					labels[c] = nchannel > 1 ? filter + ' #' + (c + 1).toString()
+						: filter;
 				}
 			}
 
@@ -505,9 +507,8 @@ export const VTileLayer = TileLayer.extend({
 		    mix = this.iipMix,
 		    m, n;
 
-		str += '&CTW=';
-
 		if (this.iipMode === 'color') {
+			str += '&CTW=';
 			for (n = 0; n < 3; n++) {
 				if (n) { str += ';'; }
 				str += mix[0][n].toString();
@@ -518,17 +519,10 @@ export const VTileLayer = TileLayer.extend({
 				}
 			}
 		} else {
-			var	cc = this.iipChannel;
+			var	cc = this.iipChannel + 1;
 
-			if (cc >= nchannel) { cc = 0; }
-			if (cc < nchannel) { nchannel = cc + 1; }
-			for (n = 0; n < 3; n++) {
-				if (n) { str += ';'; }
-				str += (cc === 0 ? '1' : '0');
-				for (m = 1; m < nchannel; m++) {
-					str += ',' + (cc === m ? '1' : '0');
-				}
-			}
+			if (cc > nchannel) { cc = 1; }
+			str += '&CHAN=' + cc.toString();
 		}
 
 		if (this.iipQuality !== this.iipdefault.quality) {

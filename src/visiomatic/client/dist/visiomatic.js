@@ -1341,18 +1341,18 @@
           }
         }
         function _setOpacityIE(el, value) {
-          var filter = false, filterName = "DXImageTransform.Microsoft.Alpha";
+          var filter2 = false, filterName = "DXImageTransform.Microsoft.Alpha";
           try {
-            filter = el.filters.item(filterName);
+            filter2 = el.filters.item(filterName);
           } catch (e) {
             if (value === 1) {
               return;
             }
           }
           value = Math.round(value * 100);
-          if (filter) {
-            filter.Enabled = value !== 100;
-            filter.Opacity = value;
+          if (filter2) {
+            filter2.Enabled = value !== 100;
+            filter2.Opacity = value;
           } else {
             el.style.filter += " progid:" + filterName + "(opacity=" + value + ")";
           }
@@ -9290,11 +9290,11 @@
             }
             return results;
           }
-          function condense(unmatched, map2, filter, context, xml) {
+          function condense(unmatched, map2, filter2, context, xml) {
             var elem, newUnmatched = [], i2 = 0, len = unmatched.length, mapped = map2 != null;
             for (; i2 < len; i2++) {
               if (elem = unmatched[i2]) {
-                if (!filter || filter(elem, context, xml)) {
+                if (!filter2 || filter2(elem, context, xml)) {
                   newUnmatched.push(elem);
                   if (mapped) {
                     map2.push(i2);
@@ -16562,11 +16562,11 @@
             }
             return results;
           }
-          function condense(unmatched, map2, filter, context, xml) {
+          function condense(unmatched, map2, filter2, context, xml) {
             var elem, newUnmatched = [], i2 = 0, len = unmatched.length, mapped = map2 != null;
             for (; i2 < len; i2++) {
               if (elem = unmatched[i2]) {
-                if (!filter || filter(elem, context, xml)) {
+                if (!filter2 || filter2(elem, context, xml)) {
                   newUnmatched.push(elem);
                   if (mapped) {
                     map2.push(i2);
@@ -33610,7 +33610,7 @@
         projparam.natpole.lng = v;
       }
       if (v = header["LATPOLE"]) {
-        projparam.natpol.lat = v;
+        projparam.natpole.lat = v;
       }
       if (v = header["CD1_1"]) {
         projparam.cd[0][0] = v;
@@ -34278,13 +34278,14 @@
         }
         this.iipChannel = options2.defaultChannel;
         var inlabels = options2.channelLabels, ninlabel = inlabels.length, labels = this.iipChannelLabels, inunits = options2.channelUnits, ninunits = inunits.length, units = this.iipChannelUnits, key = VUtil.readFITSKey, numstr, value;
+        if (!(filter = images[0].header["FILTER"])) {
+          filter = "Channel";
+        }
         for (c = 0; c < nchannel; c++) {
           if (c < ninlabel) {
             labels[c] = inlabels[c];
           } else {
-            numstr = (c + 1).toString();
-            value = images[0].header["FILTER"];
-            labels[c] = value ? value : "Channel #" + numstr;
+            labels[c] = nchannel > 1 ? filter + " #" + (c + 1).toString() : filter;
           }
         }
         for (c = 0; c < ninunits; c++) {
@@ -34480,8 +34481,8 @@
         }
       }
       var nchannel2 = this.iipNChannel, mix = this.iipMix, m, n;
-      str2 += "&CTW=";
       if (this.iipMode === "color") {
+        str2 += "&CTW=";
         for (n = 0; n < 3; n++) {
           if (n) {
             str2 += ";";
@@ -34494,22 +34495,11 @@
           }
         }
       } else {
-        var cc = this.iipChannel;
-        if (cc >= nchannel2) {
-          cc = 0;
+        var cc = this.iipChannel + 1;
+        if (cc > nchannel2) {
+          cc = 1;
         }
-        if (cc < nchannel2) {
-          nchannel2 = cc + 1;
-        }
-        for (n = 0; n < 3; n++) {
-          if (n) {
-            str2 += ";";
-          }
-          str2 += cc === 0 ? "1" : "0";
-          for (m = 1; m < nchannel2; m++) {
-            str2 += "," + (cc === m ? "1" : "0");
-          }
-        }
+        str2 += "&CHAN=" + cc.toString();
       }
       if (this.iipQuality !== this.iipdefault.quality) {
         str2 += "&QLT=" + this.iipQuality.toString();
