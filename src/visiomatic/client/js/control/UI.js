@@ -94,8 +94,8 @@ export const UI = Control.extend({
 			this._expand();
 		}
 
-		//	this._checkIIP();
-		this._map.on('layeradd', this._checkIIP, this);
+		//	this._checkVisiomatic();
+		this._map.on('layeradd', this._checkVisiomatic, this);
 
 		return	this._container;
 	},

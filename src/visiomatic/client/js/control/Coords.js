@@ -35,15 +35,15 @@ export const Coords = Control.extend({
 			className = 'leaflet-control-coords';
 
 		this._wcsdialog =  DomUtil.create('div', className + '-dialog');
-		this._map.on('layeradd', this._checkIIP, this);
+		this._map.on('layeradd', this._checkVisiomatic, this);
 		return	this._wcsdialog;
 	},
 
-	_checkIIP: function (e) {
+	_checkVisiomatic: function (e) {
 		var layer = e.layer;
 
-		// Exit if not an IIP layer
-		if (!layer || !layer.iipdefault) {
+		// Exit if not a VisiOmatic layer
+		if (!layer || !layer.visioDefault) {
 			return;
 		}
 		this._layer = layer;

@@ -88,7 +88,7 @@ export const ChannelUI = UI.extend({
 		this.saveSettings(layer, this._settings, 'color');
 
 		this._mode = this.options.mixingMode ?
-			this.options.mixingMode : layer.visio.mode;
+			this.options.mixingMode : layer.visio.mixingMode;
 
 		const	box = this._addDialogBox(),
 			modeline = this._addDialogLine('Mode:', box),

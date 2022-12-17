@@ -30659,7 +30659,7 @@
       } else {
         this._expand();
       }
-      this._map.on("layeradd", this._checkIIP, this);
+      this._map.on("layeradd", this._checkVisiomatic, this);
       return this._container;
     },
     _checkVisiomatic: function(e) {
@@ -31240,7 +31240,7 @@
       this.saveSettings(layer, this._initsettings, "color");
       this.saveSettings(layer, this._settings, "mono");
       this.saveSettings(layer, this._settings, "color");
-      this._mode = this.options.mixingMode ? this.options.mixingMode : layer.visio.mode;
+      this._mode = this.options.mixingMode ? this.options.mixingMode : layer.visio.mixingMode;
       const box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet25.DomUtil.create("div", className + "-radios", modelem);
       var modebutton = this._createRadioButton(
         className + "-radio",
@@ -31546,12 +31546,12 @@
     onAdd: function(map2) {
       var _this = this, className = "leaflet-control-coords";
       this._wcsdialog = import_leaflet26.DomUtil.create("div", className + "-dialog");
-      this._map.on("layeradd", this._checkIIP, this);
+      this._map.on("layeradd", this._checkVisiomatic, this);
       return this._wcsdialog;
     },
-    _checkIIP: function(e) {
+    _checkVisiomatic: function(e) {
       var layer = e.layer;
-      if (!layer || !layer.iipdefault) {
+      if (!layer || !layer.visioDefault) {
         return;
       }
       this._layer = layer;
