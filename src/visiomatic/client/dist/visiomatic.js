@@ -30631,7 +30631,7 @@
           this._dialog,
           this._sideClass
         );
-        this._map.on("layeradd", this._checkIIP, this);
+        this._map.on("layeradd", this._checkVisiomatic, this);
         return dest;
       } else {
         return import_leaflet23.Control.prototype.addTo.call(this, dest);
@@ -30662,9 +30662,9 @@
       this._map.on("layeradd", this._checkIIP, this);
       return this._container;
     },
-    _checkIIP: function(e) {
+    _checkVisiomatic: function(e) {
       var layer = e.layer;
-      if (!layer || !layer.iipdefault) {
+      if (!layer || !layer.visioDefault) {
         return;
       }
       this._layer = layer;
@@ -30713,7 +30713,7 @@
         if (!layer.overlay) {
           if (!layer._map) {
             this._prelayer = layer;
-          } else if (this._map.hasLayer(layer) && layer.iipdefault) {
+          } else if (this._map.hasLayer(layer) && layer.visioDefault) {
             return layer;
           }
         }
@@ -30858,11 +30858,11 @@
       return step === 0 ? 1 : step;
     },
     _onInputChange: function(layer, pname, value, func) {
-      var pnamearr = pname.split(/\[|\]/);
+      const pnamearr = pname.split(/\[|\]/);
       if (pnamearr[1]) {
-        layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+        layer.visio[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
       } else {
-        layer[pnamearr[0]] = value;
+        layer.visio[pnamearr[0]] = value;
       }
       if (func) {
         func(layer);
@@ -30888,7 +30888,11 @@
       return this;
     },
     _addLayerItem: function(obj) {
-      var _this = this, layerItem = import_leaflet23.DomUtil.create("div", "leaflet-control-iip-layer"), inputdiv = import_leaflet23.DomUtil.create("div", "leaflet-control-iip-layerswitch", layerItem);
+      const _this = this, layerItem = import_leaflet23.DomUtil.create("div", "leaflet-control-iip-layer"), inputdiv = import_leaflet23.DomUtil.create(
+        "div",
+        "leaflet-control-iip-layerswitch",
+        layerItem
+      );
       if (obj.layer.notReady) {
         import_leaflet23.DomUtil.create("div", "leaflet-control-iip-activity", inputdiv);
       } else {
@@ -30995,7 +30999,7 @@
         "catalog",
         this.options.color,
         false,
-        "iipCatalog",
+        "visiomaticCatalog",
         "Click to set catalog color"
       );
       var catselect = this._createSelectMenu(
@@ -31208,46 +31212,47 @@
       if (!settings[mode]) {
         settings[mode] = {};
       }
-      var setting = settings[mode], nchan = layer.iipNChannel;
-      setting.channel = layer.iipChannel;
-      setting.cMap = layer.iipCMap;
+      const visio = layer.visio, nchan = visio.nChannel, setting = settings[mode];
+      setting.channel = visio.channel;
+      setting.cMap = visio.cMap;
       setting.rgb = [];
-      for (var c = 0; c < nchan; c++) {
-        setting.rgb[c] = layer.iipRGB[c].clone();
+      for (let c = 0; c < nchan; c++) {
+        setting.rgb[c] = visio.rgb[c].clone();
       }
     },
     loadSettings: function(layer, settings, mode, keepchanflag) {
-      var setting = settings[mode], nchan = layer.iipNChannel;
+      const setting = settings[mode];
       if (!setting) {
         return;
       }
+      const visio = layer.visio, nchan = visio.nChannel, vrgb = visio.rgb, srgb = setting.rgb;
       if (!keepchanflag) {
-        layer.iipChannel = setting.channel;
+        visio.channel = setting.channel;
       }
-      layer.iipCMap = setting.cMap;
-      for (var c = 0; c < nchan; c++) {
-        layer.iipRGB[c] = setting.rgb[c].clone();
+      visio.cMap = setting.cMap;
+      for (let c = 0; c < nchan; c++) {
+        vrgb[c] = srgb[c].clone();
       }
     },
     _initDialog: function() {
-      var _this = this, layer = this._layer, className = this._className, dialog = this._dialog;
+      const _this = this, layer = this._layer, className = this._className, dialog = this._dialog;
       this.saveSettings(layer, this._initsettings, "mono");
       this.saveSettings(layer, this._initsettings, "color");
       this.saveSettings(layer, this._settings, "mono");
       this.saveSettings(layer, this._settings, "color");
-      this._mode = this.options.mixingMode ? this.options.mixingMode : layer.iipMode;
-      var box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet25.DomUtil.create("div", className + "-radios", modelem), elem, modebutton;
-      modebutton = this._createRadioButton(
+      this._mode = this.options.mixingMode ? this.options.mixingMode : layer.visio.mode;
+      const box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet25.DomUtil.create("div", className + "-radios", modelem);
+      var modebutton = this._createRadioButton(
         className + "-radio",
         modeinput,
         "mono",
         this._mode === "mono",
         function() {
           _this.saveSettings(layer, _this._settings, _this._mode);
-          for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+          for (let elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
             box.removeChild(elem);
           }
-          for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+          for (let elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
             dialog.removeChild(elem);
           }
           _this._channelList = void 0;
@@ -31257,17 +31262,17 @@
         },
         "Select mono-channel palettized mode"
       );
-      modebutton = this._createRadioButton(
+      var modebutton = this._createRadioButton(
         className + "-radio",
         modeinput,
         "color",
         this._mode !== "mono",
         function() {
           _this.saveSettings(layer, _this._settings, _this._mode);
-          for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+          for (let elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
             box.removeChild(elem);
           }
-          for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+          for (let elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
             dialog.removeChild(elem);
           }
           _this.loadSettings(layer, _this._settings, "color");
@@ -31284,143 +31289,164 @@
       }
     },
     _initMonoDialog: function(layer, box) {
-      var _this = this, channels = layer.iipChannelLabels, className = this._className, line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line);
+      const _this = this, channels = layer.visio.channelLabels, className = this._className;
+      var line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line);
       layer.updateMono();
       this._chanSelect = this._createSelectMenu(
         this._className + "-select",
         elem,
-        layer.iipChannelLabels,
+        layer.visio.channelLabels,
         void 0,
-        layer.iipChannel,
+        layer.visio.channel,
         function() {
-          layer.iipChannel = parseInt(this._chanSelect.selectedIndex - 1, 10);
-          this._updateChannel(layer, layer.iipChannel);
+          layer.visio.channel = parseInt(
+            this._chanSelect.selectedIndex - 1,
+            10
+          );
+          this._updateChannel(layer, layer.visio.channel);
           layer.redraw();
         },
         "Select image channel"
       );
-      line = this._addDialogLine("LUT:", box);
-      elem = this._addDialogElement(line);
-      var cmapinput = import_leaflet25.DomUtil.create("div", className + "-cmaps", elem), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
-        _this._onInputChange(layer, "iipCMap", value);
-      }, i;
-      for (i in cmaps) {
-        cbutton[i] = this._createRadioButton(
+      var line = this._addDialogLine("LUT:", box), elem = this._addDialogElement(line);
+      const cmapinput = import_leaflet25.DomUtil.create("div", className + "-cmaps", elem), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
+        _this._onInputChange(layer, "cMap", value);
+      };
+      for (let c in cmaps) {
+        cbutton[c] = this._createRadioButton(
           "leaflet-cmap",
           cmapinput,
-          cmaps[i],
-          cmaps[i] === this.options.cMap,
+          cmaps[c],
+          cmaps[c] === this.options.cMap,
           _changeMap,
-          '"' + cmaps[i].charAt(0).toUpperCase() + cmaps[i].substr(1) + '" color-map'
+          '"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) + '" color-map'
         );
       }
-      this._addMinMax(layer, layer.iipChannel, box);
+      this._addMinMax(layer, layer.visio.channel, box);
       layer.redraw();
     },
     _initColorDialog: function(layer, box) {
-      var _this = this, className = this._className, line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line), colpick = this._chanColPick = this._createColorPicker(
+      const _this = this, visio = layer.visio, className = this._className, line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line), colpick = this._chanColPick = this._createColorPicker(
         className + "-color",
         elem,
         "channel",
-        layer.iipRGB[layer.iipChannel].toStr(),
+        visio.rgb[visio.channel].toStr(),
         function() {
-          var chan = layer.iipChannel, hex = $(colpick).val();
+          const chan = visio.channel, hex = $(colpick).val();
           _this._updateMix(layer, chan, rgb(hex));
           _this.collapsedOff = true;
         },
-        "iipChannel",
+        "visiomaticChannel",
         "Click to set channel color"
       );
-      this._onInputChange(layer, "iipCMap", "grey");
+      this._onInputChange(layer, "cMap", "grey");
       layer.updateMix();
       this._chanSelect = this._createSelectMenu(
         this._className + "-select",
         elem,
-        layer.iipChannelLabels,
+        visio.channelLabels,
         void 0,
-        layer.iipChannel,
+        visio.channel,
         function() {
-          layer.iipChannel = this._chanSelect.selectedIndex - 1;
-          this._updateChannel(layer, layer.iipChannel, colpick);
+          visio.channel = this._chanSelect.selectedIndex - 1;
+          this._updateChannel(layer, visio.channel, colpick);
         },
         "Select image channel"
       );
-      this._addMinMax(layer, layer.iipChannel, box);
-      line = this._addDialogLine("Colors:", box);
-      elem = this._addDialogElement(line);
-      this._createButton(className + "-button", elem, "colormix-reset", function() {
-        _this.loadSettings(layer, _this._initsettings, "color", true);
-        layer.updateMix();
-        this._updateColPick(layer);
-        this._updateChannelList(layer);
-        layer.redraw();
-      }, "Reset color mix");
-      this._createButton(className + "-button", elem, "colormix-auto", function() {
-        var nchan = layer.iipNChannel, cc = 0, nchanon = 0, rgb3 = layer.iipRGB, defcol = layer.iipdefault.channelColors;
-        for (var c = 0; c < nchan; c++) {
-          if (rgb3[c].isOn()) {
-            nchanon++;
+      this._addMinMax(layer, visio.channel, box);
+      const line2 = this._addDialogLine("Colors:", box), elem2 = this._addDialogElement(line2);
+      this._createButton(
+        className + "-button",
+        elem2,
+        "colormix-reset",
+        function() {
+          _this.loadSettings(layer, _this._initsettings, "color", true);
+          layer.updateMix();
+          this._updateColPick(layer);
+          this._updateChannelList(layer);
+          layer.redraw();
+        },
+        "Reset color mix"
+      );
+      this._createButton(
+        className + "-button",
+        elem2,
+        "colormix-auto",
+        function() {
+          const nchan = visio.nChannel, rgb3 = visio.rgb, defcol = layer.visioDefault.channelColors;
+          let cc = 0, nchanon = 0;
+          for (let c = 0; c < nchan; c++) {
+            if (rgb3[c].isOn()) {
+              nchanon++;
+            }
           }
-        }
-        if (nchanon >= defcol.length) {
-          nchanon = defcol.length - 1;
-        }
-        for (c = 0; c < nchan; c++) {
-          if (rgb3[c].isOn() && cc < nchanon) {
-            rgb3[c] = rgb3(defcol[nchanon][cc++]);
+          if (nchanon >= defcol.length) {
+            nchanon = defcol.length - 1;
           }
-        }
-        layer.updateMix();
-        this._updateColPick(layer);
-        this._updateChannelList(layer);
-        layer.redraw();
-      }, "Re-color active channels");
+          for (let c = 0; c < nchan; c++) {
+            if (rgb3[c].isOn() && cc < nchanon) {
+              rgb3[c] = rgb3(defcol[nchanon][cc++]);
+            }
+          }
+          layer.updateMix();
+          this._updateColPick(layer);
+          this._updateChannelList(layer);
+          layer.redraw();
+        },
+        "Re-color active channels"
+      );
       _this._updateChannelList(layer);
       layer.redraw();
     },
     _addMinMax: function(layer, chan, box) {
-      var step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+      const visio = layer.visio, step = this._spinboxStep(
+        visio.minValue[chan],
+        visio.maxValue[chan]
+      );
       this._minElem = this._addNumericalInput(
         layer,
         box,
         "Min:",
-        "iipMinValue[" + chan + "]",
-        "Lower clipping limit in " + layer.iipChannelUnits[chan] + ".",
+        "minValue[" + chan + "]",
+        "Lower clipping limit in " + visio.channelUnits[chan] + ".",
         "leaflet-channel-minvalue",
-        layer.iipMinValue[chan],
+        visio.minValue[chan],
         step
       );
       this._maxElem = this._addNumericalInput(
         layer,
         box,
         "Max:",
-        "iipMaxValue[" + chan + "]",
-        "Upper clipping limit in " + layer.iipChannelUnits[chan] + ".",
+        "maxValue[" + chan + "]",
+        "Upper clipping limit in " + visio.channelUnits[chan] + ".",
         "leaflet-channel-maxvalue",
-        layer.iipMaxValue[chan],
+        visio.maxValue[chan],
         step
       );
     },
     _updateChannel: function(layer, chan, colorElem) {
-      var _this = this, step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+      const _this = this, visio = layer.visio, step = this._spinboxStep(
+        visio.minValue[chan],
+        visio.maxValue[chan]
+      );
       _this._chanSelect.selectedIndex = chan + 1;
       if (colorElem) {
-        $(colorElem).spectrum("set", layer.iipRGB[chan].toStr());
-        $(colorElem).val(layer.iipRGB[chan].toStr()).off("change").on("change", function() {
+        $(colorElem).spectrum("set", visio.rgb[chan].toStr());
+        $(colorElem).val(visio.rgb[chan].toStr()).off("change").on("change", function() {
           _this._updateMix(layer, chan, rgb($(colorElem).val()));
         });
       }
-      this._minElem.spinbox.value(layer.iipMinValue[chan]).step(step).off("change").on("change", function() {
+      this._minElem.spinbox.value(visio.minValue[chan]).step(step).off("change").on("change", function() {
         _this._onInputChange(
           layer,
-          "iipMinValue[" + chan + "]",
+          "minValue[" + chan + "]",
           _this._minElem.spinbox.value()
         );
       }, this);
-      this._maxElem.spinbox.value(layer.iipMaxValue[chan]).step(step).off("change").on("change", function() {
+      this._maxElem.spinbox.value(visio.maxValue[chan]).step(step).off("change").on("change", function() {
         _this._onInputChange(
           layer,
-          "iipMaxValue[" + chan + "]",
+          "maxValue[" + chan + "]",
           _this._maxElem.spinbox.value()
         );
       }, this);
@@ -31431,7 +31457,8 @@
       layer.redraw();
     },
     _updateChannelList: function(layer) {
-      var chanLabels = layer.iipChannelLabels, chanList = this._channelList, chanElems = this._channelElems, trashElems = this._trashElems, chanElem, trashElem, rgb3, color, label, c, chan;
+      const visio = layer.visio, chanLabels = visio.channelLabels;
+      let chanList = this._channelList, chanElems = this._channelElems, trashElems = this._trashElems;
       if (chanList) {
         import_leaflet25.DomUtil.empty(this._channelList);
       } else {
@@ -31443,18 +31470,28 @@
       }
       chanElems = this._channelElems = [];
       trashElems = this._trashElems = [];
-      for (c in chanLabels) {
-        chan = parseInt(c, 10);
-        rgb3 = layer.iipRGB[chan];
+      for (let c in chanLabels) {
+        var chan = parseInt(c, 10), rgb3 = visio.rgb[chan];
         if (rgb3.isOn()) {
-          chanElem = import_leaflet25.DomUtil.create("div", this._className + "-channel", chanList);
-          color = import_leaflet25.DomUtil.create("div", this._className + "-chancolor", chanElem);
+          var chanElem = import_leaflet25.DomUtil.create(
+            "div",
+            this._className + "-channel",
+            chanList
+          ), color = import_leaflet25.DomUtil.create(
+            "div",
+            this._className + "-chancolor",
+            chanElem
+          );
           color.style.backgroundColor = rgb3.toStr();
           this._activateChanElem(color, layer, chan);
-          label = import_leaflet25.DomUtil.create("div", this._className + "-chanlabel", chanElem);
+          var label = import_leaflet25.DomUtil.create(
+            "div",
+            this._className + "-chanlabel",
+            chanElem
+          );
           label.innerHTML = chanLabels[c];
           this._activateChanElem(label, layer, chan);
-          trashElem = this._createButton(
+          var trashElem = this._createButton(
             "leaflet-control-iip-trash",
             chanElem,
             void 0,
@@ -31468,20 +31505,21 @@
       }
     },
     _updateColPick: function(layer) {
-      $(this._chanColPick).spectrum("set", layer.iipRGB[layer.iipChannel].toStr());
-      $(this._chanColPick).val(layer.iipRGB[layer.iipChannel].toStr());
+      const visio = layer.visio;
+      $(this._chanColPick).spectrum("set", visio.rgb[visio.channel].toStr());
+      $(this._chanColPick).val(visio.rgb[visio.channel].toStr());
     },
     _activateTrashElem: function(trashElem, layer, chan) {
       import_leaflet25.DomEvent.on(trashElem, "click touch", function() {
         this._updateMix(layer, chan, rgb(0, 0, 0));
-        if (layer === this._layer && chan === layer.iipChannel) {
+        if (layer === this._layer && chan === layer.visio.channel) {
           this._updateColPick(layer);
         }
       }, this);
     },
     _activateChanElem: function(chanElem, layer, chan) {
       import_leaflet25.DomEvent.on(chanElem, "click touch", function() {
-        layer.iipChannel = chan;
+        layer.visio.channel = chan;
         this._updateChannel(layer, chan, this._chanColPick);
       }, this);
     }
@@ -32205,48 +32243,50 @@
       if (!settings) {
         return;
       }
-      settings.invertCMap = layer.iipInvertCMap;
-      settings.contrast = layer.iipContrast;
-      settings.colorSat = layer.iipColorSat;
-      settings.gamma = layer.iipGamma;
-      settings.quality = layer.iipQuality;
+      const visio = layer.visio;
+      settings.invertCMap = visio.invertCMap;
+      settings.contrast = visio.contrast;
+      settings.colorSat = visio.colorSat;
+      settings.gamma = visio.gamma;
+      settings.quality = visio.quality;
     },
     loadSettings: function(layer, settings) {
       if (!settings) {
         return;
       }
-      layer.iipInvertCMap = settings.invertCMap;
+      const visio = layer.visio;
+      visio.invertCMap = settings.invertCMap;
       this._updateInput(this._input.invertCMap, settings.invertCMap);
-      layer.iipContrast = settings.contrast;
+      visio.contrast = settings.contrast;
       this._updateInput(this._input.contrast, settings.contrast);
-      layer.iipColorSat = settings.colorSat;
+      visio.colorSat = settings.colorSat;
       this._updateInput(this._input.colorSat, settings.colorSat);
-      layer.iipGamma = settings.gamma;
+      visio.gamma = settings.gamma;
       this._updateInput(this._input.gamma, settings.gamma);
-      layer.iipQuality = settings.quality;
+      visio.quality = settings.quality;
       this._updateInput(this._input.quality, settings.quality);
     },
     _initDialog: function() {
-      var _this = this, className = this._className, layer = this._layer, map2 = this._map;
+      const _this = this, className = this._className, layer = this._layer, visio = layer.visio, map2 = this._map;
       this._input = {};
       this.saveSettings(layer, this._initsettings);
       this._input.invertCMap = this._addSwitchInput(
         layer,
         this._dialog,
         "Invert:",
-        "iipInvertCMap",
+        "invertCMap",
         "Invert color map(s)",
         "leaflet-invertCMap",
-        layer.iipInvertCMap
+        visio.invertCMap
       );
       this._input.contrast = this._addNumericalInput(
         layer,
         this._dialog,
         "Contrast:",
-        "iipContrast",
+        "contrast",
         "Adjust Contrast. 1.0: normal.",
         "leaflet-contrastValue",
-        layer.iipContrast,
+        visio.contrast,
         0.05,
         0,
         10
@@ -32255,10 +32295,10 @@
         layer,
         this._dialog,
         "Color Sat.:",
-        "iipColorSat",
+        "colorSat",
         "Adjust Color Saturation. 0: B&W, 1.0: normal.",
         "leaflet-colorsatvalue",
-        layer.iipColorSat,
+        visio.colorSat,
         0.05,
         0,
         5,
@@ -32268,10 +32308,10 @@
         layer,
         this._dialog,
         "Gamma:",
-        "iipGamma",
+        "gamma",
         "Adjust Gamma correction. The standard value is 2.2.",
         "leaflet-gammavalue",
-        layer.iipGamma,
+        visio.gamma,
         0.05,
         0.5,
         5
@@ -32280,24 +32320,30 @@
         layer,
         this._dialog,
         "JPEG quality:",
-        "iipQuality",
+        "quality",
         "Adjust JPEG compression quality. 1: lowest, 100: highest",
         "leaflet-qualvalue",
-        layer.iipQuality,
+        visio.quality,
         1,
         1,
         100
       );
-      var line = this._addDialogLine("Reset:", this._dialog), elem = this._addDialogElement(line);
-      this._createButton(className + "-button", elem, "image-reset", function() {
-        _this.loadSettings(layer, _this._initsettings);
-        layer.updateMix();
-        layer.redraw();
-      }, "Reset image settings");
+      const line = this._addDialogLine("Reset:", this._dialog), elem = this._addDialogElement(line);
+      this._createButton(
+        className + "-button",
+        elem,
+        "image-reset",
+        function() {
+          _this.loadSettings(layer, _this._initsettings);
+          layer.updateMix();
+          layer.redraw();
+        },
+        "Reset image settings"
+      );
     },
     _updateMix: function(layer) {
-      var nchannel2 = layer.iipNChannel;
-      for (var c = 0; c < nchannel2; c++) {
+      const nchannel2 = layer.visio.nChannel;
+      for (let c = 0; c < nchannel2; c++) {
         layer.rgbToMix(c);
       }
       return;
@@ -32615,36 +32661,40 @@
       this._handlingClick = false;
     },
     _initDialog: function() {
-      var _this = this, options2 = this.options, className = this._className, box = this._addDialogBox(), line, elem;
+      const _this = this, options2 = this.options, className = this._className, box = this._addDialogBox();
       if (options2.profile) {
-        line = this._addDialogLine("Profile:", box);
-        elem = this._addDialogElement(line);
-        var linecolpick = this._createColorPicker(
+        const line = this._addDialogLine("Profile:", box), elem = this._addDialogElement(line), linecolpick = this._createColorPicker(
           className + "-color",
           elem,
           "profile",
           options2.profileColor,
           false,
-          "iipProfile",
+          "visiomaticProfile",
           "Click to set line color"
         );
-        this._createButton(className + "-button", elem, "start", function() {
-          if (this._currProfileLine) {
-            this._updateLine();
-          } else {
-            var map2 = _this._map, point8 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet32.polyline)(
-              [point8, point8],
-              {
-                color: linecolpick.value,
-                weight: 7,
-                opacity: 0.5
-              }
-            );
-            line2.nameColor = linecolpick.value;
-            line2.addTo(map2);
-            map2.on("drag", this._updateLine, this);
-          }
-        }, "Start drawing a profile line");
+        this._createButton(
+          className + "-button",
+          elem,
+          "start",
+          function() {
+            if (this._currProfileLine) {
+              this._updateLine();
+            } else {
+              const map2 = _this._map, point8 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet32.polyline)(
+                [point8, point8],
+                {
+                  color: linecolpick.value,
+                  weight: 7,
+                  opacity: 0.5
+                }
+              );
+              line2.nameColor = linecolpick.value;
+              line2.addTo(map2);
+              map2.on("drag", this._updateLine, this);
+            }
+          },
+          "Start drawing a profile line"
+        );
         this._createButton(
           className + "-button",
           elem,
@@ -32654,39 +32704,55 @@
         );
       }
       if (options2.spectrum) {
-        line = this._addDialogLine("Spectrum:", box);
-        elem = this._addDialogElement(line);
-        var speccolpick = this._createColorPicker(
+        const line = this._addDialogLine("Spectrum:", box), elem = this._addDialogElement(line);
+        const speccolpick = this._createColorPicker(
           className + "-color",
           elem,
           "spectrum",
           options2.spectrumColor,
           false,
-          "iipSpectra",
+          "visiomaticSpectra",
           "Click to set marker color"
         );
-        this._createButton(className + "-button", elem, "spectrum", function() {
-          var map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point8 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet32.circleMarker)(rLatLng, {
-            color: speccolpick.value,
-            radius: 6,
-            title: "Spectrum"
-          }).addTo(map2), popdiv = import_leaflet32.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet32.DomUtil.create("div", this._className + "-activity", popdiv);
-          popdiv.id = "leaflet-spectrum-plot";
-          marker2.bindPopup(
-            popdiv,
-            { minWidth: 16, maxWidth: 1024, closeOnClick: false }
-          ).openPopup();
-          VUtil.requestURL(
-            this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
-            "getting IIP layer spectrum",
-            this._plotSpectrum,
-            this
-          );
-        }, "Plot a spectrum at the current map position");
+        this._createButton(
+          className + "-button",
+          elem,
+          "spectrum",
+          function() {
+            const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point8 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet32.circleMarker)(rLatLng, {
+              color: speccolpick.value,
+              radius: 6,
+              title: "Spectrum"
+            }).addTo(map2), popdiv = import_leaflet32.DomUtil.create(
+              "div",
+              this._className + "-popup"
+            ), activity = import_leaflet32.DomUtil.create(
+              "div",
+              this._className + "-activity",
+              popdiv
+            );
+            popdiv.id = "leaflet-spectrum-plot";
+            marker2.bindPopup(
+              popdiv,
+              {
+                minWidth: 16,
+                maxWidth: 1024,
+                closeOnClick: false
+              }
+            ).openPopup();
+            VUtil.requestURL(
+              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
+              "getting layer spectrum",
+              this._plotSpectrum,
+              this
+            );
+          },
+          "Plot a spectrum at the current map position"
+        );
       }
     },
     _updateLine: function(e) {
-      var map2 = this._map, latLng11 = map2.getCenter(), maxzoom = map2.options.crs.options.nzoom - 1, path = this._currProfileLine.getLatLngs(), point1 = map2.project(path[0], maxzoom), point22 = map2.project(map2.getCenter(), maxzoom);
+      const map2 = this._map, latLng11 = map2.getCenter(), maxzoom = map2.options.crs.options.nzoom - 1, path = this._currProfileLine.getLatLngs(), point1 = map2.project(path[0], maxzoom), point22 = map2.project(map2.getCenter(), maxzoom);
       if (Math.abs(point1.x - point22.x) > Math.abs(point1.y - point22.y)) {
         point22.y = point1.y;
       } else {
@@ -32696,36 +32762,44 @@
       this._currProfileLine.redraw();
     },
     _profileEnd: function() {
-      var map2 = this._map, point8 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
+      const map2 = this._map, point8 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
       map2.off("drag", this._updateLine, this);
       this._currProfileLine = void 0;
-      var popdiv = import_leaflet32.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet32.DomUtil.create("div", this._className + "-activity", popdiv);
+      const popdiv = import_leaflet32.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet32.DomUtil.create(
+        "div",
+        this._className + "-activity",
+        popdiv
+      );
       popdiv.id = "leaflet-profile-plot";
       line.bindPopup(
         popdiv,
         { minWidth: 16, maxWidth: 1024, closeOnClick: false }
       ).openPopup();
-      var zoom = map2.options.crs.options.nzoom - 1, path = line.getLatLngs(), point1 = map2.project(path[0], zoom), point22 = map2.project(path[1], zoom), x, y;
+      const zoom = map2.options.crs.options.nzoom - 1, path = line.getLatLngs(), point1 = map2.project(path[0], zoom), point22 = map2.project(path[1], zoom);
       if (point22.x < point1.x) {
-        x = point22.x;
+        const x = point22.x;
         point22.x = point1.x;
         point1.x = x;
       }
       if (point22.y < point1.y) {
-        y = point22.y;
+        const y = point22.y;
         point22.y = point1.y;
         point1.y = y;
       }
       VUtil.requestURL(
         this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point1.x - 0.5).toFixed(0) + "," + (point1.y - 0.5).toFixed(0) + "-" + (point22.x - 0.5).toFixed(0) + "," + (point22.y - 0.5).toFixed(0),
-        "getting IIP layer profile",
+        "getting layer profile",
         this._plotProfile,
         this
       );
     },
     _getMeasurementString: function() {
-      var currentLatLng = this._currentLatLng, previousLatLng = this._markers[this._markers.length - 1].getLatLng(), distance, distanceStr, unit;
-      distance = this._measurementRunningTotal + VUtil.distance(currentLatLng, previousLatLng);
+      const currentLatLng = this._currentLatLng, previousLatLng = this._markers[this._markers.length - 1].getLatLng();
+      var unit;
+      let distance = this._measurementRunningTotal + VUtil.distance(
+        currentLatLng,
+        previousLatLng
+      );
       if (distance >= 1) {
         unit = "&#176;";
       } else {
@@ -32737,29 +32811,34 @@
           unit = "&#34;";
         }
       }
-      distanceStr = distance.toFixed(2) + unit;
+      const distanceStr = distance.toFixed(2) + unit;
       return distanceStr;
     },
     _plotProfile: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, line = self2._profileLine, popdiv = document.getElementById("leaflet-profile-plot"), prof = [], series = [], title, ylabel;
+          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, line = self2._profileLine, popdiv = document.getElementById("leaflet-profile-plot"), prof = [], series = [];
+          var title, ylabel;
           self2.addLayer(line, "Image profile");
-          if (layer.iipMode === "mono") {
-            prof.push(self2._extractProfile(layer, rawprof, layer.iipChannel));
+          if (visio.mode === "mono") {
+            prof.push(self2._extractProfile(
+              layer,
+              rawprof,
+              visio.channel
+            ));
             series.push({
               color: "black"
             });
-            title = "Image profile for " + layer.iipChannelLabels[layer.iipChannel];
-            ylabel = "Pixel value in " + layer.iipChannelUnits[layer.iipChannel];
+            title = "Image profile for " + visio.channelLabels[visio.channel];
+            ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
           } else {
-            var rgb3 = layer.iipRGB;
-            for (var chan = 0; chan < layer.iipNChannel; chan++) {
-              if (rgb3[chan].isOn()) {
-                prof.push(self2._extractProfile(layer, rawprof, chan));
+            const rgb3 = visio.rgb;
+            for (let c = 0; c < visio.nChannel; c++) {
+              if (rgb3[c].isOn()) {
+                prof.push(self2._extractProfile(layer, rawprof, c));
                 series.push({
-                  color: rgb3[chan].toStr(),
-                  label: layer.iipChannelLabels[chan]
+                  color: rgb3[c].toStr(),
+                  label: visio.channelLabels[c]
                 });
               }
             }
@@ -32787,7 +32866,7 @@
                 }
               },
               legend: {
-                show: layer.iipMode !== "mono",
+                show: visio.mode !== "mono",
                 location: "ne"
               },
               highlighter: {
@@ -32795,7 +32874,7 @@
                 sizeAdjust: 2,
                 tooltipLocation: "n",
                 tooltipAxes: "y",
-                tooltipFormatString: "%.6g " + layer.iipChannelUnits[layer.iipChannel],
+                tooltipFormatString: "%.6g " + visio.channelUnits[visio.channel],
                 useAxesFormatters: false,
                 bringSeriesToFront: true
               },
@@ -32810,14 +32889,16 @@
               }
             });
           });
-          popdiv.removeChild(popdiv.childNodes[0]);
+          popdiv.removeChild(
+            popdiv.childNodes[0]
+          );
           line._popup.update();
         }
       }
     },
     _extractProfile: function(layer, rawprof, chan) {
-      var prof = [], nchan = layer.iipNChannel, npix = rawprof.length / nchan;
-      for (var i = 0; i < npix; i++) {
+      const nchan = layer.visio.nChannel, npix = rawprof.length / nchan, prof = [];
+      for (let i = 0; i < npix; i++) {
         prof.push(rawprof[i * nchan + chan]);
       }
       return prof;
@@ -32825,16 +32906,14 @@
     _plotSpectrum: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, marker2 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title, ylabel;
+          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker2 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title = "Image Spectrum", ylabel = "Average pixel value";
           self2.addLayer(marker2, "Image spectrum");
-          for (var chan = 0; chan < layer.iipNChannel; chan++) {
+          for (let c = 0; c < visio.nChannel; c++) {
             spec.push([
-              layer.iipChannelLabels[chan],
-              self2._extractAverage(layer, rawprof, chan)
+              visio.channelLabels[c],
+              self2._extractAverage(layer, rawprof, c)
             ]);
           }
-          title = "Image Spectrum";
-          ylabel = "Average pixel value";
           $(document).ready(function() {
             $.jqplot.config.enablePlugins = true;
             $.jqplot("leaflet-spectrum-plot", [spec], {
@@ -32862,7 +32941,7 @@
                 sizeAdjust: 2,
                 tooltipLocation: "n",
                 tooltipAxes: "y",
-                tooltipFormatString: "%.6g " + layer.iipChannelUnits[layer.iipChannel],
+                tooltipFormatString: "%.6g " + visio.channelUnits[visio.channel],
                 useAxesFormatters: false
               },
               cursor: {
@@ -32875,17 +32954,20 @@
               }
             });
           });
-          popdiv.removeChild(popdiv.childNodes[0]);
+          popdiv.removeChild(
+            popdiv.childNodes[0]
+          );
           marker2._popup.update();
         }
       }
     },
     _extractAverage: function(layer, rawprof, chan) {
-      var nchan = layer.iipNChannel, npix = rawprof.length / nchan, val = 0;
+      const nchan = layer.visio.nChannel, npix = rawprof.length / nchan;
+      let val = 0;
       if (npix === 0) {
         return 0;
       }
-      for (var i = 0; i < npix; i++) {
+      for (let i = 0; i < npix; i++) {
         val += rawprof[i * nchan + chan];
       }
       return val / npix;
@@ -32922,7 +33004,7 @@
         "region",
         this.options.color,
         false,
-        "iipRegion",
+        "visiomaticRegion",
         "Click to set region color"
       );
       var select = this._regionSelect = this._createSelectMenu(
@@ -33366,7 +33448,7 @@
       this._sideClass = "snapshot";
     },
     _initDialog: function() {
-      var _this = this, className = this._className, layer = this._layer, map2 = this._map;
+      const _this = this, className = this._className, layer = this._layer, visio = layer.visio, map2 = this._map;
       var line = this._addDialogLine("Snap:", this._dialog), elem = this._addDialogElement(line), items = ["Screen pixels", "Native pixels"];
       this._snapType = 0;
       this._snapSelect = this._createSelectMenu(
@@ -33380,19 +33462,22 @@
         },
         "Select snapshot resolution"
       );
-      var hiddenlink = document.createElement("a"), button = this._createButton(
+      const hiddenlink = document.createElement("a");
+      var button = this._createButton(
         className + "-button",
         elem,
         "snapshot",
         function(event) {
-          var latlng = map2.getCenter(), bounds3 = map2.getPixelBounds(), z = map2.getZoom(), zfac;
-          if (z > layer.iipMaxZoom) {
-            zfac = Math.pow(2, z - layer.iipMaxZoom);
-            z = layer.iipMaxZoom;
+          const latlng = map2.getCenter(), bounds3 = map2.getPixelBounds();
+          let z = map2.getZoom();
+          var zfac;
+          if (z > visio.maxZoom) {
+            zfac = Math.pow(2, z - visio.maxZoom);
+            z = visio.maxZoom;
           } else {
             zfac = 1;
           }
-          var sizex = layer.iipImageSize[z].x * zfac, sizey = layer.iipImageSize[z].y * zfac, dx = bounds3.max.x - bounds3.min.x, dy = bounds3.max.y - bounds3.min.y;
+          const sizex = visio.imageSize[z].x * zfac, sizey = visio.imageSize[z].y * zfac, dx = bounds3.max.x - bounds3.min.x, dy = bounds3.max.y - bounds3.min.y;
           hiddenlink.href = layer.getTileUrl(
             { x: 1, y: 1 }
           ).replace(
@@ -33405,14 +33490,15 @@
         "Take a snapshot of the displayed image"
       );
       document.body.appendChild(hiddenlink);
-      line = this._addDialogLine("Print:", this._dialog);
-      elem = this._addDialogElement(line);
+      var line = this._addDialogLine("Print:", this._dialog), elem = this._addDialogElement(line);
       button = this._createButton(
         className + "-button",
         elem,
         "print",
         function(event) {
-          var control2 = document.querySelector("#map > .leaflet-control-container");
+          var control2 = document.querySelector(
+            "#map > .leaflet-control-container"
+          );
           control2.style.display = "none";
           window.print();
           control2.style.display = "unset";
@@ -34157,7 +34243,7 @@
       credentials: false,
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
     },
-    iipdefault: {
+    visioDefault: {
       contrast: 1,
       gamma: 1,
       cMap: "grey",
@@ -34189,31 +34275,29 @@
         options2.subdomains = options2.subdomains.split("");
       }
       this.tileSize = { x: 256, y: 256 };
-      this.iipImageSize = [];
-      this.iipImageSize[0] = this.tileSize;
-      this.iipGridSize = [];
-      this.iipGridSize[0] = { x: 1, y: 1 };
-      this.iipBPP = 8;
-      this.iipMode = options2.mixingMode;
-      this.iipChannel = 0;
-      this.iipNChannel = 1;
-      this.iipMinZoom = options2.minZoom;
-      this.iipMaxZoom = options2.maxZoom;
-      this.iipContrast = options2.contrast;
-      this.iipColorSat = options2.colorSat;
-      this.iipGamma = options2.gamma;
-      this.iipCMap = options2.cMap;
-      this.iipInvertCMap = options2.invertCMap;
-      this.iipMinValue = [];
-      this.iipMinValue[0] = 0;
-      this.iipMaxValue = [];
-      this.iipMaxValue[0] = 255;
-      this.iipMix = [[]];
-      this.iipRGB = [];
-      this.iipChannelLabels = [];
-      this.iipChannelFlags = [];
-      this.iipChannelUnits = [];
-      this.iipQuality = options2.quality;
+      this.visio = {
+        imageSize: [[this.tileSize]],
+        gridSize: [{ x: 1, y: 1 }],
+        bpp: 8,
+        mixingMode: options2.mixingMode,
+        channel: 0,
+        nChannel: 1,
+        minZoom: options2.minZoom,
+        maxZoom: options2.maxZoom,
+        contrast: options2.contrast,
+        colorSat: options2.colorSat,
+        gamma: options2.gamma,
+        cMap: options2.cMap,
+        invertCMap: options2.invertCMap,
+        minValue: [[0]],
+        maxValue: [[255]],
+        mix: [[]],
+        rgb: [],
+        channelLabels: [],
+        channelFlags: [],
+        channelUnits: [],
+        quality: options2.quality
+      };
       this._title = options2.title.length > 0 ? options2.title : this._url.match(/^.*\/(.*)\..*$/)[1];
       this.getMetaData(this._url);
       if (!import_leaflet44.Browser.android) {
@@ -34225,96 +34309,95 @@
       const res = await fetch(url + "&INFO", { method: "GET" });
       const meta = await res.json();
       if (res.status == 200 && meta["type"] == "visiomatic") {
-        var options2 = this.options, iipdefault = this.iipdefault, maxsize = { x: meta.full_size[0], y: meta.full_size[1] };
+        const options2 = this.options, visio = this.visio, visioDefault = this.visioDefault, maxsize = { x: meta.full_size[0], y: meta.full_size[1] };
         this.tileSize = { x: meta.tile_size[0], y: meta.tile_size[1] };
         options2.tileSize = this.tileSize.x;
-        this.iipMaxZoom = meta.tile_levels - 1;
-        if (this.iipMinZoom > options2.minZoom) {
-          options2.minZoom = this.iipMinZoom;
+        visio.maxZoom = meta.tile_levels - 1;
+        if (visio.minZoom > options2.minZoom) {
+          options2.minZoom = visio.minZoom;
         }
         if (!options2.maxZoom) {
-          options2.maxZoom = this.iipMaxZoom + 6;
+          options2.maxZoom = visio.maxZoom + 6;
         }
-        options2.maxNativeZoom = this.iipMaxZoom;
-        for (var z = 0; z <= this.iipMaxZoom; z++) {
-          this.iipImageSize[z] = {
-            x: Math.floor(maxsize.x / Math.pow(2, this.iipMaxZoom - z)),
-            y: Math.floor(maxsize.y / Math.pow(2, this.iipMaxZoom - z))
+        options2.maxNativeZoom = visio.maxZoom;
+        for (let z = 0; z <= visio.maxZoom; z++) {
+          visio.imageSize[z] = {
+            x: Math.floor(maxsize.x / Math.pow(2, visio.maxZoom - z)),
+            y: Math.floor(maxsize.y / Math.pow(2, visio.maxZoom - z))
           };
-          this.iipGridSize[z] = {
-            x: Math.ceil(this.iipImageSize[z].x / this.tileSize.x),
-            y: Math.ceil(this.iipImageSize[z].y / this.tileSize.y)
+          visio.gridSize[z] = {
+            x: Math.ceil(visio.imageSize[z].x / this.tileSize.x),
+            y: Math.ceil(visio.imageSize[z].y / this.tileSize.y)
           };
         }
-        for (z = this.iipMaxZoom; z <= options2.maxZoom; z++) {
-          this.iipGridSize[z] = this.iipGridSize[this.iipMaxZoom];
+        for (let z = visio.maxZoom; z <= options2.maxZoom; z++) {
+          visio.gridSize[z] = visio.gridSize[visio.maxZoom];
         }
-        this.iipBPP = meta.bits_per_channel;
-        if (this.iipGamma === iipdefault.gamma) {
-          this.iipGamma = this.iipBPP >= 32 ? 2.2 : 1;
+        visio.bpp = meta.bits_per_channel;
+        if (visio.gamma === visioDefault.gamma) {
+          visio.gamma = visio.bpp >= 32 ? 2.2 : 1;
         }
-        nchannel = this.iipNChannel = meta.channels;
+        nchannel = visio.nChannel = meta.channels;
         images = meta.images;
-        for (var c = 0; c < nchannel; c++) {
-          iipdefault.minValue[c] = images[0].min_max[c][0];
-          iipdefault.maxValue[c] = images[0].min_max[c][1];
+        for (let c = 0; c < nchannel; c++) {
+          visioDefault.minValue[c] = images[0].min_max[c][0];
+          visioDefault.maxValue[c] = images[0].min_max[c][1];
         }
-        var minmax = options2.minMaxValues;
+        const minmax = options2.minMaxValues;
         if (minmax.length) {
-          for (c = 0; c < nchannel; c++) {
+          for (let c = 0; c < nchannel; c++) {
             if (minmax[c] !== void 0 && minmax[c].length) {
-              this.iipMinValue[c] = minmax[c][0];
-              this.iipMaxValue[c] = minmax[c][1];
+              visio.minValue[c] = minmax[c][0];
+              visio.maxValue[c] = minmax[c][1];
             } else {
-              this.iipMinValue[c] = iipdefault.minValue[c];
-              this.iipMaxValue[c] = iipdefault.maxValue[c];
+              visio.minValue[c] = visioDefault.minValue[c];
+              visio.maxValue[c] = visioDefault.maxValue[c];
             }
           }
         } else {
-          for (c = 0; c < nchannel; c++) {
-            this.iipMinValue[c] = iipdefault.minValue[c];
-            this.iipMaxValue[c] = iipdefault.maxValue[c];
+          for (let c = 0; c < nchannel; c++) {
+            visio.minValue[c] = visioDefault.minValue[c];
+            visio.maxValue[c] = visioDefault.maxValue[c];
           }
         }
-        this.iipChannel = options2.defaultChannel;
-        var inlabels = options2.channelLabels, ninlabel = inlabels.length, labels = this.iipChannelLabels, inunits = options2.channelUnits, ninunits = inunits.length, units = this.iipChannelUnits, key = VUtil.readFITSKey, numstr, value;
+        visio.channel = options2.defaultChannel;
+        const inlabels = options2.channelLabels, ninlabel = inlabels.length, labels = visio.channelLabels, inunits = options2.channelUnits, ninunits = inunits.length, units = visio.channelUnits, key = VUtil.readFITSKey;
         if (!(filter = images[0].header["FILTER"])) {
           filter = "Channel";
         }
-        for (c = 0; c < nchannel; c++) {
+        for (let c = 0; c < nchannel; c++) {
           if (c < ninlabel) {
             labels[c] = inlabels[c];
           } else {
             labels[c] = nchannel > 1 ? filter + " #" + (c + 1).toString() : filter;
           }
         }
-        for (c = 0; c < ninunits; c++) {
+        for (let c = 0; c < ninunits; c++) {
           units[c] = inunits[c];
         }
-        for (c = ninunits; c < nchannel; c++) {
+        for (let c = ninunits; c < nchannel; c++) {
           units[c] = "ADUs";
         }
-        var cc = 0, mix = this.iipMix, omix = options2.channelColors, rgb3 = this.iipRGB, re = new RegExp(options2.channelLabelMatch), nchanon = 0, channelflags = this.iipChannelFlags;
-        nchanon = 0;
-        for (c = 0; c < nchannel; c++) {
+        const mix = visio.mix, omix = options2.channelColors, rgb3 = visio.rgb, re = new RegExp(options2.channelLabelMatch), channelflags = visio.channelFlags;
+        let cc = 0, nchanon = 0;
+        for (let c = 0; c < nchannel; c++) {
           channelflags[c] = re.test(labels[c]);
           if (channelflags[c]) {
             nchanon++;
           }
         }
-        if (nchanon >= iipdefault.channelColors.length) {
-          nchanon = iipdefault.channelColors.length - 1;
+        if (nchanon >= visioDefault.channelColors.length) {
+          nchanon = visioDefault.channelColors.length - 1;
         }
-        for (c = 0; c < nchannel; c++) {
+        for (let c = 0; c < nchannel; c++) {
           mix[c] = [];
-          var col = 3;
           if (omix.length && omix[c] && omix[c].length === 3) {
             rgb3[c] = rgb2(omix[c][0], omix[c][1], omix[c][2]);
           } else {
             rgb3[c] = rgb2(0, 0, 0);
           }
           if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-            rgb3[c] = rgb2(iipdefault.channelColors[nchanon][cc++]);
+            rgb3[c] = rgb2(visioDefault.channelColors[nchanon][cc++]);
           }
           this.rgbToMix(c);
         }
@@ -34326,47 +34409,48 @@
           meta.images,
           {
             nativeCelsys: this.options.nativeCelsys,
-            nzoom: this.iipMaxZoom + 1,
+            nzoom: visio.maxZoom + 1,
             tileSize: this.tileSize
           }
         );
-        this.iipMetaReady = true;
+        visio.metaReady = true;
         this.fire("metaload");
       } else {
         alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
     rgbToMix: function(chan, rgb3) {
+      const visio = this.visio;
       if (rgb3) {
-        this.iipRGB[chan] = rgb3.clone();
+        visio.rgb[chan] = rgb3.clone();
       } else {
-        rgb3 = this.iipRGB[chan];
+        rgb3 = visio.rgb[chan];
       }
-      var cr = this._gammaCorr(rgb3.r), cg = this._gammaCorr(rgb3.g), cb = this._gammaCorr(rgb3.b), lum = (cr + cg + cb) / 3, alpha = this.iipColorSat / 3;
-      this.iipMix[chan][0] = lum + alpha * (2 * cr - cg - cb);
-      this.iipMix[chan][1] = lum + alpha * (2 * cg - cr - cb);
-      this.iipMix[chan][2] = lum + alpha * (2 * cb - cr - cg);
+      const cr = this._gammaCorr(rgb3.r), cg = this._gammaCorr(rgb3.g), cb = this._gammaCorr(rgb3.b), lum = (cr + cg + cb) / 3, alpha = visio.colorSat / 3;
+      visio.mix[chan][0] = lum + alpha * (2 * cr - cg - cb);
+      visio.mix[chan][1] = lum + alpha * (2 * cg - cr - cb);
+      visio.mix[chan][2] = lum + alpha * (2 * cb - cr - cg);
       return;
     },
     updateMono: function() {
-      this.iipMode = "mono";
+      this.visio.mode = "mono";
     },
     updateMix: function() {
-      var nchannel2 = this.iipNChannel;
-      this.iipMode = "color";
-      for (var c = 0; c < nchannel2; c++) {
-        this.rgbToMix(c, this.iipRGB[c]);
+      const visio = this.visio, nchannel2 = visio.nChannel;
+      visio.mode = "color";
+      for (let c = 0; c < nchannel2; c++) {
+        this.rgbToMix(c, visio.rgb[c]);
       }
     },
     _gammaCorr: function(val) {
-      return val > 0 ? Math.pow(val, this.iipGamma) : 0;
+      return val > 0 ? Math.pow(val, this.visio.gamma) : 0;
     },
-    _readIIPKey: function(str2, keyword, regexp) {
-      var reg = new RegExp(keyword + ":" + regexp);
+    _readVisioKey: function(str2, keyword, regexp) {
+      const reg = new RegExp(keyword + ":" + regexp);
       return reg.exec(str2);
     },
     addTo: function(map2) {
-      if (this.iipMetaReady) {
+      if (this.visio.metaReady) {
         this._addToMap(map2);
       } else {
         this._loadActivity = import_leaflet44.DomUtil.create(
@@ -34382,7 +34466,8 @@
       return this;
     },
     _addToMap: function(map2) {
-      var zoom, newcrs = this.wcs, curcrs = map2.options.crs, prevcrs = map2._prevcrs, maploadedflag = map2._loaded, center;
+      const newcrs = this.wcs, curcrs = map2.options.crs, prevcrs = map2._prevcrs, maploadedflag = map2._loaded;
+      var zoom, center;
       if (maploadedflag) {
         curcrs._prevLatLng = map2.getCenter();
         curcrs._prevZoom = map2.getZoom();
@@ -34392,7 +34477,7 @@
       if (prevcrs && newcrs !== curcrs && maploadedflag && newcrs.pixelFlag === curcrs.pixelFlag) {
         center = curcrs._prevLatLng;
         zoom = curcrs._prevZoom;
-        var prevpixscale = prevcrs.pixelScale(zoom, center), newpixscale = newcrs.pixelScale(zoom, center);
+        const prevpixscale = prevcrs.pixelScale(zoom, center), newpixscale = newcrs.pixelScale(zoom, center);
         if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
           zoom += Math.round(Math.LOG2E * Math.log(newpixscale / prevpixscale));
         }
@@ -34400,7 +34485,7 @@
         center = newcrs._prevLatLng;
         zoom = newcrs._prevZoom;
       } else if (this.options.center) {
-        var latlng = typeof this.options.center === "string" ? newcrs.parseCoords(decodeURI(this.options.center)) : this.options.center;
+        const latlng = typeof this.options.center === "string" ? newcrs.parseCoords(decodeURI(this.options.center)) : this.options.center;
         if (latlng) {
           if (this.options.fov) {
             zoom = newcrs.fovToZoom(map2, this.options.fov, latlng);
@@ -34413,18 +34498,34 @@
             function(_this, httpRequest) {
               if (httpRequest.readyState === 4) {
                 if (httpRequest.status === 200) {
-                  var str2 = httpRequest.responseText, latlng2 = newcrs.parseCoords(str2);
-                  if (latlng2) {
+                  const str2 = httpRequest.responseText, newLatlng = newcrs.parseCoords(str2);
+                  if (newLatlng) {
                     if (_this.options.fov) {
-                      zoom = newcrs.fovToZoom(map2, _this.options.fov, latlng2);
+                      zoom = newcrs.fovToZoom(
+                        map2,
+                        _this.options.fov,
+                        newLatlng
+                      );
                     }
-                    map2.setView(latlng2, zoom, { reset: true, animate: false });
+                    map2.setView(
+                      newLatlng,
+                      zoom,
+                      { reset: true, animate: false }
+                    );
                   } else {
-                    map2.setView(newcrs.crval, zoom, { reset: true, animate: false });
+                    map2.setView(
+                      newcrs.crval,
+                      zoom,
+                      { reset: true, animate: false }
+                    );
                     alert(str2 + ": Unknown location");
                   }
                 } else {
-                  map2.setView(newcrs.crval, zoom, { reset: true, animate: false });
+                  map2.setView(
+                    newcrs.crval,
+                    zoom,
+                    { reset: true, animate: false }
+                  );
                   alert("There was a problem with the request to the Sesame service at CDS");
                 }
               }
@@ -34438,73 +34539,75 @@
       }
     },
     _isValidTile: function(coords2) {
-      var crs = this._map.options.crs;
+      const crs = this._map.options.crs;
       if (!crs.infinite) {
-        var bounds3 = this._globalTileRange;
+        const bounds3 = this._globalTileRange;
         if (!crs.wrapLng && (coords2.x < bounds3.min.x || coords2.x > bounds3.max.x) || !crs.wrapLat && (coords2.y < bounds3.min.y || coords2.y > bounds3.max.y)) {
           return false;
         }
       }
-      var z = this._getZoomForUrl(), wcoords = coords2.clone();
+      const z = this._getZoomForUrl(), wcoords = coords2.clone();
       this._wrapCoords(wcoords);
-      if (wcoords.x < 0 || wcoords.x >= this.iipGridSize[z].x || wcoords.y < 0 || wcoords.y >= this.iipGridSize[z].y) {
+      if (wcoords.x < 0 || wcoords.x >= this.visio.gridSize[z].x || wcoords.y < 0 || wcoords.y >= this.visio.gridSize[z].y) {
         return false;
       }
       if (!this.options.bounds) {
         return true;
       }
-      var tileBounds = this._tileCoordsToBounds(coords2);
-      return (0, import_leaflet44.latLngBounds)(this.options.bounds).intersects(tileBounds);
+      return (0, import_leaflet44.latLngBounds)(this.options.bounds).intersects(
+        this._tileCoordsToBounds(coords2)
+      );
     },
     createTile: function(coords2, done) {
-      var tile = import_leaflet44.TileLayer.prototype.createTile.call(this, coords2, done);
+      const tile = import_leaflet44.TileLayer.prototype.createTile.call(this, coords2, done);
       tile.coords = coords2;
       return tile;
     },
     getTileUrl: function(coords2) {
-      var str2 = this._url, z = this._getZoomForUrl();
-      if (this.iipCMap !== this.iipdefault.cMap) {
-        str2 += "&CMP=" + this.iipCMap;
+      const visio = this.visio, visioDefault = this.visioDefault, z = this._getZoomForUrl();
+      let str2 = this._url;
+      if (visio.cMap !== visioDefault.cMap) {
+        str2 += "&CMP=" + visio.cMap;
       }
-      if (this.iipInvertCMap !== this.iipdefault.invertCMap) {
+      if (visio.invertCMap !== visioDefault.invertCMap) {
         str2 += "&INV";
       }
-      if (this.iipContrast !== this.iipdefault.contrast) {
-        str2 += "&CNT=" + this.iipContrast.toString();
+      if (visio.contrast !== visioDefault.contrast) {
+        str2 += "&CNT=" + visio.contrast.toString();
       }
-      if (this.iipGamma !== this.iipdefault.gamma) {
-        str2 += "&GAM=" + (1 / this.iipGamma).toFixed(4);
+      if (visio.gamma !== visioDefault.gamma) {
+        str2 += "&GAM=" + (1 / visio.gamma).toFixed(4);
       }
-      for (var c = 0; c < this.iipNChannel; c++) {
-        if (this.iipMinValue[c] !== this.iipdefault.minValue[c] || this.iipMaxValue[c] !== this.iipdefault.maxValue[c]) {
-          str2 += "&MINMAX=" + (c + 1).toString() + ":" + this.iipMinValue[c].toString() + "," + this.iipMaxValue[c].toString();
+      for (let c = 0; c < visio.nChannel; c++) {
+        if (visio.minValue[c] !== visioDefault.minValue[c] || visio.maxValue[c] !== visioDefault.maxValue[c]) {
+          str2 += "&MINMAX=" + (c + 1).toString() + ":" + visio.minValue[c].toString() + "," + visio.maxValue[c].toString();
         }
       }
-      var nchannel2 = this.iipNChannel, mix = this.iipMix, m, n;
-      if (this.iipMode === "color") {
+      const nchannel2 = visio.nChannel, mix = visio.mix;
+      if (visio.mode === "color") {
         str2 += "&CTW=";
-        for (n = 0; n < 3; n++) {
+        for (let n = 0; n < 3; n++) {
           if (n) {
             str2 += ";";
           }
           str2 += mix[0][n].toString();
-          for (m = 1; m < nchannel2; m++) {
+          for (let m = 1; m < nchannel2; m++) {
             if (mix[m][n] !== void 0) {
               str2 += "," + mix[m][n].toString();
             }
           }
         }
       } else {
-        var cc = this.iipChannel + 1;
+        let cc = visio.channel + 1;
         if (cc > nchannel2) {
           cc = 1;
         }
         str2 += "&CHAN=" + cc.toString();
       }
-      if (this.iipQuality !== this.iipdefault.quality) {
-        str2 += "&QLT=" + this.iipQuality.toString();
+      if (visio.quality !== visioDefault.quality) {
+        str2 += "&QLT=" + visio.quality.toString();
       }
-      return str2 + "&JTL=" + z.toString() + "," + (coords2.x + this.iipGridSize[z].x * coords2.y).toString();
+      return str2 + "&JTL=" + z.toString() + "," + (coords2.x + visio.gridSize[z].x * coords2.y).toString();
     },
     _initTile: function(tile) {
       import_leaflet44.DomUtil.addClass(tile, "leaflet-tile");

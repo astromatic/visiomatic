@@ -54,7 +54,7 @@ export const RegionUI = UI.extend({
 				'region',
 			  this.options.color,
 				false,
-				'iipRegion',
+				'visiomaticRegion',
 				'Click to set region color'
 			);
 

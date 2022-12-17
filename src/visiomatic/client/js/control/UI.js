@@ -46,7 +46,7 @@ export const UI = Control.extend({
 			this._dialog = DomUtil.create('div', this._className + '-dialog');
 			dest.addTab(this._id, this._className, this.options.title, this._dialog,
 			   this._sideClass);
-			this._map.on('layeradd', this._checkIIP, this);
+			this._map.on('layeradd', this._checkVisiomatic, this);
 			return dest;
 		} else {
 			return Control.prototype.addTo.call(this, dest);
@@ -100,11 +100,11 @@ export const UI = Control.extend({
 		return	this._container;
 	},
 
-	_checkIIP: function (e) {
+	_checkVisiomatic: function (e) {
 		var layer = e.layer;
 
-		// Exit if not an IIP layer
-		if (!layer || !layer.iipdefault) {
+		// Exit if not a VisiOmatic layer
+		if (!layer || !layer.visioDefault) {
 			return;
 		}
 		this._layer = layer;
@@ -183,7 +183,7 @@ export const UI = Control.extend({
 			if (!layer.overlay) {
 				if (!layer._map) {
 					this._prelayer = layer;
-				} else if (this._map.hasLayer(layer) && layer.iipdefault) {
+				} else if (this._map.hasLayer(layer) && layer.visioDefault) {
 					return layer;
 				}
 			}
@@ -370,11 +370,11 @@ export const UI = Control.extend({
 
 	_onInputChange:	function (layer, pname, value, func) {
 
-		var pnamearr = pname.split(/\[|\]/);
+		const	pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
-			layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+			layer.visio[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
 		}	else {
-			layer[pnamearr[0]] = value;
+			layer.visio[pnamearr[0]] = value;
 		}
 		if (func) {
 			func(layer);
@@ -402,15 +402,19 @@ export const UI = Control.extend({
 	},
 
 	_addLayerItem: function (obj) {
-		var _this = this,
-		 layerItem = DomUtil.create('div', 'leaflet-control-iip-layer'),
-		 inputdiv = DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
+		const	_this = this,
+			layerItem = DomUtil.create('div', 'leaflet-control-iip-layer'),
+			inputdiv = DomUtil.create(
+		 		'div',
+		 		'leaflet-control-iip-layerswitch',
+		 		layerItem
+		 	);
 
 		if (obj.layer.notReady) {
 			DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
 		} else {
-			var input,
-			    checked = this._map.hasLayer(obj.layer);
+			var	input,
+				checked = this._map.hasLayer(obj.layer);
 			input = document.createElement('input');
 			input.type = 'checkbox';
 			input.className = 'leaflet-control-iip-selector';

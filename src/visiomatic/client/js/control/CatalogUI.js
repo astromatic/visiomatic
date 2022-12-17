@@ -63,7 +63,7 @@ export const CatalogUI = UI.extend({
 				'catalog',
 			  this.options.color,
 				false,
-				'iipCatalog',
+				'visiomaticCatalog',
 				'Click to set catalog color'
 			);
 

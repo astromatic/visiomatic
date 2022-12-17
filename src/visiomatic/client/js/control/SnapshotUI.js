@@ -28,9 +28,10 @@ export const SnapshotUI = UI.extend({
 	},
 
 	_initDialog: function () {
-		var _this = this,
+		const _this = this,
 			className = this._className,
 			layer = this._layer,
+			visio = layer.visio,
 			map = this._map;
 
 		// Image snapshot
@@ -51,38 +52,42 @@ export const SnapshotUI = UI.extend({
 			'Select snapshot resolution'
 		);
 
-		var	hiddenlink = document.createElement('a'),
-			button = this._createButton(
+		const	hiddenlink = document.createElement('a');
+		var	button = this._createButton(
 				className + '-button', elem, 'snapshot',
 				function (event) {
-					var	latlng = map.getCenter(),
-						bounds = map.getPixelBounds(),
-						z = map.getZoom(),
-						zfac;
+					const	latlng = map.getCenter(),
+						bounds = map.getPixelBounds();
+					let	z = map.getZoom();
+					var	zfac;
 
-					if (z > layer.iipMaxZoom) {
-						zfac = Math.pow(2, z - layer.iipMaxZoom);
-						z = layer.iipMaxZoom;
+					if (z > visio.maxZoom) {
+						zfac = Math.pow(2, z - visio.maxZoom);
+						z = visio.maxZoom;
 					} else {
 						zfac = 1;
 					}
 
-					var	sizex = layer.iipImageSize[z].x * zfac,
-						sizey = layer.iipImageSize[z].y * zfac,
+					const	sizex = visio.imageSize[z].x * zfac,
+						sizey = visio.imageSize[z].y * zfac,
 						dx = (bounds.max.x - bounds.min.x),
 						dy = (bounds.max.y - bounds.min.y);
 
-					hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
-					  ).replace(/JTL\=\d+\,\d+/g,
-					  'RGN=' + bounds.min.x / sizex + ',' +
-					  bounds.min.y / sizey + ',' +
-					  dx / sizex + ',' + dy / sizey +
-					  '&WID=' + (this._snapType === 0 ?
-					    Math.floor(dx / zfac) :
-					    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+					hiddenlink.href = layer.getTileUrl(
+						{x: 1, y: 1}
+					).replace(
+						/JTL\=\d+\,\d+/g,
+						'RGN=' + bounds.min.x / sizex + ',' +
+					  		bounds.min.y / sizey + ',' +
+					  		dx / sizex + ',' + dy / sizey +
+					  		'&WID=' + (this._snapType === 0 ?
+					    		Math.floor(dx / zfac) :
+					    		Math.floor(dx / zfac / layer.wcs.scale(z))) +
+					    			'&CVT=jpeg'
+					);
 					hiddenlink.download = layer._title + '_' +
-					  VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-					  '.jpg';
+						VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+					  	'.jpg';
 					hiddenlink.click();
 				},
 				'Take a snapshot of the displayed image'
@@ -90,15 +95,17 @@ export const SnapshotUI = UI.extend({
 
 		document.body.appendChild(hiddenlink);
 
-		line = this._addDialogLine('Print:', this._dialog);
-		elem = this._addDialogElement(line);
-		button = this._createButton(className + '-button', elem, 'print',
-			function (event) {
-				var	control = document.querySelector('#map > .leaflet-control-container');
-				control.style.display = 'none';
-				window.print();
-				control.style.display = 'unset';
-			}, 'Print current map');
+		var	line = this._addDialogLine('Print:', this._dialog),
+			elem = this._addDialogElement(line);
+			button = this._createButton(className + '-button', elem, 'print',
+				function (event) {
+					var	control = document.querySelector(
+						'#map > .leaflet-control-container'
+					);
+					control.style.display = 'none';
+					window.print();
+					control.style.display = 'unset';
+				}, 'Print current map');
 	}
 
 });
