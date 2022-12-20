@@ -358,7 +358,7 @@ export const VTileLayer = TileLayer.extend({
 			// Wait for metadata request to complete
 			this._loadActivity = DomUtil.create(
 				'div',
-				'leaflet-layer-iip-activity',
+				'visiomatic-layer-activity-',
 				map._controlContainer
 			);
 			this.once('metaload', function () {

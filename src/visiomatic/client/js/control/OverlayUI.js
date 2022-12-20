@@ -35,8 +35,8 @@ export const OverlayUI = UI.extend({
 
 	initialize: function (baseLayers, options) {
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipoverlay';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-overlay';
 		this._layers = baseLayers;
 	},
 
@@ -294,7 +294,7 @@ export const OverlayUI = UI.extend({
 			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
 			point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
 			point2.y.toFixed(0),
-			'getting IIP layer profile',
+			'getting layer profile',
 			this._plotProfile, line
 		);
 	},

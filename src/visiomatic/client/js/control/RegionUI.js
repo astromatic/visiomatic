@@ -34,8 +34,8 @@ export const RegionUI = UI.extend({
 	initialize: function (regions, options) {
 		// Regions is an array of {url, name [, description]} objects
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipregion';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-region';
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'region';

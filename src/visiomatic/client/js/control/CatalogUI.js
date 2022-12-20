@@ -42,8 +42,8 @@ export const CatalogUI = UI.extend({
 
 	initialize: function (catalogs, options) {
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipcatalog';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-catalog';
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'catalog';

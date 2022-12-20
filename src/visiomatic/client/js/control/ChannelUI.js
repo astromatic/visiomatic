@@ -26,8 +26,8 @@ export const ChannelUI = UI.extend({
 	initialize: function (mode, options) {
 		Util.setOptions(this, options);
 
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipchannel';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-channel';
 		this._sideClass = 'channel';
 		this._settings = [];
 		this._initsettings = [];
@@ -436,7 +436,7 @@ export const ChannelUI = UI.extend({
 				label.innerHTML = chanLabels[c];
 				this._activateChanElem(label, layer, chan);
 				var	trashElem = this._createButton(
-					'leaflet-control-iip-trash',
+					'visiomatic-control-trash',
 					chanElem,
 					undefined,
 					undefined,

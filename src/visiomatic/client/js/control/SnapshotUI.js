@@ -22,8 +22,8 @@ export const SnapshotUI = UI.extend({
 	initialize: function (options) {
 		Util.setOptions(this, options);
 
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipsnapshot';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-snapshot';
 		this._sideClass = 'snapshot';
 	},
 

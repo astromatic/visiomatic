@@ -32,8 +32,8 @@ export const UI = Control.extend({
 
 	initialize: function (baseLayers,  options) {
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipimage';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-image';
 		this._layers = baseLayers;
 	},
 
@@ -390,7 +390,7 @@ export const UI = Control.extend({
 		if (this._layerList) {
 			DomUtil.empty(this._layerList);
 		} else {
-			this._layerList = DomUtil.create('div', 'leaflet-control-iip' + '-layerlist',
+			this._layerList = DomUtil.create('div', 'visiomatic-control' + '-layerlist',
 			  this._dialog);
 		}
 
@@ -403,21 +403,21 @@ export const UI = Control.extend({
 
 	_addLayerItem: function (obj) {
 		const	_this = this,
-			layerItem = DomUtil.create('div', 'leaflet-control-iip-layer'),
+			layerItem = DomUtil.create('div', 'visiomatic-control-layer'),
 			inputdiv = DomUtil.create(
 		 		'div',
-		 		'leaflet-control-iip-layerswitch',
+		 		'visiomatic-control-layerswitch',
 		 		layerItem
 		 	);
 
 		if (obj.layer.notReady) {
-			DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
+			DomUtil.create('div', 'visiomatic-control-activity', inputdiv);
 		} else {
 			var	input,
 				checked = this._map.hasLayer(obj.layer);
 			input = document.createElement('input');
 			input.type = 'checkbox';
-			input.className = 'leaflet-control-iip-selector';
+			input.className = 'visiomatic-control-selector';
 			input.defaultChecked = checked;
 			input.layerId = Util.stamp(obj.layer);
 			DomEvent.on(input, 'click', function () {
@@ -445,11 +445,11 @@ export const UI = Control.extend({
 			inputdiv.appendChild(input);
 		}
 	
-		var name = DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
+		var name = DomUtil.create('div', 'visiomatic-control-layername', layerItem);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
 
-		this._createButton('leaflet-control-iip-trash',
+		this._createButton('visiomatic-control-trash',
 			layerItem,
 			undefined,
 			function () {

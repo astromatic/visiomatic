@@ -35,8 +35,8 @@ export const ProfileUI = UI.extend({
 
 	initialize: function (options) {
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipprofile';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-profile';
 		this._layers = {};
 		this._sideClass = 'profile';
 		this._handlingClick = false;

@@ -21,8 +21,8 @@ export const ImageUI = UI.extend({
 	initialize: function (options) {
 		Util.setOptions(this, options);
 
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipimage';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-image';
 		this._sideClass = 'image';
 		this._initsettings = {};
 	},

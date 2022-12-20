@@ -27,8 +27,8 @@ export const DocUI = UI.extend({
 	initialize: function (url, options) {
 		Util.setOptions(this, options);
 
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipdoc';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-doc';
 		this._sideClass = 'doc';
 		this._url = url;
 	},
@@ -50,7 +50,7 @@ export const DocUI = UI.extend({
 
 		DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
 
-		var	box = this._addDialogBox('leaflet-iipdoc-dialog'),
+		var	box = this._addDialogBox('visiomatic-doc-dialog'),
 			line = this._addDialogLine('Navigate:', box),
 			elem = this._addDialogElement(line);
 

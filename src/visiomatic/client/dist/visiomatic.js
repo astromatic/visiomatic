@@ -30615,8 +30615,8 @@
     },
     initialize: function(baseLayers, options2) {
       import_leaflet23.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipimage";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-image";
       this._layers = baseLayers;
     },
     addTo: function(dest) {
@@ -30878,7 +30878,7 @@
       } else {
         this._layerList = import_leaflet23.DomUtil.create(
           "div",
-          "leaflet-control-iip-layerlist",
+          "visiomatic-control-layerlist",
           this._dialog
         );
       }
@@ -30888,18 +30888,18 @@
       return this;
     },
     _addLayerItem: function(obj) {
-      const _this = this, layerItem = import_leaflet23.DomUtil.create("div", "leaflet-control-iip-layer"), inputdiv = import_leaflet23.DomUtil.create(
+      const _this = this, layerItem = import_leaflet23.DomUtil.create("div", "visiomatic-control-layer"), inputdiv = import_leaflet23.DomUtil.create(
         "div",
-        "leaflet-control-iip-layerswitch",
+        "visiomatic-control-layerswitch",
         layerItem
       );
       if (obj.layer.notReady) {
-        import_leaflet23.DomUtil.create("div", "leaflet-control-iip-activity", inputdiv);
+        import_leaflet23.DomUtil.create("div", "visiomatic-control-activity", inputdiv);
       } else {
         var input, checked = this._map.hasLayer(obj.layer);
         input = document.createElement("input");
         input.type = "checkbox";
-        input.className = "leaflet-control-iip-selector";
+        input.className = "visiomatic-control-selector";
         input.defaultChecked = checked;
         input.layerId = import_leaflet23.Util.stamp(obj.layer);
         import_leaflet23.DomEvent.on(input, "click", function() {
@@ -30921,11 +30921,11 @@
         }, this);
         inputdiv.appendChild(input);
       }
-      var name = import_leaflet23.DomUtil.create("div", "leaflet-control-iip-layername", layerItem);
+      var name = import_leaflet23.DomUtil.create("div", "visiomatic-control-layername", layerItem);
       name.innerHTML = " " + obj.name;
       name.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
       this._createButton(
-        "leaflet-control-iip-trash",
+        "visiomatic-control-trash",
         layerItem,
         void 0,
         function() {
@@ -30985,8 +30985,8 @@
     },
     initialize: function(catalogs, options2) {
       import_leaflet24.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipcatalog";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-catalog";
       this._layers = {};
       this._handlingClick = false;
       this._sideClass = "catalog";
@@ -31202,8 +31202,8 @@
     },
     initialize: function(mode, options2) {
       import_leaflet25.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipchannel";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-channel";
       this._sideClass = "channel";
       this._settings = [];
       this._initsettings = [];
@@ -31492,7 +31492,7 @@
           label.innerHTML = chanLabels[c];
           this._activateChanElem(label, layer, chan);
           var trashElem = this._createButton(
-            "leaflet-control-iip-trash",
+            "visiomatic-control-trash",
             chanElem,
             void 0,
             void 0,
@@ -31746,8 +31746,8 @@
     },
     initialize: function(url, options2) {
       import_leaflet27.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipdoc";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-doc";
       this._sideClass = "doc";
       this._url = url;
     },
@@ -31767,7 +31767,7 @@
       this._navPos = 0;
       this._ignore = false;
       import_leaflet27.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
-      var box = this._addDialogBox("leaflet-iipdoc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
+      var box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
       this._homeButton = this._createButton(
         className + "-button",
         elem,
@@ -32234,8 +32234,8 @@
     },
     initialize: function(options2) {
       import_leaflet30.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipimage";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-image";
       this._sideClass = "image";
       this._initsettings = {};
     },
@@ -32365,8 +32365,8 @@
     },
     initialize: function(baseLayers, options2) {
       import_leaflet31.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipoverlay";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-overlay";
       this._layers = baseLayers;
     },
     _initDialog: function() {
@@ -32573,7 +32573,7 @@
       }
       VUtil.requestURI(
         this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + point1.x.toFixed(0) + "," + point1.y.toFixed(0) + "-" + point22.x.toFixed(0) + "," + point22.y.toFixed(0),
-        "getting IIP layer profile",
+        "getting layer profile",
         this._plotProfile,
         line
       );
@@ -32654,8 +32654,8 @@
     },
     initialize: function(options2) {
       import_leaflet32.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipprofile";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-profile";
       this._layers = {};
       this._sideClass = "profile";
       this._handlingClick = false;
@@ -32990,8 +32990,8 @@
     },
     initialize: function(regions, options2) {
       import_leaflet33.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipregion";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-region";
       this._layers = {};
       this._handlingClick = false;
       this._sideClass = "region";
@@ -33443,8 +33443,8 @@
     },
     initialize: function(options2) {
       import_leaflet37.Util.setOptions(this, options2);
-      this._className = "leaflet-control-iip";
-      this._id = "leaflet-iipsnapshot";
+      this._className = "visiomatic-control";
+      this._id = "visiomatic-snapshot";
       this._sideClass = "snapshot";
     },
     _initDialog: function() {
@@ -34455,7 +34455,7 @@
       } else {
         this._loadActivity = import_leaflet44.DomUtil.create(
           "div",
-          "leaflet-layer-iip-activity",
+          "visiomatic-layer-activity-",
           map2._controlContainer
         );
         this.once("metaload", function() {
