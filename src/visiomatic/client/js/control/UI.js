@@ -405,10 +405,10 @@ export const UI = Control.extend({
 		const	_this = this,
 			layerItem = DomUtil.create('div', 'visiomatic-control-layer'),
 			inputdiv = DomUtil.create(
-		 		'div',
-		 		'visiomatic-control-layerswitch',
-		 		layerItem
-		 	);
+				'div',
+				'visiomatic-control-layerswitch',
+				layerItem
+			);
 
 		if (obj.layer.notReady) {
 			DomUtil.create('div', 'visiomatic-control-activity', inputdiv);

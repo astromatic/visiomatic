@@ -86,7 +86,7 @@ export const ProfileUI = UI.extend({
 					}
 				},
 				'Start drawing a profile line'
-				);
+			);
 
 			// Create end profile line button
 			this._createButton(
@@ -134,11 +134,11 @@ export const ProfileUI = UI.extend({
 							'div',
 							this._className + '-popup'
 						),
-			    		activity = DomUtil.create(
-			    			'div',
-			    			this._className + '-activity',
-			    			popdiv
-			    		);
+						activity = DomUtil.create(
+							'div',
+							this._className + '-activity',
+							popdiv
+						);
 
 					popdiv.id = 'leaflet-spectrum-plot';
 					marker.bindPopup(
@@ -149,8 +149,9 @@ export const ProfileUI = UI.extend({
 							closeOnClick: false
 						}
 					).openPopup();
-					VUtil.requestURL(this._layer._url.replace(/\&.*$/g, '') +
-						'&PFL=' + zoom.toString() + ':' +
+					VUtil.requestURL(
+						this._layer._url.replace(/\&.*$/g, '') +
+							'&PFL=' + zoom.toString() + ':' +
 							(point.x - 0.5).toFixed(0) + ',' +
 							(point.y - 0.5).toFixed(0) + '-' +
 							(point.x - 0.5).toFixed(0) + ',' +

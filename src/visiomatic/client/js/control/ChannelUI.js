@@ -336,8 +336,8 @@ export const ChannelUI = UI.extend({
 			'maxValue[' + chan + ']',
 			'Upper clipping limit in ' + visio.channelUnits[chan] + '.',
 			'leaflet-channel-maxvalue',
-		 	visio.maxValue[chan],
-		 	step
+			visio.maxValue[chan],
+			step
 		);
 	},
 
@@ -417,10 +417,10 @@ export const ChannelUI = UI.extend({
 				rgb = visio.rgb[chan];
 			if (rgb.isOn()) {
 				var	chanElem = DomUtil.create(
-					'div',
-					this._className + '-channel',
-					chanList
-				),
+						'div',
+						this._className + '-channel',
+						chanList
+					),
 					color = DomUtil.create(
 						'div',
 						this._className + '-chancolor',
