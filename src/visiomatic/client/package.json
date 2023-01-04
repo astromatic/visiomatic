@@ -39,7 +39,7 @@
 	"main": "dist/visiomatic.js",
 	"scripts": {
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
-		"docs": "jsdoc --recurse --pedantic --destination doc js",
+		"docs": "jsdoc -c jsdoc.json js",
 		"lint": "eslint .",
 		"test": "npm run unit"
 	},

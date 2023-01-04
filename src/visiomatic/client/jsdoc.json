@@ -1,0 +1,12 @@
+{
+    "opts": {
+        "pedantic": true,
+        "recurse": true,
+        "destination": "doc"
+    },
+    "plugins": [
+        "plugins/markdown",
+        "plugins/summarize"
+    ]
+}
+
