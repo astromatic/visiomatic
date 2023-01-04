@@ -28,6 +28,7 @@
 		"jqplot-exported": "~1.0.9-pm.4",
 		"jquery": "~2.1.4",
 		"leaflet": "~1.9.3",
+		"npm": "^9.2.0",
 		"spectrum-colorpicker": "~1.8.1"
 	},
 	"devDependencies": {
@@ -38,7 +39,7 @@
 	"main": "dist/visiomatic.js",
 	"scripts": {
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
-		"docs": "jsdoc --recurse --verbose --destination doc js",
+		"docs": "jsdoc --recurse --pedantic --destination doc js",
 		"lint": "eslint .",
 		"test": "npm run unit"
 	},
@@ -56,11 +57,22 @@
 		},
 		"rules": {
 			"curly": "error",
-			"indent": ["error", "tab"],
+			"indent": [
+				"error",
+				"tab"
+			],
 			"key-spacing": "off",
-			"linebreak-style": ["off", "unix"],
-			"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
-			"no-unused-expressions": ["error"],
+			"linebreak-style": [
+				"off",
+				"unix"
+			],
+			"no-mixed-spaces-and-tabs": [
+				"error",
+				"smart-tabs"
+			],
+			"no-unused-expressions": [
+				"error"
+			],
 			"spaced-comment": "error",
 			"strict": "off",
 			"wrap-iife": "off",

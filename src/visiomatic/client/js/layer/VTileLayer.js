@@ -1,12 +1,12 @@
-/*
-#	Support for VisiOmatic layers to Leaflet
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
-#	                         Ruven Pillay    - C2RMF/CNRS
-
+/**
+ #	This file part of:	VisiOmatic
+ * @file Support for VisiOmatic layers in Leaflet
+ * @module
+ * @requires util/VUtil
+ * @requires util/RGB
+ * @requires crs/WCS
+ * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
 	Browser,
@@ -20,9 +20,22 @@ import {VUtil} from '../util';
 import {rgb as rgbin} from '../util';
 import {WCS} from '../crs';
 
+/**
+ * @classdesc Manage tile layers with image data queried from a VisiOmatic server.
 
+ * @exports VTileLayer
+
+ * @extends leaflet.TileLayer
+
+ * @constructor
+ * @param {string} url - URL of the tile server
+ * @param {Object} [options] - Optional options object
+ * @param {String} [options.title=''] - Layer title
+ * @returns {VTileLayer} VisiOmatic TileLayer object
+ */
 export const VTileLayer = TileLayer.extend({
 	options: {
+		/** @constant {String} title - Name of the layer */
 		title: '',
 		crs: null,
 		nativeCelsys: false,
