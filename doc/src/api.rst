@@ -7,5 +7,5 @@ API reference
    :maxdepth: 2
    :caption: Contents:
 
-   modules/server
-   modules/client
+   api/server
+   api/client/index

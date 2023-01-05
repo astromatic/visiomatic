@@ -39,7 +39,7 @@ jobs:
         run: |
           cd src/visiomatic/client
           npm run docs
-          cp -rf doc ../../../doc/build/html/client
+          cp -rf doc ../../../doc/build/html/api/client
 
       - name: Set destination dir
         if: github.ref_name != 'main'
