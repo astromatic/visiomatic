@@ -1,12 +1,13 @@
 {
-    "opts": {
-        "pedantic": true,
-        "recurse": true,
-        "destination": "doc"
-    },
-    "plugins": [
-        "plugins/markdown",
-        "plugins/summarize"
-    ]
+	"opts": {
+		"destination": "doc",
+		"pedantic": true,
+		"private": true,
+		"recurse": true
+	},
+	"plugins": [
+		"plugins/markdown",
+		"plugins/summarize"
+	]
 }
 
