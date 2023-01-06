@@ -1,10 +1,11 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Support for VisiOmatic layers in Leaflet
- * @module
+ * @module layer/VTileLayer
  * @requires util/VUtil
  * @requires util/RGB
  * @requires crs/WCS
+
  * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
@@ -20,119 +21,7 @@ import {VUtil} from '../util';
 import {rgb as rgbin} from '../util';
 import {WCS} from '../crs';
 
-/**
- * @classdesc Manage tile layers with image data queried from a VisiOmatic server.
-
- * @exports VTileLayer
-
- * @extends leaflet.TileLayer
-
- * @constructor
-
- * @param {string} url
-   URL of the tile server
- * @param {object} [options]
-   Options.
-
-
- * @param {?string} [options.title=null]
-   Layer title. Defaults to the basename of the tile URL with extension removed.
-
- * @param {?(leaflet.CRS|WCS)} [options.crs=null]
-   Coordinate Reference or World Coordinate System: extracted from the data
-   header if available or raw pixel coordinates otherwise.
-
- * @param {boolean} [options.nativeCelsys=false]
-   True if native coordinates (e.g., galactic coordinates) are to be used
-   instead of equatorial coordinates.
-
- * @param {?string} [options.center=null]
-   World coordinates (either in RA,Dec decimal form or in
-   ``hh:mm:ss.s±dd:mm:ss.s`` sexagesimal  format), or any
-   [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame}-compliant identifier
-   defining the initial centering of the map upon layer initialization.
-   Sexagesimal coordinates and identifier strings are sent to the
-   Sesame resolver service for conversion to decimal coordinates. Assume x,y
-   pixel coordinates if WCS information is missing. Defaults to image center.
-
- * @param {?number} [options.fov=null]
-   Field of View (FoV) covered by the map upon later initialization, in world
-   coordinates (degrees, or pixel coordinates if WCS information is missing).
-   Defaults to the full FoV.
- 
- * @param {number} [options.minZoom=0]
-   Minimum zoom factor.
-
- * @param {?number} [options.maxZoom=null]
-   Maximum zoom factor.
-
- * @param {number} [options.maxNativeZoom=18]
-   Maximum native zoom factor (including resampling).
-
- * @param {boolean} [options.noWrap=true]
-   Deactivate layer wrapping.
-
- * @param {number} [options.contrast=1.0]
-   Contrast factor.
-
- * @param {number} [options.colorSat=1.0]
-   Color saturation for multi-channel data (0.0: B&W, >1.0: enhance).
-
- * @param {number} [options.gamma=2.2]
-   Display gamma.
-
- * @param {string} [options.cMap='grey']
-   Colormap for single channels or channel combinations. Valid colormaps are
-   ``'grey'``, ``'jet'``, ``'cold'`` and ``'hot'``.
-
- * @param {boolean} [options.invertCMap=false]
-   Invert Colormap or color mix (like a negative).
-
- * @param {number} [options.quality=90]
-   JPEG encoding quality in percent.
-
- * @param {string} [options.mixingMode='color']
-   Channel mixing mode. Valid modes are ``'mono'`` (single-channel) and
-   ``'color'``.
-
- * @param {RGB[]} [options.channelColors=[]]
-   RGB contribution of each channel to the mixing matrix. Defaults to
-   ``rgb(0.,0.,1.), rgb(0.,1.,0.), rgb(1.,0.,0.), rgb(0.,0.,0.), ...]``
-
- * @param {string[]} [options.channelLabels=[]]
-   Channel labels. Defaults to ``['Channel #1', 'Channel #2', ...]``.
-
- * @param {string} [options.channelLabelMatch='.*']
-   Regular expression matching the labels of channels that are given a color by
-   default.
-
- * @param {string[]} [options.channelUnits=[]]
-   Channel units. Defaults to ``['ADUs','ADUs',...]``.
-
- * @param {number[][]} [options.minMaxValues=[]]
-   Pairs of lower, higher clipping limits for every channel. Defaults to values
-   extracted from the data header if available or
-   ``[[0.,255.], [0.,255.], ...]`` otherwise.
-
- * @param {number} [options.quality=0]
-   Default active channel index in mono-channel mode.
-
- * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
-   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
-   service.
-
- * @param {?string} [options.credentials=null]
-   For future use.
-
- * @returns {VTileLayer} VisiOmatic TileLayer object.
- 
- * @example
-  * const map = L.map('map'),
- *       url = '/tiles?FIF=example.fits',
- *       layer = new VTileLayer(url, {cmap: 'jet'}); 
- * layer.addTo(map);
- */
-export const VTileLayer = TileLayer.extend({
+export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	options: {
 		title: null,
 		crs: null,
@@ -176,9 +65,7 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	   Default _server_ rendering parameters (to shorten tile query strings).
-	 * @name visioDefault
 	 * @type {object}
-	 * @memberof VTileLayer
 	 * @property {number} contrast
 	   Default contrast factor.
 	 * @property {number} gamma
@@ -215,6 +102,112 @@ export const VTileLayer = TileLayer.extend({
 		quality: 90
 	},
 
+
+	/**
+	 * Manage tile layers with image data queried from a VisiOmatic server.
+	 * @extends leaflet.TileLayer
+	 * @memberof module:layer/VTileLayer
+	 * @constructs
+	 * @param {string} url - URL of the tile server
+	 * @param {object} [options] - Options.
+
+	 * @param {?string} [options.title=null]
+	   Layer title. Defaults to the basename of the tile URL with extension removed.
+
+	 * @param {?(leaflet.CRS|WCS)} [options.crs=null]
+	   Coordinate Reference or World Coordinate System: extracted from the data
+	   header if available or raw pixel coordinates otherwise.
+
+	 * @param {boolean} [options.nativeCelsys=false]
+	   True if native coordinates (e.g., galactic coordinates) are to be used
+	   instead of equatorial coordinates.
+
+	 * @param {?string} [options.center=null]
+	   World coordinates (either in RA,Dec decimal form or in
+	   ``hh:mm:ss.s±dd:mm:ss.s`` sexagesimal  format), or any
+	   [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame}-compliant identifier
+	   defining the initial centering of the map upon layer initialization.
+	   Sexagesimal coordinates and identifier strings are sent to the
+	   Sesame resolver service for conversion to decimal coordinates. Assume x,y
+	   pixel coordinates if WCS information is missing. Defaults to image center.
+
+	 * @param {?number} [options.fov=null]
+	   Field of View (FoV) covered by the map upon later initialization, in world
+	   coordinates (degrees, or pixel coordinates if WCS information is missing).
+	   Defaults to the full FoV.
+ 
+	 * @param {number} [options.minZoom=0]
+	   Minimum zoom factor.
+
+	 * @param {?number} [options.maxZoom=null]
+	   Maximum zoom factor.
+
+	 * @param {number} [options.maxNativeZoom=18]
+	   Maximum native zoom factor (including resampling).
+
+	 * @param {boolean} [options.noWrap=true]
+	   Deactivate layer wrapping.
+
+	 * @param {number} [options.contrast=1.0]
+	   Contrast factor.
+
+	 * @param {number} [options.colorSat=1.0]
+	   Color saturation for multi-channel data (0.0: B&W, >1.0: enhance).
+
+	 * @param {number} [options.gamma=2.2]
+	   Display gamma.
+
+	 * @param {string} [options.cMap='grey']
+	   Colormap for single channels or channel combinations. Valid colormaps are
+	   ``'grey'``, ``'jet'``, ``'cold'`` and ``'hot'``.
+
+	 * @param {boolean} [options.invertCMap=false]
+	   Invert Colormap or color mix (like a negative).
+
+	 * @param {number} [options.quality=90]
+	   JPEG encoding quality in percent.
+
+	 * @param {string} [options.mixingMode='color']
+	   Channel mixing mode. Valid modes are ``'mono'`` (single-channel) and
+	   ``'color'``.
+
+	 * @param {RGB[]} [options.channelColors=[]]
+	   RGB contribution of each channel to the mixing matrix. Defaults to
+	   ``rgb(0.,0.,1.), rgb(0.,1.,0.), rgb(1.,0.,0.), rgb(0.,0.,0.), ...]``
+
+	 * @param {string[]} [options.channelLabels=[]]
+	   Channel labels. Defaults to ``['Channel #1', 'Channel #2', ...]``.
+
+	 * @param {string} [options.channelLabelMatch='.*']
+	   Regular expression matching the labels of channels that are given a color by
+	   default.
+
+	 * @param {string[]} [options.channelUnits=[]]
+	   Channel units. Defaults to ``['ADUs','ADUs',...]``.
+
+	 * @param {number[][]} [options.minMaxValues=[]]
+	   Pairs of lower, higher clipping limits for every channel. Defaults to values
+	   extracted from the data header if available or
+	   ``[[0.,255.], [0.,255.], ...]`` otherwise.
+
+	 * @param {number} [options.quality=0]
+	   Default active channel index in mono-channel mode.
+
+	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
+	   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
+	   service.
+
+	 * @param {?string} [options.credentials=null]
+	   For future use.
+
+	 * @returns {VTileLayer} VisiOmatic TileLayer object.
+ 
+	 * @example
+	  * const map = L.map('map'),
+	 *       url = '/tiles?FIF=example.fits',
+	 *       layer = new VTileLayer(url, {cmap: 'jet'}); 
+	 * layer.addTo(map);
+	 */
 	initialize: function (url, options) {
 		this.type = 'tilelayer';
 		this._url = url.replace(/\&.*$/g, '');
@@ -238,10 +231,8 @@ export const VTileLayer = TileLayer.extend({
 		this.tileSize = {x: 256, y: 256};
     	/**
 		 * VisiOmatic-specific TileLayer properties.
-		 * @name visio
 		 * @type {object}
 		 * @instance
-		 * @memberof VTileLayer
     	 * @property {number[][]} imageSize
     	   Image sizes at every resolution.
     	 * @property {object[]} gridSize
@@ -324,7 +315,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @async
-	 * @memberof VTileLayer
 	 * @param {string} url - The full tile URL.
 	 * @fires metaload
 	 */
@@ -487,6 +477,7 @@ export const VTileLayer = TileLayer.extend({
 			/**
 			 * Fired when the image metadata have been loaded.
 			 * @event metaload
+			 * @memberof VTileLayer
 			 */
 			this.fire('metaload');
 		} else {
@@ -499,7 +490,6 @@ export const VTileLayer = TileLayer.extend({
 	   channel.
 	 * @method
 	 * @static
-	 * @memberof VTileLayer
 	 * @param {number} chan - Input channel.
 	 * @param {RGB} rgb - RGB color.
 	 */
@@ -532,7 +522,6 @@ export const VTileLayer = TileLayer.extend({
 	   ``'mono'`` mode
 	 * @method
 	 * @static
-	 * @memberof VTileLayer
 	 */
 	updateMono: function () {
 		this.visio.mode = 'mono';
@@ -547,7 +536,6 @@ export const VTileLayer = TileLayer.extend({
 	   ``'color'`` mode
 	 * @method
 	 * @static
-	 * @memberof VTileLayer
 	 */
 	updateMix: function () {
 		const	visio = this.visio,
@@ -564,7 +552,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @private
-	 * @memberof VTileLayer
 	 * @param {number} val - Input value.
 	 * @return {number} gamma-compressed value.
 	 */
@@ -577,7 +564,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @private
-	 * @memberof VTileLayer
 	 * @param {string} str - Input string.
 	 * @param {string} keyword - Input keyword.
 	 * @param {string} regexp - Regular expression for decoding the value.
@@ -593,7 +579,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @override
-	 * @memberof VTileLayer
 	 * @param {object} map - Leaflet map to add the layer to.
 	 * @listens metaload
 	 */
@@ -623,7 +608,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @static
 	 * @override
 	 * @private
-	 * @memberof VTileLayer
 	 * @param {object} map - Leaflet map to add the layer to.
 	 */
 	_addToMap: function (map) {
@@ -721,7 +705,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @static
 	 * @override
 	 * @private
-	 * @memberof VTileLayer
 	 * @param {point} coords - Tile coordinates.
 	 * @return {boolean} ``true`` if tile should be loaded, ``false`` otherwise.
 	 */
@@ -761,7 +744,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @override
-	 * @memberof VTileLayer
 	 * @param {point} coords
 	   Tile coordinates.
 	 * @param {boolean} done
@@ -781,7 +763,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @method
 	 * @static
 	 * @override
-	 * @memberof VTileLayer
 	 * @param {point} coords - Tile coordinates.
 	 * @return {string} The tile URL.
 	 */
@@ -849,7 +830,6 @@ export const VTileLayer = TileLayer.extend({
 	 * @static
 	 * @override
 	 * @private
-	 * @memberof VTileLayer
 	 * @param {object} tile - The tile.
 	 */
 	_initTile: function (tile) {
