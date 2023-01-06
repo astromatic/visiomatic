@@ -49,12 +49,11 @@ import {WCS} from '../crs';
  * @param {?string} [options.center=null]
    World coordinates (either in RA,Dec decimal form or in
    ``hh:mm:ss.s±dd:mm:ss.s`` sexagesimal  format), or any
-   [Sesame](http://cds.u-strasbg.fr/cgi-bin/Sesame)-compliant identifier
+   [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame}-compliant identifier
    defining the initial centering of the map upon layer initialization.
    Sexagesimal coordinates and identifier strings are sent to the
-   [Sesame](http://cds.u-strasbg.fr/cgi-bin/Sesame) resolver service for
-   conversion to decimal coordinates. Assume x,y pixel coordinates if WCS
-   information is missing. Defaults to image center.
+   Sesame resolver service for conversion to decimal coordinates. Assume x,y
+   pixel coordinates if WCS information is missing. Defaults to image center.
 
  * @param {?number} [options.fov=null]
    Field of View (FoV) covered by the map upon later initialization, in world
@@ -119,7 +118,8 @@ import {WCS} from '../crs';
    Default active channel index in mono-channel mode.
 
  * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
-   URL of the [Sesame](http://cds.u-strasbg.fr/cgi-bin/Sesame) resolver service.
+   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
+   service.
 
  * @param {?string} [options.credentials=null]
    For future use.
@@ -314,8 +314,7 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	/**
-	 * @summary
-	   Get metadata describing the tiled image at the provided URL.
+	 * Get metadata describing the tiled image at the provided URL.
 	 * @memberof VTileLayer
 	 * @method
 	 * @static
@@ -480,8 +479,8 @@ export const VTileLayer = TileLayer.extend({
 			);
 			visio.metaReady = true;
 			/**
+			 * Fired when the image metadata have been loaded.
 			 * @event metaload
-			 * @summary Fired when the image metadata have been loaded.
 			 */
 			this.fire('metaload');
 		} else {
@@ -490,8 +489,7 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	/**
-	 * @summary
-	   Update the color mixing matrix with an RGB triplet for a given channel.
+	 * Update the color mixing matrix with an RGB triplet for a given channel.
 	 * @memberof VTileLayer
 	 * @method
 	 * @static
@@ -554,8 +552,7 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	/**
-	 * @summary
-	   Apply gamma expansion to the provided input value.
+	 * Apply gamma expansion to the provided input value.
 	 * @memberof VTileLayer
 	 * @method
 	 * @static
@@ -568,8 +565,7 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	/**
-	 * @summary
-	   Decode the input string as a 'keyword:value' pair.
+	 * Decode the input string as a 'keyword:value' pair.
 	 * @memberof VTileLayer
 	 * @method
 	 * @static

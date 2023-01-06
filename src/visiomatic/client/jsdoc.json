@@ -3,11 +3,15 @@
 		"destination": "doc",
 		"pedantic": true,
 		"private": true,
-		"recurse": true
+		"recurse": true,
+		"template": "./node_modules/tidy-jsdoc"
 	},
 	"plugins": [
 		"plugins/markdown",
 		"plugins/summarize"
-	]
+	],
+	"metadata": {
+		"title": "VisiOmatic web client"
+	}
 }
 

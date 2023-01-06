@@ -24,17 +24,19 @@
 		"url": "https://github.com/ebertin/visiomatic-server/issues"
 	},
 	"dependencies": {
+		"help": "^3.0.2",
 		"html2canvas": "~1.4.1",
 		"jqplot-exported": "~1.0.9-pm.4",
 		"jquery": "~2.1.4",
 		"leaflet": "~1.9.3",
 		"npm": "^9.2.0",
-		"spectrum-colorpicker": "~1.8.1"
+		"spectrum-colorpicker": "~1.8.1",
+		"tidy-jsdoc": "^1.4.1"
 	},
 	"devDependencies": {
 		"esbuild": "^0.14.53",
 		"eslint": "^8.23.1",
-		"jsdoc": "~>3.6.3"
+		"jsdoc": "^4.0"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
