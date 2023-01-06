@@ -35,6 +35,7 @@ release = '0.1'
 extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
+    'sphinx_js',
     'sphinx.ext.githubpages',
     'sphinx.ext.ifconfig',
     'sphinx.ext.intersphinx',
@@ -136,6 +137,10 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/doc/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy', None)
 }
+
+# -- Options for Sphinx-JS ---------------------------------------------------
+js_source_path = '../../src/visiomatic/client/js'
+jsdoc_config_path = './api/client/conf.json'
 
 # -- Options for pybtex ------------------------------------------------------
 bibtex_bibfiles = ['references.bib']

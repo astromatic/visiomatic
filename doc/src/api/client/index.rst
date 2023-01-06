@@ -1,4 +1,6 @@
-:mod:`client`
--------------
+JS client
+=========
 
+.. toctree::
+    classes
 
