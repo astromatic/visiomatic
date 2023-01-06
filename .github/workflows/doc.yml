@@ -28,7 +28,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install -r doc/requirements.txt
-          npm install -g jsdoc
+          cd src/visiomatic/client
+          npm install jsdoc tidy-jsdoc
 
       - name: Build server doc
         run: |
