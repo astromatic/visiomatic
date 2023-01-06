@@ -125,6 +125,12 @@ import {WCS} from '../crs';
    For future use.
 
  * @returns {VTileLayer} VisiOmatic TileLayer object.
+ 
+ * @example
+  * const map = L.map('map'),
+ *       url = '/tiles?FIF=example.fits',
+ *       layer = new VTileLayer(url, {cmap: 'jet'}); 
+ * layer.addTo(map);
  */
 export const VTileLayer = TileLayer.extend({
 	options: {
@@ -168,26 +174,26 @@ export const VTileLayer = TileLayer.extend({
 		*/
 	},
 
-	// Default server rendering parameters (to shorten tile query strings)
 	/**
-	 * @memberof VTileLayer
-	 * @property {object} visioDefault
 	   Default _server_ rendering parameters (to shorten tile query strings).
-	 * @property {number} visioDefault.contrast
+	 * @name visioDefault
+	 * @type {object}
+	 * @memberof VTileLayer
+	 * @property {number} contrast
 	   Default contrast factor.
-	 * @property {number} visioDefault.gamma
+	 * @property {number} gamma
 	   Default display gamma.
-	 * @property {string} visioDefault.cMap
+	 * @property {string} cMap
 	   Default colormap.
-	 * @property {boolean} visioDefault.invertCMap
+	 * @property {boolean} invertCMap
 	   Default colormap inversion switch.
-	 * @property {number[]} visioDefault.minValue
+	 * @property {number[]} minValue
 	   Default lower clipping limits for channels.
-	 * @property {number[]} visioDefault.maxValue
+	 * @property {number[]} maxValue
 	   Default upper clipping limits for channels.
-	 * @property {RGB[]} visioDefault.channelColors
+	 * @property {RGB[]} channelColors
 	   Default color mixing matrix.
-	 * @property {number} visioDefault.quality
+	 * @property {number} quality
 	   Default JPEG encoding quality.
 	 */
 	visioDefault: {
@@ -230,53 +236,53 @@ export const VTileLayer = TileLayer.extend({
 		}
 
 		this.tileSize = {x: 256, y: 256};
-		// VisiOmatic-specific TileLayer properties
     	/**
+		 * VisiOmatic-specific TileLayer properties.
 		 * @name visio
-		 * @memberof VTileLayer
+		 * @type {object}
 		 * @instance
-		 * @property {object} visio - VisiOmatic-specific TileLayer properties.
-    	 * @property {number[][]} visio.imageSize
+		 * @memberof VTileLayer
+    	 * @property {number[][]} imageSize
     	   Image sizes at every resolution.
-    	 * @property {object[]} visio.gridSize
+    	 * @property {object[]} gridSize
     	   Grid sizes at every resolution.
-    	 * @property {number} visio.bpp
+    	 * @property {number} bpp
     	   Image depth in bits per pixel.
-    	 * @property {string} visio.mixingMode
+    	 * @property {string} mixingMode
     	   Current color mixing mode (``'mono'`` or ``'color'``).
-    	 * @property {number} visio.channel
+    	 * @property {number} channel
     	   Current image channel index.
-    	 * @property {number} visio.nChannel
+    	 * @property {number} nChannel
     	   Number of image channels.
-    	 * @property {number} visio.minZoom
+    	 * @property {number} minZoom
     	   Minimum zoom factor (tile resolution).
-    	 * @property {number} visio.maxZoom
+    	 * @property {number} maxZoom
     	   Maximum zoom factor (tile resolution).
-    	 * @property {number} visio.contrast
+    	 * @property {number} contrast
     	   Current image contrast factor.
-    	 * @property {number} visio.colorSat
+    	 * @property {number} colorSat
     	   Current image color saturation.
-    	 * @property {number} visio.gamma
+    	 * @property {number} gamma
     	   Current image display gamma.
-    	 * @property {string} visio.cMap
+    	 * @property {string} cMap
 		   Current color map.
-    	 * @property {boolean} visio.invertCMap
+    	 * @property {boolean} invertCMap
 		   Current colormap inversion switch status.
-    	 * @property {number[]} visio.minValue
+    	 * @property {number[]} minValue
     	   Current lower clipping limit for every channel.
-    	 * @property {number[]} visio.maxValue
+    	 * @property {number[]} maxValue
     	   Current upper clipping limit for every channel.
-    	 * @property {number[][]} visio.mix
+    	 * @property {number[][]} mix
     	   Current color mixing matrix.
-    	 * @property {RGB[]} visio.rgb
+    	 * @property {RGB[]} rgb
     	   Current color mixing matrix as RGB mixes.
-    	 * @property {string[]} visio.channelLabels
+    	 * @property {string[]} channelLabels
     	   Label for every image channel.
-    	 * @property {boolean[]} visio.channelFlags
+    	 * @property {boolean[]} channelFlags
     	   Display activation flag for every channel.
-    	 * @property {string[]} visio.channelUnits
+    	 * @property {string[]} channelUnits
     	   Pixel value unit for every image channel.
-    	 * @property {number} visio.quality
+    	 * @property {number} quality
     	   Current JPEG encoding quality.
     	 */
 		this.visio = {
@@ -315,10 +321,10 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	 * Get metadata describing the tiled image at the provided URL.
-	 * @memberof VTileLayer
 	 * @method
 	 * @static
 	 * @async
+	 * @memberof VTileLayer
 	 * @param {string} url - The full tile URL.
 	 * @fires metaload
 	 */
@@ -489,10 +495,11 @@ export const VTileLayer = TileLayer.extend({
 	},
 
 	/**
-	 * Update the color mixing matrix with an RGB triplet for a given channel.
-	 * @memberof VTileLayer
+	 * Update the color mixing matrix with the RGB contribution from a given
+	   channel.
 	 * @method
 	 * @static
+	 * @memberof VTileLayer
 	 * @param {number} chan - Input channel.
 	 * @param {RGB} rgb - RGB color.
 	 */
@@ -519,13 +526,13 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	 * @summary
-	   Switch to / update ``'mono'`` mode.
+	   Switch the layer to ``'mono'`` mode for the current channel.
 	   @desc
 	   The current channel index defines the color mixing matrix elements in
 	   ``'mono'`` mode
-	 * @memberof VTileLayer
 	 * @method
 	 * @static
+	 * @memberof VTileLayer
 	 */
 	updateMono: function () {
 		this.visio.mode = 'mono';
@@ -533,13 +540,14 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	 * @summary
-	   Update the color mixing matrix
+	   Update the color mixing matrix using the current color and
+	   saturation settings.
 	   @desc
 	   RGB colors and saturation settings define mixing matrix elements in
 	   ``'color'`` mode
-	 * @memberof VTileLayer
 	 * @method
 	 * @static
+	 * @memberof VTileLayer
 	 */
 	updateMix: function () {
 		const	visio = this.visio,
@@ -553,10 +561,10 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	 * Apply gamma expansion to the provided input value.
-	 * @memberof VTileLayer
 	 * @method
 	 * @static
 	 * @private
+	 * @memberof VTileLayer
 	 * @param {number} val - Input value.
 	 * @return {number} gamma-compressed value.
 	 */
@@ -566,10 +574,10 @@ export const VTileLayer = TileLayer.extend({
 
 	/**
 	 * Decode the input string as a 'keyword:value' pair.
-	 * @memberof VTileLayer
 	 * @method
 	 * @static
 	 * @private
+	 * @memberof VTileLayer
 	 * @param {string} str - Input string.
 	 * @param {string} keyword - Input keyword.
 	 * @param {string} regexp - Regular expression for decoding the value.
@@ -580,6 +588,15 @@ export const VTileLayer = TileLayer.extend({
 		return reg.exec(str);
 	},
 
+	/**
+	 * Add the layer to the map.
+	 * @method
+	 * @static
+	 * @override
+	 * @memberof VTileLayer
+	 * @param {object} map - Leaflet map to add the layer to.
+	 * @listens metaload
+	 */
 	addTo: function (map) {
 		if (this.visio.metaReady) {
 			// VisioMatic data are ready so we can go
@@ -600,6 +617,15 @@ export const VTileLayer = TileLayer.extend({
 		return this;
 	},
 
+	/**
+	 * Executed once the layer to be added to the map is ready.
+	 * @method
+	 * @static
+	 * @override
+	 * @private
+	 * @memberof VTileLayer
+	 * @param {object} map - Leaflet map to add the layer to.
+	 */
 	_addToMap: function (map) {
 		const	newcrs = this.wcs,
 			curcrs = map.options.crs,
@@ -689,6 +715,16 @@ export const VTileLayer = TileLayer.extend({
 		}
 	},
 
+	/**
+	 * Tell if a tile at the given coordinates should be loaded.
+	 * @method
+	 * @static
+	 * @override
+	 * @private
+	 * @memberof VTileLayer
+	 * @param {point} coords - Tile coordinates.
+	 * @return {boolean} ``true`` if tile should be loaded, ``false`` otherwise.
+	 */
 	_isValidTile: function (coords) {
 		const	crs = this._map.options.crs;
 
@@ -720,6 +756,18 @@ export const VTileLayer = TileLayer.extend({
 		);
 	},
 
+	/**
+	 * Create a tile at the given coordinates.
+	 * @method
+	 * @static
+	 * @override
+	 * @memberof VTileLayer
+	 * @param {point} coords
+	   Tile coordinates.
+	 * @param {boolean} done
+	   Callback function called when the tile has been loaded.
+	 * @return {object} The new tile.
+	 */
 	createTile: function (coords, done) {
 		const	tile = TileLayer.prototype.createTile.call(this, coords, done);
 
@@ -728,6 +776,15 @@ export const VTileLayer = TileLayer.extend({
 		return tile;
 	},
 
+	/**
+	 * Generate a tile URL from its coordinates
+	 * @method
+	 * @static
+	 * @override
+	 * @memberof VTileLayer
+	 * @param {point} coords - Tile coordinates.
+	 * @return {string} The tile URL.
+	 */
 	getTileUrl: function (coords) {
 		const	visio = this.visio,
 			visioDefault = this.visioDefault,
@@ -786,6 +843,15 @@ export const VTileLayer = TileLayer.extend({
 		 (coords.x + visio.gridSize[z].x * coords.y).toString();
 	},
 
+	/**
+	 * Initialize a tile.
+	 * @method
+	 * @static
+	 * @override
+	 * @private
+	 * @memberof VTileLayer
+	 * @param {object} tile - The tile.
+	 */
 	_initTile: function (tile) {
 		DomUtil.addClass(tile, 'leaflet-tile');
 
