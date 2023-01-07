@@ -42,7 +42,7 @@
 	"scripts": {
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
 		"docs": "jsdoc -c jsdoc.json js",
-		"lint": "eslint .",
+		"lint": "eslint js",
 		"test": "npm run unit"
 	},
 	"eslintConfig": {

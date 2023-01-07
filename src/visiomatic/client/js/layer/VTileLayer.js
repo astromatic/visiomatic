@@ -229,7 +229,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 
 		this.tileSize = {x: 256, y: 256};
-    	/**
+		/**
 		 * VisiOmatic-specific TileLayer properties.
 		 * @type {object}
 		 * @instance
