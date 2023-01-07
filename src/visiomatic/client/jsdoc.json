@@ -6,6 +6,10 @@
 		"recurse": true,
 		"template": "./node_modules/tidy-jsdoc"
 	},
+	"templates": {
+		"cleverLinks": true,
+		"monospaceLinks": false
+    },
 	"plugins": [
 		"plugins/markdown",
 		"plugins/summarize"
