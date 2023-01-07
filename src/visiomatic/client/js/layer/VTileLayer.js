@@ -104,9 +104,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 
 	/**
-	 * Manage tile layers with image data queried from a VisiOmatic server.
+	 * Layer with tiled image data queried from a VisiOmatic server.
 	 * @extends leaflet.TileLayer
 	 * @memberof module:layer/VTileLayer
+	 
 	 * @constructs
 	 * @param {string} url - URL of the tile server
 	 * @param {object} [options] - Options.
@@ -200,7 +201,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {?string} [options.credentials=null]
 	   For future use.
 
-	 * @returns {VTileLayer} VisiOmatic TileLayer object.
+	 * @returns {VTileLayer} VisiOmatic TileLayer instance.
  
 	 * @example
 	  * const map = L.map('map'),
@@ -856,7 +857,13 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	}
 
 });
-
+/**
+ * Instantiate a new VTileLayer.
+ * @function
+ * @param {string} url - URL of the tile server
+ * @param {object} [options] - Options: see {@link VTileLayer}
+ * @returns {VTileLayer} VisiOmatic TileLayer instance.
+*/
 export const vTileLayer = function (url, options) {
 	return new VTileLayer(url, options);
 };
