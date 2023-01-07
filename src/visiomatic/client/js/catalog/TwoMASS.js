@@ -1,15 +1,22 @@
-/*
-#	2MASS catalog.
-#
-#	This file part of:       VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+/**
+ #	This file part of:	VisiOmatic
+ * @file 2MASS catalog.
+ * @module catalog/TwoMASS
+ * @requires catalog/Catalog
+ *
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {extend} from 'leaflet';
 
 import {Catalog} from './Catalog';
 
 
+/**
+ * @namespace TwoMASS
+ * @summary 2MASS catalog.
+ * @extends module:catalog/Catalog~Catalog
+*/
 export const TwoMASS = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: '2MASS',

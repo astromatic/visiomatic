@@ -1,15 +1,22 @@
-/*
-#	AllWISE catalog.
-#
-#	This file part of:       VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+/**
+ #	This file part of:	VisiOmatic
+ * @file AllWISE catalog.
+ * @module catalog/AllWISE
+ * @requires catalog/Catalog
+ *
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {extend} from 'leaflet';
 
 import {Catalog} from './Catalog';
 
 
+/**
+ * @namespace AllWISE
+ * @summary AllWISE catalog.
+ * @extends module:catalog/Catalog~Catalog
+*/
 export const AllWISE = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'AllWISE',

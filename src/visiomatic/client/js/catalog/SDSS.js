@@ -1,15 +1,22 @@
-/*
-#	SDSS catalog.
-#
-#	This file part of:       VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+/**
+ #	This file part of:	VisiOmatic
+ * @file SDSS catalog.
+ * @module catalog/SDSS
+ * @requires catalog/Catalog
+ *
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {extend} from 'leaflet';
 
 import {Catalog} from './Catalog';
 
 
+/**
+ * @namespace SDSS
+ * @summary SDSS catalog.
+ * @extends module:catalog/Catalog~Catalog
+*/
 export const SDSS = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'SDSS release 12',

@@ -1,15 +1,22 @@
-/*
-#	Gaia catalogs.
-#
-#	This file part of:       VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+/**
+ #	This file part of:	VisiOmatic
+ * @file Gaia catalogs.
+ * @module catalog/Gaia
+ * @requires catalog/Catalog
+ *
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {extend} from 'leaflet';
 
 import {Catalog} from './Catalog';
 
 
+/**
+ * @namespace Gaia_DR1
+ * @summary Gaia DR1 catalog.
+ * @extends module:catalog/Catalog~Catalog
+*/
 export const Gaia_DR1 = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'Gaia DR1',
@@ -26,6 +33,11 @@ export const Gaia_DR1 = extend({}, Catalog, {
 	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
+/**
+ * @namespace Gaia_DR2
+ * @summary Gaia DR2 catalog.
+ * @extends Catalog
+*/
 export const Gaia_DR2 = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'Gaia DR2',
@@ -43,6 +55,11 @@ export const Gaia_DR2 = extend({}, Catalog, {
 	objurl: Catalog.vizierURL + '/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
+/**
+ * @namespace Gaia_DR3
+ * @summary Gaia DR3 catalog.
+ * @extends Catalog
+*/
 export const Gaia_DR3 = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'Gaia DR3',

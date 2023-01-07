@@ -1,9 +1,12 @@
-/*
-#	NVSS catalog.
-#
-#	This file part of:       VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+/**
+ #	This file part of:	VisiOmatic
+ * @file NVSS catalog.
+ * @module catalog/NVSS
+ * @requires catalog/Catalog
+ * @requires vector/Ellipse
+ *
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {extend} from 'leaflet';
 
@@ -11,6 +14,11 @@ import {Catalog} from './Catalog';
 import {ellipse} from '../vector';
 
 
+/**
+ * @namespace NVSS
+ * @summary NVSS catalog.
+ * @extends module:catalog/Catalog~Catalog
+*/
 export const NVSS = extend({}, Catalog, {
 	service: 'Vizier@CDS',
 	name: 'NVSS',
