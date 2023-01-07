@@ -36,7 +36,7 @@ export const UI = Control.extend( /** UI */ {
 	/**
 	 * VisiOmatic dialog control base.
 	 * @extends leaflet.Control
-	 * @memberof module:control/UI.js
+	 * @memberof UI
 	 * @name UI
 	 * @constructs
 	 * @param {VTileLayer[]} baseLayers - Array of layers

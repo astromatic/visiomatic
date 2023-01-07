@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace AllWISE
  * @summary AllWISE catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const AllWISE = extend({}, Catalog, {
 	service: 'Vizier@CDS',

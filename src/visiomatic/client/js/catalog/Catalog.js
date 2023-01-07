@@ -94,7 +94,7 @@ export const Catalog = {
 	 * @summary Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
 
 	 * @desc Wrapper around private method
-	   [_csvToGeoJSON]{@link module:catalog/Catalog.js~Catalog._csvToGeoJSON}.
+	   [_csvToGeoJSON]{@link Catalog._csvToGeoJSON}.
 
 	 * @method
 	 * @static

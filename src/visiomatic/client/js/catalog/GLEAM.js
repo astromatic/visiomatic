@@ -17,7 +17,7 @@ import {ellipse} from '../vector';
 /**
  * @namespace GLEAM
  * @summary GLEAM catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const GLEAM = extend({}, Catalog, {
 	service: 'Vizier@CDS',

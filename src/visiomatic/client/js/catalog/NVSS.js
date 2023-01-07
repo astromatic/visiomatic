@@ -17,7 +17,7 @@ import {ellipse} from '../vector';
 /**
  * @namespace NVSS
  * @summary NVSS catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const NVSS = extend({}, Catalog, {
 	service: 'Vizier@CDS',

@@ -17,7 +17,7 @@ import {ellipse} from '../vector';
 /**
  * @namespace TGSS
  * @summary TGSS catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const TGSS = extend({}, Catalog, {
 	service: 'Vizier@CDS',

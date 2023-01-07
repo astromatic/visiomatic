@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace TwoMASS
  * @summary 2MASS catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const TwoMASS = extend({}, Catalog, {
 	service: 'Vizier@CDS',

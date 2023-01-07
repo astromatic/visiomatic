@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace Gaia_DR1
  * @summary Gaia DR1 catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const Gaia_DR1 = extend({}, Catalog, {
 	service: 'Vizier@CDS',

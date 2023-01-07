@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace SDSS
  * @summary SDSS catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const SDSS = extend({}, Catalog, {
 	service: 'Vizier@CDS',

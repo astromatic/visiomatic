@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace GALEX
  * @summary GALEX catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const GALEX_AIS = extend({}, Catalog, {
 	service: 'Vizier@CDS',

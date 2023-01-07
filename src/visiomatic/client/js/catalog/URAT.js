@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace URAT_1
  * @summary URAT1 catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const URAT_1 = extend({}, Catalog, {
 	service: 'Vizier@CDS',

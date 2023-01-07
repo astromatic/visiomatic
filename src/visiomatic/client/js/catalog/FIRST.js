@@ -17,7 +17,7 @@ import {ellipse} from '../vector';
 /**
  * @namespace FIRST
  * @summary FIRST catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const FIRST = extend({}, Catalog, {
 	service: 'Vizier@CDS',

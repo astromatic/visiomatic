@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace PPMXL
  * @summary PPMXL catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const PPMXL = extend({}, Catalog, {
 	service: 'Vizier@CDS',

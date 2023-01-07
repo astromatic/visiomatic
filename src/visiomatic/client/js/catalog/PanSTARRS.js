@@ -15,7 +15,7 @@ import {Catalog} from './Catalog'
 /**
  * @namespace PanSTARRS1
  * @summary PanSTARRS 1 catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const PanSTARRS1 = extend({}, Catalog, {
 	service: 'Vizier@CDS',

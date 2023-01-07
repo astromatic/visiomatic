@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace Abell
  * @summary Abell catalog.
- * @extends module:catalog/Catalog.js~Catalog
+ * @extends Catalog
 */
 export const Abell = extend({}, Catalog, {
 	service: 'Vizier@CDS',
