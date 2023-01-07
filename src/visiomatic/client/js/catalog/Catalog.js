@@ -1,7 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Catalog settings and conversion tools.
- * @module catalog/Catalog
  *
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -95,7 +94,7 @@ export const Catalog = {
 	 * @summary Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
 
 	 * @desc Wrapper around private method
-	   [_csvToGeoJSON]{@link module:catalog/Catalog~Catalog._csvToGeoJSON}.
+	   [_csvToGeoJSON]{@link module:catalog/Catalog.js~Catalog._csvToGeoJSON}.
 
 	 * @method
 	 * @static

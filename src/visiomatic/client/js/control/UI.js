@@ -1,10 +1,10 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Base User Interface for VisiOmatic dialogs.
- * @module control/UI
+
  * @requires util/VUtil
- * @requires control/widget/FlipSwitch
- * @requires control/widget/Spinbox
+ * @requires control/widget/FlipSwitch.js
+ * @requires control/widget/Spinbox.js
 
  * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -36,7 +36,7 @@ export const UI = Control.extend( /** UI */ {
 	/**
 	 * VisiOmatic dialog control base.
 	 * @extends leaflet.Control
-	 * @memberof module:control/UI
+	 * @memberof module:control/UI.js
 	 * @name UI
 	 * @constructs
 	 * @param {VTileLayer[]} baseLayers - Array of layers

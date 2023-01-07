@@ -1,8 +1,8 @@
 /**
  #	This file part of:	VisiOmatic
  * @file PPMXL catalog.
- * @module catalog/PPMXL
- * @requires catalog/Catalog
+
+ * @requires catalog/Catalog.js
  *
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace PPMXL
  * @summary PPMXL catalog.
- * @extends module:catalog/Catalog~Catalog
+ * @extends module:catalog/Catalog.js~Catalog
 */
 export const PPMXL = extend({}, Catalog, {
 	service: 'Vizier@CDS',

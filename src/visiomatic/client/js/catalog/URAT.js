@@ -1,8 +1,8 @@
 /**
  #	This file part of:	VisiOmatic
  * @file URAT catalog.
- * @module catalog/URAT
- * @requires catalog/Catalog
+
+ * @requires catalog/Catalog.js
  *
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace URAT_1
  * @summary URAT1 catalog.
- * @extends module:catalog/Catalog~Catalog
+ * @extends module:catalog/Catalog.js~Catalog
 */
 export const URAT_1 = extend({}, Catalog, {
 	service: 'Vizier@CDS',

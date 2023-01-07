@@ -1,9 +1,9 @@
 /**
  #	This file part of:	VisiOmatic
  * @file FIRST catalog.
- * @module catalog/FIRST
- * @requires catalog/Catalog
- * @requires vector/Ellipse
+
+ * @requires catalog/Catalog.js
+ * @requires vector/Ellipse.js
  *
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -17,7 +17,7 @@ import {ellipse} from '../vector';
 /**
  * @namespace FIRST
  * @summary FIRST catalog.
- * @extends module:catalog/Catalog~Catalog
+ * @extends module:catalog/Catalog.js~Catalog
 */
 export const FIRST = extend({}, Catalog, {
 	service: 'Vizier@CDS',

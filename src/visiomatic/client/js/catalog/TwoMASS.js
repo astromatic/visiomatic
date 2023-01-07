@@ -1,8 +1,8 @@
 /**
  #	This file part of:	VisiOmatic
  * @file 2MASS catalog.
- * @module catalog/TwoMASS
- * @requires catalog/Catalog
+
+ * @requires catalog/Catalog.js
  *
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
@@ -15,7 +15,7 @@ import {Catalog} from './Catalog';
 /**
  * @namespace TwoMASS
  * @summary 2MASS catalog.
- * @extends module:catalog/Catalog~Catalog
+ * @extends module:catalog/Catalog.js~Catalog
 */
 export const TwoMASS = extend({}, Catalog, {
 	service: 'Vizier@CDS',
