@@ -1,10 +1,13 @@
-/*
-#	Base for VisiOmatic UI Classes.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Base User Interface for VisiOmatic dialogs.
+ * @module control/UI
+ * @requires util/VUtil
+ * @requires control/widget/FlipSwitch
+ * @requires control/widget/Spinbox
+
+ * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
@@ -23,13 +26,33 @@ import {FlipSwitch, Spinbox} from './widget';
 import {VUtil} from '../util';
 
 
-export const UI = Control.extend({
+export const UI = Control.extend( /** UI */ {
 	options: {
 		title: 'a control related to VisiOmatic',
 		collapsed: true,
 		position: 'topleft'
 	},
 
+	/**
+	 * VisiOmatic dialog control base.
+	 * @extends leaflet.Control
+	 * @memberof module:control/UI
+	 * @name UI
+	 * @constructs
+	 * @param {VTileLayer[]} baseLayers - Array of layers
+	 * @param {object} [options] - Options.
+
+	 * @param {?string} [options.title='a control related to VisiOmatic']
+	   Layer title. Defaults to the basename of the tile URL with extension removed.
+
+	 * @param {boolean} [options.collapsed=true]
+	   Start dialog in the collapsed state?.
+
+	 * @param {boolean} [options.position='topleft']
+	   Position of the dialog on the map.
+
+	 * @returns {UI} VisiOmatic UI instance.
+	 */
 	initialize: function (baseLayers,  options) {
 		Util.setOptions(this, options);
 		this._className = 'visiomatic-control';
