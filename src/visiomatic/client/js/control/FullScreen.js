@@ -114,12 +114,12 @@ export const FullScreen = Control.extend({
 			container = DomUtil.create('div', 'leaflet-bar');
 		}
 
-		this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
+		this._addButton(this.options.title, className, container, this.toogleFullScreen, map);
 
 		return container;
 	},
 
-	_createButton: function (title, className, container, fn, context) {
+	_addButton: function (title, className, container, fn, context) {
 		var link = DomUtil.create('a', className, container);
 		link.href = '#';
 		link.title = title;

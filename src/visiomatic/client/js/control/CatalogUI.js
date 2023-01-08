@@ -1,10 +1,16 @@
-/*
-#	UI for catalog overlays.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Base User Interface for VisiOmatic dialogs.
+
+ * @requires util/VUtil
+ * @requires control/UI.js
+ * @requires catalog/Gaia.js
+ * @requires catalog/TwoMASS.js
+ * @requires catalog/SDSS.js
+ * @requires catalog/PanSTARRS1js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
 	DomEvent,
@@ -17,17 +23,21 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {Gaia_DR3, TwoMASS, SDSS, PPMXL, Abell} from '../catalog';
+import {Gaia_DR3, TwoMASS, SDSS, PanSTARRS1} from '../catalog';
 
 
-export const CatalogUI = UI.extend({
+export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
+	/**
+	   Default array of catalogs.
+	 * @type {Catalog[]}
+	 * @default
+	 */
 	defaultCatalogs: [
 		Gaia_DR3,
 		TwoMASS,
 		SDSS,
-		PPMXL,
-		Abell
+		PanSTARRS1
 	],
 
 	options: {
@@ -40,6 +50,33 @@ export const CatalogUI = UI.extend({
 		authenticate: false // string define a method used to authenticate
 	},
 
+	/**
+	 * VisiOmatic dialog for catalog queries and catalog overlays.
+	 * @extends UI
+	 * @memberof module:control/CatalogUI.js
+	 * @name CatalogUI
+	 * @constructs
+	 * @param {Catalog[]} catalogs - Array of catalogs
+	 * @param {object} [options] - Options.
+
+	 * @param {?string} [options.title='Catalog overlay']
+	   Title of the dialog window or panel.
+
+	 * @param {boolean} [options.nativeCelSys=false]
+	   Use native coordinates (e.g., galactic coordinates) instead of
+	   equatorial coordinates?
+
+	 * @param {string} [options.color='#FFFF00']
+	   Default catalog overlay color
+
+	 * @param {number} [options.timeOut=30]
+	   Time out delay for catalog queries, in seconds.
+
+	 * @see [Leaflet API reference]{@link https://leafletjs.com/reference.html#control}
+	   for additional control options.
+
+	 * @returns {CatalogUI} VisiOmatic CatalogUI instance.
+	 */
 	initialize: function (catalogs, options) {
 		Util.setOptions(this, options);
 		this._className = 'visiomatic-control';
@@ -57,7 +94,7 @@ export const CatalogUI = UI.extend({
 			// CDS catalog overlay
 			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
-			colpick = this._createColorPicker(
+			colpick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'catalog',
@@ -67,7 +104,7 @@ export const CatalogUI = UI.extend({
 				'Click to set catalog color'
 			);
 
-		var catselect = this._createSelectMenu(
+		var catselect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			catalogs.map(function (catalog) { return catalog.name; }),
@@ -91,7 +128,7 @@ export const CatalogUI = UI.extend({
 
 		elem = this._addDialogElement(line);
 
-		this._createButton(className + '-button', elem, 'catalog', function () {
+		this._addButton(className + '-button', elem, 'catalog', function () {
 			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
 			if (index >= 0) {
 				var catalog = catalogs[index];

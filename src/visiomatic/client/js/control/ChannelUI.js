@@ -96,7 +96,7 @@ export const ChannelUI = UI.extend({
 			modeinput = DomUtil.create('div', className + '-radios', modelem);
 
 		// Create Mode selection control section
-		var modebutton = this._createRadioButton(
+		var modebutton = this._addRadioButton(
 			className + '-radio',
 			modeinput,
 			'mono',
@@ -123,7 +123,7 @@ export const ChannelUI = UI.extend({
 			}, 'Select mono-channel palettized mode'
 		);
 
-		var	modebutton = this._createRadioButton(
+		var	modebutton = this._addRadioButton(
 			className + '-radio',
 			modeinput,
 			'color',
@@ -167,7 +167,7 @@ export const ChannelUI = UI.extend({
 
 		layer.updateMono();
 
-		this._chanSelect = this._createSelectMenu(
+		this._chanSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			layer.visio.channelLabels,
@@ -195,7 +195,7 @@ export const ChannelUI = UI.extend({
 			};
 
 		for (let c in cmaps) {
-			cbutton[c] = this._createRadioButton(
+			cbutton[c] = this._addRadioButton(
 				'leaflet-cmap',
 				cmapinput,
 				cmaps[c],
@@ -217,7 +217,7 @@ export const ChannelUI = UI.extend({
 			className = this._className,
 			line = this._addDialogLine('Channel:', box),
 			elem = this._addDialogElement(line),
-			colpick = this._chanColPick = this._createColorPicker(
+			colpick = this._chanColPick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'channel',
@@ -235,7 +235,7 @@ export const ChannelUI = UI.extend({
 		this._onInputChange(layer, 'cMap', 'grey');
 		layer.updateMix();
 
-		this._chanSelect = this._createSelectMenu(
+		this._chanSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			visio.channelLabels,
@@ -254,7 +254,7 @@ export const ChannelUI = UI.extend({
 			elem2 = this._addDialogElement(line2);
 
 		// Create reset color settings button
-		this._createButton(
+		this._addButton(
 			className + '-button',
 			elem2,
 			'colormix-reset',
@@ -269,7 +269,7 @@ export const ChannelUI = UI.extend({
 		);
 
 		// Create automated color settings button
-		this._createButton(
+		this._addButton(
 			className + '-button',
 			elem2,
 			'colormix-auto',
@@ -435,7 +435,7 @@ export const ChannelUI = UI.extend({
 				);
 				label.innerHTML = chanLabels[c];
 				this._activateChanElem(label, layer, chan);
-				var	trashElem = this._createButton(
+				var	trashElem = this._addButton(
 					'visiomatic-control-trash',
 					chanElem,
 					undefined,

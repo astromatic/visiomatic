@@ -157,7 +157,7 @@ export const ExtraMap = Control.extend({
 	},
 
 	_addToggleButton: function () {
-		this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
+		this._toggleDisplayButton = this.options.toggleDisplay ? this._addButton(
 			'', this.options.strings.hideText, (
 				'leaflet-control-extramap-toggle-display ' +
 			  'leaflet-control-extramap-toggle-display-' + this.options.position
@@ -169,7 +169,7 @@ export const ExtraMap = Control.extend({
 		this._toggleDisplayButton.style.height = this.options.collapsedHeight + 'px';
 	},
 
-	_createButton: function (html, title, className, container, fn, context) {
+	_addButton: function (html, title, className, container, fn, context) {
 		var link = DomUtil.create('a', className, container);
 		link.innerHTML = html;
 		link.href = '#';

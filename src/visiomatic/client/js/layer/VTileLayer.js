@@ -5,7 +5,7 @@
  * @requires util/RGB
  * @requires crs/WCS
 
- * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {

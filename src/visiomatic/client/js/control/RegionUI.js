@@ -48,7 +48,7 @@ export const RegionUI = UI.extend({
 			box = this._addDialogBox(),
 			line = this._addDialogLine('Regions:', box),
 			elem = this._addDialogElement(line),
-			colpick = this._createColorPicker(
+			colpick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'region',
@@ -58,7 +58,7 @@ export const RegionUI = UI.extend({
 				'Click to set region color'
 			);
 
-		var	select = this._regionSelect = this._createSelectMenu(
+		var	select = this._regionSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			regions.map(function (o) { return o.name; }),
@@ -69,7 +69,7 @@ export const RegionUI = UI.extend({
 		);
 
 		elem = this._addDialogElement(line);
-		this._createButton(className + '-button',
+		this._addButton(className + '-button',
 			elem,
 			'region',
 			function () {

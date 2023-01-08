@@ -51,7 +51,7 @@ export const ProfileUI = UI.extend({
 		if (options.profile) {
 			const	line = this._addDialogLine('Profile:', box),
 				elem = this._addDialogElement(line),
-				linecolpick = this._createColorPicker(
+				linecolpick = this._addColorPicker(
 					className + '-color',
 					elem,
 					'profile',
@@ -62,7 +62,7 @@ export const ProfileUI = UI.extend({
 				);
 
 			// Create start profile line button
-			this._createButton(
+			this._addButton(
 				className + '-button',
 				elem,
 				'start',
@@ -89,7 +89,7 @@ export const ProfileUI = UI.extend({
 			);
 
 			// Create end profile line button
-			this._createButton(
+			this._addButton(
 				className + '-button',
 				elem,
 				'end',
@@ -104,7 +104,7 @@ export const ProfileUI = UI.extend({
 				elem = this._addDialogElement(line);
 
 			// Create Spectrum color picker
-			const	speccolpick = this._createColorPicker(
+			const	speccolpick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'spectrum',
@@ -115,7 +115,7 @@ export const ProfileUI = UI.extend({
 			);
 
 			// Create Spectrum button
-			this._createButton(
+			this._addButton(
 				className + '-button',
 				elem,
 				'spectrum',

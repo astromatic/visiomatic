@@ -137,7 +137,7 @@ export const ImageUI = UI.extend({
 		const line = this._addDialogLine('Reset:', this._dialog),
 		    elem = this._addDialogElement(line);
 
-		this._createButton(
+		this._addButton(
 			className + '-button',
 			elem,
 			'image-reset',

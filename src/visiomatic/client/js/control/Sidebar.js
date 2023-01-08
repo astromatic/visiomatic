@@ -105,7 +105,7 @@ export const Sidebar = Control.extend({
 			buttonContainer = DomUtil.create('div', 'leaflet-bar');
 		}
 		
-		this._toggleButton = this._createButton(this.options.title,
+		this._toggleButton = this._addButton(this.options.title,
 		  className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
 
 		return this;
@@ -281,7 +281,7 @@ export const Sidebar = Control.extend({
 	/**
 	 * @private
 	 */
-	_createButton: function (title, className, container) {
+	_addButton: function (title, className, container) {
 		var link = DomUtil.create('a', className, container);
 		link.href = '#';
 		link.title = title;

@@ -6,7 +6,7 @@
  * @requires control/widget/FlipSwitch.js
  * @requires control/widget/Spinbox.js
 
- * @copyright (c) 2014-2022 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import jQuery from 'jquery';
@@ -26,7 +26,7 @@ import {FlipSwitch, Spinbox} from './widget';
 import {VUtil} from '../util';
 
 
-export const UI = Control.extend( /** UI */ {
+export const UI = Control.extend( /** @lends UI */ {
 	options: {
 		title: 'a control related to VisiOmatic',
 		collapsed: true,
@@ -36,8 +36,7 @@ export const UI = Control.extend( /** UI */ {
 	/**
 	 * VisiOmatic dialog control base.
 	 * @extends leaflet.Control
-	 * @memberof UI
-	 * @name UI
+	 * @memberof module:control/UI.js
 	 * @constructs
 	 * @param {VTileLayer[]} baseLayers - Array of layers
 	 * @param {object} [options] - Options.
@@ -60,7 +59,15 @@ export const UI = Control.extend( /** UI */ {
 		this._layers = baseLayers;
 	},
 
-	// addTo can be used to add the regular leaflet controls or to the sidebar
+	/**
+	 * Add the control to the map or to a sidebar.
+	 * @method
+	 * @static
+	 * @override
+	 * @param {object} dest - Destination map or sidebar.
+	 * @returns {object} Destination object.
+	 * @listens layeradd
+	 */
 	addTo: function (dest) {
 		if (dest._sidebar) {
 			this._sidebar = dest;
@@ -76,6 +83,15 @@ export const UI = Control.extend( /** UI */ {
 		}
 	},
 
+	/**
+	 * Add the control dialog directly to the map.
+	 * @memberof UI
+	 * @method
+	 * @static
+	 * @override
+	 * @param {object} map - Leaflet map the control has been added to.
+	 * @returns {object} The newly created container of the dialog.
+	 */
 	onAdd: function (map) {
 		var	className = this._className,
 			id = this._id,
@@ -123,6 +139,13 @@ export const UI = Control.extend( /** UI */ {
 		return	this._container;
 	},
 
+	/**
+	 * Check that the layer being loaded is a VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {event} e - Leaflet map the control has been added to.
+	 */
 	_checkVisiomatic: function (e) {
 		var layer = e.layer;
 
@@ -139,6 +162,13 @@ export const UI = Control.extend( /** UI */ {
 		}
 	},
 
+	/**
+	 * Initialize the UI dialog (dummy in the base class, just a placeholder).
+	 * @method
+	 * @static
+	 * @private
+	 * @param {event} e - Leaflet map the control has been added to.
+	 */
 	_initDialog: function () {
 		/*
 		var	className = this._className,
@@ -151,11 +181,25 @@ export const UI = Control.extend( /** UI */ {
 		// Setup the rest of the dialog window here
 	},
 
+	/**
+	 * Reset the UI dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_resetDialog: function () {
 		this._dialog.innerHTML = '';
 		this._initDialog();
 	},
 
+	/**
+	 * Add a new dialog box to the UI.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} id - DOM id property of the box element.
+	 * @returns {object} The newly created dialog box.
+	 */
 	_addDialogBox: function (id) {
 		var box = DomUtil.create('div', this._className + '-box', this._dialog);
 		if (id) {
@@ -164,6 +208,15 @@ export const UI = Control.extend( /** UI */ {
 		return box;
 	},
 
+	/**
+	 * Add a new dialog line to the provided dialog box.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} label - Default text in the dialog line.
+	 * @param {object} dialogBox - The destination dialog box.
+	 * @returns {object} The newly created dialog line.
+	 */
 	_addDialogLine: function (label, dialogBox) {
 		var line = DomUtil.create('div', this._className + '-line', dialogBox),
 		 text = DomUtil.create('div', this._className + '-label', line);
@@ -171,33 +224,56 @@ export const UI = Control.extend( /** UI */ {
 		return line;
 	},
 
+	/**
+	 * Add a new dialog element to the provided dialog line.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} line - The destination dialog line.
+	 * @returns {object} The newly created dialog element.
+	 */
 	_addDialogElement: function (line) {
 		return DomUtil.create('div', this._className + '-element', line);
 	},
 
+	/**
+	 * Expand a DOM element (by adding '-expanded' to its class name).
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_expand: function () {
 		DomUtil.addClass(this._container, this._className + '-expanded');
 	},
 
+	/**
+	 * Collapse a DOM element (by removing '-expanded' from its class name).
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_collapse: function () {
-		this._container.className = this._container.className.replace(' ' + this._className + '-expanded', '');
+		this._container.className = this._container.className.replace(
+			' ' + this._className + '-expanded',
+			''
+		);
 	},
 
 	/**
-	* Get currently active base layer on the map
-	* @return {Object} l where l.name - layer name on the control,
-	* l.layer is L.TileLayer, l.overlay is overlay layer.
-	*/
+	 * Get the base layer currently active on the map.
+	 * @method
+	 * @static
+	 * @overrides
+	 * @returns {object} Tile- or overlay layer.
+	 */
 	getActiveBaseLayer: function () {
 		return this._activeBaseLayer;
 	},
 
 	/**
-	* Get currently active overlay layers on the map
-	* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
-	* and l @see #getActiveBaseLayer jsdoc.
+	* Find the base VisiOmatic layer currently active on the map.
+	* @returns {object} The active VisiOmatic layer, or ``undefined` otherwise.
 	*/
-
 	_findActiveBaseLayer: function () {
 		var layers = this._layers;
 		this._prelayer = undefined;
@@ -214,7 +290,30 @@ export const UI = Control.extend( /** UI */ {
 		return undefined;
 	},
 
-	_createButton: function (className, parent, subClassName, fn, title) {
+	/**
+	 * Add a new button to the provided parent element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} className
+	   Class name for the button.
+	 * @param {object} parent
+	   The parent element.
+	 * @param {?subClassName} [subClassName=null] 
+	   Sub-class name for the button.
+	 * @param {?function} [fn=null]
+	   Callback function for when the button is pressed.
+	 * @param {?title} [title=null]
+	   Title of the button (for, e.g., display as a tooltip).
+	 * @returns {object} The newly created button.
+	 */
+	_addButton: function (
+		className,
+		parent,
+		subClassName=null,
+		fn=null,
+		title=null
+	) {
 		var button = DomUtil.create('a', className, parent);
 		button.target = '_blank';
 		if (subClassName) {
@@ -229,7 +328,7 @@ export const UI = Control.extend( /** UI */ {
 		return button;
 	},
 
-	_createRadioButton: function (className, parent, value, checked, fn, title) {
+	_addRadioButton: function (className, parent, value, checked, fn, title) {
 		var button = DomUtil.create('input', className, parent);
 
 		button.type = 'radio';
@@ -251,7 +350,7 @@ export const UI = Control.extend( /** UI */ {
 		return button;
 	},
 
-	_createSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
+	_addSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
 		// Wrapper around the select element for better positioning and sizing
 		var	div =  DomUtil.create('div', className, parent),
 			select = DomUtil.create('select', className, div),
@@ -304,7 +403,7 @@ export const UI = Control.extend( /** UI */ {
 	},
 
 
-	_createColorPicker: function (className, parent, subClassName, defaultColor,
+	_addColorPicker: function (className, parent, subClassName, defaultColor,
 	    fn, storageKey, title) {
 		var _this = this,
 			colpick = DomUtil.create('input', className, parent);
@@ -472,7 +571,7 @@ export const UI = Control.extend( /** UI */ {
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
 
-		this._createButton('visiomatic-control-trash',
+		this._addButton('visiomatic-control-trash',
 			layerItem,
 			undefined,
 			function () {

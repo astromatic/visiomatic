@@ -40,7 +40,7 @@ export const SnapshotUI = UI.extend({
 			items = ['Screen pixels', 'Native pixels'];
 
 		this._snapType = 0;
-		this._snapSelect =  this._createSelectMenu(
+		this._snapSelect =  this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			items,
@@ -53,7 +53,7 @@ export const SnapshotUI = UI.extend({
 		);
 
 		const	hiddenlink = document.createElement('a');
-		var	button = this._createButton(
+		var	button = this._addButton(
 			className + '-button', elem, 'snapshot',
 			function (event) {
 				const	latlng = map.getCenter(),
@@ -97,7 +97,7 @@ export const SnapshotUI = UI.extend({
 		var	line = this._addDialogLine('Print:', this._dialog),
 			elem = this._addDialogElement(line);
 
-		button = this._createButton(
+		button = this._addButton(
 			className + '-button',
 			elem,
 			'print',

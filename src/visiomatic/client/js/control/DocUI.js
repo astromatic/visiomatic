@@ -54,15 +54,15 @@ export const DocUI = UI.extend({
 			line = this._addDialogLine('Navigate:', box),
 			elem = this._addDialogElement(line);
 
-		this._homeButton = this._createButton(className + '-button', elem,
+		this._homeButton = this._addButton(className + '-button', elem,
 		  'home', this._homeNav, 'Navigate home');
-		this._backButton = this._createButton(className + '-button', elem,
+		this._backButton = this._addButton(className + '-button', elem,
 		  'back', this._backNav, 'Navigate backward');
-		this._forwardButton = this._createButton(className + '-button', elem,
+		this._forwardButton = this._addButton(className + '-button', elem,
 		  'forward', this._forwardNav, 'Navigate forward');
 
 		if (this.options.pdflink) {
-			var pdfButton = this._createButton(className + '-button', elem,
+			var pdfButton = this._addButton(className + '-button', elem,
 			  'pdf', undefined, 'Download PDF version');
 			pdfButton.href = this.options.pdflink;
 		}
