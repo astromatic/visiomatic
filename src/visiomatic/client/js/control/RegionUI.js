@@ -53,7 +53,6 @@ export const RegionUI = UI.extend({
 				elem,
 				'region',
 			  this.options.color,
-				false,
 				'visiomaticRegion',
 				'Click to set region color'
 			);
@@ -64,7 +63,6 @@ export const RegionUI = UI.extend({
 			regions.map(function (o) { return o.name; }),
 			regions.map(function (o) { return (o.load ? true : false); }),
 			-1,
-			undefined,
 			'Select region'
 		);
 
@@ -72,6 +70,7 @@ export const RegionUI = UI.extend({
 		this._addButton(className + '-button',
 			elem,
 			'region',
+			'Display region',
 			function () {
 				var	index = select.selectedIndex - 1;	// Ignore 'Choose region' entry
 				if (index >= 0) {
@@ -81,8 +80,7 @@ export const RegionUI = UI.extend({
 					select.opt[index].disabled = true;
 					this._getRegion(region, this.options.timeOut);
 				}
-			},
-			'Display region'
+			}
 		);
 
 		// Load regions that have the 'load' option set.

@@ -101,6 +101,7 @@ export const ChannelUI = UI.extend({
 			modeinput,
 			'mono',
 			(this._mode === 'mono'),
+			'Select mono-channel palettized mode',
 			function () {
 				// Save previous settings 
 				_this.saveSettings(layer, _this._settings, _this._mode);
@@ -120,7 +121,7 @@ export const ChannelUI = UI.extend({
 				_this.loadSettings(layer, _this._settings, 'mono');
 				_this._initMonoDialog(layer, box);
 				_this._mode = 'mono';
-			}, 'Select mono-channel palettized mode'
+			}
 		);
 
 		var	modebutton = this._addRadioButton(
@@ -128,6 +129,7 @@ export const ChannelUI = UI.extend({
 			modeinput,
 			'color',
 			(this._mode !== 'mono'),
+			'Select color mixing mode',
 			function () {
 				// Save previous settings 
 				_this.saveSettings(layer, _this._settings, _this._mode);
@@ -146,7 +148,7 @@ export const ChannelUI = UI.extend({
 				_this._channelList = undefined;
 				_this._initColorDialog(layer, box);
 				_this._mode = 'color';
-			}, 'Select color mixing mode'
+			}
 		);
 
 		if (_this._mode === 'mono') {
@@ -173,6 +175,7 @@ export const ChannelUI = UI.extend({
 			layer.visio.channelLabels,
 			undefined,
 			layer.visio.channel,
+			'Select image channel',
 			function () {
 				layer.visio.channel = parseInt(
 					this._chanSelect.selectedIndex - 1,
@@ -180,8 +183,7 @@ export const ChannelUI = UI.extend({
 				);
 				this._updateChannel(layer, layer.visio.channel);
 				layer.redraw();
-			},
-			'Select image channel'
+			}
 		);
 
 		var line = this._addDialogLine('LUT:', box),
@@ -200,9 +202,10 @@ export const ChannelUI = UI.extend({
 				cmapinput,
 				cmaps[c],
 				(cmaps[c] === this.options.cMap),
-				_changeMap,
 				'"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) +
-					'" color-map');
+					'" color-map',
+				_changeMap
+			);
 		}
 
 		this._addMinMax(layer, layer.visio.channel, box);
@@ -222,14 +225,14 @@ export const ChannelUI = UI.extend({
 				elem,
 				'channel',
 				visio.rgb[visio.channel].toStr(),
+				'visiomaticChannel',
+				'Click to set channel color',
 				function () {
 					const	chan = visio.channel,
 				    hex = $(colpick).val();
 					_this._updateMix(layer, chan, rgb(hex));
 					_this.collapsedOff = true;
-				},
-				'visiomaticChannel',
-				'Click to set channel color'
+				}
 			);
 
 		this._onInputChange(layer, 'cMap', 'grey');
@@ -241,11 +244,11 @@ export const ChannelUI = UI.extend({
 			visio.channelLabels,
 			undefined,
 			visio.channel,
+			'Select image channel',
 			function () {
 				visio.channel =  this._chanSelect.selectedIndex - 1;
 				this._updateChannel(layer, visio.channel, colpick);
-			},
-			'Select image channel'
+			}
 		);
 
 		this._addMinMax(layer, visio.channel, box);
@@ -258,14 +261,14 @@ export const ChannelUI = UI.extend({
 			className + '-button',
 			elem2,
 			'colormix-reset',
+			'Reset color mix',
 			function () {
 				_this.loadSettings(layer, _this._initsettings, 'color', true);
 				layer.updateMix();
 				this._updateColPick(layer);
 				this._updateChannelList(layer);
 				layer.redraw();
-			},
-			'Reset color mix'
+			}
 		);
 
 		// Create automated color settings button
@@ -273,6 +276,7 @@ export const ChannelUI = UI.extend({
 			className + '-button',
 			elem2,
 			'colormix-auto',
+			'Re-color active channels',
 			function () {
 				const	nchan = visio.nChannel,
 					rgb = visio.rgb,
@@ -299,8 +303,7 @@ export const ChannelUI = UI.extend({
 				this._updateChannelList(layer);
 				layer.redraw();
 
-			},
-			'Re-color active channels'
+			}
 		);
 
 
@@ -319,25 +322,21 @@ export const ChannelUI = UI.extend({
 		// Min
 		this._minElem = this._addNumericalInput(
 			layer,
+			'minValue[' + chan + ']',
 			box,
 			'Min:',
-			'minValue[' + chan + ']',
 			'Lower clipping limit in ' + visio.channelUnits[chan] + '.',
-			'leaflet-channel-minvalue',
-			visio.minValue[chan],
-			step
+			visio.minValue[chan], step
 		);
 
 		// Max
 		this._maxElem = this._addNumericalInput(
 			layer,
-			box,
-			'Max:',
 			'maxValue[' + chan + ']',
+			box,
 			'Upper clipping limit in ' + visio.channelUnits[chan] + '.',
-			'leaflet-channel-maxvalue',
-			visio.maxValue[chan],
-			step
+			'Max:',
+			visio.maxValue[chan], step
 		);
 	},
 
@@ -438,7 +437,6 @@ export const ChannelUI = UI.extend({
 				var	trashElem = this._addButton(
 					'visiomatic-control-trash',
 					chanElem,
-					undefined,
 					undefined,
 					'Delete channel'
 				);

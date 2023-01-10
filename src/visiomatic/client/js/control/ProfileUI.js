@@ -56,7 +56,6 @@ export const ProfileUI = UI.extend({
 					elem,
 					'profile',
 					options.profileColor,
-					false,
 					'visiomaticProfile',
 					'Click to set line color'
 				);
@@ -66,6 +65,7 @@ export const ProfileUI = UI.extend({
 				className + '-button',
 				elem,
 				'start',
+				'Start drawing a profile line',
 				function () {
 					if (this._currProfileLine) {
 						this._updateLine();
@@ -84,8 +84,7 @@ export const ProfileUI = UI.extend({
 						line.addTo(map);
 						map.on('drag', this._updateLine, this);
 					}
-				},
-				'Start drawing a profile line'
+				}
 			);
 
 			// Create end profile line button
@@ -93,8 +92,8 @@ export const ProfileUI = UI.extend({
 				className + '-button',
 				elem,
 				'end',
-				this._profileEnd,
-				'End line and plot'
+				'End line and plot',
+				this._profileEnd
 			);
 		}
 
@@ -109,7 +108,6 @@ export const ProfileUI = UI.extend({
 				elem,
 				'spectrum',
 				options.spectrumColor,
-				false,
 				'visiomaticSpectra',
 				'Click to set marker color'
 			);
@@ -119,6 +117,7 @@ export const ProfileUI = UI.extend({
 				className + '-button',
 				elem,
 				'spectrum',
+				'Plot a spectrum at the current map position',
 				function () {
 					const map = _this._map,
 						latLng = map.getCenter(),
@@ -160,8 +159,7 @@ export const ProfileUI = UI.extend({
 						this._plotSpectrum,
 						this
 					);
-				},
-				'Plot a spectrum at the current map position'
+				}
 			);
 		}
 	},

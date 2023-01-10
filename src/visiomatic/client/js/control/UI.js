@@ -25,6 +25,22 @@ import {
 import {FlipSwitch, Spinbox} from './widget';
 import {VUtil} from '../util';
 
+// Callback definitions
+/**
+ * Callbacks for UI control changes.
+ * @callback UI~controlCallback
+ * @param {object} UI - control object.
+ */
+/**
+ * Callbacks for color picker changes.
+ * @callback UI~colorCallback
+ */
+/**
+ * Callbacks for layer attribute changes.
+ * @callback UI~layerCallback
+ * @param {VTileLayer} layer - VisiOmatic layer.
+ */
+
 
 export const UI = Control.extend( /** @lends UI */ {
 	options: {
@@ -41,8 +57,9 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @param {VTileLayer[]} baseLayers - Array of layers
 	 * @param {object} [options] - Options.
 
-	 * @param {?string} [options.title='a control related to VisiOmatic']
-	   Layer title. Defaults to the basename of the tile URL with extension removed.
+	 * @param {string} [options.title='a control related to VisiOmatic']
+	   Layer title. Defaults to the basename of the tile URL with extension
+	   removed.
 
 	 * @param {boolean} [options.collapsed=true]
 	   Start dialog in the collapsed state?.
@@ -93,9 +110,12 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @returns {object} The newly created container of the dialog.
 	 */
 	onAdd: function (map) {
-		var	className = this._className,
+		const	className = this._className,
 			id = this._id,
-			container = this._container = DomUtil.create('div', className + ' leaflet-bar');
+			container = this._container = DomUtil.create(
+				'div',
+				className + ' leaflet-bar'
+			);
 
 		// Makes this work on IE10 Touch devices by stopping it
 		// from firing a mouseout event when the touch is released
@@ -113,7 +133,11 @@ export const UI = Control.extend( /** @lends UI */ {
 					.on(container, 'mouseout', this._collapse, this);
 			}
 
-			var toggle = this._toggle = DomUtil.create('a', className + '-toggle leaflet-bar', container);
+			const toggle = this._toggle = DomUtil.create(
+				'a',
+				className + '-toggle leaflet-bar',
+				container
+			);
 			toggle.href = '#';
 			toggle.id = id + '-toggle';
 			toggle.title = this.options.title;
@@ -147,7 +171,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @param {event} e - Leaflet map the control has been added to.
 	 */
 	_checkVisiomatic: function (e) {
-		var layer = e.layer;
+		const	layer = e.layer;
 
 		// Exit if not a VisiOmatic layer
 		if (!layer || !layer.visioDefault) {
@@ -171,7 +195,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	 */
 	_initDialog: function () {
 		/*
-		var	className = this._className,
+		const	className = this._className,
 			container = this._container,
 			dialog = this._dialog,
 			toggle = this._toggle,
@@ -197,11 +221,15 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @method
 	 * @static
 	 * @private
-	 * @param {string} id - DOM id property of the box element.
+	 * @param {string} [id] - DOM id property of the box element.
 	 * @returns {object} The newly created dialog box.
 	 */
 	_addDialogBox: function (id) {
-		var box = DomUtil.create('div', this._className + '-box', this._dialog);
+		const	box = DomUtil.create(
+			'div',
+			this._className + '-box',
+			this._dialog
+		);
 		if (id) {
 			box.id = id;
 		}
@@ -218,8 +246,13 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @returns {object} The newly created dialog line.
 	 */
 	_addDialogLine: function (label, dialogBox) {
-		var line = DomUtil.create('div', this._className + '-line', dialogBox),
-		 text = DomUtil.create('div', this._className + '-label', line);
+		const	line = DomUtil.create(
+				'div',
+				this._className + '-line',
+				dialogBox
+			),
+			text = DomUtil.create('div', this._className + '-label', line);
+
 		text.innerHTML = label;
 		return line;
 	},
@@ -275,10 +308,11 @@ export const UI = Control.extend( /** @lends UI */ {
 	* @returns {object} The active VisiOmatic layer, or ``undefined` otherwise.
 	*/
 	_findActiveBaseLayer: function () {
-		var layers = this._layers;
+		const	layers = this._layers;
+
 		this._prelayer = undefined;
-		for (var layername in layers) {
-			var layer = layers[layername];
+		for (var l in layers) {
+			var layer = layers[l];
 			if (!layer.overlay) {
 				if (!layer._map) {
 					this._prelayer = layer;
@@ -299,22 +333,24 @@ export const UI = Control.extend( /** @lends UI */ {
 	   Class name for the button.
 	 * @param {object} parent
 	   The parent element.
-	 * @param {?subClassName} [subClassName=null] 
-	   Sub-class name for the button.
-	 * @param {?function} [fn=null]
-	   Callback function for when the button is pressed.
-	 * @param {?title} [title=null]
+	 * @param {string} [subClassName] 
+	   Sub-class name for the button (will be combined with ClassName to
+	   generate a unique element id).
+	 * @param {string} [title]
 	   Title of the button (for, e.g., display as a tooltip).
+	 * @param {UI~controlCallback} [fn]
+	   Callback function for when the button is pressed.
 	 * @returns {object} The newly created button.
 	 */
 	_addButton: function (
 		className,
 		parent,
-		subClassName=null,
-		fn=null,
-		title=null
+		subClassName=undefined,
+		title=undefined,
+		fn=undefined
 	) {
-		var button = DomUtil.create('a', className, parent);
+		const	button = DomUtil.create('a', className, parent);
+
 		button.target = '_blank';
 		if (subClassName) {
 			button.id = className + '-' + subClassName;
@@ -328,8 +364,34 @@ export const UI = Control.extend( /** @lends UI */ {
 		return button;
 	},
 
-	_addRadioButton: function (className, parent, value, checked, fn, title) {
-		var button = DomUtil.create('input', className, parent);
+	/**
+	 * Add a new radio button to the provided parent element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} className
+	   Class name for the radio button.
+	 * @param {object} parent
+	   The parent element.
+	 * @param {*} value 
+	   Value associated with the radio button (e.g., button index or label).
+	 * @param {boolean} checked 
+	   Initial status of the button.
+	 * @param {string} [title]
+	   Title of the button (for, e.g., display as a tooltip).
+	 * @param {UI~controlCallback} [fn]
+	   Callback function for when the button is pressed.
+	 * @returns {object} The newly created radio button.
+	 */
+	_addRadioButton: function (
+		className,
+		parent,
+		value,
+		checked,
+		title=undefined,
+		fn=undefined
+	) {
+		const	button = DomUtil.create('input', className, parent);
 
 		button.type = 'radio';
 		button.name = className;
@@ -341,7 +403,7 @@ export const UI = Control.extend( /** @lends UI */ {
 			}, this);
 		}
 
-		var label =  DomUtil.create('label', className, parent);
+		const	label =  DomUtil.create('label', className, parent);
 
 		label.htmlFor = button.id = className + '-' + value;
 		if (title) {
@@ -350,13 +412,41 @@ export const UI = Control.extend( /** @lends UI */ {
 		return button;
 	},
 
-	_addSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
+	/**
+	 * Add a new selection menu to the provided parent element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} className
+	   Class name for the selection menu.
+	 * @param {object} parent
+	   The parent element.
+	 * @param {string[]} 
+	   Item list.
+	 * @param {boolean[]} [disabled]
+	   Item-disabling flag list.
+	 * @param {number} [selected]
+	   Selected item index.
+	 * @param {string} [title]
+	   Title of the selection menu (for, e.g., display as a tooltip).
+	 * @param {UI~controlCallback} [fn]
+	   Callback function for when an item is selected.
+	 * @returns {object} The newly created selection menu.
+	 */
+	_addSelectMenu: function (
+		className,
+		parent,
+		items,
+		disabled=undefined,
+		selected=undefined,
+		title=undefined,
+		fn=undefined
+	) {
 		// Wrapper around the select element for better positioning and sizing
-		var	div =  DomUtil.create('div', className, parent),
+		const	div =  DomUtil.create('div', className, parent),
 			select = DomUtil.create('select', className, div),
 			choose = document.createElement('option'),
-			opt = select.opt = [],
-			index;
+			opt = select.opt = [];
 
 		choose.text = 'choose';
 		choose.disabled = true;
@@ -365,7 +455,7 @@ export const UI = Control.extend( /** @lends UI */ {
 		}
 		select.add(choose, null);
 		for (var i in items) {
-			index = parseInt(i, 10);
+			var	index = parseInt(i, 10);
 			opt[index] = document.createElement('option');
 			opt[index].text = items[index];
 			opt[index].value = index;
@@ -403,9 +493,38 @@ export const UI = Control.extend( /** @lends UI */ {
 	},
 
 
-	_addColorPicker: function (className, parent, subClassName, defaultColor,
-	    fn, storageKey, title) {
-		var _this = this,
+	/**
+	 * Add a new color picker to the provided parent element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {string} className
+	   Class name for the color picker.
+	 * @param {object} parent
+	   The parent element.
+	 * @param {string} subClassName 
+	   Sub-class name for the color picker (will be combined with ClassName to
+	   generate a unique element id).
+	 * @param {string} defaultColor
+	   Default color picked by default.
+	 * @param {string} storageKey
+	   String to be used as a local browser storage key.
+	 * @param {string} [title]
+	   Title of the color picker (for, e.g., display as a tooltip).
+	 * @param {UI~colorCallback} [fn]
+	   Callback function for when a color has been picked.
+	 * @returns {object} The newly created color picker.
+	 */
+	_addColorPicker: function (
+		className,
+		parent,
+		subClassName,
+		defaultColor,
+	    storageKey,
+	    title=undefined,
+	    fn=undefined
+	) {
+		const	_this = this,
 			colpick = DomUtil.create('input', className, parent);
 
 		colpick.type = 'color';
@@ -439,12 +558,37 @@ export const UI = Control.extend( /** @lends UI */ {
 	},
 
 
-	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
-		var line = this._addDialogLine(label, box),
+	/**
+	 * Add a new layer attribute flip switch to the provided box element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   Layer affected by the flip switch action.
+	 * @param {string} attr
+	   Name of the (boolean) layer attribute to be flipped.
+	 * @param {object} box
+	   The parent box element.
+	 * @param {string} label 
+	   Text for the created dialog line.
+	 * @param {string} [title]
+	   Title of the flip switch (for, e.g., display as a tooltip).
+	 * @param {boolean} checked
+	   Initial switch position.
+	 * @returns {object} The newly created flip switch.
+	 */
+	_addSwitchInput: function (
+		layer,
+		attr,
+		box,
+		label,
+		title=undefined,
+		checked
+	) {
+		const	line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
 			flip = elem.flip = new FlipSwitch(elem, {
 				checked: checked,
-				id: id,
 				title: title
 			});
 
@@ -455,9 +599,47 @@ export const UI = Control.extend( /** @lends UI */ {
 		return elem;
 	},
 
-	_addNumericalInput:	function (layer, box, label, attr, title, id, initValue,
-	  step, min, max, func) {
-		var line = this._addDialogLine(label, box),
+	/**
+	 * Add a new numerical input widget to the provided box element for
+	   updating a layer attribute .
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   Layer affected by the numerical update.
+	 * @param {string} attr
+	   Name of the (numerical) layer attribute to be updated.
+	 * @param {object} box
+	   The parent box element.
+	 * @param {string} label 
+	   Text for the created dialog line.
+	 * @param {string} [title]
+	   Title of the numerical input (for, e.g., display as a tooltip).
+	 * @param {number} initValue
+	   Initial numerical value.
+	 * @param {number} step
+	   Starting step value.
+	 * @param {number} [min]
+	   Minimum value.
+ 	 * @param {number} [max]
+	   Maximum value.
+	 * @param {UI~layerCallback} [fn]
+	   Callback function for when the numerical input has been updated.
+	 * @returns {object} The newly created numerical input.
+	 */
+	_addNumericalInput:	function (
+		layer,
+		attr,
+		box,
+		label,
+		title=undefined,
+		initValue,
+		step,
+		min=undefined,
+		max=undefined,
+		fn=undefined
+	) {
+		const	line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
 			spinbox = elem.spinbox = new Spinbox(elem, {
 				step: step,
@@ -469,12 +651,22 @@ export const UI = Control.extend( /** @lends UI */ {
 
 		spinbox.on('change', function () {
 			VUtil.flashElement(spinbox._input);
-			this._onInputChange(layer, attr, spinbox.value(), func);
+			this._onInputChange(layer, attr, spinbox.value(), fn);
 		}, this);
 
 		return elem;
 	},
 
+	/**
+	 * Update the value stored in a widget element.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} element
+	   Widget element.
+	 * @param {*} value
+	   New value.
+	 */
 	_updateInput:	function (elem, value) {
 		if (elem.spinbox) {
 			elem.spinbox.value(value);
@@ -483,27 +675,65 @@ export const UI = Control.extend( /** @lends UI */ {
 		}
 	},
 
+	/**
+	 * Compute a step for the spinbox widget from the provided min and max
+	   values.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} min
+	   Minimum value.
+ 	 * @param {number} max
+	   Maximum value.
+	 * @returns {number} The computed step value.
+	 */
 	_spinboxStep: function (min, max) {
-		var step = parseFloat((Math.abs(max === min ? max : max - min) *
+		const	step = parseFloat((Math.abs(max === min ? max : max - min) *
 			         0.001).toPrecision(1));
 
 		return step === 0.0 ? 1.0 : step;
 	},
 
-	_onInputChange:	function (layer, pname, value, func) {
+	/**
+	 * Action performed on a layer attribute when a widget value is modified.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   Layer affected by the update.
+	 * @param {string} attr
+	   Name of the (numerical) layer attribute to be updated.
+	 * @param {*} value
+	   New value.
+	 * @param {UI~layerCallback} [fn]
+	   Optional additional callback function.
+	 */
+	_onInputChange:	function (
+		layer,
+		attr,
+		value,
+		fn=undefined
+	) {
 
-		const	pnamearr = pname.split(/\[|\]/);
-		if (pnamearr[1]) {
-			layer.visio[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+		const	attrarr = attr.split(/\[|\]/);
+		if (attrarr[1]) {
+			layer.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
 		}	else {
-			layer.visio[pnamearr[0]] = value;
+			layer.visio[attrarr[0]] = value;
 		}
-		if (func) {
-			func(layer);
+		if (fn) {
+			fn(layer);
 		}
 		layer.redraw();
 	},
 
+	/**
+	 * Update the control list of layers.
+	 * @method
+	 * @static
+	 * @private
+	 * @returns {object} This (control).
+	 */
 	_updateLayerList: function () {
 		if (!this._dialog) {
 			return this;
@@ -512,8 +742,11 @@ export const UI = Control.extend( /** @lends UI */ {
 		if (this._layerList) {
 			DomUtil.empty(this._layerList);
 		} else {
-			this._layerList = DomUtil.create('div', 'visiomatic-control' + '-layerlist',
-			  this._dialog);
+			this._layerList = DomUtil.create(
+				'div',
+				'visiomatic-control' + '-layerlist',
+				this._dialog
+			);
 		}
 
 		for (var i in this._layers) {
@@ -523,6 +756,14 @@ export const UI = Control.extend( /** @lends UI */ {
 		return this;
 	},
 
+	/**
+	 * Add control item element for the provided layer parent object.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} obj - Layer parent object.
+	 * @returns {object} The control item element.
+	 */
 	_addLayerItem: function (obj) {
 		const	_this = this,
 			layerItem = DomUtil.create('div', 'visiomatic-control-layer'),
@@ -535,26 +776,26 @@ export const UI = Control.extend( /** @lends UI */ {
 		if (obj.layer.notReady) {
 			DomUtil.create('div', 'visiomatic-control-activity', inputdiv);
 		} else {
-			var	input,
-				checked = this._map.hasLayer(obj.layer);
-			input = document.createElement('input');
-			input.type = 'checkbox';
-			input.className = 'visiomatic-control-selector';
-			input.defaultChecked = checked;
-			input.layerId = Util.stamp(obj.layer);
-			DomEvent.on(input, 'click', function () {
-				var i, input, obj,
-			      inputs = this._layerList.getElementsByTagName('input'),
-				    inputsLen = inputs.length;
+			const	checked = this._map.hasLayer(obj.layer),
+				newInput = document.createElement('input');
+
+			newInput.type = 'checkbox';
+			newInput.className = 'visiomatic-control-selector';
+			newInput.defaultChecked = checked;
+			newInput.layerId = Util.stamp(obj.layer);
+			DomEvent.on(newInput, 'click', function () {
+				const inputs = this._layerList.getElementsByTagName('input'),
+					inputsLen = inputs.length;
 
 				this._handlingClick = true;
 
 				for (i = 0; i < inputsLen; i++) {
-					input = inputs[i];
+					var	input = inputs[i];
+
 					if (!('layerId' in input)) {
 						continue;
 					}
-					obj = this._layers[input.layerId];
+					var	obj = this._layers[input.layerId];
 					if (input.checked && !this._map.hasLayer(obj.layer)) {
 						obj.layer.addTo(this._map);
 					} else if (!input.checked && this._map.hasLayer(obj.layer)) {
@@ -564,23 +805,27 @@ export const UI = Control.extend( /** @lends UI */ {
 
 				this._handlingClick = false;
 			}, this);
-			inputdiv.appendChild(input);
+			inputdiv.appendChild(newInput);
 		}
 	
-		var name = DomUtil.create('div', 'visiomatic-control-layername', layerItem);
-		name.innerHTML = ' ' + obj.name;
-		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
+		const layerName = DomUtil.create(
+			'div',
+			'visiomatic-control-layername',
+			layerItem
+		);
+		layerName.innerHTML = ' ' + obj.name;
+		layerName.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
 
 		this._addButton('visiomatic-control-trash',
 			layerItem,
 			undefined,
+			'Delete layer',
 			function () {
 				_this.removeLayer(obj.layer);
 				if (!obj.notReady) {
 					_this._map.removeLayer(obj.layer);
 				}
-			},
-			'Delete layer'
+			}
 		);
 
 		this._layerList.appendChild(layerItem);
@@ -588,10 +833,19 @@ export const UI = Control.extend( /** @lends UI */ {
 		return layerItem;
 	},
 
+	/**
+	 * Add (overlay) layer from the present control.
+	 * @method
+	 * @static
+	 * @param {leaflet.Layer} layer - Layer to be added.
+	 * @param {string} name - Layer name.
+	 * @param {number} [index] - Layer depth index.
+	 * @returns {object} This (control).
+	 */
 	addLayer: function (layer, name, index) {
 		layer.on('add remove', this._onLayerChange, this);
 
-		var id = Util.stamp(layer);
+		const	id = Util.stamp(layer);
 
 		this._layers[id] = {
 			layer: layer,
@@ -602,6 +856,13 @@ export const UI = Control.extend( /** @lends UI */ {
 		return this._updateLayerList();
 	},
 
+	/**
+	 * Remove (overlay) layer from the present control.
+	 * @method
+	 * @static
+	 * @param {leaflet.Layer} layer - Layer to be removed.
+	 * @returns {object} This (control).
+	 */
 	removeLayer: function (layer) {
 		layer.off('add remove', this._onLayerChange, this);
 		layer.fire('trash', {index: this._layers[Util.stamp(layer)].index});
@@ -611,19 +872,33 @@ export const UI = Control.extend( /** @lends UI */ {
 		return this._updateLayerList();
 	},
 
+	/**
+	 * Action performed when an (overlay) layer is added or removed.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {event} e - layer event (``add`` or ``remove``).
+	 */
 	_onLayerChange: function (e) {
 		if (!this._handlingClick) {
 			this._updateLayerList();
 		}
 
-		var obj = this._layers[Util.stamp(e.target)],
-		    type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
+		const	obj = this._layers[Util.stamp(e.target)],
+			type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
 
 		this._map.fire(type, obj);
 	}
 
 });
 
+/**
+ * Instantiate a new UI.
+ * @function
+ * @param {VTileLayer[]} baseLayers - Array of layers
+ * @param {object} [options] - Options: see {@link UI}
+ * @returns {UI} VisiOmatic UI instance.
+*/
 export const ui = function (baseLayers, options) {
 	return new UI(baseLayers, options);
 };

@@ -564,6 +564,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @method
 	 * @static
 	 * @private
+	 * @deprecated since version 3.0
 	 * @param {string} str - Input string.
 	 * @param {string} keyword - Input keyword.
 	 * @param {string} regexp - Regular expression for decoding the value.
@@ -856,6 +857,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	}
 
 });
+
 /**
  * Instantiate a new VTileLayer.
  * @function

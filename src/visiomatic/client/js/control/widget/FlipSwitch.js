@@ -5,7 +5,7 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+#	Copyright: (C) 2015-2023 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 #
 */
 import {
@@ -22,7 +22,6 @@ export const FlipSwitch = Evented.extend({
 		checked: false,
 		title: 'Click to switch',
 		className: 'leaflet-flipswitch',
-		id: 'leaflet-flipswitch'
 	},
 
 	initialize: function (parent, options) {

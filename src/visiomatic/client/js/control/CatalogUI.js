@@ -87,29 +87,29 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
+	// CDS catalog overlay
 	_initDialog: function () {
-		var	className = this._className,
+		const	className = this._className,
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
-			// CDS catalog overlay
 			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
 			colpick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'catalog',
-			  this.options.color,
-				false,
+				this.options.color,
 				'visiomaticCatalog',
 				'Click to set catalog color'
 			);
 
-		var catselect = this._addSelectMenu(
+		const	catselect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
 			catalogs.map(function (catalog) { return catalog.name; }),
 			undefined,
 			-1,
+			'Select Catalog',
 			function () {
 				var className = catalogs[catselect.selectedIndex - 1].className;
 				if (className === undefined) {
@@ -117,28 +117,35 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				}
 				DomUtil.setClass(catselect, this._className + '-select ' + className);
 				return;
-			},
-			'Select Catalog'
+			}
 		);
 
 		DomEvent.on(catselect, 'change keyup', function () {
-			var catalog = catalogs[catselect.selectedIndex - 1];
+			const	catalog = catalogs[catselect.selectedIndex - 1];
+
 			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
 
-		elem = this._addDialogElement(line);
+		const	elem2 = this._addDialogElement(line);
 
-		this._addButton(className + '-button', elem, 'catalog', function () {
-			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
-			if (index >= 0) {
-				var catalog = catalogs[index];
-				catalog.color = colpick.value;
-				catselect.selectedIndex = 0;
-				catselect.title = 'Select Catalog';
-				DomUtil.setClass(catselect, this._className + '-select ');
-				this._getCatalog(catalog, this.options.timeOut);
+		this._addButton(
+			className + '-button',
+			elem2,
+			'catalog',
+			'Query catalog',
+			function () {
+				// Ignore dummy 'Choose catalog' entry
+				const	index = catselect.selectedIndex - 1;
+				if (index >= 0) {
+					const	catalog = catalogs[index];
+					catalog.color = colpick.value;
+					catselect.selectedIndex = 0;
+					catselect.title = 'Select Catalog';
+					DomUtil.setClass(catselect, this._className + '-select ');
+					this._getCatalog(catalog, this.options.timeOut);
+				}
 			}
-		}, 'Query catalog');
+		);
 	},
 
 	_resetDialog: function () {

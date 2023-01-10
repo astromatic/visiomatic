@@ -34,11 +34,11 @@
         "use strict";
         var version = "1.9.3";
         function extend16(dest) {
-          var i, j, len, src;
+          var i2, j, len, src;
           for (j = 1, len = arguments.length; j < len; j++) {
             src = arguments[j];
-            for (i in src) {
-              dest[i] = src[i];
+            for (i2 in src) {
+              dest[i2] = src[i2];
             }
           }
           return dest;
@@ -112,15 +112,15 @@
           if (!Object.prototype.hasOwnProperty.call(obj, "options")) {
             obj.options = obj.options ? create$2(obj.options) : {};
           }
-          for (var i in options2) {
-            obj.options[i] = options2[i];
+          for (var i2 in options2) {
+            obj.options[i2] = options2[i2];
           }
           return obj.options;
         }
         function getParamString(obj, existingUrl, uppercase) {
           var params = [];
-          for (var i in obj) {
-            params.push(encodeURIComponent(uppercase ? i.toUpperCase() : i) + "=" + encodeURIComponent(obj[i]));
+          for (var i2 in obj) {
+            params.push(encodeURIComponent(uppercase ? i2.toUpperCase() : i2) + "=" + encodeURIComponent(obj[i2]));
           }
           return (!existingUrl || existingUrl.indexOf("?") === -1 ? "?" : "&") + params.join("&");
         }
@@ -140,9 +140,9 @@
           return Object.prototype.toString.call(obj) === "[object Array]";
         };
         function indexOf(array, el) {
-          for (var i = 0; i < array.length; i++) {
-            if (array[i] === el) {
-              return i;
+          for (var i2 = 0; i2 < array.length; i2++) {
+            if (array[i2] === el) {
+              return i2;
             }
           }
           return -1;
@@ -213,9 +213,9 @@
           var proto = create$2(parentProto);
           proto.constructor = NewClass;
           NewClass.prototype = proto;
-          for (var i in this) {
-            if (Object.prototype.hasOwnProperty.call(this, i) && i !== "prototype" && i !== "__super__") {
-              NewClass[i] = this[i];
+          for (var i2 in this) {
+            if (Object.prototype.hasOwnProperty.call(this, i2) && i2 !== "prototype" && i2 !== "__super__") {
+              NewClass[i2] = this[i2];
             }
           }
           if (props.statics) {
@@ -241,8 +241,8 @@
               parentProto.callInitHooks.call(this);
             }
             this._initHooksCalled = true;
-            for (var i2 = 0, len = proto._initHooks.length; i2 < len; i2++) {
-              proto._initHooks[i2].call(this);
+            for (var i3 = 0, len = proto._initHooks.length; i3 < len; i3++) {
+              proto._initHooks[i3].call(this);
             }
           };
           return NewClass;
@@ -274,8 +274,8 @@
             return;
           }
           includes = isArray(includes) ? includes : [includes];
-          for (var i = 0; i < includes.length; i++) {
-            if (includes[i] === L.Mixin.Events) {
+          for (var i2 = 0; i2 < includes.length; i2++) {
+            if (includes[i2] === L.Mixin.Events) {
               console.warn("Deprecated include of L.Mixin.Events: this property will be removed in future releases, please inherit from L.Evented instead.", new Error().stack);
             }
           }
@@ -288,8 +288,8 @@
               }
             } else {
               types = splitWords(types);
-              for (var i = 0, len = types.length; i < len; i++) {
-                this._on(types[i], fn, context);
+              for (var i2 = 0, len = types.length; i2 < len; i2++) {
+                this._on(types[i2], fn, context);
               }
             }
             return this;
@@ -304,11 +304,11 @@
             } else {
               types = splitWords(types);
               var removeAll = arguments.length === 1;
-              for (var i = 0, len = types.length; i < len; i++) {
+              for (var i2 = 0, len = types.length; i2 < len; i2++) {
                 if (removeAll) {
-                  this._off(types[i]);
+                  this._off(types[i2]);
                 } else {
-                  this._off(types[i], fn, context);
+                  this._off(types[i2], fn, context);
                 }
               }
             }
@@ -334,7 +334,7 @@
             this._events[type].push(newListener);
           },
           _off: function(type, fn, context) {
-            var listeners, i, len;
+            var listeners, i2, len;
             if (!this._events) {
               return;
             }
@@ -344,8 +344,8 @@
             }
             if (arguments.length === 1) {
               if (this._firingCount) {
-                for (i = 0, len = listeners.length; i < len; i++) {
-                  listeners[i].fn = falseFn;
+                for (i2 = 0, len = listeners.length; i2 < len; i2++) {
+                  listeners[i2].fn = falseFn;
                 }
               }
               delete this._events[type];
@@ -378,8 +378,8 @@
               var listeners = this._events[type];
               if (listeners) {
                 this._firingCount = this._firingCount + 1 || 1;
-                for (var i = 0, len = listeners.length; i < len; i++) {
-                  var l = listeners[i];
+                for (var i2 = 0, len = listeners.length; i2 < len; i2++) {
+                  var l = listeners[i2];
                   var fn = l.fn;
                   if (l.once) {
                     this.off(type, fn, l.ctx);
@@ -430,9 +430,9 @@
             if (context === this) {
               context = void 0;
             }
-            for (var i = 0, len = listeners.length; i < len; i++) {
-              if (listeners[i].fn === fn && listeners[i].ctx === context) {
-                return i;
+            for (var i2 = 0, len = listeners.length; i2 < len; i2++) {
+              if (listeners[i2].fn === fn && listeners[i2].ctx === context) {
+                return i2;
               }
             }
             return false;
@@ -444,8 +444,8 @@
               }
             } else {
               types = splitWords(types);
-              for (var i = 0, len = types.length; i < len; i++) {
-                this._on(types[i], fn, context, true);
+              for (var i2 = 0, len = types.length; i2 < len; i2++) {
+                this._on(types[i2], fn, context, true);
               }
             }
             return this;
@@ -594,8 +594,8 @@
             return;
           }
           var points = b ? [a, b] : a;
-          for (var i = 0, len = points.length; i < len; i++) {
-            this.extend(points[i]);
+          for (var i2 = 0, len = points.length; i2 < len; i2++) {
+            this.extend(points[i2]);
           }
         }
         Bounds2.prototype = {
@@ -701,8 +701,8 @@
             return;
           }
           var latlngs = corner2 ? [corner1, corner2] : corner1;
-          for (var i = 0, len = latlngs.length; i < len; i++) {
-            this.extend(latlngs[i]);
+          for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
+            this.extend(latlngs[i2]);
           }
         }
         LatLngBounds3.prototype = {
@@ -1001,9 +1001,9 @@
           return document.createElementNS("http://www.w3.org/2000/svg", name);
         }
         function pointsToPath(rings, closed) {
-          var str2 = "", i, j, len, len2, points, p;
-          for (i = 0, len = rings.length; i < len; i++) {
-            points = rings[i];
+          var str2 = "", i2, j, len, len2, points, p;
+          for (i2 = 0, len = rings.length; i2 < len; i2++) {
+            points = rings[i2];
             for (j = 0, len2 = points.length; j < len2; j++) {
               p = points[j];
               str2 += (j ? "L" : "M") + p.x + " " + p.y;
@@ -1180,8 +1180,8 @@
             return;
           }
           e.touches = [];
-          for (var i in _pointers) {
-            e.touches.push(_pointers[i]);
+          for (var i2 in _pointers) {
+            e.touches.push(_pointers[i2]);
           }
           e.changedTouches = [e];
           handler(e);
@@ -1193,10 +1193,10 @@
           _handlePointer(handler, e);
         }
         function makeDblclick(event) {
-          var newEvent = {}, prop, i;
-          for (i in event) {
-            prop = event[i];
-            newEvent[i] = prop && prop.bind ? prop.bind(event) : prop;
+          var newEvent = {}, prop, i2;
+          for (i2 in event) {
+            prop = event[i2];
+            newEvent[i2] = prop && prop.bind ? prop.bind(event) : prop;
           }
           event = newEvent;
           newEvent.type = "dblclick";
@@ -1305,8 +1305,8 @@
         function addClass(el, name) {
           if (el.classList !== void 0) {
             var classes = splitWords(name);
-            for (var i = 0, len = classes.length; i < len; i++) {
-              el.classList.add(classes[i]);
+            for (var i2 = 0, len = classes.length; i2 < len; i2++) {
+              el.classList.add(classes[i2]);
             }
           } else if (!hasClass(el, name)) {
             var className = getClass(el);
@@ -1359,9 +1359,9 @@
         }
         function testProp(props) {
           var style2 = document.documentElement.style;
-          for (var i = 0; i < props.length; i++) {
-            if (props[i] in style2) {
-              return props[i];
+          for (var i2 = 0; i2 < props.length; i2++) {
+            if (props[i2] in style2) {
+              return props[i2];
             }
           }
           return false;
@@ -1495,8 +1495,8 @@
             }
           } else {
             types = splitWords(types);
-            for (var i = 0, len = types.length; i < len; i++) {
-              addOne(obj, types[i], fn, context);
+            for (var i2 = 0, len = types.length; i2 < len; i2++) {
+              addOne(obj, types[i2], fn, context);
             }
           }
           return this;
@@ -1517,8 +1517,8 @@
                 return indexOf(types, type2) !== -1;
               });
             } else {
-              for (var i = 0, len = types.length; i < len; i++) {
-                removeOne(obj, types[i], fn, context);
+              for (var i2 = 0, len = types.length; i2 < len; i2++) {
+                removeOne(obj, types[i2], fn, context);
               }
             }
           }
@@ -1880,8 +1880,8 @@
             targetCenter = toLatLng(targetCenter);
             targetZoom = targetZoom === void 0 ? startZoom : targetZoom;
             var w0 = Math.max(size.x, size.y), w1 = w0 * this.getZoomScale(startZoom, targetZoom), u1 = to.distanceTo(from) || 1, rho = 1.42, rho2 = rho * rho;
-            function r(i) {
-              var s1 = i ? -1 : 1, s2 = i ? w1 : w0, t1 = w1 * w1 - w0 * w0 + s1 * rho2 * rho2 * u1 * u1, b1 = 2 * s2 * rho2 * u1, b = t1 / b1, sq = Math.sqrt(b * b + 1) - b;
+            function r(i2) {
+              var s1 = i2 ? -1 : 1, s2 = i2 ? w1 : w0, t1 = w1 * w1 - w0 * w0 + s1 * rho2 * rho2 * u1 * u1, b1 = 2 * s2 * rho2 * u1, b = t1 / b1, sq = Math.sqrt(b * b + 1) - b;
               var log = sq < 1e-9 ? -18 : Math.log(sq);
               return log;
             }
@@ -2083,9 +2083,9 @@
               bounds: bounds3,
               timestamp: pos.timestamp
             };
-            for (var i in pos.coords) {
-              if (typeof pos.coords[i] === "number") {
-                data[i] = pos.coords[i];
+            for (var i2 in pos.coords) {
+              if (typeof pos.coords[i2] === "number") {
+                data[i2] = pos.coords[i2];
               }
             }
             this.fire("locationfound", data);
@@ -2132,12 +2132,12 @@
             if (this._loaded) {
               this.fire("unload");
             }
-            var i;
-            for (i in this._layers) {
-              this._layers[i].remove();
+            var i2;
+            for (i2 in this._layers) {
+              this._layers[i2].remove();
             }
-            for (i in this._panes) {
-              remove(this._panes[i]);
+            for (i2 in this._panes) {
+              remove(this._panes[i2]);
             }
             this._layers = [];
             this._panes = [];
@@ -2466,9 +2466,9 @@
             var targets = this._findEventTargets(e, type);
             if (canvasTargets) {
               var filtered = [];
-              for (var i = 0; i < canvasTargets.length; i++) {
-                if (canvasTargets[i].listens(type, true)) {
-                  filtered.push(canvasTargets[i]);
+              for (var i2 = 0; i2 < canvasTargets.length; i2++) {
+                if (canvasTargets[i2].listens(type, true)) {
+                  filtered.push(canvasTargets[i2]);
                 }
               }
               targets = filtered.concat(targets);
@@ -2489,9 +2489,9 @@
               data.layerPoint = this.containerPointToLayerPoint(data.containerPoint);
               data.latlng = isMarker ? target.getLatLng() : this.layerPointToLatLng(data.layerPoint);
             }
-            for (i = 0; i < targets.length; i++) {
-              targets[i].fire(type, data, true);
-              if (data.originalEvent._stopped || targets[i].options.bubblingMouseEvents === false && indexOf(this._mouseEvents, type) !== -1) {
+            for (i2 = 0; i2 < targets.length; i2++) {
+              targets[i2].fire(type, data, true);
+              if (data.originalEvent._stopped || targets[i2].options.bubblingMouseEvents === false && indexOf(this._mouseEvents, type) !== -1) {
                 return;
               }
             }
@@ -2501,8 +2501,8 @@
             return obj.dragging && obj.dragging.moved() || this.boxZoom && this.boxZoom.moved();
           },
           _clearHandlers: function() {
-            for (var i = 0, len = this._handlers.length; i < len; i++) {
-              this._handlers[i].disable();
+            for (var i2 = 0, len = this._handlers.length; i2 < len; i2++) {
+              this._handlers[i2].disable();
             }
           },
           whenReady: function(callback, context) {
@@ -2763,8 +2763,8 @@
             createCorner("bottom", "right");
           },
           _clearControlPos: function() {
-            for (var i in this._controlCorners) {
-              remove(this._controlCorners[i]);
+            for (var i2 in this._controlCorners) {
+              remove(this._controlCorners[i2]);
             }
             remove(this._controlContainer);
             delete this._controlCorners;
@@ -2788,11 +2788,11 @@
             this._layers = [];
             this._lastZIndex = 0;
             this._handlingClick = false;
-            for (var i in baseLayers) {
-              this._addLayer(baseLayers[i], i);
+            for (var i2 in baseLayers) {
+              this._addLayer(baseLayers[i2], i2);
             }
-            for (i in overlays) {
-              this._addLayer(overlays[i], i, true);
+            for (i2 in overlays) {
+              this._addLayer(overlays[i2], i2, true);
             }
           },
           onAdd: function(map2) {
@@ -2800,8 +2800,8 @@
             this._update();
             this._map = map2;
             map2.on("zoomend", this._checkDisabledLayers, this);
-            for (var i = 0; i < this._layers.length; i++) {
-              this._layers[i].layer.on("add remove", this._onLayerChange, this);
+            for (var i2 = 0; i2 < this._layers.length; i2++) {
+              this._layers[i2].layer.on("add remove", this._onLayerChange, this);
             }
             return this._container;
           },
@@ -2811,8 +2811,8 @@
           },
           onRemove: function() {
             this._map.off("zoomend", this._checkDisabledLayers, this);
-            for (var i = 0; i < this._layers.length; i++) {
-              this._layers[i].layer.off("add remove", this._onLayerChange, this);
+            for (var i2 = 0; i2 < this._layers.length; i2++) {
+              this._layers[i2].layer.off("add remove", this._onLayerChange, this);
             }
           },
           addBaseLayer: function(layer, name) {
@@ -2885,9 +2885,9 @@
             container.appendChild(section);
           },
           _getLayer: function(id) {
-            for (var i = 0; i < this._layers.length; i++) {
-              if (this._layers[i] && stamp(this._layers[i].layer) === id) {
-                return this._layers[i];
+            for (var i2 = 0; i2 < this._layers.length; i2++) {
+              if (this._layers[i2] && stamp(this._layers[i2].layer) === id) {
+                return this._layers[i2];
               }
             }
           },
@@ -2918,9 +2918,9 @@
             empty(this._baseLayersList);
             empty(this._overlaysList);
             this._layerControlInputs = [];
-            var baseLayersPresent, overlaysPresent, i, obj, baseLayersCount = 0;
-            for (i = 0; i < this._layers.length; i++) {
-              obj = this._layers[i];
+            var baseLayersPresent, overlaysPresent, i2, obj, baseLayersCount = 0;
+            for (i2 = 0; i2 < this._layers.length; i2++) {
+              obj = this._layers[i2];
               this._addItem(obj);
               overlaysPresent = overlaysPresent || obj.overlay;
               baseLayersPresent = baseLayersPresent || !obj.overlay;
@@ -2977,8 +2977,8 @@
             var inputs = this._layerControlInputs, input, layer;
             var addedLayers = [], removedLayers = [];
             this._handlingClick = true;
-            for (var i = inputs.length - 1; i >= 0; i--) {
-              input = inputs[i];
+            for (var i2 = inputs.length - 1; i2 >= 0; i2--) {
+              input = inputs[i2];
               layer = this._getLayer(input.layerId).layer;
               if (input.checked) {
                 addedLayers.push(layer);
@@ -2986,14 +2986,14 @@
                 removedLayers.push(layer);
               }
             }
-            for (i = 0; i < removedLayers.length; i++) {
-              if (this._map.hasLayer(removedLayers[i])) {
-                this._map.removeLayer(removedLayers[i]);
+            for (i2 = 0; i2 < removedLayers.length; i2++) {
+              if (this._map.hasLayer(removedLayers[i2])) {
+                this._map.removeLayer(removedLayers[i2]);
               }
             }
-            for (i = 0; i < addedLayers.length; i++) {
-              if (!this._map.hasLayer(addedLayers[i])) {
-                this._map.addLayer(addedLayers[i]);
+            for (i2 = 0; i2 < addedLayers.length; i2++) {
+              if (!this._map.hasLayer(addedLayers[i2])) {
+                this._map.addLayer(addedLayers[i2]);
               }
             }
             this._handlingClick = false;
@@ -3001,8 +3001,8 @@
           },
           _checkDisabledLayers: function() {
             var inputs = this._layerControlInputs, input, layer, zoom2 = this._map.getZoom();
-            for (var i = inputs.length - 1; i >= 0; i--) {
-              input = inputs[i];
+            for (var i2 = inputs.length - 1; i2 >= 0; i2--) {
+              input = inputs[i2];
               layer = this._getLayer(input.layerId).layer;
               input.disabled = layer.options.minZoom !== void 0 && zoom2 < layer.options.minZoom || layer.options.maxZoom !== void 0 && zoom2 > layer.options.maxZoom;
             }
@@ -3200,9 +3200,9 @@
             map2.attributionControl = this;
             this._container = create$1("div", "leaflet-control-attribution");
             disableClickPropagation(this._container);
-            for (var i in map2._layers) {
-              if (map2._layers[i].getAttribution) {
-                this.addAttribution(map2._layers[i].getAttribution());
+            for (var i2 in map2._layers) {
+              if (map2._layers[i2].getAttribution) {
+                this.addAttribution(map2._layers[i2].getAttribution());
               }
             }
             this._update();
@@ -3251,9 +3251,9 @@
               return;
             }
             var attribs = [];
-            for (var i in this._attributions) {
-              if (this._attributions[i]) {
-                attribs.push(i);
+            for (var i2 in this._attributions) {
+              if (this._attributions[i2]) {
+                attribs.push(i2);
               }
             }
             var prefixAndAttribs = [];
@@ -3462,20 +3462,20 @@
           var len = points.length, ArrayConstructor = typeof Uint8Array !== void 0 + "" ? Uint8Array : Array, markers = new ArrayConstructor(len);
           markers[0] = markers[len - 1] = 1;
           _simplifyDPStep(points, markers, sqTolerance, 0, len - 1);
-          var i, newPoints = [];
-          for (i = 0; i < len; i++) {
-            if (markers[i]) {
-              newPoints.push(points[i]);
+          var i2, newPoints = [];
+          for (i2 = 0; i2 < len; i2++) {
+            if (markers[i2]) {
+              newPoints.push(points[i2]);
             }
           }
           return newPoints;
         }
         function _simplifyDPStep(points, markers, sqTolerance, first, last) {
-          var maxSqDist = 0, index2, i, sqDist;
-          for (i = first + 1; i <= last - 1; i++) {
-            sqDist = _sqClosestPointOnSegment(points[i], points[first], points[last], true);
+          var maxSqDist = 0, index2, i2, sqDist;
+          for (i2 = first + 1; i2 <= last - 1; i2++) {
+            sqDist = _sqClosestPointOnSegment(points[i2], points[first], points[last], true);
             if (sqDist > maxSqDist) {
-              index2 = i;
+              index2 = i2;
               maxSqDist = sqDist;
             }
           }
@@ -3487,10 +3487,10 @@
         }
         function _reducePoints(points, sqTolerance) {
           var reducedPoints = [points[0]];
-          for (var i = 1, prev = 0, len = points.length; i < len; i++) {
-            if (_sqDist(points[i], points[prev]) > sqTolerance) {
-              reducedPoints.push(points[i]);
-              prev = i;
+          for (var i2 = 1, prev = 0, len = points.length; i2 < len; i2++) {
+            if (_sqDist(points[i2], points[prev]) > sqTolerance) {
+              reducedPoints.push(points[i2]);
+              prev = i2;
             }
           }
           if (prev < len - 1) {
@@ -3580,7 +3580,7 @@
           return isFlat(latlngs);
         }
         function polylineCenter(latlngs, crs) {
-          var i, halfDist, segDist, dist, p1, p2, ratio, center;
+          var i2, halfDist, segDist, dist, p1, p2, ratio, center;
           if (!latlngs || latlngs.length === 0) {
             throw new Error("latlngs not passed");
           }
@@ -3593,15 +3593,15 @@
             points.push(crs.project(toLatLng(latlngs[j])));
           }
           var len = points.length;
-          for (i = 0, halfDist = 0; i < len - 1; i++) {
-            halfDist += points[i].distanceTo(points[i + 1]) / 2;
+          for (i2 = 0, halfDist = 0; i2 < len - 1; i2++) {
+            halfDist += points[i2].distanceTo(points[i2 + 1]) / 2;
           }
           if (halfDist === 0) {
             center = points[0];
           } else {
-            for (i = 0, dist = 0; i < len - 1; i++) {
-              p1 = points[i];
-              p2 = points[i + 1];
+            for (i2 = 0, dist = 0; i2 < len - 1; i2++) {
+              p1 = points[i2];
+              p2 = points[i2 + 1];
               segDist = p1.distanceTo(p2);
               dist += segDist;
               if (dist > halfDist) {
@@ -3630,15 +3630,15 @@
           polylineCenter
         };
         function clipPolygon(points, bounds3, round) {
-          var clippedPoints, edges = [1, 4, 2, 8], i, j, k, a, b, len, edge2, p;
-          for (i = 0, len = points.length; i < len; i++) {
-            points[i]._code = _getBitCode(points[i], bounds3);
+          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
+          for (i2 = 0, len = points.length; i2 < len; i2++) {
+            points[i2]._code = _getBitCode(points[i2], bounds3);
           }
           for (k = 0; k < 4; k++) {
             edge2 = edges[k];
             clippedPoints = [];
-            for (i = 0, len = points.length, j = len - 1; i < len; j = i++) {
-              a = points[i];
+            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
+              a = points[i2];
               b = points[j];
               if (!(a._code & edge2)) {
                 if (b._code & edge2) {
@@ -3658,7 +3658,7 @@
           return points;
         }
         function polygonCenter(latlngs, crs) {
-          var i, j, p1, p2, f, area, x, y, center;
+          var i2, j, p1, p2, f, area, x, y, center;
           if (!latlngs || latlngs.length === 0) {
             throw new Error("latlngs not passed");
           }
@@ -3672,8 +3672,8 @@
           }
           var len = points.length;
           area = x = y = 0;
-          for (i = 0, j = len - 1; i < len; j = i++) {
-            p1 = points[i];
+          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
+            p1 = points[i2];
             p2 = points[j];
             f = p1.y * p2.x - p2.y * p1.x;
             x += (p1.x + p2.x) * f;
@@ -3713,7 +3713,7 @@
           },
           unproject: function(point8) {
             var d2 = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point8.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
-            for (var i = 0, dphi = 0.1, con; i < 15 && Math.abs(dphi) > 1e-7; i++) {
+            for (var i2 = 0, dphi = 0.1, con; i2 < 15 && Math.abs(dphi) > 1e-7; i2++) {
               con = e * Math.sin(phi);
               con = Math.pow((1 - con) / (1 + con), e / 2);
               dphi = Math.PI / 2 - 2 * Math.atan(ts * con) - phi;
@@ -3851,15 +3851,15 @@
             return stamp(layer) in this._layers;
           },
           eachLayer: function(method, context) {
-            for (var i in this._layers) {
-              method.call(context, this._layers[i]);
+            for (var i2 in this._layers) {
+              method.call(context, this._layers[i2]);
             }
             return this;
           },
           _addLayers: function(layers2) {
             layers2 = layers2 ? isArray(layers2) ? layers2 : [layers2] : [];
-            for (var i = 0, len = layers2.length; i < len; i++) {
-              this.addLayer(layers2[i]);
+            for (var i2 = 0, len = layers2.length; i2 < len; i2++) {
+              this.addLayer(layers2[i2]);
             }
           },
           _addZoomLimit: function(layer) {
@@ -3877,8 +3877,8 @@
           },
           _updateZoomLevels: function() {
             var minZoom = Infinity, maxZoom = -Infinity, oldZoomSpan = this._getZoomSpan();
-            for (var i in this._zoomBoundLayers) {
-              var options2 = this._zoomBoundLayers[i].options;
+            for (var i2 in this._zoomBoundLayers) {
+              var options2 = this._zoomBoundLayers[i2].options;
               minZoom = options2.minZoom === void 0 ? minZoom : Math.min(minZoom, options2.minZoom);
               maxZoom = options2.maxZoom === void 0 ? maxZoom : Math.max(maxZoom, options2.maxZoom);
             }
@@ -3899,10 +3899,10 @@
           initialize: function(layers2, options2) {
             setOptions(this, options2);
             this._layers = {};
-            var i, len;
+            var i2, len;
             if (layers2) {
-              for (i = 0, len = layers2.length; i < len; i++) {
-                this.addLayer(layers2[i]);
+              for (i2 = 0, len = layers2.length; i2 < len; i2++) {
+                this.addLayer(layers2[i2]);
               }
             }
           },
@@ -3930,9 +3930,9 @@
             return this.eachLayer(this.removeLayer, this);
           },
           invoke: function(methodName) {
-            var args = Array.prototype.slice.call(arguments, 1), i, layer;
-            for (i in this._layers) {
-              layer = this._layers[i];
+            var args = Array.prototype.slice.call(arguments, 1), i2, layer;
+            for (i2 in this._layers) {
+              layer = this._layers[i2];
               if (layer[methodName]) {
                 layer[methodName].apply(layer, args);
               }
@@ -3946,8 +3946,8 @@
             this.eachLayer(map2.removeLayer, map2);
           },
           eachLayer: function(method, context) {
-            for (var i in this._layers) {
-              method.call(context, this._layers[i]);
+            for (var i2 in this._layers) {
+              method.call(context, this._layers[i2]);
             }
             return this;
           },
@@ -4622,9 +4622,9 @@
             var minDistance = Infinity, minPoint = null, closest = _sqClosestPointOnSegment, p1, p2;
             for (var j = 0, jLen = this._parts.length; j < jLen; j++) {
               var points = this._parts[j];
-              for (var i = 1, len = points.length; i < len; i++) {
-                p1 = points[i - 1];
-                p2 = points[i];
+              for (var i2 = 1, len = points.length; i2 < len; i2++) {
+                p1 = points[i2 - 1];
+                p2 = points[i2];
                 var sqDist = closest(p, p1, p2, true);
                 if (sqDist < minDistance) {
                   minDistance = sqDist;
@@ -4662,12 +4662,12 @@
           },
           _convertLatLngs: function(latlngs) {
             var result = [], flat = isFlat(latlngs);
-            for (var i = 0, len = latlngs.length; i < len; i++) {
+            for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
               if (flat) {
-                result[i] = toLatLng(latlngs[i]);
-                this._bounds.extend(result[i]);
+                result[i2] = toLatLng(latlngs[i2]);
+                this._bounds.extend(result[i2]);
               } else {
-                result[i] = this._convertLatLngs(latlngs[i]);
+                result[i2] = this._convertLatLngs(latlngs[i2]);
               }
             }
             return result;
@@ -4692,17 +4692,17 @@
             ]);
           },
           _projectLatlngs: function(latlngs, result, projectedBounds) {
-            var flat = latlngs[0] instanceof LatLng2, len = latlngs.length, i, ring;
+            var flat = latlngs[0] instanceof LatLng2, len = latlngs.length, i2, ring;
             if (flat) {
               ring = [];
-              for (i = 0; i < len; i++) {
-                ring[i] = this._map.latLngToLayerPoint(latlngs[i]);
-                projectedBounds.extend(ring[i]);
+              for (i2 = 0; i2 < len; i2++) {
+                ring[i2] = this._map.latLngToLayerPoint(latlngs[i2]);
+                projectedBounds.extend(ring[i2]);
               }
               result.push(ring);
             } else {
-              for (i = 0; i < len; i++) {
-                this._projectLatlngs(latlngs[i], result, projectedBounds);
+              for (i2 = 0; i2 < len; i2++) {
+                this._projectLatlngs(latlngs[i2], result, projectedBounds);
               }
             }
           },
@@ -4716,9 +4716,9 @@
               this._parts = this._rings;
               return;
             }
-            var parts = this._parts, i, j, k, len, len2, segment, points;
-            for (i = 0, k = 0, len = this._rings.length; i < len; i++) {
-              points = this._rings[i];
+            var parts = this._parts, i2, j, k, len, len2, segment, points;
+            for (i2 = 0, k = 0, len = this._rings.length; i2 < len; i2++) {
+              points = this._rings[i2];
               for (j = 0, len2 = points.length; j < len2 - 1; j++) {
                 segment = clipSegment(points[j], points[j + 1], bounds3, j, true);
                 if (!segment) {
@@ -4735,8 +4735,8 @@
           },
           _simplifyPoints: function() {
             var parts = this._parts, tolerance = this.options.smoothFactor;
-            for (var i = 0, len = parts.length; i < len; i++) {
-              parts[i] = simplify(parts[i], tolerance);
+            for (var i2 = 0, len = parts.length; i2 < len; i2++) {
+              parts[i2] = simplify(parts[i2], tolerance);
             }
           },
           _update: function() {
@@ -4751,12 +4751,12 @@
             this._renderer._updatePoly(this);
           },
           _containsPoint: function(p, closed) {
-            var i, j, k, len, len2, part, w = this._clickTolerance();
+            var i2, j, k, len, len2, part, w = this._clickTolerance();
             if (!this._pxBounds || !this._pxBounds.contains(p)) {
               return false;
             }
-            for (i = 0, len = this._parts.length; i < len; i++) {
-              part = this._parts[i];
+            for (i2 = 0, len = this._parts.length; i2 < len; i2++) {
+              part = this._parts[i2];
               for (j = 0, len2 = part.length, k = len2 - 1; j < len2; k = j++) {
                 if (!closed && j === 0) {
                   continue;
@@ -4813,8 +4813,8 @@
               this._parts = this._rings;
               return;
             }
-            for (var i = 0, len = this._rings.length, clipped; i < len; i++) {
-              clipped = clipPolygon(this._rings[i], bounds3, true);
+            for (var i2 = 0, len = this._rings.length, clipped; i2 < len; i2++) {
+              clipped = clipPolygon(this._rings[i2], bounds3, true);
               if (clipped.length) {
                 this._parts.push(clipped);
               }
@@ -4824,12 +4824,12 @@
             this._renderer._updatePoly(this, true);
           },
           _containsPoint: function(p) {
-            var inside = false, part, p1, p2, i, j, k, len, len2;
+            var inside = false, part, p1, p2, i2, j, k, len, len2;
             if (!this._pxBounds || !this._pxBounds.contains(p)) {
               return false;
             }
-            for (i = 0, len = this._parts.length; i < len; i++) {
-              part = this._parts[i];
+            for (i2 = 0, len = this._parts.length; i2 < len; i2++) {
+              part = this._parts[i2];
               for (j = 0, len2 = part.length, k = len2 - 1; j < len2; k = j++) {
                 p1 = part[j];
                 p2 = part[k];
@@ -4853,10 +4853,10 @@
             }
           },
           addData: function(geojson) {
-            var features = isArray(geojson) ? geojson : geojson.features, i, len, feature;
+            var features = isArray(geojson) ? geojson : geojson.features, i2, len, feature;
             if (features) {
-              for (i = 0, len = features.length; i < len; i++) {
-                feature = features[i];
+              for (i2 = 0, len = features.length; i2 < len; i2++) {
+                feature = features[i2];
                 if (feature.geometries || feature.geometry || feature.features || feature.coordinates) {
                   this.addData(feature);
                 }
@@ -4902,7 +4902,7 @@
           }
         });
         function geometryToLayer(geojson, options2) {
-          var geometry = geojson.type === "Feature" ? geojson.geometry : geojson, coords2 = geometry ? geometry.coordinates : null, layers2 = [], pointToLayer = options2 && options2.pointToLayer, _coordsToLatLng = options2 && options2.coordsToLatLng || coordsToLatLng, latlng, latlngs, i, len;
+          var geometry = geojson.type === "Feature" ? geojson.geometry : geojson, coords2 = geometry ? geometry.coordinates : null, layers2 = [], pointToLayer = options2 && options2.pointToLayer, _coordsToLatLng = options2 && options2.coordsToLatLng || coordsToLatLng, latlng, latlngs, i2, len;
           if (!coords2 && !geometry) {
             return null;
           }
@@ -4911,8 +4911,8 @@
               latlng = _coordsToLatLng(coords2);
               return _pointToLayer(pointToLayer, geojson, latlng, options2);
             case "MultiPoint":
-              for (i = 0, len = coords2.length; i < len; i++) {
-                latlng = _coordsToLatLng(coords2[i]);
+              for (i2 = 0, len = coords2.length; i2 < len; i2++) {
+                latlng = _coordsToLatLng(coords2[i2]);
                 layers2.push(_pointToLayer(pointToLayer, geojson, latlng, options2));
               }
               return new FeatureGroup(layers2);
@@ -4925,9 +4925,9 @@
               latlngs = coordsToLatLngs(coords2, geometry.type === "Polygon" ? 1 : 2, _coordsToLatLng);
               return new Polygon(latlngs, options2);
             case "GeometryCollection":
-              for (i = 0, len = geometry.geometries.length; i < len; i++) {
+              for (i2 = 0, len = geometry.geometries.length; i2 < len; i2++) {
                 var geoLayer = geometryToLayer({
-                  geometry: geometry.geometries[i],
+                  geometry: geometry.geometries[i2],
                   type: "Feature",
                   properties: geojson.properties
                 }, options2);
@@ -4937,8 +4937,8 @@
               }
               return new FeatureGroup(layers2);
             case "FeatureCollection":
-              for (i = 0, len = geometry.features.length; i < len; i++) {
-                var featureLayer = geometryToLayer(geometry.features[i], options2);
+              for (i2 = 0, len = geometry.features.length; i2 < len; i2++) {
+                var featureLayer = geometryToLayer(geometry.features[i2], options2);
                 if (featureLayer) {
                   layers2.push(featureLayer);
                 }
@@ -4956,8 +4956,8 @@
         }
         function coordsToLatLngs(coords2, levelsDeep, _coordsToLatLng) {
           var latlngs = [];
-          for (var i = 0, len = coords2.length, latlng; i < len; i++) {
-            latlng = levelsDeep ? coordsToLatLngs(coords2[i], levelsDeep - 1, _coordsToLatLng) : (_coordsToLatLng || coordsToLatLng)(coords2[i]);
+          for (var i2 = 0, len = coords2.length, latlng; i2 < len; i2++) {
+            latlng = levelsDeep ? coordsToLatLngs(coords2[i2], levelsDeep - 1, _coordsToLatLng) : (_coordsToLatLng || coordsToLatLng)(coords2[i2]);
             latlngs.push(latlng);
           }
           return latlngs;
@@ -4968,8 +4968,8 @@
         }
         function latLngsToCoords(latlngs, levelsDeep, closed, precision) {
           var coords2 = [];
-          for (var i = 0, len = latlngs.length; i < len; i++) {
-            coords2.push(levelsDeep ? latLngsToCoords(latlngs[i], isFlat(latlngs[i]) ? 0 : levelsDeep - 1, closed, precision) : latLngToCoords(latlngs[i], precision));
+          for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
+            coords2.push(levelsDeep ? latLngsToCoords(latlngs[i2], isFlat(latlngs[i2]) ? 0 : levelsDeep - 1, closed, precision) : latLngToCoords(latlngs[i2], precision));
           }
           if (!levelsDeep && closed) {
             coords2.push(coords2[0].slice());
@@ -5269,9 +5269,9 @@
             vid.loop = !!this.options.loop;
             vid.muted = !!this.options.muted;
             vid.playsInline = !!this.options.playsInline;
-            for (var i = 0; i < this._url.length; i++) {
+            for (var i2 = 0; i2 < this._url.length; i2++) {
               var source = create$1("source");
-              source.src = this._url[i];
+              source.src = this._url[i2];
               vid.appendChild(source);
             }
           }
@@ -6148,9 +6148,9 @@
           },
           _setAutoZIndex: function(compare) {
             var layers2 = this.getPane().children, edgeZIndex = -compare(-Infinity, Infinity);
-            for (var i = 0, len = layers2.length, zIndex; i < len; i++) {
-              zIndex = layers2[i].style.zIndex;
-              if (layers2[i] !== this._container && zIndex) {
+            for (var i2 = 0, len = layers2.length, zIndex; i2 < len; i2++) {
+              zIndex = layers2[i2].style.zIndex;
+              if (layers2[i2] !== this._container && zIndex) {
                 edgeZIndex = compare(edgeZIndex, +zIndex);
               }
             }
@@ -6307,9 +6307,9 @@
             return false;
           },
           _retainChildren: function(x, y, z, maxZoom) {
-            for (var i = 2 * x; i < 2 * x + 2; i++) {
+            for (var i2 = 2 * x; i2 < 2 * x + 2; i2++) {
               for (var j = 2 * y; j < 2 * y + 2; j++) {
-                var coords2 = new Point2(i, j);
+                var coords2 = new Point2(i2, j);
                 coords2.z = z + 1;
                 var key = this._tileCoordsToKey(coords2), tile = this._tiles[key];
                 if (tile && tile.active) {
@@ -6319,7 +6319,7 @@
                   tile.retain = true;
                 }
                 if (z + 1 < maxZoom) {
-                  this._retainChildren(i, j, z + 1, maxZoom);
+                  this._retainChildren(i2, j, z + 1, maxZoom);
                 }
               }
             }
@@ -6367,8 +6367,8 @@
             this._setZoomTransforms(center, zoom2);
           },
           _setZoomTransforms: function(center, zoom2) {
-            for (var i in this._levels) {
-              this._setZoomTransform(this._levels[i], center, zoom2);
+            for (var i2 in this._levels) {
+              this._setZoomTransform(this._levels[i2], center, zoom2);
             }
           },
           _setZoomTransform: function(level, center, zoom2) {
@@ -6434,8 +6434,8 @@
               return;
             }
             for (var j = tileRange.min.y; j <= tileRange.max.y; j++) {
-              for (var i = tileRange.min.x; i <= tileRange.max.x; i++) {
-                var coords2 = new Point2(i, j);
+              for (var i2 = tileRange.min.x; i2 <= tileRange.max.x; i2++) {
+                var coords2 = new Point2(i2, j);
                 coords2.z = this._tileZoom;
                 if (!this._isValidTile(coords2)) {
                   continue;
@@ -6457,8 +6457,8 @@
                 this.fire("loading");
               }
               var fragment = document.createDocumentFragment();
-              for (i = 0; i < queue.length; i++) {
-                this._addTile(queue[i], fragment);
+              for (i2 = 0; i2 < queue.length; i2++) {
+                this._addTile(queue[i2], fragment);
               }
               this._level.el.appendChild(fragment);
             }
@@ -6716,17 +6716,17 @@
             return this.options.subdomains[index2];
           },
           _abortLoading: function() {
-            var i, tile;
-            for (i in this._tiles) {
-              if (this._tiles[i].coords.z !== this._tileZoom) {
-                tile = this._tiles[i].el;
+            var i2, tile;
+            for (i2 in this._tiles) {
+              if (this._tiles[i2].coords.z !== this._tileZoom) {
+                tile = this._tiles[i2].el;
                 tile.onload = falseFn;
                 tile.onerror = falseFn;
                 if (!tile.complete) {
                   tile.src = emptyImageUrl;
-                  var coords2 = this._tiles[i].coords;
+                  var coords2 = this._tiles[i2].coords;
                   remove(tile);
-                  delete this._tiles[i];
+                  delete this._tiles[i2];
                   this.fire("tileabort", {
                     tile,
                     coords: coords2
@@ -6770,9 +6770,9 @@
           initialize: function(url, options2) {
             this._url = url;
             var wmsParams = extend16({}, this.defaultWmsParams);
-            for (var i in options2) {
-              if (!(i in this.options)) {
-                wmsParams[i] = options2[i];
+            for (var i2 in options2) {
+              if (!(i2 in this.options)) {
+                wmsParams[i2] = options2[i2];
               }
             }
             options2 = setOptions(this, options2);
@@ -6994,9 +6994,9 @@
           },
           _updateDashArray: function(layer) {
             if (typeof layer.options.dashArray === "string") {
-              var parts = layer.options.dashArray.split(/[, ]+/), dashArray = [], dashValue, i;
-              for (i = 0; i < parts.length; i++) {
-                dashValue = Number(parts[i]);
+              var parts = layer.options.dashArray.split(/[, ]+/), dashArray = [], dashValue, i2;
+              for (i2 = 0; i2 < parts.length; i2++) {
+                dashValue = Number(parts[i2]);
                 if (isNaN(dashValue)) {
                   return;
                 }
@@ -7067,14 +7067,14 @@
             if (!this._drawing) {
               return;
             }
-            var i, j, len2, p, parts = layer._parts, len = parts.length, ctx = this._ctx;
+            var i2, j, len2, p, parts = layer._parts, len = parts.length, ctx = this._ctx;
             if (!len) {
               return;
             }
             ctx.beginPath();
-            for (i = 0; i < len; i++) {
-              for (j = 0, len2 = parts[i].length; j < len2; j++) {
-                p = parts[i][j];
+            for (i2 = 0; i2 < len; i2++) {
+              for (j = 0, len2 = parts[i2].length; j < len2; j++) {
+                p = parts[i2][j];
                 ctx[j ? "lineTo" : "moveTo"](p.x, p.y);
               }
               if (closed) {
@@ -7804,27 +7804,27 @@
             this._map.fire("blur");
           },
           _setPanDelta: function(panDelta) {
-            var keys = this._panKeys = {}, codes = this.keyCodes, i, len;
-            for (i = 0, len = codes.left.length; i < len; i++) {
-              keys[codes.left[i]] = [-1 * panDelta, 0];
+            var keys = this._panKeys = {}, codes = this.keyCodes, i2, len;
+            for (i2 = 0, len = codes.left.length; i2 < len; i2++) {
+              keys[codes.left[i2]] = [-1 * panDelta, 0];
             }
-            for (i = 0, len = codes.right.length; i < len; i++) {
-              keys[codes.right[i]] = [panDelta, 0];
+            for (i2 = 0, len = codes.right.length; i2 < len; i2++) {
+              keys[codes.right[i2]] = [panDelta, 0];
             }
-            for (i = 0, len = codes.down.length; i < len; i++) {
-              keys[codes.down[i]] = [0, panDelta];
+            for (i2 = 0, len = codes.down.length; i2 < len; i2++) {
+              keys[codes.down[i2]] = [0, panDelta];
             }
-            for (i = 0, len = codes.up.length; i < len; i++) {
-              keys[codes.up[i]] = [0, -1 * panDelta];
+            for (i2 = 0, len = codes.up.length; i2 < len; i2++) {
+              keys[codes.up[i2]] = [0, -1 * panDelta];
             }
           },
           _setZoomDelta: function(zoomDelta) {
-            var keys = this._zoomKeys = {}, codes = this.keyCodes, i, len;
-            for (i = 0, len = codes.zoomIn.length; i < len; i++) {
-              keys[codes.zoomIn[i]] = zoomDelta;
+            var keys = this._zoomKeys = {}, codes = this.keyCodes, i2, len;
+            for (i2 = 0, len = codes.zoomIn.length; i2 < len; i2++) {
+              keys[codes.zoomIn[i2]] = zoomDelta;
             }
-            for (i = 0, len = codes.zoomOut.length; i < len; i++) {
-              keys[codes.zoomOut[i]] = -zoomDelta;
+            for (i2 = 0, len = codes.zoomOut.length; i2 < len; i2++) {
+              keys[codes.zoomOut[i2]] = -zoomDelta;
             }
           },
           _addHooks: function() {
@@ -8195,8 +8195,8 @@
             return jQuery6.each(this, callback, args);
           },
           map: function(callback) {
-            return this.pushStack(jQuery6.map(this, function(elem, i) {
-              return callback.call(elem, i, elem);
+            return this.pushStack(jQuery6.map(this, function(elem, i2) {
+              return callback.call(elem, i2, elem);
             }));
           },
           slice: function() {
@@ -8208,8 +8208,8 @@
           last: function() {
             return this.eq(-1);
           },
-          eq: function(i) {
-            var len = this.length, j = +i + (i < 0 ? len : 0);
+          eq: function(i2) {
+            var len = this.length, j = +i2 + (i2 < 0 ? len : 0);
             return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
           },
           end: function() {
@@ -8220,21 +8220,21 @@
           splice: arr.splice
         };
         jQuery6.extend = jQuery6.fn.extend = function() {
-          var options2, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
+          var options2, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i2 = 1, length = arguments.length, deep = false;
           if (typeof target === "boolean") {
             deep = target;
-            target = arguments[i] || {};
-            i++;
+            target = arguments[i2] || {};
+            i2++;
           }
           if (typeof target !== "object" && !jQuery6.isFunction(target)) {
             target = {};
           }
-          if (i === length) {
+          if (i2 === length) {
             target = this;
-            i--;
+            i2--;
           }
-          for (; i < length; i++) {
-            if ((options2 = arguments[i]) != null) {
+          for (; i2 < length; i2++) {
+            if ((options2 = arguments[i2]) != null) {
               for (name in options2) {
                 src = target[name];
                 copy = options2[name];
@@ -8317,18 +8317,18 @@
             return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
           },
           each: function(obj, callback, args) {
-            var value, i = 0, length = obj.length, isArray = isArraylike(obj);
+            var value, i2 = 0, length = obj.length, isArray = isArraylike(obj);
             if (args) {
               if (isArray) {
-                for (; i < length; i++) {
-                  value = callback.apply(obj[i], args);
+                for (; i2 < length; i2++) {
+                  value = callback.apply(obj[i2], args);
                   if (value === false) {
                     break;
                   }
                 }
               } else {
-                for (i in obj) {
-                  value = callback.apply(obj[i], args);
+                for (i2 in obj) {
+                  value = callback.apply(obj[i2], args);
                   if (value === false) {
                     break;
                   }
@@ -8336,15 +8336,15 @@
               }
             } else {
               if (isArray) {
-                for (; i < length; i++) {
-                  value = callback.call(obj[i], i, obj[i]);
+                for (; i2 < length; i2++) {
+                  value = callback.call(obj[i2], i2, obj[i2]);
                   if (value === false) {
                     break;
                   }
                 }
               } else {
-                for (i in obj) {
-                  value = callback.call(obj[i], i, obj[i]);
+                for (i2 in obj) {
+                  value = callback.call(obj[i2], i2, obj[i2]);
                   if (value === false) {
                     break;
                   }
@@ -8370,39 +8370,39 @@
             }
             return ret;
           },
-          inArray: function(elem, arr2, i) {
-            return arr2 == null ? -1 : indexOf.call(arr2, elem, i);
+          inArray: function(elem, arr2, i2) {
+            return arr2 == null ? -1 : indexOf.call(arr2, elem, i2);
           },
           merge: function(first, second) {
-            var len = +second.length, j = 0, i = first.length;
+            var len = +second.length, j = 0, i2 = first.length;
             for (; j < len; j++) {
-              first[i++] = second[j];
+              first[i2++] = second[j];
             }
-            first.length = i;
+            first.length = i2;
             return first;
           },
           grep: function(elems, callback, invert) {
-            var callbackInverse, matches = [], i = 0, length = elems.length, callbackExpect = !invert;
-            for (; i < length; i++) {
-              callbackInverse = !callback(elems[i], i);
+            var callbackInverse, matches = [], i2 = 0, length = elems.length, callbackExpect = !invert;
+            for (; i2 < length; i2++) {
+              callbackInverse = !callback(elems[i2], i2);
               if (callbackInverse !== callbackExpect) {
-                matches.push(elems[i]);
+                matches.push(elems[i2]);
               }
             }
             return matches;
           },
           map: function(elems, callback, arg) {
-            var value, i = 0, length = elems.length, isArray = isArraylike(elems), ret = [];
+            var value, i2 = 0, length = elems.length, isArray = isArraylike(elems), ret = [];
             if (isArray) {
-              for (; i < length; i++) {
-                value = callback(elems[i], i, arg);
+              for (; i2 < length; i2++) {
+                value = callback(elems[i2], i2, arg);
                 if (value != null) {
                   ret.push(value);
                 }
               }
             } else {
-              for (i in elems) {
-                value = callback(elems[i], i, arg);
+              for (i2 in elems) {
+                value = callback(elems[i2], i2, arg);
                 if (value != null) {
                   ret.push(value);
                 }
@@ -8431,7 +8431,7 @@
           now: Date.now,
           support
         });
-        jQuery6.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
+        jQuery6.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i2, name) {
           class2type["[object " + name + "]"] = name.toLowerCase();
         });
         function isArraylike(obj) {
@@ -8445,16 +8445,16 @@
           return type === "array" || length === 0 || typeof length === "number" && length > 0 && length - 1 in obj;
         }
         var Sizzle = function(window3) {
-          var i, support2, Expr, getText, isXML, tokenize, compile, select, outermostContext, sortInput, hasDuplicate, setDocument, document3, docElem2, documentIsHTML, rbuggyQSA, rbuggyMatches, matches, contains, expando = "sizzle" + 1 * new Date(), preferredDoc = window3.document, dirruns = 0, done = 0, classCache = createCache(), tokenCache = createCache(), compilerCache = createCache(), sortOrder = function(a, b) {
+          var i2, support2, Expr, getText, isXML, tokenize, compile, select, outermostContext, sortInput, hasDuplicate, setDocument, document3, docElem2, documentIsHTML, rbuggyQSA, rbuggyMatches, matches, contains, expando = "sizzle" + 1 * new Date(), preferredDoc = window3.document, dirruns = 0, done = 0, classCache = createCache(), tokenCache = createCache(), compilerCache = createCache(), sortOrder = function(a, b) {
             if (a === b) {
               hasDuplicate = true;
             }
             return 0;
           }, MAX_NEGATIVE = 1 << 31, hasOwn2 = {}.hasOwnProperty, arr2 = [], pop = arr2.pop, push_native = arr2.push, push2 = arr2.push, slice2 = arr2.slice, indexOf2 = function(list, elem) {
-            var i2 = 0, len = list.length;
-            for (; i2 < len; i2++) {
-              if (list[i2] === elem) {
-                return i2;
+            var i3 = 0, len = list.length;
+            for (; i3 < len; i3++) {
+              if (list[i3] === elem) {
+                return i3;
               }
             }
             return -1;
@@ -8484,15 +8484,15 @@
               apply: arr2.length ? function(target, els) {
                 push_native.apply(target, slice2.call(els));
               } : function(target, els) {
-                var j = target.length, i2 = 0;
-                while (target[j++] = els[i2++]) {
+                var j = target.length, i3 = 0;
+                while (target[j++] = els[i3++]) {
                 }
                 target.length = j - 1;
               }
             };
           }
           function Sizzle2(selector, context, results, seed) {
-            var match, elem, m, nodeType, i2, groups, old, nid, newContext, newSelector;
+            var match, elem, m, nodeType, i3, groups, old, nid, newContext, newSelector;
             if ((context ? context.ownerDocument || context : preferredDoc) !== document3) {
               setDocument(context);
             }
@@ -8541,9 +8541,9 @@
                     context.setAttribute("id", nid);
                   }
                   nid = "[id='" + nid + "'] ";
-                  i2 = groups.length;
-                  while (i2--) {
-                    groups[i2] = nid + toSelector(groups[i2]);
+                  i3 = groups.length;
+                  while (i3--) {
+                    groups[i3] = nid + toSelector(groups[i3]);
                   }
                   newContext = rsibling.test(selector) && testContext(context.parentNode) || context;
                   newSelector = groups.join(",");
@@ -8594,9 +8594,9 @@
             }
           }
           function addHandle(attrs, handler) {
-            var arr3 = attrs.split("|"), i2 = attrs.length;
-            while (i2--) {
-              Expr.attrHandle[arr3[i2]] = handler;
+            var arr3 = attrs.split("|"), i3 = attrs.length;
+            while (i3--) {
+              Expr.attrHandle[arr3[i3]] = handler;
             }
           }
           function siblingCheck(a, b) {
@@ -8629,9 +8629,9 @@
             return markFunction(function(argument) {
               argument = +argument;
               return markFunction(function(seed, matches2) {
-                var j, matchIndexes = fn([], seed.length, argument), i2 = matchIndexes.length;
-                while (i2--) {
-                  if (seed[j = matchIndexes[i2]]) {
+                var j, matchIndexes = fn([], seed.length, argument), i3 = matchIndexes.length;
+                while (i3--) {
+                  if (seed[j = matchIndexes[i3]]) {
                     seed[j] = !(matches2[j] = seed[j]);
                   }
                 }
@@ -8705,9 +8705,9 @@
                 return context.querySelectorAll(tag);
               }
             } : function(tag, context) {
-              var elem, tmp = [], i2 = 0, results = context.getElementsByTagName(tag);
+              var elem, tmp = [], i3 = 0, results = context.getElementsByTagName(tag);
               if (tag === "*") {
-                while (elem = results[i2++]) {
+                while (elem = results[i3++]) {
                   if (elem.nodeType === 1) {
                     tmp.push(elem);
                   }
@@ -8804,7 +8804,7 @@
                 hasDuplicate = true;
                 return 0;
               }
-              var cur, i2 = 0, aup = a.parentNode, bup = b.parentNode, ap = [a], bp = [b];
+              var cur, i3 = 0, aup = a.parentNode, bup = b.parentNode, ap = [a], bp = [b];
               if (!aup || !bup) {
                 return a === doc ? -1 : b === doc ? 1 : aup ? -1 : bup ? 1 : sortInput ? indexOf2(sortInput, a) - indexOf2(sortInput, b) : 0;
               } else if (aup === bup) {
@@ -8818,10 +8818,10 @@
               while (cur = cur.parentNode) {
                 bp.unshift(cur);
               }
-              while (ap[i2] === bp[i2]) {
-                i2++;
+              while (ap[i3] === bp[i3]) {
+                i3++;
               }
-              return i2 ? siblingCheck(ap[i2], bp[i2]) : ap[i2] === preferredDoc ? -1 : bp[i2] === preferredDoc ? 1 : 0;
+              return i3 ? siblingCheck(ap[i3], bp[i3]) : ap[i3] === preferredDoc ? -1 : bp[i3] === preferredDoc ? 1 : 0;
             };
             return doc;
           };
@@ -8861,14 +8861,14 @@
             throw new Error("Syntax error, unrecognized expression: " + msg);
           };
           Sizzle2.uniqueSort = function(results) {
-            var elem, duplicates = [], j = 0, i2 = 0;
+            var elem, duplicates = [], j = 0, i3 = 0;
             hasDuplicate = !support2.detectDuplicates;
             sortInput = !support2.sortStable && results.slice(0);
             results.sort(sortOrder);
             if (hasDuplicate) {
-              while (elem = results[i2++]) {
-                if (elem === results[i2]) {
-                  j = duplicates.push(i2);
+              while (elem = results[i3++]) {
+                if (elem === results[i3]) {
+                  j = duplicates.push(i3);
                 }
               }
               while (j--) {
@@ -8879,9 +8879,9 @@
             return results;
           };
           getText = Sizzle2.getText = function(elem) {
-            var node, ret = "", i2 = 0, nodeType = elem.nodeType;
+            var node, ret = "", i3 = 0, nodeType = elem.nodeType;
             if (!nodeType) {
-              while (node = elem[i2++]) {
+              while (node = elem[i3++]) {
                 ret += getText(node);
               }
             } else if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
@@ -9032,10 +9032,10 @@
                 if (fn.length > 1) {
                   args = [pseudo, pseudo, "", argument];
                   return Expr.setFilters.hasOwnProperty(pseudo.toLowerCase()) ? markFunction(function(seed, matches2) {
-                    var idx, matched = fn(seed, argument), i2 = matched.length;
-                    while (i2--) {
-                      idx = indexOf2(seed, matched[i2]);
-                      seed[idx] = !(matches2[idx] = matched[i2]);
+                    var idx, matched = fn(seed, argument), i3 = matched.length;
+                    while (i3--) {
+                      idx = indexOf2(seed, matched[i3]);
+                      seed[idx] = !(matches2[idx] = matched[i3]);
                     }
                   }) : function(elem) {
                     return fn(elem, 0, args);
@@ -9048,10 +9048,10 @@
               "not": markFunction(function(selector) {
                 var input = [], results = [], matcher = compile(selector.replace(rtrim2, "$1"));
                 return matcher[expando] ? markFunction(function(seed, matches2, context, xml) {
-                  var elem, unmatched = matcher(seed, null, xml, []), i2 = seed.length;
-                  while (i2--) {
-                    if (elem = unmatched[i2]) {
-                      seed[i2] = !(matches2[i2] = elem);
+                  var elem, unmatched = matcher(seed, null, xml, []), i3 = seed.length;
+                  while (i3--) {
+                    if (elem = unmatched[i3]) {
+                      seed[i3] = !(matches2[i3] = elem);
                     }
                   }
                 }) : function(elem, context, xml) {
@@ -9149,41 +9149,41 @@
                 return [argument < 0 ? argument + length : argument];
               }),
               "even": createPositionalPseudo(function(matchIndexes, length) {
-                var i2 = 0;
-                for (; i2 < length; i2 += 2) {
-                  matchIndexes.push(i2);
+                var i3 = 0;
+                for (; i3 < length; i3 += 2) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "odd": createPositionalPseudo(function(matchIndexes, length) {
-                var i2 = 1;
-                for (; i2 < length; i2 += 2) {
-                  matchIndexes.push(i2);
+                var i3 = 1;
+                for (; i3 < length; i3 += 2) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "lt": createPositionalPseudo(function(matchIndexes, length, argument) {
-                var i2 = argument < 0 ? argument + length : argument;
-                for (; --i2 >= 0; ) {
-                  matchIndexes.push(i2);
+                var i3 = argument < 0 ? argument + length : argument;
+                for (; --i3 >= 0; ) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "gt": createPositionalPseudo(function(matchIndexes, length, argument) {
-                var i2 = argument < 0 ? argument + length : argument;
-                for (; ++i2 < length; ) {
-                  matchIndexes.push(i2);
+                var i3 = argument < 0 ? argument + length : argument;
+                for (; ++i3 < length; ) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               })
             }
           };
           Expr.pseudos["nth"] = Expr.pseudos["eq"];
-          for (i in { radio: true, checkbox: true, file: true, password: true, image: true }) {
-            Expr.pseudos[i] = createInputPseudo(i);
+          for (i2 in { radio: true, checkbox: true, file: true, password: true, image: true }) {
+            Expr.pseudos[i2] = createInputPseudo(i2);
           }
-          for (i in { submit: true, reset: true }) {
-            Expr.pseudos[i] = createButtonPseudo(i);
+          for (i2 in { submit: true, reset: true }) {
+            Expr.pseudos[i2] = createButtonPseudo(i2);
           }
           function setFilters() {
           }
@@ -9231,9 +9231,9 @@
             return parseOnly ? soFar.length : soFar ? Sizzle2.error(selector) : tokenCache(selector, groups).slice(0);
           };
           function toSelector(tokens) {
-            var i2 = 0, len = tokens.length, selector = "";
-            for (; i2 < len; i2++) {
-              selector += tokens[i2].value;
+            var i3 = 0, len = tokens.length, selector = "";
+            for (; i3 < len; i3++) {
+              selector += tokens[i3].value;
             }
             return selector;
           }
@@ -9274,9 +9274,9 @@
           }
           function elementMatcher(matchers) {
             return matchers.length > 1 ? function(elem, context, xml) {
-              var i2 = matchers.length;
-              while (i2--) {
-                if (!matchers[i2](elem, context, xml)) {
+              var i3 = matchers.length;
+              while (i3--) {
+                if (!matchers[i3](elem, context, xml)) {
                   return false;
                 }
               }
@@ -9284,20 +9284,20 @@
             } : matchers[0];
           }
           function multipleContexts(selector, contexts, results) {
-            var i2 = 0, len = contexts.length;
-            for (; i2 < len; i2++) {
-              Sizzle2(selector, contexts[i2], results);
+            var i3 = 0, len = contexts.length;
+            for (; i3 < len; i3++) {
+              Sizzle2(selector, contexts[i3], results);
             }
             return results;
           }
           function condense(unmatched, map2, filter2, context, xml) {
-            var elem, newUnmatched = [], i2 = 0, len = unmatched.length, mapped = map2 != null;
-            for (; i2 < len; i2++) {
-              if (elem = unmatched[i2]) {
+            var elem, newUnmatched = [], i3 = 0, len = unmatched.length, mapped = map2 != null;
+            for (; i3 < len; i3++) {
+              if (elem = unmatched[i3]) {
                 if (!filter2 || filter2(elem, context, xml)) {
                   newUnmatched.push(elem);
                   if (mapped) {
-                    map2.push(i2);
+                    map2.push(i3);
                   }
                 }
               }
@@ -9312,17 +9312,17 @@
               postFinder = setMatcher(postFinder, postSelector);
             }
             return markFunction(function(seed, results, context, xml) {
-              var temp, i2, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(selector || "*", context.nodeType ? [context] : context, []), matcherIn = preFilter && (seed || !selector) ? condense(elems, preMap, preFilter, context, xml) : elems, matcherOut = matcher ? postFinder || (seed ? preFilter : preexisting || postFilter) ? [] : results : matcherIn;
+              var temp, i3, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(selector || "*", context.nodeType ? [context] : context, []), matcherIn = preFilter && (seed || !selector) ? condense(elems, preMap, preFilter, context, xml) : elems, matcherOut = matcher ? postFinder || (seed ? preFilter : preexisting || postFilter) ? [] : results : matcherIn;
               if (matcher) {
                 matcher(matcherIn, matcherOut, context, xml);
               }
               if (postFilter) {
                 temp = condense(matcherOut, postMap);
                 postFilter(temp, [], context, xml);
-                i2 = temp.length;
-                while (i2--) {
-                  if (elem = temp[i2]) {
-                    matcherOut[postMap[i2]] = !(matcherIn[postMap[i2]] = elem);
+                i3 = temp.length;
+                while (i3--) {
+                  if (elem = temp[i3]) {
+                    matcherOut[postMap[i3]] = !(matcherIn[postMap[i3]] = elem);
                   }
                 }
               }
@@ -9330,17 +9330,17 @@
                 if (postFinder || preFilter) {
                   if (postFinder) {
                     temp = [];
-                    i2 = matcherOut.length;
-                    while (i2--) {
-                      if (elem = matcherOut[i2]) {
-                        temp.push(matcherIn[i2] = elem);
+                    i3 = matcherOut.length;
+                    while (i3--) {
+                      if (elem = matcherOut[i3]) {
+                        temp.push(matcherIn[i3] = elem);
                       }
                     }
                     postFinder(null, matcherOut = [], temp, xml);
                   }
-                  i2 = matcherOut.length;
-                  while (i2--) {
-                    if ((elem = matcherOut[i2]) && (temp = postFinder ? indexOf2(seed, elem) : preMap[i2]) > -1) {
+                  i3 = matcherOut.length;
+                  while (i3--) {
+                    if ((elem = matcherOut[i3]) && (temp = postFinder ? indexOf2(seed, elem) : preMap[i3]) > -1) {
                       seed[temp] = !(results[temp] = elem);
                     }
                   }
@@ -9358,7 +9358,7 @@
             });
           }
           function matcherFromTokens(tokens) {
-            var checkContext, matcher, j, len = tokens.length, leadingRelative = Expr.relative[tokens[0].type], implicitRelative = leadingRelative || Expr.relative[" "], i2 = leadingRelative ? 1 : 0, matchContext = addCombinator(function(elem) {
+            var checkContext, matcher, j, len = tokens.length, leadingRelative = Expr.relative[tokens[0].type], implicitRelative = leadingRelative || Expr.relative[" "], i3 = leadingRelative ? 1 : 0, matchContext = addCombinator(function(elem) {
               return elem === checkContext;
             }, implicitRelative, true), matchAnyContext = addCombinator(function(elem) {
               return indexOf2(checkContext, elem) > -1;
@@ -9367,25 +9367,25 @@
               checkContext = null;
               return ret;
             }];
-            for (; i2 < len; i2++) {
-              if (matcher = Expr.relative[tokens[i2].type]) {
+            for (; i3 < len; i3++) {
+              if (matcher = Expr.relative[tokens[i3].type]) {
                 matchers = [addCombinator(elementMatcher(matchers), matcher)];
               } else {
-                matcher = Expr.filter[tokens[i2].type].apply(null, tokens[i2].matches);
+                matcher = Expr.filter[tokens[i3].type].apply(null, tokens[i3].matches);
                 if (matcher[expando]) {
-                  j = ++i2;
+                  j = ++i3;
                   for (; j < len; j++) {
                     if (Expr.relative[tokens[j].type]) {
                       break;
                     }
                   }
                   return setMatcher(
-                    i2 > 1 && elementMatcher(matchers),
-                    i2 > 1 && toSelector(
-                      tokens.slice(0, i2 - 1).concat({ value: tokens[i2 - 2].type === " " ? "*" : "" })
+                    i3 > 1 && elementMatcher(matchers),
+                    i3 > 1 && toSelector(
+                      tokens.slice(0, i3 - 1).concat({ value: tokens[i3 - 2].type === " " ? "*" : "" })
                     ).replace(rtrim2, "$1"),
                     matcher,
-                    i2 < j && matcherFromTokens(tokens.slice(i2, j)),
+                    i3 < j && matcherFromTokens(tokens.slice(i3, j)),
                     j < len && matcherFromTokens(tokens = tokens.slice(j)),
                     j < len && toSelector(tokens)
                   );
@@ -9397,11 +9397,11 @@
           }
           function matcherFromGroupMatchers(elementMatchers, setMatchers) {
             var bySet = setMatchers.length > 0, byElement = elementMatchers.length > 0, superMatcher = function(seed, context, xml, results, outermost) {
-              var elem, j, matcher, matchedCount = 0, i2 = "0", unmatched = seed && [], setMatched = [], contextBackup = outermostContext, elems = seed || byElement && Expr.find["TAG"]("*", outermost), dirrunsUnique = dirruns += contextBackup == null ? 1 : Math.random() || 0.1, len = elems.length;
+              var elem, j, matcher, matchedCount = 0, i3 = "0", unmatched = seed && [], setMatched = [], contextBackup = outermostContext, elems = seed || byElement && Expr.find["TAG"]("*", outermost), dirrunsUnique = dirruns += contextBackup == null ? 1 : Math.random() || 0.1, len = elems.length;
               if (outermost) {
                 outermostContext = context !== document3 && context;
               }
-              for (; i2 !== len && (elem = elems[i2]) != null; i2++) {
+              for (; i3 !== len && (elem = elems[i3]) != null; i3++) {
                 if (byElement && elem) {
                   j = 0;
                   while (matcher = elementMatchers[j++]) {
@@ -9423,17 +9423,17 @@
                   }
                 }
               }
-              matchedCount += i2;
-              if (bySet && i2 !== matchedCount) {
+              matchedCount += i3;
+              if (bySet && i3 !== matchedCount) {
                 j = 0;
                 while (matcher = setMatchers[j++]) {
                   matcher(unmatched, setMatched, context, xml);
                 }
                 if (seed) {
                   if (matchedCount > 0) {
-                    while (i2--) {
-                      if (!(unmatched[i2] || setMatched[i2])) {
-                        setMatched[i2] = pop.call(results);
+                    while (i3--) {
+                      if (!(unmatched[i3] || setMatched[i3])) {
+                        setMatched[i3] = pop.call(results);
                       }
                     }
                   }
@@ -9453,14 +9453,14 @@
             return bySet ? markFunction(superMatcher) : superMatcher;
           }
           compile = Sizzle2.compile = function(selector, match) {
-            var i2, setMatchers = [], elementMatchers = [], cached = compilerCache[selector + " "];
+            var i3, setMatchers = [], elementMatchers = [], cached = compilerCache[selector + " "];
             if (!cached) {
               if (!match) {
                 match = tokenize(selector);
               }
-              i2 = match.length;
-              while (i2--) {
-                cached = matcherFromTokens(match[i2]);
+              i3 = match.length;
+              while (i3--) {
+                cached = matcherFromTokens(match[i3]);
                 if (cached[expando]) {
                   setMatchers.push(cached);
                 } else {
@@ -9473,7 +9473,7 @@
             return cached;
           };
           select = Sizzle2.select = function(selector, context, results, seed) {
-            var i2, tokens, token, type, find, compiled = typeof selector === "function" && selector, match = !seed && tokenize(selector = compiled.selector || selector);
+            var i3, tokens, token, type, find, compiled = typeof selector === "function" && selector, match = !seed && tokenize(selector = compiled.selector || selector);
             results = results || [];
             if (match.length === 1) {
               tokens = match[0] = match[0].slice(0);
@@ -9486,9 +9486,9 @@
                 }
                 selector = selector.slice(tokens.shift().value.length);
               }
-              i2 = matchExpr["needsContext"].test(selector) ? 0 : tokens.length;
-              while (i2--) {
-                token = tokens[i2];
+              i3 = matchExpr["needsContext"].test(selector) ? 0 : tokens.length;
+              while (i3--) {
+                token = tokens[i3];
                 if (Expr.relative[type = token.type]) {
                   break;
                 }
@@ -9497,7 +9497,7 @@
                     token.matches[0].replace(runescape, funescape),
                     rsibling.test(tokens[0].type) && testContext(context.parentNode) || context
                   )) {
-                    tokens.splice(i2, 1);
+                    tokens.splice(i3, 1);
                     selector = seed.length && toSelector(tokens);
                     if (!selector) {
                       push2.apply(results, seed);
@@ -9568,8 +9568,8 @@
         var risSimple = /^.[^:#\[\.,]*$/;
         function winnow(elements, qualifier, not) {
           if (jQuery6.isFunction(qualifier)) {
-            return jQuery6.grep(elements, function(elem, i) {
-              return !!qualifier.call(elem, i, elem) !== not;
+            return jQuery6.grep(elements, function(elem, i2) {
+              return !!qualifier.call(elem, i2, elem) !== not;
             });
           }
           if (qualifier.nodeType) {
@@ -9598,18 +9598,18 @@
         };
         jQuery6.fn.extend({
           find: function(selector) {
-            var i, len = this.length, ret = [], self2 = this;
+            var i2, len = this.length, ret = [], self2 = this;
             if (typeof selector !== "string") {
               return this.pushStack(jQuery6(selector).filter(function() {
-                for (i = 0; i < len; i++) {
-                  if (jQuery6.contains(self2[i], this)) {
+                for (i2 = 0; i2 < len; i2++) {
+                  if (jQuery6.contains(self2[i2], this)) {
                     return true;
                   }
                 }
               }));
             }
-            for (i = 0; i < len; i++) {
-              jQuery6.find(selector, self2[i], ret);
+            for (i2 = 0; i2 < len; i2++) {
+              jQuery6.find(selector, self2[i2], ret);
             }
             ret = this.pushStack(len > 1 ? jQuery6.unique(ret) : ret);
             ret.selector = this.selector ? this.selector + " " + selector : selector;
@@ -9721,18 +9721,18 @@
           has: function(target) {
             var targets = jQuery6(target, this), l = targets.length;
             return this.filter(function() {
-              var i = 0;
-              for (; i < l; i++) {
-                if (jQuery6.contains(this, targets[i])) {
+              var i2 = 0;
+              for (; i2 < l; i2++) {
+                if (jQuery6.contains(this, targets[i2])) {
                   return true;
                 }
               }
             });
           },
           closest: function(selectors, context) {
-            var cur, i = 0, l = this.length, matched = [], pos = rneedsContext.test(selectors) || typeof selectors !== "string" ? jQuery6(selectors, context || this.context) : 0;
-            for (; i < l; i++) {
-              for (cur = this[i]; cur && cur !== context; cur = cur.parentNode) {
+            var cur, i2 = 0, l = this.length, matched = [], pos = rneedsContext.test(selectors) || typeof selectors !== "string" ? jQuery6(selectors, context || this.context) : 0;
+            for (; i2 < l; i2++) {
+              for (cur = this[i2]; cur && cur !== context; cur = cur.parentNode) {
                 if (cur.nodeType < 11 && (pos ? pos.index(cur) > -1 : cur.nodeType === 1 && jQuery6.find.matchesSelector(cur, selectors))) {
                   matched.push(cur);
                   break;
@@ -9779,7 +9779,7 @@
           parents: function(elem) {
             return jQuery6.dir(elem, "parentNode");
           },
-          parentsUntil: function(elem, i, until) {
+          parentsUntil: function(elem, i2, until) {
             return jQuery6.dir(elem, "parentNode", until);
           },
           next: function(elem) {
@@ -9794,10 +9794,10 @@
           prevAll: function(elem) {
             return jQuery6.dir(elem, "previousSibling");
           },
-          nextUntil: function(elem, i, until) {
+          nextUntil: function(elem, i2, until) {
             return jQuery6.dir(elem, "nextSibling", until);
           },
-          prevUntil: function(elem, i, until) {
+          prevUntil: function(elem, i2, until) {
             return jQuery6.dir(elem, "previousSibling", until);
           },
           siblings: function(elem) {
@@ -9973,8 +9973,8 @@
               then: function() {
                 var fns = arguments;
                 return jQuery6.Deferred(function(newDefer) {
-                  jQuery6.each(tuples, function(i, tuple) {
-                    var fn = jQuery6.isFunction(fns[i]) && fns[i];
+                  jQuery6.each(tuples, function(i2, tuple) {
+                    var fn = jQuery6.isFunction(fns[i2]) && fns[i2];
                     deferred[tuple[1]](function() {
                       var returned = fn && fn.apply(this, arguments);
                       if (returned && jQuery6.isFunction(returned.promise)) {
@@ -9992,13 +9992,13 @@
               }
             }, deferred = {};
             promise.pipe = promise.then;
-            jQuery6.each(tuples, function(i, tuple) {
+            jQuery6.each(tuples, function(i2, tuple) {
               var list = tuple[2], stateString = tuple[3];
               promise[tuple[1]] = list.add;
               if (stateString) {
                 list.add(function() {
                   state = stateString;
-                }, tuples[i ^ 1][2].disable, tuples[2][2].lock);
+                }, tuples[i2 ^ 1][2].disable, tuples[2][2].lock);
               }
               deferred[tuple[0]] = function() {
                 deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments);
@@ -10013,10 +10013,10 @@
             return deferred;
           },
           when: function(subordinate) {
-            var i = 0, resolveValues = slice.call(arguments), length = resolveValues.length, remaining = length !== 1 || subordinate && jQuery6.isFunction(subordinate.promise) ? length : 0, deferred = remaining === 1 ? subordinate : jQuery6.Deferred(), updateFunc = function(i2, contexts, values) {
+            var i2 = 0, resolveValues = slice.call(arguments), length = resolveValues.length, remaining = length !== 1 || subordinate && jQuery6.isFunction(subordinate.promise) ? length : 0, deferred = remaining === 1 ? subordinate : jQuery6.Deferred(), updateFunc = function(i3, contexts, values) {
               return function(value) {
-                contexts[i2] = this;
-                values[i2] = arguments.length > 1 ? slice.call(arguments) : value;
+                contexts[i3] = this;
+                values[i3] = arguments.length > 1 ? slice.call(arguments) : value;
                 if (values === progressValues) {
                   deferred.notifyWith(contexts, values);
                 } else if (!--remaining) {
@@ -10028,9 +10028,9 @@
               progressValues = new Array(length);
               progressContexts = new Array(length);
               resolveContexts = new Array(length);
-              for (; i < length; i++) {
-                if (resolveValues[i] && jQuery6.isFunction(resolveValues[i].promise)) {
-                  resolveValues[i].promise().done(updateFunc(i, resolveContexts, resolveValues)).fail(deferred.reject).progress(updateFunc(i, progressContexts, progressValues));
+              for (; i2 < length; i2++) {
+                if (resolveValues[i2] && jQuery6.isFunction(resolveValues[i2].promise)) {
+                  resolveValues[i2].promise().done(updateFunc(i2, resolveContexts, resolveValues)).fail(deferred.reject).progress(updateFunc(i2, progressContexts, progressValues));
                 } else {
                   --remaining;
                 }
@@ -10091,11 +10091,11 @@
         };
         jQuery6.ready.promise();
         var access = jQuery6.access = function(elems, fn, key, value, chainable, emptyGet, raw) {
-          var i = 0, len = elems.length, bulk = key == null;
+          var i2 = 0, len = elems.length, bulk = key == null;
           if (jQuery6.type(key) === "object") {
             chainable = true;
-            for (i in key) {
-              jQuery6.access(elems, fn, i, key[i], true, emptyGet, raw);
+            for (i2 in key) {
+              jQuery6.access(elems, fn, i2, key[i2], true, emptyGet, raw);
             }
           } else if (value !== void 0) {
             chainable = true;
@@ -10114,8 +10114,8 @@
               }
             }
             if (fn) {
-              for (; i < len; i++) {
-                fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
+              for (; i2 < len; i2++) {
+                fn(elems[i2], key, raw ? value : value.call(elems[i2], i2, fn(elems[i2], key)));
               }
             }
           }
@@ -10184,7 +10184,7 @@
             return value !== void 0 ? value : key;
           },
           remove: function(owner, key) {
-            var i, name, camel, unlock = this.key(owner), cache = this.cache[unlock];
+            var i2, name, camel, unlock = this.key(owner), cache = this.cache[unlock];
             if (key === void 0) {
               this.cache[unlock] = {};
             } else {
@@ -10199,9 +10199,9 @@
                   name = name in cache ? [name] : name.match(rnotwhite) || [];
                 }
               }
-              i = name.length;
-              while (i--) {
-                delete cache[name[i]];
+              i2 = name.length;
+              while (i2--) {
+                delete cache[name[i2]];
               }
             }
           },
@@ -10255,15 +10255,15 @@
         });
         jQuery6.fn.extend({
           data: function(key, value) {
-            var i, name, data, elem = this[0], attrs = elem && elem.attributes;
+            var i2, name, data, elem = this[0], attrs = elem && elem.attributes;
             if (key === void 0) {
               if (this.length) {
                 data = data_user.get(elem);
                 if (elem.nodeType === 1 && !data_priv.get(elem, "hasDataAttrs")) {
-                  i = attrs.length;
-                  while (i--) {
-                    if (attrs[i]) {
-                      name = attrs[i].name;
+                  i2 = attrs.length;
+                  while (i2--) {
+                    if (attrs[i2]) {
+                      name = attrs[i2].name;
                       if (name.indexOf("data-") === 0) {
                         name = jQuery6.camelCase(name.slice(5));
                         dataAttr(elem, name, data[name]);
@@ -10385,7 +10385,7 @@
             return this.queue(type || "fx", []);
           },
           promise: function(type, obj) {
-            var tmp, count = 1, defer = jQuery6.Deferred(), elements = this, i = this.length, resolve = function() {
+            var tmp, count = 1, defer = jQuery6.Deferred(), elements = this, i2 = this.length, resolve = function() {
               if (!--count) {
                 defer.resolveWith(elements, [elements]);
               }
@@ -10395,8 +10395,8 @@
               type = void 0;
             }
             type = type || "fx";
-            while (i--) {
-              tmp = data_priv.get(elements[i], type + "queueHooks");
+            while (i2--) {
+              tmp = data_priv.get(elements[i2], type + "queueHooks");
               if (tmp && tmp.empty) {
                 count++;
                 tmp.empty.add(resolve);
@@ -10553,7 +10553,7 @@
             }
           },
           trigger: function(event, data, elem, onlyHandlers) {
-            var i, cur, tmp, bubbleType, ontype, handle, special, eventPath = [elem || document2], type = hasOwn.call(event, "type") ? event.type : event, namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
+            var i2, cur, tmp, bubbleType, ontype, handle, special, eventPath = [elem || document2], type = hasOwn.call(event, "type") ? event.type : event, namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
             cur = tmp = elem = elem || document2;
             if (elem.nodeType === 3 || elem.nodeType === 8) {
               return;
@@ -10593,9 +10593,9 @@
                 eventPath.push(tmp.defaultView || tmp.parentWindow || window2);
               }
             }
-            i = 0;
-            while ((cur = eventPath[i++]) && !event.isPropagationStopped()) {
-              event.type = i > 1 ? bubbleType : special.bindType || type;
+            i2 = 0;
+            while ((cur = eventPath[i2++]) && !event.isPropagationStopped()) {
+              event.type = i2 > 1 ? bubbleType : special.bindType || type;
               handle = (data_priv.get(cur, "events") || {})[event.type] && data_priv.get(cur, "handle");
               if (handle) {
                 handle.apply(cur, data);
@@ -10629,15 +10629,15 @@
           },
           dispatch: function(event) {
             event = jQuery6.event.fix(event);
-            var i, j, ret, matched, handleObj, handlerQueue = [], args = slice.call(arguments), handlers = (data_priv.get(this, "events") || {})[event.type] || [], special = jQuery6.event.special[event.type] || {};
+            var i2, j, ret, matched, handleObj, handlerQueue = [], args = slice.call(arguments), handlers = (data_priv.get(this, "events") || {})[event.type] || [], special = jQuery6.event.special[event.type] || {};
             args[0] = event;
             event.delegateTarget = this;
             if (special.preDispatch && special.preDispatch.call(this, event) === false) {
               return;
             }
             handlerQueue = jQuery6.event.handlers.call(this, event, handlers);
-            i = 0;
-            while ((matched = handlerQueue[i++]) && !event.isPropagationStopped()) {
+            i2 = 0;
+            while ((matched = handlerQueue[i2++]) && !event.isPropagationStopped()) {
               event.currentTarget = matched.elem;
               j = 0;
               while ((handleObj = matched.handlers[j++]) && !event.isImmediatePropagationStopped()) {
@@ -10660,13 +10660,13 @@
             return event.result;
           },
           handlers: function(event, handlers) {
-            var i, matches, sel, handleObj, handlerQueue = [], delegateCount = handlers.delegateCount, cur = event.target;
+            var i2, matches, sel, handleObj, handlerQueue = [], delegateCount = handlers.delegateCount, cur = event.target;
             if (delegateCount && cur.nodeType && (!event.button || event.type !== "click")) {
               for (; cur !== this; cur = cur.parentNode || this) {
                 if (cur.disabled !== true || event.type !== "click") {
                   matches = [];
-                  for (i = 0; i < delegateCount; i++) {
-                    handleObj = handlers[i];
+                  for (i2 = 0; i2 < delegateCount; i2++) {
+                    handleObj = handlers[i2];
                     sel = handleObj.selector + " ";
                     if (matches[sel] === void 0) {
                       matches[sel] = handleObj.needsContext ? jQuery6(sel, this).index(cur) >= 0 : jQuery6.find(sel, this, null, [cur]).length;
@@ -10718,15 +10718,15 @@
             if (event[jQuery6.expando]) {
               return event;
             }
-            var i, prop, copy, type = event.type, originalEvent = event, fixHook = this.fixHooks[type];
+            var i2, prop, copy, type = event.type, originalEvent = event, fixHook = this.fixHooks[type];
             if (!fixHook) {
               this.fixHooks[type] = fixHook = rmouseEvent.test(type) ? this.mouseHooks : rkeyEvent.test(type) ? this.keyHooks : {};
             }
             copy = fixHook.props ? this.props.concat(fixHook.props) : this.props;
             event = new jQuery6.Event(originalEvent);
-            i = copy.length;
-            while (i--) {
-              prop = copy[i];
+            i2 = copy.length;
+            while (i2--) {
+              prop = copy[i2];
               event[prop] = originalEvent[prop];
             }
             if (!event.target) {
@@ -11006,17 +11006,17 @@
           return elem;
         }
         function setGlobalEval(elems, refElements) {
-          var i = 0, l = elems.length;
-          for (; i < l; i++) {
+          var i2 = 0, l = elems.length;
+          for (; i2 < l; i2++) {
             data_priv.set(
-              elems[i],
+              elems[i2],
               "globalEval",
-              !refElements || data_priv.get(refElements[i], "globalEval")
+              !refElements || data_priv.get(refElements[i2], "globalEval")
             );
           }
         }
         function cloneCopyEvent(src, dest) {
-          var i, l, type, pdataOld, pdataCur, udataOld, udataCur, events;
+          var i2, l, type, pdataOld, pdataCur, udataOld, udataCur, events;
           if (dest.nodeType !== 1) {
             return;
           }
@@ -11028,8 +11028,8 @@
               delete pdataCur.handle;
               pdataCur.events = {};
               for (type in events) {
-                for (i = 0, l = events[type].length; i < l; i++) {
-                  jQuery6.event.add(dest, type, events[type][i]);
+                for (i2 = 0, l = events[type].length; i2 < l; i2++) {
+                  jQuery6.event.add(dest, type, events[type][i2]);
                 }
               }
             }
@@ -11054,20 +11054,20 @@
         }
         jQuery6.extend({
           clone: function(elem, dataAndEvents, deepDataAndEvents) {
-            var i, l, srcElements, destElements, clone = elem.cloneNode(true), inPage = jQuery6.contains(elem.ownerDocument, elem);
+            var i2, l, srcElements, destElements, clone = elem.cloneNode(true), inPage = jQuery6.contains(elem.ownerDocument, elem);
             if (!support.noCloneChecked && (elem.nodeType === 1 || elem.nodeType === 11) && !jQuery6.isXMLDoc(elem)) {
               destElements = getAll(clone);
               srcElements = getAll(elem);
-              for (i = 0, l = srcElements.length; i < l; i++) {
-                fixInput(srcElements[i], destElements[i]);
+              for (i2 = 0, l = srcElements.length; i2 < l; i2++) {
+                fixInput(srcElements[i2], destElements[i2]);
               }
             }
             if (dataAndEvents) {
               if (deepDataAndEvents) {
                 srcElements = srcElements || getAll(elem);
                 destElements = destElements || getAll(clone);
-                for (i = 0, l = srcElements.length; i < l; i++) {
-                  cloneCopyEvent(srcElements[i], destElements[i]);
+                for (i2 = 0, l = srcElements.length; i2 < l; i2++) {
+                  cloneCopyEvent(srcElements[i2], destElements[i2]);
                 }
               } else {
                 cloneCopyEvent(elem, clone);
@@ -11080,9 +11080,9 @@
             return clone;
           },
           buildFragment: function(elems, context, scripts, selection) {
-            var elem, tmp, tag, wrap, contains, j, fragment = context.createDocumentFragment(), nodes = [], i = 0, l = elems.length;
-            for (; i < l; i++) {
-              elem = elems[i];
+            var elem, tmp, tag, wrap, contains, j, fragment = context.createDocumentFragment(), nodes = [], i2 = 0, l = elems.length;
+            for (; i2 < l; i2++) {
+              elem = elems[i2];
               if (elem || elem === 0) {
                 if (jQuery6.type(elem) === "object") {
                   jQuery6.merge(nodes, elem.nodeType ? [elem] : elem);
@@ -11104,8 +11104,8 @@
               }
             }
             fragment.textContent = "";
-            i = 0;
-            while (elem = nodes[i++]) {
+            i2 = 0;
+            while (elem = nodes[i2++]) {
               if (selection && jQuery6.inArray(elem, selection) !== -1) {
                 continue;
               }
@@ -11126,8 +11126,8 @@
             return fragment;
           },
           cleanData: function(elems) {
-            var data, elem, type, key, special = jQuery6.event.special, i = 0;
-            for (; (elem = elems[i]) !== void 0; i++) {
+            var data, elem, type, key, special = jQuery6.event.special, i2 = 0;
+            for (; (elem = elems[i2]) !== void 0; i2++) {
               if (jQuery6.acceptData(elem)) {
                 key = elem[data_priv.expando];
                 if (key && (data = data_priv.cache[key])) {
@@ -11190,8 +11190,8 @@
             });
           },
           remove: function(selector, keepData) {
-            var elem, elems = selector ? jQuery6.filter(selector, this) : this, i = 0;
-            for (; (elem = elems[i]) != null; i++) {
+            var elem, elems = selector ? jQuery6.filter(selector, this) : this, i2 = 0;
+            for (; (elem = elems[i2]) != null; i2++) {
               if (!keepData && elem.nodeType === 1) {
                 jQuery6.cleanData(getAll(elem));
               }
@@ -11205,8 +11205,8 @@
             return this;
           },
           empty: function() {
-            var elem, i = 0;
-            for (; (elem = this[i]) != null; i++) {
+            var elem, i2 = 0;
+            for (; (elem = this[i2]) != null; i2++) {
               if (elem.nodeType === 1) {
                 jQuery6.cleanData(getAll(elem, false));
                 elem.textContent = "";
@@ -11223,15 +11223,15 @@
           },
           html: function(value) {
             return access(this, function(value2) {
-              var elem = this[0] || {}, i = 0, l = this.length;
+              var elem = this[0] || {}, i2 = 0, l = this.length;
               if (value2 === void 0 && elem.nodeType === 1) {
                 return elem.innerHTML;
               }
               if (typeof value2 === "string" && !rnoInnerhtml.test(value2) && !wrapMap[(rtagName.exec(value2) || ["", ""])[1].toLowerCase()]) {
                 value2 = value2.replace(rxhtmlTag, "<$1></$2>");
                 try {
-                  for (; i < l; i++) {
-                    elem = this[i] || {};
+                  for (; i2 < l; i2++) {
+                    elem = this[i2] || {};
                     if (elem.nodeType === 1) {
                       jQuery6.cleanData(getAll(elem, false));
                       elem.innerHTML = value2;
@@ -11262,7 +11262,7 @@
           },
           domManip: function(args, callback) {
             args = concat.apply([], args);
-            var fragment, first, scripts, hasScripts, node, doc, i = 0, l = this.length, set = this, iNoClone = l - 1, value = args[0], isFunction = jQuery6.isFunction(value);
+            var fragment, first, scripts, hasScripts, node, doc, i2 = 0, l = this.length, set = this, iNoClone = l - 1, value = args[0], isFunction = jQuery6.isFunction(value);
             if (isFunction || l > 1 && typeof value === "string" && !support.checkClone && rchecked.test(value)) {
               return this.each(function(index) {
                 var self2 = set.eq(index);
@@ -11281,21 +11281,21 @@
               if (first) {
                 scripts = jQuery6.map(getAll(fragment, "script"), disableScript);
                 hasScripts = scripts.length;
-                for (; i < l; i++) {
+                for (; i2 < l; i2++) {
                   node = fragment;
-                  if (i !== iNoClone) {
+                  if (i2 !== iNoClone) {
                     node = jQuery6.clone(node, true, true);
                     if (hasScripts) {
                       jQuery6.merge(scripts, getAll(node, "script"));
                     }
                   }
-                  callback.call(this[i], node, i);
+                  callback.call(this[i2], node, i2);
                 }
                 if (hasScripts) {
                   doc = scripts[scripts.length - 1].ownerDocument;
                   jQuery6.map(scripts, restoreScript);
-                  for (i = 0; i < hasScripts; i++) {
-                    node = scripts[i];
+                  for (i2 = 0; i2 < hasScripts; i2++) {
+                    node = scripts[i2];
                     if (rscriptType.test(node.type || "") && !data_priv.access(node, "globalEval") && jQuery6.contains(doc, node)) {
                       if (node.src) {
                         if (jQuery6._evalUrl) {
@@ -11320,10 +11320,10 @@
           replaceAll: "replaceWith"
         }, function(name, original) {
           jQuery6.fn[name] = function(selector) {
-            var elems, ret = [], insert = jQuery6(selector), last = insert.length - 1, i = 0;
-            for (; i <= last; i++) {
-              elems = i === last ? this : this.clone(true);
-              jQuery6(insert[i])[original](elems);
+            var elems, ret = [], insert = jQuery6(selector), last = insert.length - 1, i2 = 0;
+            for (; i2 <= last; i2++) {
+              elems = i2 === last ? this : this.clone(true);
+              jQuery6(insert[i2])[original](elems);
               push.apply(ret, elems.get());
             }
             return this.pushStack(ret);
@@ -11458,9 +11458,9 @@
           if (name in style) {
             return name;
           }
-          var capName = name[0].toUpperCase() + name.slice(1), origName = name, i = cssPrefixes.length;
-          while (i--) {
-            name = cssPrefixes[i] + capName;
+          var capName = name[0].toUpperCase() + name.slice(1), origName = name, i2 = cssPrefixes.length;
+          while (i2--) {
+            name = cssPrefixes[i2] + capName;
             if (name in style) {
               return name;
             }
@@ -11472,22 +11472,22 @@
           return matches ? Math.max(0, matches[1] - (subtract || 0)) + (matches[2] || "px") : value;
         }
         function augmentWidthOrHeight(elem, name, extra, isBorderBox, styles) {
-          var i = extra === (isBorderBox ? "border" : "content") ? 4 : name === "width" ? 1 : 0, val = 0;
-          for (; i < 4; i += 2) {
+          var i2 = extra === (isBorderBox ? "border" : "content") ? 4 : name === "width" ? 1 : 0, val = 0;
+          for (; i2 < 4; i2 += 2) {
             if (extra === "margin") {
-              val += jQuery6.css(elem, extra + cssExpand[i], true, styles);
+              val += jQuery6.css(elem, extra + cssExpand[i2], true, styles);
             }
             if (isBorderBox) {
               if (extra === "content") {
-                val -= jQuery6.css(elem, "padding" + cssExpand[i], true, styles);
+                val -= jQuery6.css(elem, "padding" + cssExpand[i2], true, styles);
               }
               if (extra !== "margin") {
-                val -= jQuery6.css(elem, "border" + cssExpand[i] + "Width", true, styles);
+                val -= jQuery6.css(elem, "border" + cssExpand[i2] + "Width", true, styles);
               }
             } else {
-              val += jQuery6.css(elem, "padding" + cssExpand[i], true, styles);
+              val += jQuery6.css(elem, "padding" + cssExpand[i2], true, styles);
               if (extra !== "padding") {
-                val += jQuery6.css(elem, "border" + cssExpand[i] + "Width", true, styles);
+                val += jQuery6.css(elem, "border" + cssExpand[i2] + "Width", true, styles);
               }
             }
           }
@@ -11628,7 +11628,7 @@
             return val;
           }
         });
-        jQuery6.each(["height", "width"], function(i, name) {
+        jQuery6.each(["height", "width"], function(i2, name) {
           jQuery6.cssHooks[name] = {
             get: function(elem, computed, extra) {
               if (computed) {
@@ -11673,9 +11673,9 @@
         }, function(prefix, suffix) {
           jQuery6.cssHooks[prefix + suffix] = {
             expand: function(value) {
-              var i = 0, expanded = {}, parts = typeof value === "string" ? value.split(" ") : [value];
-              for (; i < 4; i++) {
-                expanded[prefix + cssExpand[i] + suffix] = parts[i] || parts[i - 2] || parts[0];
+              var i2 = 0, expanded = {}, parts = typeof value === "string" ? value.split(" ") : [value];
+              for (; i2 < 4; i2++) {
+                expanded[prefix + cssExpand[i2] + suffix] = parts[i2] || parts[i2 - 2] || parts[0];
               }
               return expanded;
             }
@@ -11687,12 +11687,12 @@
         jQuery6.fn.extend({
           css: function(name, value) {
             return access(this, function(elem, name2, value2) {
-              var styles, len, map2 = {}, i = 0;
+              var styles, len, map2 = {}, i2 = 0;
               if (jQuery6.isArray(name2)) {
                 styles = getStyles(elem);
                 len = name2.length;
-                for (; i < len; i++) {
-                  map2[name2[i]] = jQuery6.css(elem, name2[i], false, styles);
+                for (; i2 < len; i2++) {
+                  map2[name2[i2]] = jQuery6.css(elem, name2[i2], false, styles);
                 }
                 return map2;
               }
@@ -11829,10 +11829,10 @@
           return fxNow = jQuery6.now();
         }
         function genFx(type, includeWidth) {
-          var which, i = 0, attrs = { height: type };
+          var which, i2 = 0, attrs = { height: type };
           includeWidth = includeWidth ? 1 : 0;
-          for (; i < 4; i += 2 - includeWidth) {
-            which = cssExpand[i];
+          for (; i2 < 4; i2 += 2 - includeWidth) {
+            which = cssExpand[i2];
             attrs["margin" + which] = attrs["padding" + which] = type;
           }
           if (includeWidth) {
@@ -12170,7 +12170,7 @@
             });
           }
         });
-        jQuery6.each(["toggle", "show", "hide"], function(i, name) {
+        jQuery6.each(["toggle", "show", "hide"], function(i2, name) {
           var cssFn = jQuery6.fn[name];
           jQuery6.fn[name] = function(speed, easing, callback) {
             return speed == null || typeof speed === "boolean" ? cssFn.apply(this, arguments) : this.animate(genFx(name, true), speed, easing, callback);
@@ -12190,12 +12190,12 @@
         });
         jQuery6.timers = [];
         jQuery6.fx.tick = function() {
-          var timer, i = 0, timers = jQuery6.timers;
+          var timer, i2 = 0, timers = jQuery6.timers;
           fxNow = jQuery6.now();
-          for (; i < timers.length; i++) {
-            timer = timers[i];
-            if (!timer() && timers[i] === timer) {
-              timers.splice(i--, 1);
+          for (; i2 < timers.length; i2++) {
+            timer = timers[i2];
+            if (!timer() && timers[i2] === timer) {
+              timers.splice(i2--, 1);
             }
           }
           if (!timers.length) {
@@ -12289,9 +12289,9 @@
             }
           },
           removeAttr: function(elem, value) {
-            var name, propName, i = 0, attrNames = value && value.match(rnotwhite);
+            var name, propName, i2 = 0, attrNames = value && value.match(rnotwhite);
             if (attrNames && elem.nodeType === 1) {
-              while (name = attrNames[i++]) {
+              while (name = attrNames[i2++]) {
                 propName = jQuery6.propFix[name] || name;
                 if (jQuery6.expr.match.bool.test(name)) {
                   elem[propName] = false;
@@ -12325,7 +12325,7 @@
             return name;
           }
         };
-        jQuery6.each(jQuery6.expr.match.bool.source.match(/\w+/g), function(i, name) {
+        jQuery6.each(jQuery6.expr.match.bool.source.match(/\w+/g), function(i2, name) {
           var getter = attrHandle[name] || jQuery6.find.attr;
           attrHandle[name] = function(elem, name2, isXML) {
             var ret, handle;
@@ -12406,7 +12406,7 @@
         var rclass = /[\t\r\n\f]/g;
         jQuery6.fn.extend({
           addClass: function(value) {
-            var classes, elem, cur, clazz, j, finalValue, proceed = typeof value === "string" && value, i = 0, len = this.length;
+            var classes, elem, cur, clazz, j, finalValue, proceed = typeof value === "string" && value, i2 = 0, len = this.length;
             if (jQuery6.isFunction(value)) {
               return this.each(function(j2) {
                 jQuery6(this).addClass(value.call(this, j2, this.className));
@@ -12414,8 +12414,8 @@
             }
             if (proceed) {
               classes = (value || "").match(rnotwhite) || [];
-              for (; i < len; i++) {
-                elem = this[i];
+              for (; i2 < len; i2++) {
+                elem = this[i2];
                 cur = elem.nodeType === 1 && (elem.className ? (" " + elem.className + " ").replace(rclass, " ") : " ");
                 if (cur) {
                   j = 0;
@@ -12434,7 +12434,7 @@
             return this;
           },
           removeClass: function(value) {
-            var classes, elem, cur, clazz, j, finalValue, proceed = arguments.length === 0 || typeof value === "string" && value, i = 0, len = this.length;
+            var classes, elem, cur, clazz, j, finalValue, proceed = arguments.length === 0 || typeof value === "string" && value, i2 = 0, len = this.length;
             if (jQuery6.isFunction(value)) {
               return this.each(function(j2) {
                 jQuery6(this).removeClass(value.call(this, j2, this.className));
@@ -12442,8 +12442,8 @@
             }
             if (proceed) {
               classes = (value || "").match(rnotwhite) || [];
-              for (; i < len; i++) {
-                elem = this[i];
+              for (; i2 < len; i2++) {
+                elem = this[i2];
                 cur = elem.nodeType === 1 && (elem.className ? (" " + elem.className + " ").replace(rclass, " ") : "");
                 if (cur) {
                   j = 0;
@@ -12467,14 +12467,14 @@
               return stateVal ? this.addClass(value) : this.removeClass(value);
             }
             if (jQuery6.isFunction(value)) {
-              return this.each(function(i) {
-                jQuery6(this).toggleClass(value.call(this, i, this.className, stateVal), stateVal);
+              return this.each(function(i2) {
+                jQuery6(this).toggleClass(value.call(this, i2, this.className, stateVal), stateVal);
               });
             }
             return this.each(function() {
               if (type === "string") {
-                var className, i = 0, self2 = jQuery6(this), classNames = value.match(rnotwhite) || [];
-                while (className = classNames[i++]) {
+                var className, i2 = 0, self2 = jQuery6(this), classNames = value.match(rnotwhite) || [];
+                while (className = classNames[i2++]) {
                   if (self2.hasClass(className)) {
                     self2.removeClass(className);
                   } else {
@@ -12490,9 +12490,9 @@
             });
           },
           hasClass: function(selector) {
-            var className = " " + selector + " ", i = 0, l = this.length;
-            for (; i < l; i++) {
-              if (this[i].nodeType === 1 && (" " + this[i].className + " ").replace(rclass, " ").indexOf(className) >= 0) {
+            var className = " " + selector + " ", i2 = 0, l = this.length;
+            for (; i2 < l; i2++) {
+              if (this[i2].nodeType === 1 && (" " + this[i2].className + " ").replace(rclass, " ").indexOf(className) >= 0) {
                 return true;
               }
             }
@@ -12515,13 +12515,13 @@
               return;
             }
             isFunction = jQuery6.isFunction(value);
-            return this.each(function(i) {
+            return this.each(function(i2) {
               var val;
               if (this.nodeType !== 1) {
                 return;
               }
               if (isFunction) {
-                val = value.call(this, i, jQuery6(this).val());
+                val = value.call(this, i2, jQuery6(this).val());
               } else {
                 val = value;
               }
@@ -12551,10 +12551,10 @@
             },
             select: {
               get: function(elem) {
-                var value, option, options2 = elem.options, index = elem.selectedIndex, one = elem.type === "select-one" || index < 0, values = one ? null : [], max = one ? index + 1 : options2.length, i = index < 0 ? max : one ? index : 0;
-                for (; i < max; i++) {
-                  option = options2[i];
-                  if ((option.selected || i === index) && (support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) && (!option.parentNode.disabled || !jQuery6.nodeName(option.parentNode, "optgroup"))) {
+                var value, option, options2 = elem.options, index = elem.selectedIndex, one = elem.type === "select-one" || index < 0, values = one ? null : [], max = one ? index + 1 : options2.length, i2 = index < 0 ? max : one ? index : 0;
+                for (; i2 < max; i2++) {
+                  option = options2[i2];
+                  if ((option.selected || i2 === index) && (support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) && (!option.parentNode.disabled || !jQuery6.nodeName(option.parentNode, "optgroup"))) {
                     value = jQuery6(option).val();
                     if (one) {
                       return value;
@@ -12565,9 +12565,9 @@
                 return values;
               },
               set: function(elem, value) {
-                var optionSet, option, options2 = elem.options, values = jQuery6.makeArray(value), i = options2.length;
-                while (i--) {
-                  option = options2[i];
+                var optionSet, option, options2 = elem.options, values = jQuery6.makeArray(value), i2 = options2.length;
+                while (i2--) {
+                  option = options2[i2];
                   if (option.selected = jQuery6.inArray(option.value, values) >= 0) {
                     optionSet = true;
                   }
@@ -12594,7 +12594,7 @@
             };
           }
         });
-        jQuery6.each("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error contextmenu".split(" "), function(i, name) {
+        jQuery6.each("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error contextmenu".split(" "), function(i2, name) {
           jQuery6.fn[name] = function(data, fn) {
             return arguments.length > 0 ? this.on(name, null, data, fn) : this.trigger(name);
           };
@@ -12644,9 +12644,9 @@
               func = dataTypeExpression;
               dataTypeExpression = "*";
             }
-            var dataType, i = 0, dataTypes = dataTypeExpression.toLowerCase().match(rnotwhite) || [];
+            var dataType, i2 = 0, dataTypes = dataTypeExpression.toLowerCase().match(rnotwhite) || [];
             if (jQuery6.isFunction(func)) {
-              while (dataType = dataTypes[i++]) {
+              while (dataType = dataTypes[i2++]) {
                 if (dataType[0] === "+") {
                   dataType = dataType.slice(1) || "*";
                   (structure[dataType] = structure[dataType] || []).unshift(func);
@@ -12831,7 +12831,7 @@
               url = void 0;
             }
             options2 = options2 || {};
-            var transport, cacheURL, responseHeadersString, responseHeaders, timeoutTimer, parts, fireGlobals, i, s = jQuery6.ajaxSetup({}, options2), callbackContext = s.context || s, globalEventContext = s.context && (callbackContext.nodeType || callbackContext.jquery) ? jQuery6(callbackContext) : jQuery6.event, deferred = jQuery6.Deferred(), completeDeferred = jQuery6.Callbacks("once memory"), statusCode = s.statusCode || {}, requestHeaders = {}, requestHeadersNames = {}, state = 0, strAbort = "canceled", jqXHR = {
+            var transport, cacheURL, responseHeadersString, responseHeaders, timeoutTimer, parts, fireGlobals, i2, s = jQuery6.ajaxSetup({}, options2), callbackContext = s.context || s, globalEventContext = s.context && (callbackContext.nodeType || callbackContext.jquery) ? jQuery6(callbackContext) : jQuery6.event, deferred = jQuery6.Deferred(), completeDeferred = jQuery6.Callbacks("once memory"), statusCode = s.statusCode || {}, requestHeaders = {}, requestHeadersNames = {}, state = 0, strAbort = "canceled", jqXHR = {
               readyState: 0,
               getResponseHeader: function(key) {
                 var match;
@@ -12933,15 +12933,15 @@
               "Accept",
               s.dataTypes[0] && s.accepts[s.dataTypes[0]] ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*" ? ", " + allTypes + "; q=0.01" : "") : s.accepts["*"]
             );
-            for (i in s.headers) {
-              jqXHR.setRequestHeader(i, s.headers[i]);
+            for (i2 in s.headers) {
+              jqXHR.setRequestHeader(i2, s.headers[i2]);
             }
             if (s.beforeSend && (s.beforeSend.call(callbackContext, jqXHR, s) === false || state === 2)) {
               return jqXHR.abort();
             }
             strAbort = "abort";
-            for (i in { success: 1, error: 1, complete: 1 }) {
-              jqXHR[i](s[i]);
+            for (i2 in { success: 1, error: 1, complete: 1 }) {
+              jqXHR[i2](s[i2]);
             }
             transport = inspectPrefiltersOrTransports(transports, s, options2, jqXHR);
             if (!transport) {
@@ -13046,7 +13046,7 @@
             return jQuery6.get(url, void 0, callback, "script");
           }
         });
-        jQuery6.each(["get", "post"], function(i, method) {
+        jQuery6.each(["get", "post"], function(i2, method) {
           jQuery6[method] = function(url, data, callback, type) {
             if (jQuery6.isFunction(data)) {
               type = type || callback;
@@ -13076,8 +13076,8 @@
           wrapAll: function(html) {
             var wrap;
             if (jQuery6.isFunction(html)) {
-              return this.each(function(i) {
-                jQuery6(this).wrapAll(html.call(this, i));
+              return this.each(function(i2) {
+                jQuery6(this).wrapAll(html.call(this, i2));
               });
             }
             if (this[0]) {
@@ -13097,8 +13097,8 @@
           },
           wrapInner: function(html) {
             if (jQuery6.isFunction(html)) {
-              return this.each(function(i) {
-                jQuery6(this).wrapInner(html.call(this, i));
+              return this.each(function(i2) {
+                jQuery6(this).wrapInner(html.call(this, i2));
               });
             }
             return this.each(function() {
@@ -13112,8 +13112,8 @@
           },
           wrap: function(html) {
             var isFunction = jQuery6.isFunction(html);
-            return this.each(function(i) {
-              jQuery6(this).wrapAll(isFunction ? html.call(this, i) : html);
+            return this.each(function(i2) {
+              jQuery6(this).wrapAll(isFunction ? html.call(this, i2) : html);
             });
           },
           unwrap: function() {
@@ -13134,11 +13134,11 @@
         function buildParams(prefix, obj, traditional, add) {
           var name;
           if (jQuery6.isArray(obj)) {
-            jQuery6.each(obj, function(i, v) {
+            jQuery6.each(obj, function(i2, v) {
               if (traditional || rbracket.test(prefix)) {
                 add(prefix, v);
               } else {
-                buildParams(prefix + "[" + (typeof v === "object" ? i : "") + "]", v, traditional, add);
+                buildParams(prefix + "[" + (typeof v === "object" ? i2 : "") + "]", v, traditional, add);
               }
             });
           } else if (!traditional && jQuery6.type(obj) === "object") {
@@ -13179,7 +13179,7 @@
             }).filter(function() {
               var type = this.type;
               return this.name && !jQuery6(this).is(":disabled") && rsubmittable.test(this.nodeName) && !rsubmitterTypes.test(type) && (this.checked || !rcheckableType.test(type));
-            }).map(function(i, elem) {
+            }).map(function(i2, elem) {
               var val = jQuery6(this).val();
               return val == null ? null : jQuery6.isArray(val) ? jQuery6.map(val, function(val2) {
                 return { name: elem.name, value: val2.replace(rCRLF, "\r\n") };
@@ -13211,11 +13211,11 @@
           if (support.cors || xhrSupported && !options2.crossDomain) {
             return {
               send: function(headers, complete) {
-                var i, xhr = options2.xhr(), id = ++xhrId;
+                var i2, xhr = options2.xhr(), id = ++xhrId;
                 xhr.open(options2.type, options2.url, options2.async, options2.username, options2.password);
                 if (options2.xhrFields) {
-                  for (i in options2.xhrFields) {
-                    xhr[i] = options2.xhrFields[i];
+                  for (i2 in options2.xhrFields) {
+                    xhr[i2] = options2.xhrFields[i2];
                   }
                 }
                 if (options2.mimeType && xhr.overrideMimeType) {
@@ -13224,8 +13224,8 @@
                 if (!options2.crossDomain && !headers["X-Requested-With"]) {
                   headers["X-Requested-With"] = "XMLHttpRequest";
                 }
-                for (i in headers) {
-                  xhr.setRequestHeader(i, headers[i]);
+                for (i2 in headers) {
+                  xhr.setRequestHeader(i2, headers[i2]);
                 }
                 callback = function(type) {
                   return function() {
@@ -13415,7 +13415,7 @@
           }
           return this;
         };
-        jQuery6.each(["ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend"], function(i, type) {
+        jQuery6.each(["ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend"], function(i2, type) {
           jQuery6.fn[type] = function(fn) {
             return this.on(type, fn);
           };
@@ -13430,7 +13430,7 @@
           return jQuery6.isWindow(elem) ? elem : elem.nodeType === 9 && elem.defaultView;
         }
         jQuery6.offset = {
-          setOffset: function(elem, options2, i) {
+          setOffset: function(elem, options2, i2) {
             var curPosition, curLeft, curCSSTop, curTop, curOffset, curCSSLeft, calculatePosition, position = jQuery6.css(elem, "position"), curElem = jQuery6(elem), props = {};
             if (position === "static") {
               elem.style.position = "relative";
@@ -13448,7 +13448,7 @@
               curLeft = parseFloat(curCSSLeft) || 0;
             }
             if (jQuery6.isFunction(options2)) {
-              options2 = options2.call(elem, i, curOffset);
+              options2 = options2.call(elem, i2, curOffset);
             }
             if (options2.top != null) {
               props.top = options2.top - curOffset.top + curTop;
@@ -13466,8 +13466,8 @@
         jQuery6.fn.extend({
           offset: function(options2) {
             if (arguments.length) {
-              return options2 === void 0 ? this : this.each(function(i) {
-                jQuery6.offset.setOffset(this, options2, i);
+              return options2 === void 0 ? this : this.each(function(i2) {
+                jQuery6.offset.setOffset(this, options2, i2);
               });
             }
             var docElem2, win, elem = this[0], box = { top: 0, left: 0 }, doc = elem && elem.ownerDocument;
@@ -13537,7 +13537,7 @@
             }, method, val, arguments.length, null);
           };
         });
-        jQuery6.each(["top", "left"], function(i, prop) {
+        jQuery6.each(["top", "left"], function(i2, prop) {
           jQuery6.cssHooks[prop] = addGetHookIf(
             support.pixelPosition,
             function(elem, computed) {
@@ -13666,8 +13666,8 @@
         ].join(""), markup = function() {
           var gradientFix = "";
           if (IE) {
-            for (var i = 1; i <= 6; i++) {
-              gradientFix += "<div class='sp-" + i + "'></div>";
+            for (var i2 = 1; i2 <= 6; i2++) {
+              gradientFix += "<div class='sp-" + i2 + "'></div>";
             }
           }
           return [
@@ -13712,8 +13712,8 @@
         }();
         function paletteTemplate(p, color, className, opts) {
           var html = [];
-          for (var i = 0; i < p.length; i++) {
-            var current = p[i];
+          for (var i2 = 0; i2 < p.length; i2++) {
+            var current = p[i2];
             if (current) {
               var tiny = tinycolor(current);
               var c = tiny.toHsl().l < 0.5 ? "sp-thumb-el sp-thumb-dark" : "sp-thumb-el sp-thumb-light";
@@ -13733,9 +13733,9 @@
           return "<div class='sp-cf " + className + "'>" + html.join("") + "</div>";
         }
         function hideAll() {
-          for (var i = 0; i < spectrums.length; i++) {
-            if (spectrums[i]) {
-              spectrums[i].hide();
+          for (var i2 = 0; i2 < spectrums.length; i2++) {
+            if (spectrums[i2]) {
+              spectrums[i2].hide();
             }
           }
         }
@@ -13762,9 +13762,9 @@
               palette = opts.palette.slice(0);
               paletteArray = $2.isArray(palette[0]) ? palette : [palette];
               paletteLookup = {};
-              for (var i = 0; i < paletteArray.length; i++) {
-                for (var j = 0; j < paletteArray[i].length; j++) {
-                  var rgb3 = tinycolor(paletteArray[i][j]).toRgbString();
+              for (var i2 = 0; i2 < paletteArray.length; i2++) {
+                for (var j = 0; j < paletteArray[i2].length; j++) {
+                  var rgb3 = tinycolor(paletteArray[i2][j]).toRgbString();
                   paletteLookup[rgb3] = true;
                 }
               }
@@ -13939,7 +13939,7 @@
                 var oldPalette = window.localStorage[localStorageKey].split(",#");
                 if (oldPalette.length > 1) {
                   delete window.localStorage[localStorageKey];
-                  $2.each(oldPalette, function(i, c) {
+                  $2.each(oldPalette, function(i2, c) {
                     addColorToSelectionPalette(c);
                   });
                 }
@@ -13971,10 +13971,10 @@
           function getUniqueSelectionPalette() {
             var unique = [];
             if (opts.showPalette) {
-              for (var i = 0; i < selectionPalette.length; i++) {
-                var rgb3 = tinycolor(selectionPalette[i]).toRgbString();
+              for (var i2 = 0; i2 < selectionPalette.length; i2++) {
+                var rgb3 = tinycolor(selectionPalette[i2]).toRgbString();
                 if (!paletteLookup[rgb3]) {
-                  unique.push(selectionPalette[i]);
+                  unique.push(selectionPalette[i2]);
                 }
               }
             }
@@ -13982,8 +13982,8 @@
           }
           function drawPalette() {
             var currentColor = get();
-            var html = $2.map(paletteArray, function(palette2, i) {
-              return paletteTemplate(palette2, currentColor, "sp-palette-row sp-palette-row-" + i, opts);
+            var html = $2.map(paletteArray, function(palette2, i2) {
+              return paletteTemplate(palette2, currentColor, "sp-palette-row sp-palette-row-" + i2, opts);
             });
             updateSelectionPaletteFromStorage();
             if (selectionPalette) {
@@ -14712,12 +14712,12 @@
           tinycolor2.fromRatio = function(color, opts) {
             if (typeof color == "object") {
               var newColor = {};
-              for (var i in color) {
-                if (color.hasOwnProperty(i)) {
-                  if (i === "a") {
-                    newColor[i] = color[i];
+              for (var i2 in color) {
+                if (color.hasOwnProperty(i2)) {
+                  if (i2 === "a") {
+                    newColor[i2] = color[i2];
                   } else {
-                    newColor[i] = convertToPercentage(color[i]);
+                    newColor[i2] = convertToPercentage(color[i2]);
                   }
                 }
               }
@@ -14857,7 +14857,7 @@
             h = bound01(h, 360) * 6;
             s = bound01(s, 100);
             v = bound01(v, 100);
-            var i = math.floor(h), f = h - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s), mod = i % 6, r = [v, q, p, p, t, v][mod], g = [t, v, v, q, p, p][mod], b = [p, p, t, v, v, q][mod];
+            var i2 = math.floor(h), f = h - i2, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s), mod = i2 % 6, r = [v, q, p, p, t, v][mod], g = [t, v, v, q, p, p][mod], b = [p, p, t, v, v, q][mod];
             return { r: r * 255, g: g * 255, b: b * 255 };
           }
           function rgbToHex(r, g, b, allow3Char) {
@@ -15039,14 +15039,14 @@
             var bestColor = null;
             var bestScore = 0;
             var bestIsReadable = false;
-            for (var i = 0; i < colorList.length; i++) {
-              var readability = tinycolor2.readability(baseColor, colorList[i]);
+            for (var i2 = 0; i2 < colorList.length; i2++) {
+              var readability = tinycolor2.readability(baseColor, colorList[i2]);
               var readable = readability.brightness > 125 && readability.color > 500;
               var score = 3 * (readability.brightness / 125) + readability.color / 500;
               if (readable && !bestIsReadable || readable && bestIsReadable && score > bestScore || !readable && !bestIsReadable && score > bestScore) {
                 bestIsReadable = readable;
                 bestScore = score;
-                bestColor = tinycolor2(colorList[i]);
+                bestColor = tinycolor2(colorList[i2]);
               }
             }
             return bestColor;
@@ -15205,9 +15205,9 @@
           var hexNames = tinycolor2.hexNames = flip(names);
           function flip(o) {
             var flipped = {};
-            for (var i in o) {
-              if (o.hasOwnProperty(i)) {
-                flipped[o[i]] = i;
+            for (var i2 in o) {
+              if (o.hasOwnProperty(i2)) {
+                flipped[o[i2]] = i2;
               }
             }
             return flipped;
@@ -15392,13 +15392,13 @@
         };
         function DOMEval(code, node, doc) {
           doc = doc || document2;
-          var i, val, script = doc.createElement("script");
+          var i2, val, script = doc.createElement("script");
           script.text = code;
           if (node) {
-            for (i in preservedScriptAttributes) {
-              val = node[i] || node.getAttribute && node.getAttribute(i);
+            for (i2 in preservedScriptAttributes) {
+              val = node[i2] || node.getAttribute && node.getAttribute(i2);
               if (val) {
-                script.setAttribute(i, val);
+                script.setAttribute(i2, val);
               }
             }
           }
@@ -15435,8 +15435,8 @@
             return jQuery6.each(this, callback);
           },
           map: function(callback) {
-            return this.pushStack(jQuery6.map(this, function(elem, i) {
-              return callback.call(elem, i, elem);
+            return this.pushStack(jQuery6.map(this, function(elem, i2) {
+              return callback.call(elem, i2, elem);
             }));
           },
           slice: function() {
@@ -15449,17 +15449,17 @@
             return this.eq(-1);
           },
           even: function() {
-            return this.pushStack(jQuery6.grep(this, function(_elem, i) {
-              return (i + 1) % 2;
+            return this.pushStack(jQuery6.grep(this, function(_elem, i2) {
+              return (i2 + 1) % 2;
             }));
           },
           odd: function() {
-            return this.pushStack(jQuery6.grep(this, function(_elem, i) {
-              return i % 2;
+            return this.pushStack(jQuery6.grep(this, function(_elem, i2) {
+              return i2 % 2;
             }));
           },
-          eq: function(i) {
-            var len = this.length, j = +i + (i < 0 ? len : 0);
+          eq: function(i2) {
+            var len = this.length, j = +i2 + (i2 < 0 ? len : 0);
             return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
           },
           end: function() {
@@ -15470,21 +15470,21 @@
           splice: arr.splice
         };
         jQuery6.extend = jQuery6.fn.extend = function() {
-          var options2, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
+          var options2, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i2 = 1, length = arguments.length, deep = false;
           if (typeof target === "boolean") {
             deep = target;
-            target = arguments[i] || {};
-            i++;
+            target = arguments[i2] || {};
+            i2++;
           }
           if (typeof target !== "object" && !isFunction(target)) {
             target = {};
           }
-          if (i === length) {
+          if (i2 === length) {
             target = this;
-            i--;
+            i2--;
           }
-          for (; i < length; i++) {
-            if ((options2 = arguments[i]) != null) {
+          for (; i2 < length; i2++) {
+            if ((options2 = arguments[i2]) != null) {
               for (name in options2) {
                 copy = options2[name];
                 if (name === "__proto__" || target === copy) {
@@ -15540,17 +15540,17 @@
             DOMEval(code, { nonce: options2 && options2.nonce }, doc);
           },
           each: function(obj, callback) {
-            var length, i = 0;
+            var length, i2 = 0;
             if (isArrayLike(obj)) {
               length = obj.length;
-              for (; i < length; i++) {
-                if (callback.call(obj[i], i, obj[i]) === false) {
+              for (; i2 < length; i2++) {
+                if (callback.call(obj[i2], i2, obj[i2]) === false) {
                   break;
                 }
               }
             } else {
-              for (i in obj) {
-                if (callback.call(obj[i], i, obj[i]) === false) {
+              for (i2 in obj) {
+                if (callback.call(obj[i2], i2, obj[i2]) === false) {
                   break;
                 }
               }
@@ -15571,40 +15571,40 @@
             }
             return ret;
           },
-          inArray: function(elem, arr2, i) {
-            return arr2 == null ? -1 : indexOf.call(arr2, elem, i);
+          inArray: function(elem, arr2, i2) {
+            return arr2 == null ? -1 : indexOf.call(arr2, elem, i2);
           },
           merge: function(first, second) {
-            var len = +second.length, j = 0, i = first.length;
+            var len = +second.length, j = 0, i2 = first.length;
             for (; j < len; j++) {
-              first[i++] = second[j];
+              first[i2++] = second[j];
             }
-            first.length = i;
+            first.length = i2;
             return first;
           },
           grep: function(elems, callback, invert) {
-            var callbackInverse, matches = [], i = 0, length = elems.length, callbackExpect = !invert;
-            for (; i < length; i++) {
-              callbackInverse = !callback(elems[i], i);
+            var callbackInverse, matches = [], i2 = 0, length = elems.length, callbackExpect = !invert;
+            for (; i2 < length; i2++) {
+              callbackInverse = !callback(elems[i2], i2);
               if (callbackInverse !== callbackExpect) {
-                matches.push(elems[i]);
+                matches.push(elems[i2]);
               }
             }
             return matches;
           },
           map: function(elems, callback, arg) {
-            var length, value, i = 0, ret = [];
+            var length, value, i2 = 0, ret = [];
             if (isArrayLike(elems)) {
               length = elems.length;
-              for (; i < length; i++) {
-                value = callback(elems[i], i, arg);
+              for (; i2 < length; i2++) {
+                value = callback(elems[i2], i2, arg);
                 if (value != null) {
                   ret.push(value);
                 }
               }
             } else {
-              for (i in elems) {
-                value = callback(elems[i], i, arg);
+              for (i2 in elems) {
+                value = callback(elems[i2], i2, arg);
                 if (value != null) {
                   ret.push(value);
                 }
@@ -15632,16 +15632,16 @@
           return type === "array" || length === 0 || typeof length === "number" && length > 0 && length - 1 in obj;
         }
         var Sizzle = function(window3) {
-          var i, support2, Expr, getText, isXML, tokenize, compile, select, outermostContext, sortInput, hasDuplicate, setDocument, document3, docElem, documentIsHTML, rbuggyQSA, rbuggyMatches, matches, contains, expando = "sizzle" + 1 * new Date(), preferredDoc = window3.document, dirruns = 0, done = 0, classCache = createCache(), tokenCache = createCache(), compilerCache = createCache(), nonnativeSelectorCache = createCache(), sortOrder = function(a, b) {
+          var i2, support2, Expr, getText, isXML, tokenize, compile, select, outermostContext, sortInput, hasDuplicate, setDocument, document3, docElem, documentIsHTML, rbuggyQSA, rbuggyMatches, matches, contains, expando = "sizzle" + 1 * new Date(), preferredDoc = window3.document, dirruns = 0, done = 0, classCache = createCache(), tokenCache = createCache(), compilerCache = createCache(), nonnativeSelectorCache = createCache(), sortOrder = function(a, b) {
             if (a === b) {
               hasDuplicate = true;
             }
             return 0;
           }, hasOwn2 = {}.hasOwnProperty, arr2 = [], pop = arr2.pop, pushNative = arr2.push, push2 = arr2.push, slice2 = arr2.slice, indexOf2 = function(list, elem) {
-            var i2 = 0, len = list.length;
-            for (; i2 < len; i2++) {
-              if (list[i2] === elem) {
-                return i2;
+            var i3 = 0, len = list.length;
+            for (; i3 < len; i3++) {
+              if (list[i3] === elem) {
+                return i3;
               }
             }
             return -1;
@@ -15684,15 +15684,15 @@
               apply: arr2.length ? function(target, els) {
                 pushNative.apply(target, slice2.call(els));
               } : function(target, els) {
-                var j = target.length, i2 = 0;
-                while (target[j++] = els[i2++]) {
+                var j = target.length, i3 = 0;
+                while (target[j++] = els[i3++]) {
                 }
                 target.length = j - 1;
               }
             };
           }
           function Sizzle2(selector, context, results, seed) {
-            var m, i2, elem, nid, match, groups, newSelector, newContext = context && context.ownerDocument, nodeType = context ? context.nodeType : 9;
+            var m, i3, elem, nid, match, groups, newSelector, newContext = context && context.ownerDocument, nodeType = context ? context.nodeType : 9;
             results = results || [];
             if (typeof selector !== "string" || !selector || nodeType !== 1 && nodeType !== 9 && nodeType !== 11) {
               return results;
@@ -15739,9 +15739,9 @@
                       }
                     }
                     groups = tokenize(selector);
-                    i2 = groups.length;
-                    while (i2--) {
-                      groups[i2] = (nid ? "#" + nid : ":scope") + " " + toSelector(groups[i2]);
+                    i3 = groups.length;
+                    while (i3--) {
+                      groups[i3] = (nid ? "#" + nid : ":scope") + " " + toSelector(groups[i3]);
                     }
                     newSelector = groups.join(",");
                   }
@@ -15791,9 +15791,9 @@
             }
           }
           function addHandle(attrs, handler) {
-            var arr3 = attrs.split("|"), i2 = arr3.length;
-            while (i2--) {
-              Expr.attrHandle[arr3[i2]] = handler;
+            var arr3 = attrs.split("|"), i3 = arr3.length;
+            while (i3--) {
+              Expr.attrHandle[arr3[i3]] = handler;
             }
           }
           function siblingCheck(a, b) {
@@ -15846,9 +15846,9 @@
             return markFunction(function(argument) {
               argument = +argument;
               return markFunction(function(seed, matches2) {
-                var j, matchIndexes = fn([], seed.length, argument), i2 = matchIndexes.length;
-                while (i2--) {
-                  if (seed[j = matchIndexes[i2]]) {
+                var j, matchIndexes = fn([], seed.length, argument), i3 = matchIndexes.length;
+                while (i3--) {
+                  if (seed[j = matchIndexes[i3]]) {
                     seed[j] = !(matches2[j] = seed[j]);
                   }
                 }
@@ -15918,15 +15918,15 @@
               };
               Expr.find["ID"] = function(id, context) {
                 if (typeof context.getElementById !== "undefined" && documentIsHTML) {
-                  var node2, i2, elems, elem = context.getElementById(id);
+                  var node2, i3, elems, elem = context.getElementById(id);
                   if (elem) {
                     node2 = elem.getAttributeNode("id");
                     if (node2 && node2.value === id) {
                       return [elem];
                     }
                     elems = context.getElementsByName(id);
-                    i2 = 0;
-                    while (elem = elems[i2++]) {
+                    i3 = 0;
+                    while (elem = elems[i3++]) {
                       node2 = elem.getAttributeNode("id");
                       if (node2 && node2.value === id) {
                         return [elem];
@@ -15944,9 +15944,9 @@
                 return context.querySelectorAll(tag);
               }
             } : function(tag, context) {
-              var elem, tmp = [], i2 = 0, results = context.getElementsByTagName(tag);
+              var elem, tmp = [], i3 = 0, results = context.getElementsByTagName(tag);
               if (tag === "*") {
-                while (elem = results[i2++]) {
+                while (elem = results[i3++]) {
                   if (elem.nodeType === 1) {
                     tmp.push(elem);
                   }
@@ -16057,7 +16057,7 @@
                 hasDuplicate = true;
                 return 0;
               }
-              var cur, i2 = 0, aup = a.parentNode, bup = b.parentNode, ap = [a], bp = [b];
+              var cur, i3 = 0, aup = a.parentNode, bup = b.parentNode, ap = [a], bp = [b];
               if (!aup || !bup) {
                 return a == document3 ? -1 : b == document3 ? 1 : aup ? -1 : bup ? 1 : sortInput ? indexOf2(sortInput, a) - indexOf2(sortInput, b) : 0;
               } else if (aup === bup) {
@@ -16071,10 +16071,10 @@
               while (cur = cur.parentNode) {
                 bp.unshift(cur);
               }
-              while (ap[i2] === bp[i2]) {
-                i2++;
+              while (ap[i3] === bp[i3]) {
+                i3++;
               }
-              return i2 ? siblingCheck(ap[i2], bp[i2]) : ap[i2] == preferredDoc ? -1 : bp[i2] == preferredDoc ? 1 : 0;
+              return i3 ? siblingCheck(ap[i3], bp[i3]) : ap[i3] == preferredDoc ? -1 : bp[i3] == preferredDoc ? 1 : 0;
             };
             return document3;
           };
@@ -16115,14 +16115,14 @@
             throw new Error("Syntax error, unrecognized expression: " + msg);
           };
           Sizzle2.uniqueSort = function(results) {
-            var elem, duplicates = [], j = 0, i2 = 0;
+            var elem, duplicates = [], j = 0, i3 = 0;
             hasDuplicate = !support2.detectDuplicates;
             sortInput = !support2.sortStable && results.slice(0);
             results.sort(sortOrder);
             if (hasDuplicate) {
-              while (elem = results[i2++]) {
-                if (elem === results[i2]) {
-                  j = duplicates.push(i2);
+              while (elem = results[i3++]) {
+                if (elem === results[i3]) {
+                  j = duplicates.push(i3);
                 }
               }
               while (j--) {
@@ -16133,9 +16133,9 @@
             return results;
           };
           getText = Sizzle2.getText = function(elem) {
-            var node, ret = "", i2 = 0, nodeType = elem.nodeType;
+            var node, ret = "", i3 = 0, nodeType = elem.nodeType;
             if (!nodeType) {
-              while (node = elem[i2++]) {
+              while (node = elem[i3++]) {
                 ret += getText(node);
               }
             } else if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
@@ -16303,10 +16303,10 @@
                 if (fn.length > 1) {
                   args = [pseudo, pseudo, "", argument];
                   return Expr.setFilters.hasOwnProperty(pseudo.toLowerCase()) ? markFunction(function(seed, matches2) {
-                    var idx, matched = fn(seed, argument), i2 = matched.length;
-                    while (i2--) {
-                      idx = indexOf2(seed, matched[i2]);
-                      seed[idx] = !(matches2[idx] = matched[i2]);
+                    var idx, matched = fn(seed, argument), i3 = matched.length;
+                    while (i3--) {
+                      idx = indexOf2(seed, matched[i3]);
+                      seed[idx] = !(matches2[idx] = matched[i3]);
                     }
                   }) : function(elem) {
                     return fn(elem, 0, args);
@@ -16319,10 +16319,10 @@
               "not": markFunction(function(selector) {
                 var input = [], results = [], matcher = compile(selector.replace(rtrim2, "$1"));
                 return matcher[expando] ? markFunction(function(seed, matches2, _context, xml) {
-                  var elem, unmatched = matcher(seed, null, xml, []), i2 = seed.length;
-                  while (i2--) {
-                    if (elem = unmatched[i2]) {
-                      seed[i2] = !(matches2[i2] = elem);
+                  var elem, unmatched = matcher(seed, null, xml, []), i3 = seed.length;
+                  while (i3--) {
+                    if (elem = unmatched[i3]) {
+                      seed[i3] = !(matches2[i3] = elem);
                     }
                   }
                 }) : function(elem, _context, xml) {
@@ -16416,41 +16416,41 @@
                 return [argument < 0 ? argument + length : argument];
               }),
               "even": createPositionalPseudo(function(matchIndexes, length) {
-                var i2 = 0;
-                for (; i2 < length; i2 += 2) {
-                  matchIndexes.push(i2);
+                var i3 = 0;
+                for (; i3 < length; i3 += 2) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "odd": createPositionalPseudo(function(matchIndexes, length) {
-                var i2 = 1;
-                for (; i2 < length; i2 += 2) {
-                  matchIndexes.push(i2);
+                var i3 = 1;
+                for (; i3 < length; i3 += 2) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "lt": createPositionalPseudo(function(matchIndexes, length, argument) {
-                var i2 = argument < 0 ? argument + length : argument > length ? length : argument;
-                for (; --i2 >= 0; ) {
-                  matchIndexes.push(i2);
+                var i3 = argument < 0 ? argument + length : argument > length ? length : argument;
+                for (; --i3 >= 0; ) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               }),
               "gt": createPositionalPseudo(function(matchIndexes, length, argument) {
-                var i2 = argument < 0 ? argument + length : argument;
-                for (; ++i2 < length; ) {
-                  matchIndexes.push(i2);
+                var i3 = argument < 0 ? argument + length : argument;
+                for (; ++i3 < length; ) {
+                  matchIndexes.push(i3);
                 }
                 return matchIndexes;
               })
             }
           };
           Expr.pseudos["nth"] = Expr.pseudos["eq"];
-          for (i in { radio: true, checkbox: true, file: true, password: true, image: true }) {
-            Expr.pseudos[i] = createInputPseudo(i);
+          for (i2 in { radio: true, checkbox: true, file: true, password: true, image: true }) {
+            Expr.pseudos[i2] = createInputPseudo(i2);
           }
-          for (i in { submit: true, reset: true }) {
-            Expr.pseudos[i] = createButtonPseudo(i);
+          for (i2 in { submit: true, reset: true }) {
+            Expr.pseudos[i2] = createButtonPseudo(i2);
           }
           function setFilters() {
           }
@@ -16498,9 +16498,9 @@
             return parseOnly ? soFar.length : soFar ? Sizzle2.error(selector) : tokenCache(selector, groups).slice(0);
           };
           function toSelector(tokens) {
-            var i2 = 0, len = tokens.length, selector = "";
-            for (; i2 < len; i2++) {
-              selector += tokens[i2].value;
+            var i3 = 0, len = tokens.length, selector = "";
+            for (; i3 < len; i3++) {
+              selector += tokens[i3].value;
             }
             return selector;
           }
@@ -16546,9 +16546,9 @@
           }
           function elementMatcher(matchers) {
             return matchers.length > 1 ? function(elem, context, xml) {
-              var i2 = matchers.length;
-              while (i2--) {
-                if (!matchers[i2](elem, context, xml)) {
+              var i3 = matchers.length;
+              while (i3--) {
+                if (!matchers[i3](elem, context, xml)) {
                   return false;
                 }
               }
@@ -16556,20 +16556,20 @@
             } : matchers[0];
           }
           function multipleContexts(selector, contexts, results) {
-            var i2 = 0, len = contexts.length;
-            for (; i2 < len; i2++) {
-              Sizzle2(selector, contexts[i2], results);
+            var i3 = 0, len = contexts.length;
+            for (; i3 < len; i3++) {
+              Sizzle2(selector, contexts[i3], results);
             }
             return results;
           }
           function condense(unmatched, map2, filter2, context, xml) {
-            var elem, newUnmatched = [], i2 = 0, len = unmatched.length, mapped = map2 != null;
-            for (; i2 < len; i2++) {
-              if (elem = unmatched[i2]) {
+            var elem, newUnmatched = [], i3 = 0, len = unmatched.length, mapped = map2 != null;
+            for (; i3 < len; i3++) {
+              if (elem = unmatched[i3]) {
                 if (!filter2 || filter2(elem, context, xml)) {
                   newUnmatched.push(elem);
                   if (mapped) {
-                    map2.push(i2);
+                    map2.push(i3);
                   }
                 }
               }
@@ -16584,7 +16584,7 @@
               postFinder = setMatcher(postFinder, postSelector);
             }
             return markFunction(function(seed, results, context, xml) {
-              var temp, i2, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(
+              var temp, i3, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(
                 selector || "*",
                 context.nodeType ? [context] : context,
                 []
@@ -16595,10 +16595,10 @@
               if (postFilter) {
                 temp = condense(matcherOut, postMap);
                 postFilter(temp, [], context, xml);
-                i2 = temp.length;
-                while (i2--) {
-                  if (elem = temp[i2]) {
-                    matcherOut[postMap[i2]] = !(matcherIn[postMap[i2]] = elem);
+                i3 = temp.length;
+                while (i3--) {
+                  if (elem = temp[i3]) {
+                    matcherOut[postMap[i3]] = !(matcherIn[postMap[i3]] = elem);
                   }
                 }
               }
@@ -16606,17 +16606,17 @@
                 if (postFinder || preFilter) {
                   if (postFinder) {
                     temp = [];
-                    i2 = matcherOut.length;
-                    while (i2--) {
-                      if (elem = matcherOut[i2]) {
-                        temp.push(matcherIn[i2] = elem);
+                    i3 = matcherOut.length;
+                    while (i3--) {
+                      if (elem = matcherOut[i3]) {
+                        temp.push(matcherIn[i3] = elem);
                       }
                     }
                     postFinder(null, matcherOut = [], temp, xml);
                   }
-                  i2 = matcherOut.length;
-                  while (i2--) {
-                    if ((elem = matcherOut[i2]) && (temp = postFinder ? indexOf2(seed, elem) : preMap[i2]) > -1) {
+                  i3 = matcherOut.length;
+                  while (i3--) {
+                    if ((elem = matcherOut[i3]) && (temp = postFinder ? indexOf2(seed, elem) : preMap[i3]) > -1) {
                       seed[temp] = !(results[temp] = elem);
                     }
                   }
@@ -16634,7 +16634,7 @@
             });
           }
           function matcherFromTokens(tokens) {
-            var checkContext, matcher, j, len = tokens.length, leadingRelative = Expr.relative[tokens[0].type], implicitRelative = leadingRelative || Expr.relative[" "], i2 = leadingRelative ? 1 : 0, matchContext = addCombinator(function(elem) {
+            var checkContext, matcher, j, len = tokens.length, leadingRelative = Expr.relative[tokens[0].type], implicitRelative = leadingRelative || Expr.relative[" "], i3 = leadingRelative ? 1 : 0, matchContext = addCombinator(function(elem) {
               return elem === checkContext;
             }, implicitRelative, true), matchAnyContext = addCombinator(function(elem) {
               return indexOf2(checkContext, elem) > -1;
@@ -16643,25 +16643,25 @@
               checkContext = null;
               return ret;
             }];
-            for (; i2 < len; i2++) {
-              if (matcher = Expr.relative[tokens[i2].type]) {
+            for (; i3 < len; i3++) {
+              if (matcher = Expr.relative[tokens[i3].type]) {
                 matchers = [addCombinator(elementMatcher(matchers), matcher)];
               } else {
-                matcher = Expr.filter[tokens[i2].type].apply(null, tokens[i2].matches);
+                matcher = Expr.filter[tokens[i3].type].apply(null, tokens[i3].matches);
                 if (matcher[expando]) {
-                  j = ++i2;
+                  j = ++i3;
                   for (; j < len; j++) {
                     if (Expr.relative[tokens[j].type]) {
                       break;
                     }
                   }
                   return setMatcher(
-                    i2 > 1 && elementMatcher(matchers),
-                    i2 > 1 && toSelector(
-                      tokens.slice(0, i2 - 1).concat({ value: tokens[i2 - 2].type === " " ? "*" : "" })
+                    i3 > 1 && elementMatcher(matchers),
+                    i3 > 1 && toSelector(
+                      tokens.slice(0, i3 - 1).concat({ value: tokens[i3 - 2].type === " " ? "*" : "" })
                     ).replace(rtrim2, "$1"),
                     matcher,
-                    i2 < j && matcherFromTokens(tokens.slice(i2, j)),
+                    i3 < j && matcherFromTokens(tokens.slice(i3, j)),
                     j < len && matcherFromTokens(tokens = tokens.slice(j)),
                     j < len && toSelector(tokens)
                   );
@@ -16673,11 +16673,11 @@
           }
           function matcherFromGroupMatchers(elementMatchers, setMatchers) {
             var bySet = setMatchers.length > 0, byElement = elementMatchers.length > 0, superMatcher = function(seed, context, xml, results, outermost) {
-              var elem, j, matcher, matchedCount = 0, i2 = "0", unmatched = seed && [], setMatched = [], contextBackup = outermostContext, elems = seed || byElement && Expr.find["TAG"]("*", outermost), dirrunsUnique = dirruns += contextBackup == null ? 1 : Math.random() || 0.1, len = elems.length;
+              var elem, j, matcher, matchedCount = 0, i3 = "0", unmatched = seed && [], setMatched = [], contextBackup = outermostContext, elems = seed || byElement && Expr.find["TAG"]("*", outermost), dirrunsUnique = dirruns += contextBackup == null ? 1 : Math.random() || 0.1, len = elems.length;
               if (outermost) {
                 outermostContext = context == document3 || context || outermost;
               }
-              for (; i2 !== len && (elem = elems[i2]) != null; i2++) {
+              for (; i3 !== len && (elem = elems[i3]) != null; i3++) {
                 if (byElement && elem) {
                   j = 0;
                   if (!context && elem.ownerDocument != document3) {
@@ -16703,17 +16703,17 @@
                   }
                 }
               }
-              matchedCount += i2;
-              if (bySet && i2 !== matchedCount) {
+              matchedCount += i3;
+              if (bySet && i3 !== matchedCount) {
                 j = 0;
                 while (matcher = setMatchers[j++]) {
                   matcher(unmatched, setMatched, context, xml);
                 }
                 if (seed) {
                   if (matchedCount > 0) {
-                    while (i2--) {
-                      if (!(unmatched[i2] || setMatched[i2])) {
-                        setMatched[i2] = pop.call(results);
+                    while (i3--) {
+                      if (!(unmatched[i3] || setMatched[i3])) {
+                        setMatched[i3] = pop.call(results);
                       }
                     }
                   }
@@ -16733,14 +16733,14 @@
             return bySet ? markFunction(superMatcher) : superMatcher;
           }
           compile = Sizzle2.compile = function(selector, match) {
-            var i2, setMatchers = [], elementMatchers = [], cached = compilerCache[selector + " "];
+            var i3, setMatchers = [], elementMatchers = [], cached = compilerCache[selector + " "];
             if (!cached) {
               if (!match) {
                 match = tokenize(selector);
               }
-              i2 = match.length;
-              while (i2--) {
-                cached = matcherFromTokens(match[i2]);
+              i3 = match.length;
+              while (i3--) {
+                cached = matcherFromTokens(match[i3]);
                 if (cached[expando]) {
                   setMatchers.push(cached);
                 } else {
@@ -16756,7 +16756,7 @@
             return cached;
           };
           select = Sizzle2.select = function(selector, context, results, seed) {
-            var i2, tokens, token, type, find, compiled = typeof selector === "function" && selector, match = !seed && tokenize(selector = compiled.selector || selector);
+            var i3, tokens, token, type, find, compiled = typeof selector === "function" && selector, match = !seed && tokenize(selector = compiled.selector || selector);
             results = results || [];
             if (match.length === 1) {
               tokens = match[0] = match[0].slice(0);
@@ -16769,9 +16769,9 @@
                 }
                 selector = selector.slice(tokens.shift().value.length);
               }
-              i2 = matchExpr["needsContext"].test(selector) ? 0 : tokens.length;
-              while (i2--) {
-                token = tokens[i2];
+              i3 = matchExpr["needsContext"].test(selector) ? 0 : tokens.length;
+              while (i3--) {
+                token = tokens[i3];
                 if (Expr.relative[type = token.type]) {
                   break;
                 }
@@ -16780,7 +16780,7 @@
                     token.matches[0].replace(runescape, funescape),
                     rsibling.test(tokens[0].type) && testContext(context.parentNode) || context
                   )) {
-                    tokens.splice(i2, 1);
+                    tokens.splice(i3, 1);
                     selector = seed.length && toSelector(tokens);
                     if (!selector) {
                       push2.apply(results, seed);
@@ -16875,8 +16875,8 @@
         var rsingleTag = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;
         function winnow(elements, qualifier, not) {
           if (isFunction(qualifier)) {
-            return jQuery6.grep(elements, function(elem, i) {
-              return !!qualifier.call(elem, i, elem) !== not;
+            return jQuery6.grep(elements, function(elem, i2) {
+              return !!qualifier.call(elem, i2, elem) !== not;
             });
           }
           if (qualifier.nodeType) {
@@ -16905,19 +16905,19 @@
         };
         jQuery6.fn.extend({
           find: function(selector) {
-            var i, ret, len = this.length, self2 = this;
+            var i2, ret, len = this.length, self2 = this;
             if (typeof selector !== "string") {
               return this.pushStack(jQuery6(selector).filter(function() {
-                for (i = 0; i < len; i++) {
-                  if (jQuery6.contains(self2[i], this)) {
+                for (i2 = 0; i2 < len; i2++) {
+                  if (jQuery6.contains(self2[i2], this)) {
                     return true;
                   }
                 }
               }));
             }
             ret = this.pushStack([]);
-            for (i = 0; i < len; i++) {
-              jQuery6.find(selector, self2[i], ret);
+            for (i2 = 0; i2 < len; i2++) {
+              jQuery6.find(selector, self2[i2], ret);
             }
             return len > 1 ? jQuery6.uniqueSort(ret) : ret;
           },
@@ -16999,19 +16999,19 @@
           has: function(target) {
             var targets = jQuery6(target, this), l = targets.length;
             return this.filter(function() {
-              var i = 0;
-              for (; i < l; i++) {
-                if (jQuery6.contains(this, targets[i])) {
+              var i2 = 0;
+              for (; i2 < l; i2++) {
+                if (jQuery6.contains(this, targets[i2])) {
                   return true;
                 }
               }
             });
           },
           closest: function(selectors, context) {
-            var cur, i = 0, l = this.length, matched = [], targets = typeof selectors !== "string" && jQuery6(selectors);
+            var cur, i2 = 0, l = this.length, matched = [], targets = typeof selectors !== "string" && jQuery6(selectors);
             if (!rneedsContext.test(selectors)) {
-              for (; i < l; i++) {
-                for (cur = this[i]; cur && cur !== context; cur = cur.parentNode) {
+              for (; i2 < l; i2++) {
+                for (cur = this[i2]; cur && cur !== context; cur = cur.parentNode) {
                   if (cur.nodeType < 11 && (targets ? targets.index(cur) > -1 : cur.nodeType === 1 && jQuery6.find.matchesSelector(cur, selectors))) {
                     matched.push(cur);
                     break;
@@ -17409,7 +17409,7 @@
                 return obj != null ? jQuery6.extend(obj, promise) : promise;
               }
             }, deferred = {};
-            jQuery6.each(tuples, function(i, tuple) {
+            jQuery6.each(tuples, function(i2, tuple) {
               var list = tuple[2], stateString = tuple[5];
               promise[tuple[1]] = list.add;
               if (stateString) {
@@ -17417,8 +17417,8 @@
                   function() {
                     state = stateString;
                   },
-                  tuples[3 - i][2].disable,
-                  tuples[3 - i][3].disable,
+                  tuples[3 - i2][2].disable,
+                  tuples[3 - i2][3].disable,
                   tuples[0][2].lock,
                   tuples[0][3].lock
                 );
@@ -17437,10 +17437,10 @@
             return deferred;
           },
           when: function(singleValue) {
-            var remaining = arguments.length, i = remaining, resolveContexts = Array(i), resolveValues = slice.call(arguments), primary = jQuery6.Deferred(), updateFunc = function(i2) {
+            var remaining = arguments.length, i2 = remaining, resolveContexts = Array(i2), resolveValues = slice.call(arguments), primary = jQuery6.Deferred(), updateFunc = function(i3) {
               return function(value) {
-                resolveContexts[i2] = this;
-                resolveValues[i2] = arguments.length > 1 ? slice.call(arguments) : value;
+                resolveContexts[i3] = this;
+                resolveValues[i3] = arguments.length > 1 ? slice.call(arguments) : value;
                 if (!--remaining) {
                   primary.resolveWith(resolveContexts, resolveValues);
                 }
@@ -17449,16 +17449,16 @@
             if (remaining <= 1) {
               adoptValue(
                 singleValue,
-                primary.done(updateFunc(i)).resolve,
+                primary.done(updateFunc(i2)).resolve,
                 primary.reject,
                 !remaining
               );
-              if (primary.state() === "pending" || isFunction(resolveValues[i] && resolveValues[i].then)) {
+              if (primary.state() === "pending" || isFunction(resolveValues[i2] && resolveValues[i2].then)) {
                 return primary.then();
               }
             }
-            while (i--) {
-              adoptValue(resolveValues[i], updateFunc(i), primary.reject);
+            while (i2--) {
+              adoptValue(resolveValues[i2], updateFunc(i2), primary.reject);
             }
             return primary.promise();
           }
@@ -17508,11 +17508,11 @@
           window2.addEventListener("load", completed);
         }
         var access = function(elems, fn, key, value, chainable, emptyGet, raw) {
-          var i = 0, len = elems.length, bulk = key == null;
+          var i2 = 0, len = elems.length, bulk = key == null;
           if (toType(key) === "object") {
             chainable = true;
-            for (i in key) {
-              access(elems, fn, i, key[i], true, emptyGet, raw);
+            for (i2 in key) {
+              access(elems, fn, i2, key[i2], true, emptyGet, raw);
             }
           } else if (value !== void 0) {
             chainable = true;
@@ -17531,11 +17531,11 @@
               }
             }
             if (fn) {
-              for (; i < len; i++) {
+              for (; i2 < len; i2++) {
                 fn(
-                  elems[i],
+                  elems[i2],
                   key,
-                  raw ? value : value.call(elems[i], i, fn(elems[i], key))
+                  raw ? value : value.call(elems[i2], i2, fn(elems[i2], key))
                 );
               }
             }
@@ -17602,7 +17602,7 @@
             return value !== void 0 ? value : key;
           },
           remove: function(owner, key) {
-            var i, cache = owner[this.expando];
+            var i2, cache = owner[this.expando];
             if (cache === void 0) {
               return;
             }
@@ -17613,9 +17613,9 @@
                 key = camelCase(key);
                 key = key in cache ? [key] : key.match(rnothtmlwhite) || [];
               }
-              i = key.length;
-              while (i--) {
-                delete cache[key[i]];
+              i2 = key.length;
+              while (i2--) {
+                delete cache[key[i2]];
               }
             }
             if (key === void 0 || jQuery6.isEmptyObject(cache)) {
@@ -17688,15 +17688,15 @@
         });
         jQuery6.fn.extend({
           data: function(key, value) {
-            var i, name, data, elem = this[0], attrs = elem && elem.attributes;
+            var i2, name, data, elem = this[0], attrs = elem && elem.attributes;
             if (key === void 0) {
               if (this.length) {
                 data = dataUser.get(elem);
                 if (elem.nodeType === 1 && !dataPriv.get(elem, "hasDataAttrs")) {
-                  i = attrs.length;
-                  while (i--) {
-                    if (attrs[i]) {
-                      name = attrs[i].name;
+                  i2 = attrs.length;
+                  while (i2--) {
+                    if (attrs[i2]) {
+                      name = attrs[i2].name;
                       if (name.indexOf("data-") === 0) {
                         name = camelCase(name.slice(5));
                         dataAttr(elem, name, data[name]);
@@ -17810,7 +17810,7 @@
             return this.queue(type || "fx", []);
           },
           promise: function(type, obj) {
-            var tmp, count = 1, defer = jQuery6.Deferred(), elements = this, i = this.length, resolve = function() {
+            var tmp, count = 1, defer = jQuery6.Deferred(), elements = this, i2 = this.length, resolve = function() {
               if (!--count) {
                 defer.resolveWith(elements, [elements]);
               }
@@ -17820,8 +17820,8 @@
               type = void 0;
             }
             type = type || "fx";
-            while (i--) {
-              tmp = dataPriv.get(elements[i], type + "queueHooks");
+            while (i2--) {
+              tmp = dataPriv.get(elements[i2], type + "queueHooks");
               if (tmp && tmp.empty) {
                 count++;
                 tmp.empty.add(resolve);
@@ -17988,20 +17988,20 @@
           return ret;
         }
         function setGlobalEval(elems, refElements) {
-          var i = 0, l = elems.length;
-          for (; i < l; i++) {
+          var i2 = 0, l = elems.length;
+          for (; i2 < l; i2++) {
             dataPriv.set(
-              elems[i],
+              elems[i2],
               "globalEval",
-              !refElements || dataPriv.get(refElements[i], "globalEval")
+              !refElements || dataPriv.get(refElements[i2], "globalEval")
             );
           }
         }
         var rhtml = /<|&#?\w+;/;
         function buildFragment(elems, context, scripts, selection, ignored) {
-          var elem, tmp, tag, wrap, attached, j, fragment = context.createDocumentFragment(), nodes = [], i = 0, l = elems.length;
-          for (; i < l; i++) {
-            elem = elems[i];
+          var elem, tmp, tag, wrap, attached, j, fragment = context.createDocumentFragment(), nodes = [], i2 = 0, l = elems.length;
+          for (; i2 < l; i2++) {
+            elem = elems[i2];
             if (elem || elem === 0) {
               if (toType(elem) === "object") {
                 jQuery6.merge(nodes, elem.nodeType ? [elem] : elem);
@@ -18023,8 +18023,8 @@
             }
           }
           fragment.textContent = "";
-          i = 0;
-          while (elem = nodes[i++]) {
+          i2 = 0;
+          while (elem = nodes[i2++]) {
             if (selection && jQuery6.inArray(elem, selection) > -1) {
               if (ignored) {
                 ignored.push(elem);
@@ -18222,18 +18222,18 @@
             }
           },
           dispatch: function(nativeEvent) {
-            var i, j, ret, matched, handleObj, handlerQueue, args = new Array(arguments.length), event = jQuery6.event.fix(nativeEvent), handlers = (dataPriv.get(this, "events") || /* @__PURE__ */ Object.create(null))[event.type] || [], special = jQuery6.event.special[event.type] || {};
+            var i2, j, ret, matched, handleObj, handlerQueue, args = new Array(arguments.length), event = jQuery6.event.fix(nativeEvent), handlers = (dataPriv.get(this, "events") || /* @__PURE__ */ Object.create(null))[event.type] || [], special = jQuery6.event.special[event.type] || {};
             args[0] = event;
-            for (i = 1; i < arguments.length; i++) {
-              args[i] = arguments[i];
+            for (i2 = 1; i2 < arguments.length; i2++) {
+              args[i2] = arguments[i2];
             }
             event.delegateTarget = this;
             if (special.preDispatch && special.preDispatch.call(this, event) === false) {
               return;
             }
             handlerQueue = jQuery6.event.handlers.call(this, event, handlers);
-            i = 0;
-            while ((matched = handlerQueue[i++]) && !event.isPropagationStopped()) {
+            i2 = 0;
+            while ((matched = handlerQueue[i2++]) && !event.isPropagationStopped()) {
               event.currentTarget = matched.elem;
               j = 0;
               while ((handleObj = matched.handlers[j++]) && !event.isImmediatePropagationStopped()) {
@@ -18256,14 +18256,14 @@
             return event.result;
           },
           handlers: function(event, handlers) {
-            var i, handleObj, sel, matchedHandlers, matchedSelectors, handlerQueue = [], delegateCount = handlers.delegateCount, cur = event.target;
+            var i2, handleObj, sel, matchedHandlers, matchedSelectors, handlerQueue = [], delegateCount = handlers.delegateCount, cur = event.target;
             if (delegateCount && cur.nodeType && !(event.type === "click" && event.button >= 1)) {
               for (; cur !== this; cur = cur.parentNode || this) {
                 if (cur.nodeType === 1 && !(event.type === "click" && cur.disabled === true)) {
                   matchedHandlers = [];
                   matchedSelectors = {};
-                  for (i = 0; i < delegateCount; i++) {
-                    handleObj = handlers[i];
+                  for (i2 = 0; i2 < delegateCount; i2++) {
+                    handleObj = handlers[i2];
                     sel = handleObj.selector + " ";
                     if (matchedSelectors[sel] === void 0) {
                       matchedSelectors[sel] = handleObj.needsContext ? jQuery6(sel, this).index(cur) > -1 : jQuery6.find(sel, this, null, [cur]).length;
@@ -18567,7 +18567,7 @@
           return elem;
         }
         function cloneCopyEvent(src, dest) {
-          var i, l, type, pdataOld, udataOld, udataCur, events;
+          var i2, l, type, pdataOld, udataOld, udataCur, events;
           if (dest.nodeType !== 1) {
             return;
           }
@@ -18577,8 +18577,8 @@
             if (events) {
               dataPriv.remove(dest, "handle events");
               for (type in events) {
-                for (i = 0, l = events[type].length; i < l; i++) {
-                  jQuery6.event.add(dest, type, events[type][i]);
+                for (i2 = 0, l = events[type].length; i2 < l; i2++) {
+                  jQuery6.event.add(dest, type, events[type][i2]);
                 }
               }
             }
@@ -18599,7 +18599,7 @@
         }
         function domManip(collection, args, callback, ignored) {
           args = flat(args);
-          var fragment, first, scripts, hasScripts, node, doc, i = 0, l = collection.length, iNoClone = l - 1, value = args[0], valueIsFunction = isFunction(value);
+          var fragment, first, scripts, hasScripts, node, doc, i2 = 0, l = collection.length, iNoClone = l - 1, value = args[0], valueIsFunction = isFunction(value);
           if (valueIsFunction || l > 1 && typeof value === "string" && !support.checkClone && rchecked.test(value)) {
             return collection.each(function(index) {
               var self2 = collection.eq(index);
@@ -18618,21 +18618,21 @@
             if (first || ignored) {
               scripts = jQuery6.map(getAll(fragment, "script"), disableScript);
               hasScripts = scripts.length;
-              for (; i < l; i++) {
+              for (; i2 < l; i2++) {
                 node = fragment;
-                if (i !== iNoClone) {
+                if (i2 !== iNoClone) {
                   node = jQuery6.clone(node, true, true);
                   if (hasScripts) {
                     jQuery6.merge(scripts, getAll(node, "script"));
                   }
                 }
-                callback.call(collection[i], node, i);
+                callback.call(collection[i2], node, i2);
               }
               if (hasScripts) {
                 doc = scripts[scripts.length - 1].ownerDocument;
                 jQuery6.map(scripts, restoreScript);
-                for (i = 0; i < hasScripts; i++) {
-                  node = scripts[i];
+                for (i2 = 0; i2 < hasScripts; i2++) {
+                  node = scripts[i2];
                   if (rscriptType.test(node.type || "") && !dataPriv.access(node, "globalEval") && jQuery6.contains(doc, node)) {
                     if (node.src && (node.type || "").toLowerCase() !== "module") {
                       if (jQuery6._evalUrl && !node.noModule) {
@@ -18651,8 +18651,8 @@
           return collection;
         }
         function remove(elem, selector, keepData) {
-          var node, nodes = selector ? jQuery6.filter(selector, elem) : elem, i = 0;
-          for (; (node = nodes[i]) != null; i++) {
+          var node, nodes = selector ? jQuery6.filter(selector, elem) : elem, i2 = 0;
+          for (; (node = nodes[i2]) != null; i2++) {
             if (!keepData && node.nodeType === 1) {
               jQuery6.cleanData(getAll(node));
             }
@@ -18670,20 +18670,20 @@
             return html;
           },
           clone: function(elem, dataAndEvents, deepDataAndEvents) {
-            var i, l, srcElements, destElements, clone = elem.cloneNode(true), inPage = isAttached(elem);
+            var i2, l, srcElements, destElements, clone = elem.cloneNode(true), inPage = isAttached(elem);
             if (!support.noCloneChecked && (elem.nodeType === 1 || elem.nodeType === 11) && !jQuery6.isXMLDoc(elem)) {
               destElements = getAll(clone);
               srcElements = getAll(elem);
-              for (i = 0, l = srcElements.length; i < l; i++) {
-                fixInput(srcElements[i], destElements[i]);
+              for (i2 = 0, l = srcElements.length; i2 < l; i2++) {
+                fixInput(srcElements[i2], destElements[i2]);
               }
             }
             if (dataAndEvents) {
               if (deepDataAndEvents) {
                 srcElements = srcElements || getAll(elem);
                 destElements = destElements || getAll(clone);
-                for (i = 0, l = srcElements.length; i < l; i++) {
-                  cloneCopyEvent(srcElements[i], destElements[i]);
+                for (i2 = 0, l = srcElements.length; i2 < l; i2++) {
+                  cloneCopyEvent(srcElements[i2], destElements[i2]);
                 }
               } else {
                 cloneCopyEvent(elem, clone);
@@ -18696,8 +18696,8 @@
             return clone;
           },
           cleanData: function(elems) {
-            var data, elem, type, special = jQuery6.event.special, i = 0;
-            for (; (elem = elems[i]) !== void 0; i++) {
+            var data, elem, type, special = jQuery6.event.special, i2 = 0;
+            for (; (elem = elems[i2]) !== void 0; i2++) {
               if (acceptData(elem)) {
                 if (data = elem[dataPriv.expando]) {
                   if (data.events) {
@@ -18765,8 +18765,8 @@
             });
           },
           empty: function() {
-            var elem, i = 0;
-            for (; (elem = this[i]) != null; i++) {
+            var elem, i2 = 0;
+            for (; (elem = this[i2]) != null; i2++) {
               if (elem.nodeType === 1) {
                 jQuery6.cleanData(getAll(elem, false));
                 elem.textContent = "";
@@ -18783,15 +18783,15 @@
           },
           html: function(value) {
             return access(this, function(value2) {
-              var elem = this[0] || {}, i = 0, l = this.length;
+              var elem = this[0] || {}, i2 = 0, l = this.length;
               if (value2 === void 0 && elem.nodeType === 1) {
                 return elem.innerHTML;
               }
               if (typeof value2 === "string" && !rnoInnerhtml.test(value2) && !wrapMap[(rtagName.exec(value2) || ["", ""])[1].toLowerCase()]) {
                 value2 = jQuery6.htmlPrefilter(value2);
                 try {
-                  for (; i < l; i++) {
-                    elem = this[i] || {};
+                  for (; i2 < l; i2++) {
+                    elem = this[i2] || {};
                     if (elem.nodeType === 1) {
                       jQuery6.cleanData(getAll(elem, false));
                       elem.innerHTML = value2;
@@ -18827,10 +18827,10 @@
           replaceAll: "replaceWith"
         }, function(name, original) {
           jQuery6.fn[name] = function(selector) {
-            var elems, ret = [], insert = jQuery6(selector), last = insert.length - 1, i = 0;
-            for (; i <= last; i++) {
-              elems = i === last ? this : this.clone(true);
-              jQuery6(insert[i])[original](elems);
+            var elems, ret = [], insert = jQuery6(selector), last = insert.length - 1, i2 = 0;
+            for (; i2 <= last; i2++) {
+              elems = i2 === last ? this : this.clone(true);
+              jQuery6(insert[i2])[original](elems);
               push.apply(ret, elems.get());
             }
             return this.pushStack(ret);
@@ -18970,9 +18970,9 @@
         }
         var cssPrefixes = ["Webkit", "Moz", "ms"], emptyStyle = document2.createElement("div").style, vendorProps = {};
         function vendorPropName(name) {
-          var capName = name[0].toUpperCase() + name.slice(1), i = cssPrefixes.length;
-          while (i--) {
-            name = cssPrefixes[i] + capName;
+          var capName = name[0].toUpperCase() + name.slice(1), i2 = cssPrefixes.length;
+          while (i2--) {
+            name = cssPrefixes[i2] + capName;
             if (name in emptyStyle) {
               return name;
             }
@@ -18997,27 +18997,27 @@
           return matches ? Math.max(0, matches[2] - (subtract || 0)) + (matches[3] || "px") : value;
         }
         function boxModelAdjustment(elem, dimension, box, isBorderBox, styles, computedVal) {
-          var i = dimension === "width" ? 1 : 0, extra = 0, delta = 0;
+          var i2 = dimension === "width" ? 1 : 0, extra = 0, delta = 0;
           if (box === (isBorderBox ? "border" : "content")) {
             return 0;
           }
-          for (; i < 4; i += 2) {
+          for (; i2 < 4; i2 += 2) {
             if (box === "margin") {
-              delta += jQuery6.css(elem, box + cssExpand[i], true, styles);
+              delta += jQuery6.css(elem, box + cssExpand[i2], true, styles);
             }
             if (!isBorderBox) {
-              delta += jQuery6.css(elem, "padding" + cssExpand[i], true, styles);
+              delta += jQuery6.css(elem, "padding" + cssExpand[i2], true, styles);
               if (box !== "padding") {
-                delta += jQuery6.css(elem, "border" + cssExpand[i] + "Width", true, styles);
+                delta += jQuery6.css(elem, "border" + cssExpand[i2] + "Width", true, styles);
               } else {
-                extra += jQuery6.css(elem, "border" + cssExpand[i] + "Width", true, styles);
+                extra += jQuery6.css(elem, "border" + cssExpand[i2] + "Width", true, styles);
               }
             } else {
               if (box === "content") {
-                delta -= jQuery6.css(elem, "padding" + cssExpand[i], true, styles);
+                delta -= jQuery6.css(elem, "padding" + cssExpand[i2], true, styles);
               }
               if (box !== "margin") {
-                delta -= jQuery6.css(elem, "border" + cssExpand[i] + "Width", true, styles);
+                delta -= jQuery6.css(elem, "border" + cssExpand[i2] + "Width", true, styles);
               }
             }
           }
@@ -19194,9 +19194,9 @@
         }, function(prefix, suffix) {
           jQuery6.cssHooks[prefix + suffix] = {
             expand: function(value) {
-              var i = 0, expanded = {}, parts = typeof value === "string" ? value.split(" ") : [value];
-              for (; i < 4; i++) {
-                expanded[prefix + cssExpand[i] + suffix] = parts[i] || parts[i - 2] || parts[0];
+              var i2 = 0, expanded = {}, parts = typeof value === "string" ? value.split(" ") : [value];
+              for (; i2 < 4; i2++) {
+                expanded[prefix + cssExpand[i2] + suffix] = parts[i2] || parts[i2 - 2] || parts[0];
               }
               return expanded;
             }
@@ -19208,12 +19208,12 @@
         jQuery6.fn.extend({
           css: function(name, value) {
             return access(this, function(elem, name2, value2) {
-              var styles, len, map2 = {}, i = 0;
+              var styles, len, map2 = {}, i2 = 0;
               if (Array.isArray(name2)) {
                 styles = getStyles(elem);
                 len = name2.length;
-                for (; i < len; i++) {
-                  map2[name2[i]] = jQuery6.css(elem, name2[i], false, styles);
+                for (; i2 < len; i2++) {
+                  map2[name2[i2]] = jQuery6.css(elem, name2[i2], false, styles);
                 }
                 return map2;
               }
@@ -19323,10 +19323,10 @@
           return fxNow = Date.now();
         }
         function genFx(type, includeWidth) {
-          var which, i = 0, attrs = { height: type };
+          var which, i2 = 0, attrs = { height: type };
           includeWidth = includeWidth ? 1 : 0;
-          for (; i < 4; i += 2 - includeWidth) {
-            which = cssExpand[i];
+          for (; i2 < 4; i2 += 2 - includeWidth) {
+            which = cssExpand[i2];
             attrs["margin" + which] = attrs["padding" + which] = type;
           }
           if (includeWidth) {
@@ -19735,12 +19735,12 @@
         });
         jQuery6.timers = [];
         jQuery6.fx.tick = function() {
-          var timer, i = 0, timers = jQuery6.timers;
+          var timer, i2 = 0, timers = jQuery6.timers;
           fxNow = Date.now();
-          for (; i < timers.length; i++) {
-            timer = timers[i];
-            if (!timer() && timers[i] === timer) {
-              timers.splice(i--, 1);
+          for (; i2 < timers.length; i2++) {
+            timer = timers[i2];
+            if (!timer() && timers[i2] === timer) {
+              timers.splice(i2--, 1);
             }
           }
           if (!timers.length) {
@@ -19843,9 +19843,9 @@
             }
           },
           removeAttr: function(elem, value) {
-            var name, i = 0, attrNames = value && value.match(rnothtmlwhite);
+            var name, i2 = 0, attrNames = value && value.match(rnothtmlwhite);
             if (attrNames && elem.nodeType === 1) {
-              while (name = attrNames[i++]) {
+              while (name = attrNames[i2++]) {
                 elem.removeAttribute(name);
               }
             }
@@ -19977,7 +19977,7 @@
         }
         jQuery6.fn.extend({
           addClass: function(value) {
-            var classNames, cur, curValue, className, i, finalValue;
+            var classNames, cur, curValue, className, i2, finalValue;
             if (isFunction(value)) {
               return this.each(function(j) {
                 jQuery6(this).addClass(value.call(this, j, getClass(this)));
@@ -19989,8 +19989,8 @@
                 curValue = getClass(this);
                 cur = this.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
                 if (cur) {
-                  for (i = 0; i < classNames.length; i++) {
-                    className = classNames[i];
+                  for (i2 = 0; i2 < classNames.length; i2++) {
+                    className = classNames[i2];
                     if (cur.indexOf(" " + className + " ") < 0) {
                       cur += className + " ";
                     }
@@ -20005,7 +20005,7 @@
             return this;
           },
           removeClass: function(value) {
-            var classNames, cur, curValue, className, i, finalValue;
+            var classNames, cur, curValue, className, i2, finalValue;
             if (isFunction(value)) {
               return this.each(function(j) {
                 jQuery6(this).removeClass(value.call(this, j, getClass(this)));
@@ -20020,8 +20020,8 @@
                 curValue = getClass(this);
                 cur = this.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
                 if (cur) {
-                  for (i = 0; i < classNames.length; i++) {
-                    className = classNames[i];
+                  for (i2 = 0; i2 < classNames.length; i2++) {
+                    className = classNames[i2];
                     while (cur.indexOf(" " + className + " ") > -1) {
                       cur = cur.replace(" " + className + " ", " ");
                     }
@@ -20036,11 +20036,11 @@
             return this;
           },
           toggleClass: function(value, stateVal) {
-            var classNames, className, i, self2, type = typeof value, isValidValue = type === "string" || Array.isArray(value);
+            var classNames, className, i2, self2, type = typeof value, isValidValue = type === "string" || Array.isArray(value);
             if (isFunction(value)) {
-              return this.each(function(i2) {
+              return this.each(function(i3) {
                 jQuery6(this).toggleClass(
-                  value.call(this, i2, getClass(this), stateVal),
+                  value.call(this, i3, getClass(this), stateVal),
                   stateVal
                 );
               });
@@ -20052,8 +20052,8 @@
             return this.each(function() {
               if (isValidValue) {
                 self2 = jQuery6(this);
-                for (i = 0; i < classNames.length; i++) {
-                  className = classNames[i];
+                for (i2 = 0; i2 < classNames.length; i2++) {
+                  className = classNames[i2];
                   if (self2.hasClass(className)) {
                     self2.removeClass(className);
                   } else {
@@ -20075,9 +20075,9 @@
             });
           },
           hasClass: function(selector) {
-            var className, elem, i = 0;
+            var className, elem, i2 = 0;
             className = " " + selector + " ";
-            while (elem = this[i++]) {
+            while (elem = this[i2++]) {
               if (elem.nodeType === 1 && (" " + stripAndCollapse(getClass(elem)) + " ").indexOf(className) > -1) {
                 return true;
               }
@@ -20104,13 +20104,13 @@
               return;
             }
             valueIsFunction = isFunction(value);
-            return this.each(function(i) {
+            return this.each(function(i2) {
               var val;
               if (this.nodeType !== 1) {
                 return;
               }
               if (valueIsFunction) {
-                val = value.call(this, i, jQuery6(this).val());
+                val = value.call(this, i2, jQuery6(this).val());
               } else {
                 val = value;
               }
@@ -20140,15 +20140,15 @@
             },
             select: {
               get: function(elem) {
-                var value, option, i, options2 = elem.options, index = elem.selectedIndex, one = elem.type === "select-one", values = one ? null : [], max = one ? index + 1 : options2.length;
+                var value, option, i2, options2 = elem.options, index = elem.selectedIndex, one = elem.type === "select-one", values = one ? null : [], max = one ? index + 1 : options2.length;
                 if (index < 0) {
-                  i = max;
+                  i2 = max;
                 } else {
-                  i = one ? index : 0;
+                  i2 = one ? index : 0;
                 }
-                for (; i < max; i++) {
-                  option = options2[i];
-                  if ((option.selected || i === index) && !option.disabled && (!option.parentNode.disabled || !nodeName(option.parentNode, "optgroup"))) {
+                for (; i2 < max; i2++) {
+                  option = options2[i2];
+                  if ((option.selected || i2 === index) && !option.disabled && (!option.parentNode.disabled || !nodeName(option.parentNode, "optgroup"))) {
                     value = jQuery6(option).val();
                     if (one) {
                       return value;
@@ -20159,9 +20159,9 @@
                 return values;
               },
               set: function(elem, value) {
-                var optionSet, option, options2 = elem.options, values = jQuery6.makeArray(value), i = options2.length;
-                while (i--) {
-                  option = options2[i];
+                var optionSet, option, options2 = elem.options, values = jQuery6.makeArray(value), i2 = options2.length;
+                while (i2--) {
+                  option = options2[i2];
                   if (option.selected = jQuery6.inArray(jQuery6.valHooks.option.get(option), values) > -1) {
                     optionSet = true;
                   }
@@ -20194,7 +20194,7 @@
         };
         jQuery6.extend(jQuery6.event, {
           trigger: function(event, data, elem, onlyHandlers) {
-            var i, cur, tmp, bubbleType, ontype, handle, special, lastElement, eventPath = [elem || document2], type = hasOwn.call(event, "type") ? event.type : event, namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
+            var i2, cur, tmp, bubbleType, ontype, handle, special, lastElement, eventPath = [elem || document2], type = hasOwn.call(event, "type") ? event.type : event, namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
             cur = lastElement = tmp = elem = elem || document2;
             if (elem.nodeType === 3 || elem.nodeType === 8) {
               return;
@@ -20234,10 +20234,10 @@
                 eventPath.push(tmp.defaultView || tmp.parentWindow || window2);
               }
             }
-            i = 0;
-            while ((cur = eventPath[i++]) && !event.isPropagationStopped()) {
+            i2 = 0;
+            while ((cur = eventPath[i2++]) && !event.isPropagationStopped()) {
               lastElement = cur;
-              event.type = i > 1 ? bubbleType : special.bindType || type;
+              event.type = i2 > 1 ? bubbleType : special.bindType || type;
               handle = (dataPriv.get(cur, "events") || /* @__PURE__ */ Object.create(null))[event.type] && dataPriv.get(cur, "handle");
               if (handle) {
                 handle.apply(cur, data);
@@ -20349,12 +20349,12 @@
         function buildParams(prefix, obj, traditional, add) {
           var name;
           if (Array.isArray(obj)) {
-            jQuery6.each(obj, function(i, v) {
+            jQuery6.each(obj, function(i2, v) {
               if (traditional || rbracket.test(prefix)) {
                 add(prefix, v);
               } else {
                 buildParams(
-                  prefix + "[" + (typeof v === "object" && v != null ? i : "") + "]",
+                  prefix + "[" + (typeof v === "object" && v != null ? i2 : "") + "]",
                   v,
                   traditional,
                   add
@@ -20421,9 +20421,9 @@
               func = dataTypeExpression;
               dataTypeExpression = "*";
             }
-            var dataType, i = 0, dataTypes = dataTypeExpression.toLowerCase().match(rnothtmlwhite) || [];
+            var dataType, i2 = 0, dataTypes = dataTypeExpression.toLowerCase().match(rnothtmlwhite) || [];
             if (isFunction(func)) {
-              while (dataType = dataTypes[i++]) {
+              while (dataType = dataTypes[i2++]) {
                 if (dataType[0] === "+") {
                   dataType = dataType.slice(1) || "*";
                   (structure[dataType] = structure[dataType] || []).unshift(func);
@@ -20611,7 +20611,7 @@
               url = void 0;
             }
             options2 = options2 || {};
-            var transport, cacheURL, responseHeadersString, responseHeaders, timeoutTimer, urlAnchor, completed2, fireGlobals, i, uncached, s = jQuery6.ajaxSetup({}, options2), callbackContext = s.context || s, globalEventContext = s.context && (callbackContext.nodeType || callbackContext.jquery) ? jQuery6(callbackContext) : jQuery6.event, deferred = jQuery6.Deferred(), completeDeferred = jQuery6.Callbacks("once memory"), statusCode = s.statusCode || {}, requestHeaders = {}, requestHeadersNames = {}, strAbort = "canceled", jqXHR = {
+            var transport, cacheURL, responseHeadersString, responseHeaders, timeoutTimer, urlAnchor, completed2, fireGlobals, i2, uncached, s = jQuery6.ajaxSetup({}, options2), callbackContext = s.context || s, globalEventContext = s.context && (callbackContext.nodeType || callbackContext.jquery) ? jQuery6(callbackContext) : jQuery6.event, deferred = jQuery6.Deferred(), completeDeferred = jQuery6.Callbacks("once memory"), statusCode = s.statusCode || {}, requestHeaders = {}, requestHeadersNames = {}, strAbort = "canceled", jqXHR = {
               readyState: 0,
               getResponseHeader: function(key) {
                 var match;
@@ -20721,8 +20721,8 @@
               "Accept",
               s.dataTypes[0] && s.accepts[s.dataTypes[0]] ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*" ? ", " + allTypes + "; q=0.01" : "") : s.accepts["*"]
             );
-            for (i in s.headers) {
-              jqXHR.setRequestHeader(i, s.headers[i]);
+            for (i2 in s.headers) {
+              jqXHR.setRequestHeader(i2, s.headers[i2]);
             }
             if (s.beforeSend && (s.beforeSend.call(callbackContext, jqXHR, s) === false || completed2)) {
               return jqXHR.abort();
@@ -20857,10 +20857,10 @@
           };
         });
         jQuery6.ajaxPrefilter(function(s) {
-          var i;
-          for (i in s.headers) {
-            if (i.toLowerCase() === "content-type") {
-              s.contentType = s.headers[i] || "";
+          var i2;
+          for (i2 in s.headers) {
+            if (i2.toLowerCase() === "content-type") {
+              s.contentType = s.headers[i2] || "";
             }
           }
         });
@@ -20904,8 +20904,8 @@
           },
           wrapInner: function(html) {
             if (isFunction(html)) {
-              return this.each(function(i) {
-                jQuery6(this).wrapInner(html.call(this, i));
+              return this.each(function(i2) {
+                jQuery6(this).wrapInner(html.call(this, i2));
               });
             }
             return this.each(function() {
@@ -20919,8 +20919,8 @@
           },
           wrap: function(html) {
             var htmlIsFunction = isFunction(html);
-            return this.each(function(i) {
-              jQuery6(this).wrapAll(htmlIsFunction ? html.call(this, i) : html);
+            return this.each(function(i2) {
+              jQuery6(this).wrapAll(htmlIsFunction ? html.call(this, i2) : html);
             });
           },
           unwrap: function(selector) {
@@ -20953,7 +20953,7 @@
           if (support.cors || xhrSupported && !options2.crossDomain) {
             return {
               send: function(headers, complete) {
-                var i, xhr = options2.xhr();
+                var i2, xhr = options2.xhr();
                 xhr.open(
                   options2.type,
                   options2.url,
@@ -20962,8 +20962,8 @@
                   options2.password
                 );
                 if (options2.xhrFields) {
-                  for (i in options2.xhrFields) {
-                    xhr[i] = options2.xhrFields[i];
+                  for (i2 in options2.xhrFields) {
+                    xhr[i2] = options2.xhrFields[i2];
                   }
                 }
                 if (options2.mimeType && xhr.overrideMimeType) {
@@ -20972,8 +20972,8 @@
                 if (!options2.crossDomain && !headers["X-Requested-With"]) {
                   headers["X-Requested-With"] = "XMLHttpRequest";
                 }
-                for (i in headers) {
-                  xhr.setRequestHeader(i, headers[i]);
+                for (i2 in headers) {
+                  xhr.setRequestHeader(i2, headers[i2]);
                 }
                 callback = function(type) {
                   return function() {
@@ -21199,7 +21199,7 @@
           }).length;
         };
         jQuery6.offset = {
-          setOffset: function(elem, options2, i) {
+          setOffset: function(elem, options2, i2) {
             var curPosition, curLeft, curCSSTop, curTop, curOffset, curCSSLeft, calculatePosition, position = jQuery6.css(elem, "position"), curElem = jQuery6(elem), props = {};
             if (position === "static") {
               elem.style.position = "relative";
@@ -21217,7 +21217,7 @@
               curLeft = parseFloat(curCSSLeft) || 0;
             }
             if (isFunction(options2)) {
-              options2 = options2.call(elem, i, jQuery6.extend({}, curOffset));
+              options2 = options2.call(elem, i2, jQuery6.extend({}, curOffset));
             }
             if (options2.top != null) {
               props.top = options2.top - curOffset.top + curTop;
@@ -21235,8 +21235,8 @@
         jQuery6.fn.extend({
           offset: function(options2) {
             if (arguments.length) {
-              return options2 === void 0 ? this : this.each(function(i) {
-                jQuery6.offset.setOffset(this, options2, i);
+              return options2 === void 0 ? this : this.each(function(i2) {
+                jQuery6.offset.setOffset(this, options2, i2);
               });
             }
             var rect, win, elem = this[0];
@@ -21473,7 +21473,7 @@
       }
       var undefined2;
       _jquery2.default.fn.emptyForce = function() {
-        for (var i = 0, elem; (elem = (0, _jquery2.default)(this)[i]) != null; i++) {
+        for (var i2 = 0, elem; (elem = (0, _jquery2.default)(this)[i2]) != null; i2++) {
           if (elem.nodeType === 1) {
             _jquery2.default.cleanData(elem.getElementsByTagName("*"));
           }
@@ -21497,11 +21497,11 @@
       _jquery2.default.fn.jqplot = function() {
         var datas = [];
         var options2 = [];
-        for (var i = 0, l = arguments.length; i < l; i++) {
-          if (_jquery2.default.isArray(arguments[i])) {
-            datas.push(arguments[i]);
-          } else if (_jquery2.default.isPlainObject(arguments[i])) {
-            options2.push(arguments[i]);
+        for (var i2 = 0, l = arguments.length; i2 < l; i2++) {
+          if (_jquery2.default.isArray(arguments[i2])) {
+            datas.push(arguments[i2]);
+          } else if (_jquery2.default.isPlainObject(arguments[i2])) {
+            options2.push(arguments[i2]);
           }
         }
         return this.each(function(index) {
@@ -21579,12 +21579,12 @@
           var canvas;
           var makeNew = true;
           if (!jqplot.use_excanvas) {
-            for (var i = 0, l = jqplot.CanvasManager.canvases.length; i < l; i++) {
-              if (jqplot.CanvasManager.free[i] === true) {
+            for (var i2 = 0, l = jqplot.CanvasManager.canvases.length; i2 < l; i2++) {
+              if (jqplot.CanvasManager.free[i2] === true) {
                 makeNew = false;
-                canvas = jqplot.CanvasManager.canvases[i];
-                jqplot.CanvasManager.free[i] = false;
-                myCanvases.push(i);
+                canvas = jqplot.CanvasManager.canvases[i2];
+                jqplot.CanvasManager.free[i2] = false;
+                myCanvases.push(i2);
                 break;
               }
             }
@@ -21617,8 +21617,8 @@
           return canvas;
         };
         this.freeAllCanvases = function() {
-          for (var i = 0, l = myCanvases.length; i < l; i++) {
-            this.freeCanvas(myCanvases[i]);
+          for (var i2 = 0, l = myCanvases.length; i2 < l; i2++) {
+            this.freeCanvas(myCanvases[i2]);
           }
           myCanvases = [];
         };
@@ -21888,8 +21888,8 @@
         db.max = null;
         var l, s, d2;
         var doforce = this.show ? true : false;
-        for (var i = 0; i < this._series.length; i++) {
-          s = this._series[i];
+        for (var i2 = 0; i2 < this._series.length; i2++) {
+          s = this._series[i2];
           if (s.show || this.scaleToHiddenSeries) {
             d2 = s._plotData;
             if (s._type === "line" && s.renderer.bands.show && this.name.charAt(0) !== "x") {
@@ -22069,8 +22069,8 @@
         this.renderer.init.call(this, this.rendererOptions);
       };
       Legend.prototype.draw = function(offsets, plot) {
-        for (var i = 0; i < jqplot.preDrawLegendHooks.length; i++) {
-          jqplot.preDrawLegendHooks[i].call(this, offsets);
+        for (var i2 = 0; i2 < jqplot.preDrawLegendHooks.length; i2++) {
+          jqplot.preDrawLegendHooks[i2].call(this, offsets);
         }
         return this.renderer.draw.call(this, offsets, plot);
       };
@@ -22168,16 +22168,16 @@
         this.index = index;
         this.gridBorderWidth = gridbw;
         var d2 = this.data;
-        var temp = [], i, l;
-        for (i = 0, l = d2.length; i < l; i++) {
+        var temp = [], i2, l;
+        for (i2 = 0, l = d2.length; i2 < l; i2++) {
           if (!this.breakOnNull) {
-            if (d2[i] == null || d2[i][0] == null || d2[i][1] == null) {
+            if (d2[i2] == null || d2[i2][0] == null || d2[i2][1] == null) {
               continue;
             } else {
-              temp.push(d2[i]);
+              temp.push(d2[i2]);
             }
           } else {
-            temp.push(d2[i]);
+            temp.push(d2[i2]);
           }
         }
         this.data = temp;
@@ -22401,8 +22401,8 @@
       jqplot.HooksManager.prototype.addOnce = function(fn, args) {
         args = args || [];
         var havehook = false;
-        for (var i = 0, l = this.hooks.length; i < l; i++) {
-          if (this.hooks[i] == fn) {
+        for (var i2 = 0, l = this.hooks.length; i2 < l; i2++) {
+          if (this.hooks[i2] == fn) {
             havehook = true;
           }
         }
@@ -22420,9 +22420,9 @@
         this.hooks = [];
       };
       jqplot.EventListenerManager.prototype.addOnce = function(ev, fn) {
-        var havehook = false, h, i;
-        for (var i = 0, l = this.hooks.length; i < l; i++) {
-          h = this.hooks[i];
+        var havehook = false, h, i2;
+        for (var i2 = 0, l = this.hooks.length; i2 < l; i2++) {
+          h = this.hooks[i2];
           if (h[0] == ev && h[1] == fn) {
             havehook = true;
           }
@@ -22532,11 +22532,11 @@
         var seriesColorsIndex = 0;
         this.init = function(target, data, options2) {
           options2 = options2 || {};
-          for (var i = 0; i < jqplot.preInitHooks.length; i++) {
-            jqplot.preInitHooks[i].call(this, target, data, options2);
+          for (var i2 = 0; i2 < jqplot.preInitHooks.length; i2++) {
+            jqplot.preInitHooks[i2].call(this, target, data, options2);
           }
-          for (var i = 0; i < this.preInitHooks.hooks.length; i++) {
-            this.preInitHooks.hooks[i].call(this, target, data, options2);
+          for (var i2 = 0; i2 < this.preInitHooks.hooks.length; i2++) {
+            this.preInitHooks.hooks[i2].call(this, target, data, options2);
           }
           this.targetId = "#" + target;
           this.target = (0, _jquery2.default)("#" + target);
@@ -22581,8 +22581,8 @@
           } else {
             this._width = w = this.target.width();
           }
-          for (var i = 0, l = _axisNames.length; i < l; i++) {
-            this.axes[_axisNames[i]] = new Axis(_axisNames[i]);
+          for (var i2 = 0, l = _axisNames.length; i2 < l; i2++) {
+            this.axes[_axisNames[i2]] = new Axis(_axisNames[i2]);
           }
           this._plotDimensions.height = this._height;
           this._plotDimensions.width = this._width;
@@ -22649,31 +22649,31 @@
           this._sumy = 0;
           this._sumx = 0;
           this.computePlotData();
-          for (var i = 0; i < this.series.length; i++) {
-            this.seriesStack.push(i);
-            this.previousSeriesStack.push(i);
-            this.series[i].shadowCanvas._plotDimensions = this._plotDimensions;
-            this.series[i].canvas._plotDimensions = this._plotDimensions;
+          for (var i2 = 0; i2 < this.series.length; i2++) {
+            this.seriesStack.push(i2);
+            this.previousSeriesStack.push(i2);
+            this.series[i2].shadowCanvas._plotDimensions = this._plotDimensions;
+            this.series[i2].canvas._plotDimensions = this._plotDimensions;
             for (var j = 0; j < jqplot.preSeriesInitHooks.length; j++) {
-              jqplot.preSeriesInitHooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              jqplot.preSeriesInitHooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
             for (var j = 0; j < this.preSeriesInitHooks.hooks.length; j++) {
-              this.preSeriesInitHooks.hooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              this.preSeriesInitHooks.hooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
-            this.series[i]._plotDimensions = this._plotDimensions;
-            this.series[i].init(i, this.grid.borderWidth, this);
+            this.series[i2]._plotDimensions = this._plotDimensions;
+            this.series[i2].init(i2, this.grid.borderWidth, this);
             for (var j = 0; j < jqplot.postSeriesInitHooks.length; j++) {
-              jqplot.postSeriesInitHooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              jqplot.postSeriesInitHooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
             for (var j = 0; j < this.postSeriesInitHooks.hooks.length; j++) {
-              this.postSeriesInitHooks.hooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              this.postSeriesInitHooks.hooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
-            this._sumy += this.series[i]._sumy;
-            this._sumx += this.series[i]._sumx;
+            this._sumy += this.series[i2]._sumy;
+            this._sumx += this.series[i2]._sumx;
           }
           var name, axis;
-          for (var i = 0, l = _axisNames.length; i < l; i++) {
-            name = _axisNames[i];
+          for (var i2 = 0, l = _axisNames.length; i2 < l; i2++) {
+            name = _axisNames[i2];
             axis = this.axes[name];
             axis._plotDimensions = this._plotDimensions;
             axis.init();
@@ -22691,11 +22691,11 @@
           this.grid.init();
           this.grid._axes = this.axes;
           this.legend._series = this.series;
-          for (var i = 0; i < jqplot.postInitHooks.length; i++) {
-            jqplot.postInitHooks[i].call(this, target, this.data, options2);
+          for (var i2 = 0; i2 < jqplot.postInitHooks.length; i2++) {
+            jqplot.postInitHooks[i2].call(this, target, this.data, options2);
           }
-          for (var i = 0; i < this.postInitHooks.hooks.length; i++) {
-            this.postInitHooks.hooks[i].call(this, target, this.data, options2);
+          for (var i2 = 0; i2 < this.postInitHooks.hooks.length; i2++) {
+            this.postInitHooks.hooks[i2].call(this, target, this.data, options2);
           }
         };
         this.resetAxesScale = function(axes, options2) {
@@ -22705,8 +22705,8 @@
             ax = this.axes;
           }
           if (_jquery2.default.isArray(ax)) {
-            for (var i = 0; i < ax.length; i++) {
-              this.axes[ax[i]].resetScale(opts[ax[i]]);
+            for (var i2 = 0; i2 < ax.length; i2++) {
+              this.axes[ax[i2]].resetScale(opts[ax[i2]]);
             }
           } else if ((typeof ax === "undefined" ? "undefined" : _typeof(ax)) === "object") {
             for (var name in ax) {
@@ -22718,11 +22718,11 @@
           var options2 = _jquery2.default.extend(true, {}, this.options, opts);
           var target = this.targetId.substr(1);
           var tdata = data == null ? this.data : data;
-          for (var i = 0; i < jqplot.preInitHooks.length; i++) {
-            jqplot.preInitHooks[i].call(this, target, tdata, options2);
+          for (var i2 = 0; i2 < jqplot.preInitHooks.length; i2++) {
+            jqplot.preInitHooks[i2].call(this, target, tdata, options2);
           }
-          for (var i = 0; i < this.preInitHooks.hooks.length; i++) {
-            this.preInitHooks.hooks[i].call(this, target, tdata, options2);
+          for (var i2 = 0; i2 < this.preInitHooks.hooks.length; i2++) {
+            this.preInitHooks.hooks[i2].call(this, target, tdata, options2);
           }
           this._height = this.target.height();
           this._width = this.target.width();
@@ -22737,8 +22737,8 @@
           this.eventCanvas._plotDimensions = this._plotDimensions;
           this.legend._plotDimensions = this._plotDimensions;
           var name, t, j, axis;
-          for (var i = 0, l = _axisNames.length; i < l; i++) {
-            name = _axisNames[i];
+          for (var i2 = 0, l = _axisNames.length; i2 < l; i2++) {
+            name = _axisNames[i2];
             axis = this.axes[name];
             t = axis._ticks;
             for (var j = 0, tlen = t.length; j < tlen; j++) {
@@ -22789,30 +22789,30 @@
           this.seriesStack = [];
           this.previousSeriesStack = [];
           this.computePlotData();
-          for (var i = 0, l = this.series.length; i < l; i++) {
-            this.seriesStack.push(i);
-            this.previousSeriesStack.push(i);
-            this.series[i].shadowCanvas._plotDimensions = this._plotDimensions;
-            this.series[i].canvas._plotDimensions = this._plotDimensions;
+          for (var i2 = 0, l = this.series.length; i2 < l; i2++) {
+            this.seriesStack.push(i2);
+            this.previousSeriesStack.push(i2);
+            this.series[i2].shadowCanvas._plotDimensions = this._plotDimensions;
+            this.series[i2].canvas._plotDimensions = this._plotDimensions;
             for (var j = 0; j < jqplot.preSeriesInitHooks.length; j++) {
-              jqplot.preSeriesInitHooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              jqplot.preSeriesInitHooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
             for (var j = 0; j < this.preSeriesInitHooks.hooks.length; j++) {
-              this.preSeriesInitHooks.hooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              this.preSeriesInitHooks.hooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
-            this.series[i]._plotDimensions = this._plotDimensions;
-            this.series[i].init(i, this.grid.borderWidth, this);
+            this.series[i2]._plotDimensions = this._plotDimensions;
+            this.series[i2].init(i2, this.grid.borderWidth, this);
             for (var j = 0; j < jqplot.postSeriesInitHooks.length; j++) {
-              jqplot.postSeriesInitHooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              jqplot.postSeriesInitHooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
             for (var j = 0; j < this.postSeriesInitHooks.hooks.length; j++) {
-              this.postSeriesInitHooks.hooks[j].call(this.series[i], target, this.data, this.options.seriesDefaults, this.options.series[i], this);
+              this.postSeriesInitHooks.hooks[j].call(this.series[i2], target, this.data, this.options.seriesDefaults, this.options.series[i2], this);
             }
-            this._sumy += this.series[i]._sumy;
-            this._sumx += this.series[i]._sumx;
+            this._sumy += this.series[i2]._sumy;
+            this._sumx += this.series[i2]._sumx;
           }
-          for (var i = 0, l = _axisNames.length; i < l; i++) {
-            name = _axisNames[i];
+          for (var i2 = 0, l = _axisNames.length; i2 < l; i2++) {
+            name = _axisNames[i2];
             axis = this.axes[name];
             axis._plotDimensions = this._plotDimensions;
             axis.init();
@@ -22830,11 +22830,11 @@
           this.grid.init();
           this.grid._axes = this.axes;
           this.legend._series = this.series;
-          for (var i = 0, l = jqplot.postInitHooks.length; i < l; i++) {
-            jqplot.postInitHooks[i].call(this, target, this.data, options2);
+          for (var i2 = 0, l = jqplot.postInitHooks.length; i2 < l; i2++) {
+            jqplot.postInitHooks[i2].call(this, target, this.data, options2);
           }
-          for (var i = 0, l = this.postInitHooks.hooks.length; i < l; i++) {
-            this.postInitHooks.hooks[i].call(this, target, this.data, options2);
+          for (var i2 = 0, l = this.postInitHooks.hooks.length; i2 < l; i2++) {
+            this.postInitHooks.hooks[i2].call(this, target, this.data, options2);
           }
         };
         this.quickInit = function() {
@@ -22867,21 +22867,21 @@
           this._sumy = 0;
           this._sumx = 0;
           this.computePlotData();
-          for (var i = 0; i < this.series.length; i++) {
-            if (this.series[i]._type === "line" && this.series[i].renderer.bands.show) {
-              this.series[i].renderer.initBands.call(this.series[i], this.series[i].renderer.options, this);
+          for (var i2 = 0; i2 < this.series.length; i2++) {
+            if (this.series[i2]._type === "line" && this.series[i2].renderer.bands.show) {
+              this.series[i2].renderer.initBands.call(this.series[i2], this.series[i2].renderer.options, this);
             }
-            this.series[i]._plotDimensions = this._plotDimensions;
-            this.series[i].canvas._plotDimensions = this._plotDimensions;
-            this._sumy += this.series[i]._sumy;
-            this._sumx += this.series[i]._sumx;
+            this.series[i2]._plotDimensions = this._plotDimensions;
+            this.series[i2].canvas._plotDimensions = this._plotDimensions;
+            this._sumy += this.series[i2]._sumy;
+            this._sumx += this.series[i2]._sumx;
           }
           var name;
           for (var j = 0; j < 12; j++) {
             name = _axisNames[j];
             var t = this.axes[name]._ticks;
-            for (var i = 0; i < t.length; i++) {
-              var el = t[i]._elem;
+            for (var i2 = 0; i2 < t.length; i2++) {
+              var el = t[i2]._elem;
               if (el) {
                 if (jqplot.use_excanvas && window.G_vmlCanvasManager.uninitElement !== undefined2) {
                   window.G_vmlCanvasManager.uninitElement(el.get(0));
@@ -22903,13 +22903,13 @@
         };
         function sortData(series) {
           var d2, sd, pd, ppd, ret;
-          for (var i = 0; i < series.length; i++) {
+          for (var i2 = 0; i2 < series.length; i2++) {
             var check;
-            var bat = [series[i].data, series[i]._stackData, series[i]._plotData, series[i]._prevPlotData];
+            var bat = [series[i2].data, series[i2]._stackData, series[i2]._plotData, series[i2]._prevPlotData];
             for (var n = 0; n < 4; n++) {
               check = true;
               d2 = bat[n];
-              if (series[i]._stackAxis == "x") {
+              if (series[i2]._stackAxis == "x") {
                 for (var j = 0; j < d2.length; j++) {
                   if (typeof d2[j][1] != "number") {
                     check = false;
@@ -22973,9 +22973,9 @@
                 }
               }
             } else {
-              for (var i = 0; i < series.data.length; i++) {
-                plotValues.x.push(series.data[i][0]);
-                plotValues.y.push(series.data[i][1]);
+              for (var i2 = 0; i2 < series.data.length; i2++) {
+                plotValues.x.push(series.data[i2][0]);
+                plotValues.y.push(series.data[i2][1]);
               }
               this._stackData.push(series.data);
               this.series[index]._stackData = series.data;
@@ -22988,9 +22988,9 @@
             }
             series._sumy = 0;
             series._sumx = 0;
-            for (i = series.data.length - 1; i > -1; i--) {
-              series._sumy += series.data[i][1];
-              series._sumx += series.data[i][0];
+            for (i2 = series.data.length - 1; i2 > -1; i2--) {
+              series._sumy += series.data[i2][1];
+              series._sumx += series.data[i2][0];
             }
           }
         };
@@ -23020,9 +23020,9 @@
                 }
               }
             }
-            for (var i = 0; i < plotdata.length; i++) {
-              plotValues.x.push(plotdata[i][0]);
-              plotValues.y.push(plotdata[i][1]);
+            for (var i2 = 0; i2 < plotdata.length; i2++) {
+              plotValues.x.push(plotdata[i2][0]);
+              plotValues.y.push(plotdata[i2][1]);
             }
             this._plotData.push(plotdata);
             this._stackData.push(temp);
@@ -23030,9 +23030,9 @@
             series._plotData = plotdata;
             series._plotValues = plotValues;
           } else {
-            for (var i = 0; i < series.data.length; i++) {
-              plotValues.x.push(series.data[i][0]);
-              plotValues.y.push(series.data[i][1]);
+            for (var i2 = 0; i2 < series.data.length; i2++) {
+              plotValues.x.push(series.data[i2][0]);
+              plotValues.y.push(series.data[i2][1]);
             }
             this._stackData.push(series.data);
             this.series[index]._stackData = series.data;
@@ -23045,9 +23045,9 @@
           }
           series._sumy = 0;
           series._sumx = 0;
-          for (i = series.data.length - 1; i > -1; i--) {
-            series._sumy += series.data[i][1];
-            series._sumx += series.data[i][0];
+          for (i2 = series.data.length - 1; i2 > -1; i2--) {
+            series._sumy += series.data[i2][1];
+            series._sumx += series.data[i2][0];
           }
         };
         this.getNextSeriesColor = function(t) {
@@ -23063,11 +23063,11 @@
           };
         }(this);
         this.parseOptions = function(options2) {
-          for (var i = 0; i < this.preParseOptionsHooks.hooks.length; i++) {
-            this.preParseOptionsHooks.hooks[i].call(this, options2);
+          for (var i2 = 0; i2 < this.preParseOptionsHooks.hooks.length; i2++) {
+            this.preParseOptionsHooks.hooks[i2].call(this, options2);
           }
-          for (var i = 0; i < jqplot.preParseOptionsHooks.length; i++) {
-            jqplot.preParseOptionsHooks[i].call(this, options2);
+          for (var i2 = 0; i2 < jqplot.preParseOptionsHooks.length; i2++) {
+            jqplot.preParseOptionsHooks[i2].call(this, options2);
           }
           this.options = _jquery2.default.extend(true, {}, this.defaults, options2);
           var opts = this.options;
@@ -23076,8 +23076,8 @@
           this.stackSeries = opts.stackSeries;
           if (_jquery2.default.isPlainObject(opts.fillBetween)) {
             var temp = ["series1", "series2", "color", "baseSeries", "fill"], tempi;
-            for (var i = 0, l = temp.length; i < l; i++) {
-              tempi = temp[i];
+            for (var i2 = 0, l = temp.length; i2 < l; i2++) {
+              tempi = temp[i2];
               if (opts.fillBetween[tempi] != null) {
                 this.fillBetween[tempi] = opts.fillBetween[tempi];
               }
@@ -23097,8 +23097,8 @@
           this.negativeColorGenerator.setColors(this.negativeSeriesColors);
           _jquery2.default.extend(true, this._gridPadding, opts.gridPadding);
           this.sortData = opts.sortData != null ? opts.sortData : this.sortData;
-          for (var i = 0; i < 12; i++) {
-            var n = _axisNames[i];
+          for (var i2 = 0; i2 < 12; i2++) {
+            var n = _axisNames[i2];
             var axis = this.axes[n];
             axis._options = _jquery2.default.extend(true, {}, opts.axesDefaults, opts.axes[n]);
             _jquery2.default.extend(true, axis, opts.axesDefaults, opts.axes[n]);
@@ -23107,14 +23107,14 @@
           }
           var normalizeData = function normalizeData2(data, dir2, start) {
             var temp2 = [];
-            var i2, l2;
+            var i3, l2;
             dir2 = dir2 || "vertical";
             if (!_jquery2.default.isArray(data[0])) {
-              for (i2 = 0, l2 = data.length; i2 < l2; i2++) {
+              for (i3 = 0, l2 = data.length; i3 < l2; i3++) {
                 if (dir2 == "vertical") {
-                  temp2.push([start + i2, data[i2]]);
+                  temp2.push([start + i3, data[i3]]);
                 } else {
-                  temp2.push([data[i2], start + i2]);
+                  temp2.push([data[i3], start + i3]);
                 }
               }
             } else {
@@ -23124,14 +23124,14 @@
           };
           var colorIndex = 0;
           this.series = [];
-          for (var i = 0; i < this.data.length; i++) {
-            var sopts = _jquery2.default.extend(true, { index: i }, { seriesColors: this.seriesColors, negativeSeriesColors: this.negativeSeriesColors }, this.options.seriesDefaults, this.options.series[i], { rendererOptions: { animation: { show: this.animate } } });
+          for (var i2 = 0; i2 < this.data.length; i2++) {
+            var sopts = _jquery2.default.extend(true, { index: i2 }, { seriesColors: this.seriesColors, negativeSeriesColors: this.negativeSeriesColors }, this.options.seriesDefaults, this.options.series[i2], { rendererOptions: { animation: { show: this.animate } } });
             var temp = new Series(sopts);
             for (var j = 0; j < jqplot.preParseSeriesOptionsHooks.length; j++) {
-              jqplot.preParseSeriesOptionsHooks[j].call(temp, this.options.seriesDefaults, this.options.series[i]);
+              jqplot.preParseSeriesOptionsHooks[j].call(temp, this.options.seriesDefaults, this.options.series[i2]);
             }
             for (var j = 0; j < this.preParseSeriesOptionsHooks.hooks.length; j++) {
-              this.preParseSeriesOptionsHooks.hooks[j].call(temp, this.options.seriesDefaults, this.options.series[i]);
+              this.preParseSeriesOptionsHooks.hooks[j].call(temp, this.options.seriesDefaults, this.options.series[i2]);
             }
             _jquery2.default.extend(true, temp, sopts);
             var dir = "vertical";
@@ -23140,7 +23140,7 @@
               temp._stackAxis = "x";
               temp._primaryAxis = "_yaxis";
             }
-            temp.data = normalizeData(this.data[i], dir, this.defaultAxisStart);
+            temp.data = normalizeData(this.data[i2], dir, this.defaultAxisStart);
             switch (temp.xaxis) {
               case "xaxis":
                 temp._xaxis = this.axes.xaxis;
@@ -23166,19 +23166,19 @@
               }
             }
             if (!temp.label) {
-              temp.label = "Series " + (i + 1).toString();
+              temp.label = "Series " + (i2 + 1).toString();
             }
             this.series.push(temp);
             for (var j = 0; j < jqplot.postParseSeriesOptionsHooks.length; j++) {
-              jqplot.postParseSeriesOptionsHooks[j].call(this.series[i], this.options.seriesDefaults, this.options.series[i]);
+              jqplot.postParseSeriesOptionsHooks[j].call(this.series[i2], this.options.seriesDefaults, this.options.series[i2]);
             }
             for (var j = 0; j < this.postParseSeriesOptionsHooks.hooks.length; j++) {
-              this.postParseSeriesOptionsHooks.hooks[j].call(this.series[i], this.options.seriesDefaults, this.options.series[i]);
+              this.postParseSeriesOptionsHooks.hooks[j].call(this.series[i2], this.options.seriesDefaults, this.options.series[i2]);
             }
           }
           _jquery2.default.extend(true, this.grid, this.options.grid);
-          for (var i = 0, l = _axisNames.length; i < l; i++) {
-            var n = _axisNames[i];
+          for (var i2 = 0, l = _axisNames.length; i2 < l; i2++) {
+            var n = _axisNames[i2];
             var axis = this.axes[n];
             if (axis.borderWidth == null) {
               axis.borderWidth = this.grid.borderWidth;
@@ -23191,11 +23191,11 @@
           }
           this.title._plotWidth = this._width;
           this.legend.setOptions(this.options.legend);
-          for (var i = 0; i < jqplot.postParseOptionsHooks.length; i++) {
-            jqplot.postParseOptionsHooks[i].call(this, options2);
+          for (var i2 = 0; i2 < jqplot.postParseOptionsHooks.length; i2++) {
+            jqplot.postParseOptionsHooks[i2].call(this, options2);
           }
-          for (var i = 0; i < this.postParseOptionsHooks.hooks.length; i++) {
-            this.postParseOptionsHooks.hooks[i].call(this, options2);
+          for (var i2 = 0; i2 < this.postParseOptionsHooks.hooks.length; i2++) {
+            this.postParseOptionsHooks.hooks[i2].call(this, options2);
           }
         };
         this.destroy = function() {
@@ -23243,9 +23243,9 @@
           this.computePlotData();
           this._sumy = 0;
           this._sumx = 0;
-          for (var i = 0, tsl = this.series.length; i < tsl; i++) {
-            this._sumy += this.series[i]._sumy;
-            this._sumx += this.series[i]._sumx;
+          for (var i2 = 0, tsl = this.series.length; i2 < tsl; i2++) {
+            this._sumy += this.series[i2]._sumy;
+            this._sumx += this.series[i2]._sumx;
           }
           this.draw();
           this.target.trigger("jqplotPostRedraw");
@@ -23253,12 +23253,12 @@
         this.draw = function() {
           if (this.drawIfHidden || this.target.is(":visible")) {
             this.target.trigger("jqplotPreDraw");
-            var i, j, l, tempseries;
-            for (i = 0, l = jqplot.preDrawHooks.length; i < l; i++) {
-              jqplot.preDrawHooks[i].call(this);
+            var i2, j, l, tempseries;
+            for (i2 = 0, l = jqplot.preDrawHooks.length; i2 < l; i2++) {
+              jqplot.preDrawHooks[i2].call(this);
             }
-            for (i = 0, l = this.preDrawHooks.hooks.length; i < l; i++) {
-              this.preDrawHooks.hooks[i].apply(this, this.preDrawSeriesHooks.args[i]);
+            for (i2 = 0, l = this.preDrawHooks.hooks.length; i2 < l; i2++) {
+              this.preDrawHooks.hooks[i2].apply(this, this.preDrawSeriesHooks.args[i2]);
             }
             this.target.append(this.baseCanvas.createElement({ left: 0, right: 0, top: 0, bottom: 0 }, "jqplot-base-canvas", null, this));
             this.baseCanvas.setContext();
@@ -23293,8 +23293,8 @@
             }
             var ax = this.axes;
             var name;
-            for (i = 0; i < 12; i++) {
-              name = _axisNames[i];
+            for (i2 = 0; i2 < 12; i2++) {
+              name = _axisNames[i2];
               this.target.append(ax[name].draw(this.baseCanvas._ctx, this));
               ax[name].set();
             }
@@ -23348,8 +23348,8 @@
             ax.xaxis.pack({ position: "absolute", bottom: this._gridPadding.bottom - ax.xaxis.getHeight(), left: 0, width: this._width }, { min: this._gridPadding.left, max: this._width - this._gridPadding.right });
             ax.yaxis.pack({ position: "absolute", top: 0, left: this._gridPadding.left - ax.yaxis.getWidth(), height: this._height }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             ax.x2axis.pack({ position: "absolute", top: this._gridPadding.top - ax.x2axis.getHeight(), left: 0, width: this._width }, { min: this._gridPadding.left, max: this._width - this._gridPadding.right });
-            for (i = 8; i > 0; i--) {
-              ax[ra[i - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
+            for (i2 = 8; i2 > 0; i2--) {
+              ax[ra[i2 - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i2 - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             }
             var ltemp = (this._width - this._gridPadding.left - this._gridPadding.right) / 2 + this._gridPadding.left - ax.yMidAxis.getWidth() / 2;
             ax.yMidAxis.pack({ position: "absolute", top: 0, left: ltemp, zIndex: 9, textAlign: "center" }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
@@ -23357,14 +23357,14 @@
             this.grid.draw();
             var series = this.series;
             var seriesLength = series.length;
-            for (i = 0, l = seriesLength; i < l; i++) {
-              j = this.seriesStack[i];
+            for (i2 = 0, l = seriesLength; i2 < l; i2++) {
+              j = this.seriesStack[i2];
               this.target.append(series[j].shadowCanvas.createElement(this._gridPadding, "jqplot-series-shadowCanvas", null, this));
               series[j].shadowCanvas.setContext();
               series[j].shadowCanvas._elem.data("seriesIndex", j);
             }
-            for (i = 0, l = seriesLength; i < l; i++) {
-              j = this.seriesStack[i];
+            for (i2 = 0, l = seriesLength; i2 < l; i2++) {
+              j = this.seriesStack[i2];
               this.target.append(series[j].canvas.createElement(this._gridPadding, "jqplot-series-canvas", null, this));
               series[j].canvas.setContext();
               series[j].canvas._elem.data("seriesIndex", j);
@@ -23389,11 +23389,11 @@
               }
               this.legend.pack(legendPadding);
             }
-            for (var i = 0, l = jqplot.eventListenerHooks.length; i < l; i++) {
-              this.eventCanvas._elem.bind(jqplot.eventListenerHooks[i][0], { plot: this }, jqplot.eventListenerHooks[i][1]);
+            for (var i2 = 0, l = jqplot.eventListenerHooks.length; i2 < l; i2++) {
+              this.eventCanvas._elem.bind(jqplot.eventListenerHooks[i2][0], { plot: this }, jqplot.eventListenerHooks[i2][1]);
             }
-            for (var i = 0, l = this.eventListenerHooks.hooks.length; i < l; i++) {
-              this.eventCanvas._elem.bind(this.eventListenerHooks.hooks[i][0], { plot: this }, this.eventListenerHooks.hooks[i][1]);
+            for (var i2 = 0, l = this.eventListenerHooks.hooks.length; i2 < l; i2++) {
+              this.eventCanvas._elem.bind(this.eventListenerHooks.hooks[i2][0], { plot: this }, this.eventListenerHooks.hooks[i2][1]);
             }
             var fb = this.fillBetween;
             if (typeof fb.series1 == "number") {
@@ -23421,20 +23421,20 @@
                 }
               }
             }
-            for (var i = 0, l = jqplot.postDrawHooks.length; i < l; i++) {
-              jqplot.postDrawHooks[i].call(this);
+            for (var i2 = 0, l = jqplot.postDrawHooks.length; i2 < l; i2++) {
+              jqplot.postDrawHooks[i2].call(this);
             }
-            for (var i = 0, l = this.postDrawHooks.hooks.length; i < l; i++) {
-              this.postDrawHooks.hooks[i].apply(this, this.postDrawHooks.args[i]);
+            for (var i2 = 0, l = this.postDrawHooks.hooks.length; i2 < l; i2++) {
+              this.postDrawHooks.hooks[i2].apply(this, this.postDrawHooks.args[i2]);
             }
             if (this.target.is(":visible")) {
               this._drawCount += 1;
             }
             var temps, tempr, sel, _els;
-            for (i = 0, l = seriesLength; i < l; i++) {
-              temps = series[i];
+            for (i2 = 0, l = seriesLength; i2 < l; i2++) {
+              temps = series[i2];
               tempr = temps.renderer;
-              sel = ".jqplot-point-label.jqplot-series-" + i;
+              sel = ".jqplot-point-label.jqplot-series-" + i2;
               if (tempr.animation && tempr.animation._supported && tempr.animation.show && (this._drawCount < 2 || this.animateReplot)) {
                 _els = this.target.find(sel);
                 _els.stop(true, true).hide();
@@ -23522,12 +23522,12 @@
         }
         function checkIntersection(gridpos, plot) {
           var series = plot.series;
-          var i, j, k, s, r, x, y, theta, sm, sa, minang, maxang;
+          var i2, j, k, s, r, x, y, theta, sm, sa, minang, maxang;
           var d0, d2, p, pp, points, bw, hp;
           var threshold, t;
           for (k = plot.seriesStack.length - 1; k >= 0; k--) {
-            i = plot.seriesStack[k];
-            s = series[i];
+            i2 = plot.seriesStack[k];
+            s = series[i2];
             hp = s._highlightThreshold;
             switch (s.renderer.constructor) {
               case jqplot.BarRenderer:
@@ -23636,7 +23636,7 @@
                     d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
                     if (d2 <= p[2] && (d2 <= d0 || d0 == null)) {
                       d0 = d2;
-                      ret = { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                      ret = { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                     }
                   }
                   if (ret != null) {
@@ -23686,7 +23686,7 @@
                       }
                     }
                     if (inside) {
-                      return { seriesIndex: i, pointIndex: null, gridData: s.gridData, data: s.data, points: s._areaPoints };
+                      return { seriesIndex: i2, pointIndex: null, gridData: s.gridData, data: s.data, points: s._areaPoints };
                     }
                     break;
                   } else {
@@ -23698,24 +23698,24 @@
                         if (r.candleStick) {
                           var yp = s._yaxis.series_u2p;
                           if (x >= p[0] - r._bodyWidth / 2 && x <= p[0] + r._bodyWidth / 2 && y >= yp(s.data[j][2]) && y <= yp(s.data[j][3])) {
-                            return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                            return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                           }
                         } else if (!r.hlc) {
                           var yp = s._yaxis.series_u2p;
                           if (x >= p[0] - r._tickLength && x <= p[0] + r._tickLength && y >= yp(s.data[j][2]) && y <= yp(s.data[j][3])) {
-                            return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                            return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                           }
                         } else {
                           var yp = s._yaxis.series_u2p;
                           if (x >= p[0] - r._tickLength && x <= p[0] + r._tickLength && y >= yp(s.data[j][1]) && y <= yp(s.data[j][2])) {
-                            return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                            return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                           }
                         }
                       } else if (p[0] != null && p[1] != null) {
                         d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
                         if (d2 <= threshold && (d2 <= d0 || d0 == null)) {
                           d0 = d2;
-                          return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                          return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                         }
                       }
                     }
@@ -23735,24 +23735,24 @@
                       if (r.candleStick) {
                         var yp = s._yaxis.series_u2p;
                         if (x >= p[0] - r._bodyWidth / 2 && x <= p[0] + r._bodyWidth / 2 && y >= yp(s.data[j][2]) && y <= yp(s.data[j][3])) {
-                          return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                          return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                         }
                       } else if (!r.hlc) {
                         var yp = s._yaxis.series_u2p;
                         if (x >= p[0] - r._tickLength && x <= p[0] + r._tickLength && y >= yp(s.data[j][2]) && y <= yp(s.data[j][3])) {
-                          return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                          return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                         }
                       } else {
                         var yp = s._yaxis.series_u2p;
                         if (x >= p[0] - r._tickLength && x <= p[0] + r._tickLength && y >= yp(s.data[j][1]) && y <= yp(s.data[j][2])) {
-                          return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                          return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                         }
                       }
                     } else {
                       d2 = Math.sqrt((x - p[0]) * (x - p[0]) + (y - p[1]) * (y - p[1]));
                       if (d2 <= threshold && (d2 <= d0 || d0 == null)) {
                         d0 = d2;
-                        return { seriesIndex: i, pointIndex: j, gridData: p, data: s.data[j] };
+                        return { seriesIndex: i2, pointIndex: j, gridData: p, data: s.data[j] };
                       }
                     }
                   }
@@ -23842,7 +23842,7 @@
           (0, _jquery2.default)(this).trigger(evt, [positions.gridPos, positions.dataPos, null, p]);
         };
         this.drawSeries = function(options2, idx) {
-          var i, series, ctx;
+          var i2, series, ctx;
           idx = typeof options2 === "number" && idx == null ? options2 : idx;
           options2 = (typeof options2 === "undefined" ? "undefined" : _typeof(options2)) === "object" ? options2 : {};
           if (idx != undefined2) {
@@ -23859,8 +23859,8 @@
               }
             }
           } else {
-            for (i = 0; i < this.series.length; i++) {
-              series = this.series[i];
+            for (i2 = 0; i2 < this.series.length; i2++) {
+              series = this.series[i2];
               ctx = series.shadowCanvas._ctx;
               ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
               series.drawShadow(ctx, options2, this);
@@ -23869,7 +23869,7 @@
               series.draw(ctx, options2, this);
             }
           }
-          options2 = idx = i = series = ctx = null;
+          options2 = idx = i2 = series = ctx = null;
         };
         this.moveSeriesToFront = function(idx) {
           idx = parseInt(idx, 10);
@@ -23906,13 +23906,13 @@
           this.seriesStack.unshift(idx);
         };
         this.restorePreviousSeriesOrder = function() {
-          var i, j, serelem, shadelem, temp, move, keep;
+          var i2, j, serelem, shadelem, temp, move, keep;
           if (this.seriesStack == this.previousSeriesStack) {
             return;
           }
-          for (i = 1; i < this.previousSeriesStack.length; i++) {
-            move = this.previousSeriesStack[i];
-            keep = this.previousSeriesStack[i - 1];
+          for (i2 = 1; i2 < this.previousSeriesStack.length; i2++) {
+            move = this.previousSeriesStack[i2];
+            keep = this.previousSeriesStack[i2 - 1];
             serelem = this.series[move].canvas._elem.detach();
             shadelem = this.series[move].shadowCanvas._elem.detach();
             this.series[keep].shadowCanvas._elem.after(shadelem);
@@ -23923,20 +23923,20 @@
           this.previousSeriesStack = temp;
         };
         this.restoreOriginalSeriesOrder = function() {
-          var i, j, arr = [], serelem, shadelem;
-          for (i = 0; i < this.series.length; i++) {
-            arr.push(i);
+          var i2, j, arr = [], serelem, shadelem;
+          for (i2 = 0; i2 < this.series.length; i2++) {
+            arr.push(i2);
           }
           if (this.seriesStack == arr) {
             return;
           }
           this.previousSeriesStack = this.seriesStack.slice(0);
           this.seriesStack = arr;
-          for (i = 1; i < this.seriesStack.length; i++) {
-            serelem = this.series[i].canvas._elem.detach();
-            shadelem = this.series[i].shadowCanvas._elem.detach();
-            this.series[i - 1].shadowCanvas._elem.after(shadelem);
-            this.series[i - 1].canvas._elem.after(serelem);
+          for (i2 = 1; i2 < this.seriesStack.length; i2++) {
+            serelem = this.series[i2].canvas._elem.detach();
+            shadelem = this.series[i2].shadowCanvas._elem.detach();
+            this.series[i2 - 1].shadowCanvas._elem.after(shadelem);
+            this.series[i2 - 1].canvas._elem.after(serelem);
           }
         };
         this.activateTheme = function(name) {
@@ -23947,8 +23947,8 @@
         var ret;
         if (_jquery2.default.isArray(colors)) {
           ret = [];
-          for (var i = 0; i < colors.length; i++) {
-            var rgba = jqplot.getColorComponents(colors[i]);
+          for (var i2 = 0; i2 < colors.length; i2++) {
+            var rgba = jqplot.getColorComponents(colors[i2]);
             var newrgb = [rgba[0], rgba[1], rgba[2]];
             var sum = newrgb[0] + newrgb[1] + newrgb[2];
             for (var j = 0; j < 3; j++) {
@@ -23992,8 +23992,8 @@
             return colors[idx];
           }
         };
-        this.get = function(i) {
-          var idx2 = i - colors.length * Math.floor(i / colors.length);
+        this.get = function(i2) {
+          var idx2 = i2 - colors.length * Math.floor(i2 / colors.length);
           return colors[idx2];
         };
         this.setColors = function(c) {
@@ -24026,15 +24026,15 @@
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *(?:, *[0-9.]*)?\)/;
         var m = s.match(pat);
         var h = "#";
-        for (var i = 1; i < 4; i++) {
+        for (var i2 = 1; i2 < 4; i2++) {
           var temp;
-          if (m[i].search(/%/) != -1) {
-            temp = parseInt(255 * m[i] / 100, 10).toString(16);
+          if (m[i2].search(/%/) != -1) {
+            temp = parseInt(255 * m[i2] / 100, 10).toString(16);
             if (temp.length == 1) {
               temp = "0" + temp;
             }
           } else {
-            temp = parseInt(m[i], 10).toString(16);
+            temp = parseInt(m[i2], 10).toString(16);
             if (temp.length == 1) {
               temp = "0" + temp;
             }
@@ -24058,11 +24058,11 @@
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *,? *([0-9.]* *)?\)/;
         var m = rgb3.match(pat);
         var ret = [];
-        for (var i = 1; i < 4; i++) {
-          if (m[i].search(/%/) != -1) {
-            ret[i - 1] = parseInt(255 * m[i] / 100, 10);
+        for (var i2 = 1; i2 < 4; i2++) {
+          if (m[i2].search(/%/) != -1) {
+            ret[i2 - 1] = parseInt(255 * m[i2] / 100, 10);
           } else {
-            ret[i - 1] = parseInt(m[i], 10);
+            ret[i2 - 1] = parseInt(m[i2], 10);
           }
         }
         ret[3] = parseFloat(m[4]) ? parseFloat(m[4]) : 1;
@@ -24467,8 +24467,8 @@
         ctx.strokeStyle = this.gridLineColor;
         var b, e, s, m;
         var ax = ["xaxis", "yaxis", "x2axis", "y2axis"];
-        for (var i = 4; i > 0; i--) {
-          var name = ax[i - 1];
+        for (var i2 = 4; i2 > 0; i2--) {
+          var name = ax[i2 - 1];
           var axis = axes[name];
           var ticks = axis._ticks;
           var numticks = ticks.length;
@@ -24640,8 +24640,8 @@
           ticks = null;
         }
         ax = ["y3axis", "y4axis", "y5axis", "y6axis", "y7axis", "y8axis", "y9axis", "yMidAxis"];
-        for (var i = 7; i > 0; i--) {
-          var axis = axes[ax[i - 1]];
+        for (var i2 = 7; i2 > 0; i2--) {
+          var axis = axes[ax[i2 - 1]];
           var ticks = axis._ticks;
           if (axis.show) {
             var tn = ticks[axis.numberTicks - 1];
@@ -24821,10 +24821,10 @@
           if (pattern[0] === "." || pattern[0] === "-") {
             var s = pattern;
             pattern = [];
-            for (var i = 0, imax = s.length; i < imax; i++) {
-              if (s[i] === ".") {
+            for (var i2 = 0, imax = s.length; i2 < imax; i2++) {
+              if (s[i2] === ".") {
                 pattern.push(dotlen);
-              } else if (s[i] === "-") {
+              } else if (s[i2] === "-") {
                 pattern.push(_jqplot2.default.config.dashLength);
               } else {
                 continue;
@@ -25028,8 +25028,8 @@
           if (_jquery2.default.isArray(bd[0][0])) {
             var p;
             var bdminidx = 0, bdmaxidx = 0;
-            for (var i = 0, l = bd[0].length; i < l; i++) {
-              p = bd[0][i];
+            for (var i2 = 0, l = bd[0].length; i2 < l; i2++) {
+              p = bd[0][i2];
               if (p[1] != null && p[1] > bands._max || bands._max == null) {
                 bands._max = p[1];
               }
@@ -25037,8 +25037,8 @@
                 bands._min = p[1];
               }
             }
-            for (var i = 0, l = bd[1].length; i < l; i++) {
-              p = bd[1][i];
+            for (var i2 = 0, l = bd[1].length; i2 < l; i2++) {
+              p = bd[1][i2];
               if (p[1] != null && p[1] > bands._max || bands._max == null) {
                 bands._max = p[1];
                 bdmaxidx = 1;
@@ -25056,9 +25056,9 @@
           } else if (bd[0].length === data.length && bd[1].length === data.length) {
             var hi = bd[0][0] > bd[1][0] ? 0 : 1;
             var low = hi ? 0 : 1;
-            for (var i = 0, l = data.length; i < l; i++) {
-              bands.hiData.push([data[i][0], bd[hi][i]]);
-              bands.lowData.push([data[i][0], bd[low][i]]);
+            for (var i2 = 0, l = data.length; i2 < l; i2++) {
+              bands.hiData.push([data[i2][0], bd[hi][i2]]);
+              bands.lowData.push([data[i2][0], bd[low][i2]]);
             }
           } else {
             bands.show = false;
@@ -25066,9 +25066,9 @@
         } else if (bd.length > 2 && !_jquery2.default.isArray(bd[0][0])) {
           var hi = bd[0][0] > bd[0][1] ? 0 : 1;
           var low = hi ? 0 : 1;
-          for (var i = 0, l = bd.length; i < l; i++) {
-            bands.hiData.push([data[i][0], bd[i][hi]]);
-            bands.lowData.push([data[i][0], bd[i][low]]);
+          for (var i2 = 0, l = bd.length; i2 < l; i2++) {
+            bands.hiData.push([data[i2][0], bd[i2][hi]]);
+            bands.lowData.push([data[i2][0], bd[i2][low]]);
           }
         } else {
           var intrv = bands.interval;
@@ -25116,21 +25116,21 @@
               afunc = bfunc;
               bfunc = temp;
             }
-            for (var i = 0, l = data.length; i < l; i++) {
+            for (var i2 = 0, l = data.length; i2 < l; i2++) {
               switch (afunc) {
                 case "add":
-                  bands.hiData.push([data[i][0], data[i][1] + a]);
+                  bands.hiData.push([data[i2][0], data[i2][1] + a]);
                   break;
                 case "multiply":
-                  bands.hiData.push([data[i][0], data[i][1] * a]);
+                  bands.hiData.push([data[i2][0], data[i2][1] * a]);
                   break;
               }
               switch (bfunc) {
                 case "add":
-                  bands.lowData.push([data[i][0], data[i][1] + b]);
+                  bands.lowData.push([data[i2][0], data[i2][1] + b]);
                   break;
                 case "multiply":
-                  bands.lowData.push([data[i][0], data[i][1] * b]);
+                  bands.lowData.push([data[i2][0], data[i2][1] * b]);
                   break;
               }
             }
@@ -25140,14 +25140,14 @@
         }
         var hd = bands.hiData;
         var ld = bands.lowData;
-        for (var i = 0, l = hd.length; i < l; i++) {
-          if (hd[i][1] != null && hd[i][1] > bands._max || bands._max == null) {
-            bands._max = hd[i][1];
+        for (var i2 = 0, l = hd.length; i2 < l; i2++) {
+          if (hd[i2][1] != null && hd[i2][1] > bands._max || bands._max == null) {
+            bands._max = hd[i2][1];
           }
         }
-        for (var i = 0, l = ld.length; i < l; i++) {
-          if (ld[i][1] != null && ld[i][1] < bands._min || bands._min == null) {
-            bands._min = ld[i][1];
+        for (var i2 = 0, l = ld.length; i2 < l; i2++) {
+          if (ld[i2][1] != null && ld[i2][1] < bands._min || bands._min == null) {
+            bands._min = ld[i2][1];
           }
         }
         if (bands.fillColor === null) {
@@ -25180,9 +25180,9 @@
         }
         var yy = [];
         var xx = [];
-        for (var i = 0, l = gd.length; i < l; i++) {
-          yy.push(gd[i][1]);
-          xx.push(gd[i][0]);
+        for (var i2 = 0, l = gd.length; i2 < l; i2++) {
+          yy.push(gd[i2][1]);
+          xx.push(gd[i2][0]);
         }
         function dxx(x1, x0) {
           if (x1 - x0 == 0) {
@@ -25197,17 +25197,17 @@
           var gxx = [];
           var ggxx = [];
           for (var j = 0; j < 2; j++) {
-            var i = num - 1 + j;
-            if (i == 0 || i == nmax) {
+            var i2 = num - 1 + j;
+            if (i2 == 0 || i2 == nmax) {
               gxx[j] = Math.pow(10, 10);
-            } else if (yy[i + 1] - yy[i] == 0 || yy[i] - yy[i - 1] == 0) {
+            } else if (yy[i2 + 1] - yy[i2] == 0 || yy[i2] - yy[i2 - 1] == 0) {
               gxx[j] = 0;
-            } else if ((xx[i + 1] - xx[i]) / (yy[i + 1] - yy[i]) + (xx[i] - xx[i - 1]) / (yy[i] - yy[i - 1]) == 0) {
+            } else if ((xx[i2 + 1] - xx[i2]) / (yy[i2 + 1] - yy[i2]) + (xx[i2] - xx[i2 - 1]) / (yy[i2] - yy[i2 - 1]) == 0) {
               gxx[j] = 0;
-            } else if ((yy[i + 1] - yy[i]) * (yy[i] - yy[i - 1]) < 0) {
+            } else if ((yy[i2 + 1] - yy[i2]) * (yy[i2] - yy[i2 - 1]) < 0) {
               gxx[j] = 0;
             } else {
-              gxx[j] = 2 / (dxx(xx[i + 1], xx[i]) / (yy[i + 1] - yy[i]) + dxx(xx[i], xx[i - 1]) / (yy[i] - yy[i - 1]));
+              gxx[j] = 2 / (dxx(xx[i2 + 1], xx[i2]) / (yy[i2 + 1] - yy[i2]) + dxx(xx[i2], xx[i2 - 1]) / (yy[i2] - yy[i2 - 1]));
             }
           }
           if (num == 1) {
@@ -25232,8 +25232,8 @@
             _smoothedPlotData.push([xp(temp[0]), yp(temp[1])]);
           }
         }
-        _smoothedData.push(gd[i]);
-        _smoothedPlotData.push([xp(gd[i][0]), yp(gd[i][1])]);
+        _smoothedData.push(gd[i2]);
+        _smoothedPlotData.push([xp(gd[i2][0]), yp(gd[i2][1])]);
         return [_smoothedData, _smoothedPlotData];
       }
       function computeHermiteSmoothedData(gd) {
@@ -25267,9 +25267,9 @@
         if (!isNaN(parseFloat(tension))) {
           tension = parseFloat(tension);
         }
-        for (var i = 0, l = gd.length - 1; i < l; i++) {
+        for (var i2 = 0, l = gd.length - 1; i2 < l; i2++) {
           if (tension === null) {
-            slope = Math.abs((gd[i + 1][1] - gd[i][1]) / (gd[i + 1][0] - gd[i][0]));
+            slope = Math.abs((gd[i2 + 1][1] - gd[i2][1]) / (gd[i2 + 1][0] - gd[i2][0]));
             min = 0.3;
             max = 0.6;
             stretch = (max - min) / 2;
@@ -25277,8 +25277,8 @@
             shift = -1.4;
             temp = slope / scale2 + shift;
             a1 = stretch * tanh(temp) - stretch * tanh(shift) + min;
-            if (i > 0) {
-              slope2 = Math.abs((gd[i][1] - gd[i - 1][1]) / (gd[i][0] - gd[i - 1][0]));
+            if (i2 > 0) {
+              slope2 = Math.abs((gd[i2][1] - gd[i2 - 1][1]) / (gd[i2][0] - gd[i2 - 1][0]));
             }
             temp = slope2 / scale2 + shift;
             a2 = stretch * tanh(temp) - stretch * tanh(shift) + min;
@@ -25292,22 +25292,22 @@
             h2 = s * Math.pow(1 - s, 2);
             h3 = Math.pow(s, 2) * (3 - 2 * s);
             h4 = Math.pow(s, 2) * (s - 1);
-            if (gd[i - 1]) {
-              TiX = a * (gd[i + 1][0] - gd[i - 1][0]);
-              TiY = a * (gd[i + 1][1] - gd[i - 1][1]);
+            if (gd[i2 - 1]) {
+              TiX = a * (gd[i2 + 1][0] - gd[i2 - 1][0]);
+              TiY = a * (gd[i2 + 1][1] - gd[i2 - 1][1]);
             } else {
-              TiX = a * (gd[i + 1][0] - gd[i][0]);
-              TiY = a * (gd[i + 1][1] - gd[i][1]);
+              TiX = a * (gd[i2 + 1][0] - gd[i2][0]);
+              TiY = a * (gd[i2 + 1][1] - gd[i2][1]);
             }
-            if (gd[i + 2]) {
-              Ti1X = a * (gd[i + 2][0] - gd[i][0]);
-              Ti1Y = a * (gd[i + 2][1] - gd[i][1]);
+            if (gd[i2 + 2]) {
+              Ti1X = a * (gd[i2 + 2][0] - gd[i2][0]);
+              Ti1Y = a * (gd[i2 + 2][1] - gd[i2][1]);
             } else {
-              Ti1X = a * (gd[i + 1][0] - gd[i][0]);
-              Ti1Y = a * (gd[i + 1][1] - gd[i][1]);
+              Ti1X = a * (gd[i2 + 1][0] - gd[i2][0]);
+              Ti1Y = a * (gd[i2 + 1][1] - gd[i2][1]);
             }
-            pX = h1 * gd[i][0] + h3 * gd[i + 1][0] + h2 * TiX + h4 * Ti1X;
-            pY = h1 * gd[i][1] + h3 * gd[i + 1][1] + h2 * TiY + h4 * Ti1Y;
+            pX = h1 * gd[i2][0] + h3 * gd[i2 + 1][0] + h2 * TiX + h4 * Ti1X;
+            pY = h1 * gd[i2][1] + h3 * gd[i2 + 1][1] + h2 * TiY + h4 * Ti1Y;
             p = [pX, pY];
             _smoothedData.push(p);
             _smoothedPlotData.push([xp(pX), yp(pY)]);
@@ -25332,22 +25332,22 @@
         this.renderer._lowBandSmoothedData = [];
         var bands = this.renderer.bands;
         var hasNull = false;
-        for (var i = 0, l = data.length; i < l; i++) {
-          if (data[i][0] != null && data[i][1] != null) {
-            this.gridData.push([xp.call(this._xaxis, data[i][0]), yp.call(this._yaxis, data[i][1])]);
-          } else if (data[i][0] == null) {
+        for (var i2 = 0, l = data.length; i2 < l; i2++) {
+          if (data[i2][0] != null && data[i2][1] != null) {
+            this.gridData.push([xp.call(this._xaxis, data[i2][0]), yp.call(this._yaxis, data[i2][1])]);
+          } else if (data[i2][0] == null) {
             hasNull = true;
-            this.gridData.push([null, yp.call(this._yaxis, data[i][1])]);
-          } else if (data[i][1] == null) {
+            this.gridData.push([null, yp.call(this._yaxis, data[i2][1])]);
+          } else if (data[i2][1] == null) {
             hasNull = true;
-            this.gridData.push([xp.call(this._xaxis, data[i][0]), null]);
+            this.gridData.push([xp.call(this._xaxis, data[i2][0]), null]);
           }
-          if (pdata[i] != null && pdata[i][0] != null && pdata[i][1] != null) {
-            this._prevGridData.push([xp.call(this._xaxis, pdata[i][0]), yp.call(this._yaxis, pdata[i][1])]);
-          } else if (pdata[i] != null && pdata[i][0] == null) {
-            this._prevGridData.push([null, yp.call(this._yaxis, pdata[i][1])]);
-          } else if (pdata[i] != null && pdata[i][0] != null && pdata[i][1] == null) {
-            this._prevGridData.push([xp.call(this._xaxis, pdata[i][0]), null]);
+          if (pdata[i2] != null && pdata[i2][0] != null && pdata[i2][1] != null) {
+            this._prevGridData.push([xp.call(this._xaxis, pdata[i2][0]), yp.call(this._yaxis, pdata[i2][1])]);
+          } else if (pdata[i2] != null && pdata[i2][0] == null) {
+            this._prevGridData.push([null, yp.call(this._yaxis, pdata[i2][1])]);
+          } else if (pdata[i2] != null && pdata[i2][0] != null && pdata[i2][1] == null) {
+            this._prevGridData.push([xp.call(this._xaxis, pdata[i2][0]), null]);
           }
         }
         if (hasNull) {
@@ -25357,11 +25357,11 @@
           }
         }
         if (this._type === "line" && bands.show) {
-          for (var i = 0, l = bands.hiData.length; i < l; i++) {
-            this.renderer._hiBandGridData.push([xp.call(this._xaxis, bands.hiData[i][0]), yp.call(this._yaxis, bands.hiData[i][1])]);
+          for (var i2 = 0, l = bands.hiData.length; i2 < l; i2++) {
+            this.renderer._hiBandGridData.push([xp.call(this._xaxis, bands.hiData[i2][0]), yp.call(this._yaxis, bands.hiData[i2][1])]);
           }
-          for (var i = 0, l = bands.lowData.length; i < l; i++) {
-            this.renderer._lowBandGridData.push([xp.call(this._xaxis, bands.lowData[i][0]), yp.call(this._yaxis, bands.lowData[i][1])]);
+          for (var i2 = 0, l = bands.lowData.length; i2 < l; i2++) {
+            this.renderer._lowBandGridData.push([xp.call(this._xaxis, bands.lowData[i2][0]), yp.call(this._yaxis, bands.lowData[i2][1])]);
           }
         }
         if (this._type === "line" && this.renderer.smooth && this.gridData.length > 2) {
@@ -25404,18 +25404,18 @@
         this.renderer._lowBandSmoothedData = [];
         var bands = this.renderer.bands;
         var hasNull = false;
-        for (var i = 0; i < data.length; i++) {
-          if (data[i][0] != null && data[i][1] != null) {
-            if (this.step && i > 0) {
-              gd.push([xp.call(this._xaxis, data[i][0]), yp.call(this._yaxis, data[i - 1][1])]);
+        for (var i2 = 0; i2 < data.length; i2++) {
+          if (data[i2][0] != null && data[i2][1] != null) {
+            if (this.step && i2 > 0) {
+              gd.push([xp.call(this._xaxis, data[i2][0]), yp.call(this._yaxis, data[i2 - 1][1])]);
             }
-            gd.push([xp.call(this._xaxis, data[i][0]), yp.call(this._yaxis, data[i][1])]);
-          } else if (data[i][0] == null) {
+            gd.push([xp.call(this._xaxis, data[i2][0]), yp.call(this._yaxis, data[i2][1])]);
+          } else if (data[i2][0] == null) {
             hasNull = true;
-            gd.push([null, yp.call(this._yaxis, data[i][1])]);
-          } else if (data[i][1] == null) {
+            gd.push([null, yp.call(this._yaxis, data[i2][1])]);
+          } else if (data[i2][1] == null) {
             hasNull = true;
-            gd.push([xp.call(this._xaxis, data[i][0]), null]);
+            gd.push([xp.call(this._xaxis, data[i2][0]), null]);
           }
         }
         if (hasNull) {
@@ -25425,11 +25425,11 @@
           }
         }
         if (this._type === "line" && bands.show) {
-          for (var i = 0, l = bands.hiData.length; i < l; i++) {
-            this.renderer._hiBandGridData.push([xp.call(this._xaxis, bands.hiData[i][0]), yp.call(this._yaxis, bands.hiData[i][1])]);
+          for (var i2 = 0, l = bands.hiData.length; i2 < l; i2++) {
+            this.renderer._hiBandGridData.push([xp.call(this._xaxis, bands.hiData[i2][0]), yp.call(this._yaxis, bands.hiData[i2][1])]);
           }
-          for (var i = 0, l = bands.lowData.length; i < l; i++) {
-            this.renderer._lowBandGridData.push([xp.call(this._xaxis, bands.lowData[i][0]), yp.call(this._yaxis, bands.lowData[i][1])]);
+          for (var i2 = 0, l = bands.lowData.length; i2 < l; i2++) {
+            this.renderer._lowBandGridData.push([xp.call(this._xaxis, bands.lowData[i2][0]), yp.call(this._yaxis, bands.lowData[i2][1])]);
           }
         }
         if (this._type === "line" && this.renderer.smooth && gd.length > 2) {
@@ -25461,7 +25461,7 @@
         return gd;
       };
       _jqplot2.default.LineRenderer.prototype.draw = function(ctx, gd, options2, plot) {
-        var i;
+        var i2;
         var opts = _jquery2.default.extend(true, {}, options2);
         var shadow = opts.shadow != void 0 ? opts.shadow : this.shadow;
         var showLine = opts.showLine != void 0 ? opts.showLine : this.showLine;
@@ -25492,18 +25492,18 @@
                   if (this.fillAxis == "y") {
                     tempgd.push([gd[0][0], pyzero]);
                     this._areaPoints.push([gd[0][0], pyzero]);
-                    for (var i = 0; i < gd.length - 1; i++) {
-                      tempgd.push(gd[i]);
-                      this._areaPoints.push(gd[i]);
-                      if (pd[i][1] * pd[i + 1][1] <= 0) {
-                        if (pd[i][1] < 0) {
+                    for (var i2 = 0; i2 < gd.length - 1; i2++) {
+                      tempgd.push(gd[i2]);
+                      this._areaPoints.push(gd[i2]);
+                      if (pd[i2][1] * pd[i2 + 1][1] <= 0) {
+                        if (pd[i2][1] < 0) {
                           isnegative = true;
                           opts.fillStyle = negativeColor;
                         } else {
                           isnegative = false;
                           opts.fillStyle = posfs;
                         }
-                        var xintercept = gd[i][0] + (gd[i + 1][0] - gd[i][0]) * (pyzero - gd[i][1]) / (gd[i + 1][1] - gd[i][1]);
+                        var xintercept = gd[i2][0] + (gd[i2 + 1][0] - gd[i2][0]) * (pyzero - gd[i2][1]) / (gd[i2 + 1][1] - gd[i2][1]);
                         tempgd.push([xintercept, pyzero]);
                         this._areaPoints.push([xintercept, pyzero]);
                         if (shadow) {
@@ -25531,8 +25531,8 @@
                   this.renderer.shapeRenderer.draw(ctx, tempgd, opts);
                 } else {
                   var prev = this._prevGridData;
-                  for (var i = prev.length; i > 0; i--) {
-                    gd.push(prev[i - 1]);
+                  for (var i2 = prev.length; i2 > 0; i2--) {
+                    gd.push(prev[i2 - 1]);
                   }
                   if (shadow) {
                     this.renderer.shadowRenderer.draw(ctx, gd, opts);
@@ -25551,8 +25551,8 @@
                   gd.push([gd[len - 1][0], gridymin]);
                 } else {
                   var prev = this._prevGridData;
-                  for (var i = prev.length; i > 0; i--) {
-                    gd.push(prev[i - 1]);
+                  for (var i2 = prev.length; i2 > 0; i2--) {
+                    gd.push(prev[i2 - 1]);
                   }
                 }
                 this._areaPoints = gd;
@@ -25568,12 +25568,12 @@
                   if (this.renderer.smooth) {
                     fasgd = this.gridData;
                   }
-                  for (i = 0; i < fasgd.length; i++) {
+                  for (i2 = 0; i2 < fasgd.length; i2++) {
                     var markerOptions = opts.markerOptions || {};
                     if (this.markerOptionsCallback) {
-                      markerOptions = _jquery2.default.extend(true, markerOptions, this.markerOptionsCallback(plot, this, i, this.data[i], gd[i]) || {});
+                      markerOptions = _jquery2.default.extend(true, markerOptions, this.markerOptionsCallback(plot, this, i2, this.data[i2], gd[i2]) || {});
                     }
-                    this.markerRenderer.draw(fasgd[i][0], fasgd[i][1], ctx, markerOptions);
+                    this.markerRenderer.draw(fasgd[i2][0], fasgd[i2][1], ctx, markerOptions);
                   }
                 }
               }
@@ -25607,8 +25607,8 @@
             }
           }
           var xmin = xmax = ymin = ymax = null;
-          for (i = 0; i < this._areaPoints.length; i++) {
-            var p = this._areaPoints[i];
+          for (i2 = 0; i2 < this._areaPoints.length; i2++) {
+            var p = this._areaPoints[i2];
             if (xmin > p[0] || xmin == null) {
               xmin = p[0];
             }
@@ -25631,13 +25631,13 @@
             if (this.renderer.smooth) {
               gd = this.gridData;
             }
-            for (i = 0; i < gd.length; i++) {
+            for (i2 = 0; i2 < gd.length; i2++) {
               var markerOptions = opts.markerOptions || {};
               if (this.markerOptionsCallback) {
-                markerOptions = _jquery2.default.extend(true, markerOptions, this.markerOptionsCallback(plot, this, i, this.data[i], gd[i]) || {});
+                markerOptions = _jquery2.default.extend(true, markerOptions, this.markerOptionsCallback(plot, this, i2, this.data[i2], gd[i2]) || {});
               }
-              if (gd[i][0] != null && gd[i][1] != null) {
-                this.markerRenderer.draw(gd[i][0], gd[i][1], ctx, markerOptions);
+              if (gd[i2][0] != null && gd[i2][1] != null) {
+                this.markerRenderer.draw(gd[i2][0], gd[i2][1], ctx, markerOptions);
               }
             }
           }
@@ -25647,10 +25647,10 @@
       _jqplot2.default.LineRenderer.prototype.drawShadow = function(ctx, gd, options2) {
       };
       function postInit(target, data, options2) {
-        for (var i = 0; i < this.series.length; i++) {
-          if (this.series[i].renderer.constructor == _jqplot2.default.LineRenderer) {
-            if (this.series[i].highlightMouseOver) {
-              this.series[i].highlightMouseDown = false;
+        for (var i2 = 0; i2 < this.series.length; i2++) {
+          if (this.series[i2].renderer.constructor == _jqplot2.default.LineRenderer) {
+            if (this.series[i2].highlightMouseOver) {
+              this.series[i2].highlightMouseDown = false;
             }
           }
         }
@@ -25685,8 +25685,8 @@
       function unhighlight(plot) {
         var canvas = plot.plugins.lineRenderer.highlightCanvas;
         canvas._ctx.clearRect(0, 0, canvas._ctx.canvas.width, canvas._ctx.canvas.height);
-        for (var i = 0; i < plot.series.length; i++) {
-          plot.series[i]._highlightedPoint = null;
+        for (var i2 = 0; i2 < plot.series.length; i2++) {
+          plot.series[i2]._highlightedPoint = null;
         }
         plot.plugins.lineRenderer.highlightedSeriesIndex = null;
         plot.target.trigger("jqplotDataUnhighlight");
@@ -25829,8 +25829,8 @@
           }
           var t = this._ticks;
           var tick;
-          for (var i = 0; i < t.length; i++) {
-            tick = t[i];
+          for (var i2 = 0; i2 < t.length; i2++) {
+            tick = t[i2];
             if (tick.show && tick.showLabel && (!tick.isMinorTick || this.showMinorTicks)) {
               this._elem.append(tick.draw(ctx, plot));
             }
@@ -25859,8 +25859,8 @@
         if (this.show) {
           var t = this._ticks;
           var tick;
-          for (var i = 0; i < t.length; i++) {
-            tick = t[i];
+          for (var i2 = 0; i2 < t.length; i2++) {
+            tick = t[i2];
             if (!tick._breakTick && tick.show && tick.showLabel && (!tick.isMinorTick || this.showMinorTicks)) {
               if (this.name == "xaxis" || this.name == "x2axis") {
                 temp = tick._elem.outerHeight(true);
@@ -25908,7 +25908,7 @@
         var interval;
         var min, max;
         var pos1, pos2;
-        var tt, i;
+        var tt, i2;
         var userMin = this.min;
         var userMax = this.max;
         var userNT = this.numberTicks;
@@ -25916,8 +25916,8 @@
         var threshold = 30;
         this._scalefact = (Math.max(dim, threshold + 1) - threshold) / 300;
         if (userTicks.length) {
-          for (i = 0; i < userTicks.length; i++) {
-            var ut = userTicks[i];
+          for (i2 = 0; i2 < userTicks.length; i2++) {
+            var ut = userTicks[i2];
             var t = new this.tickRenderer(this.tickOptions);
             if (_jquery2.default.isArray(ut)) {
               t.value = ut[0];
@@ -26036,8 +26036,8 @@
               var forceMinZero = false;
               var forceZeroLine = false;
               var intervals = { min: null, max: null, average: null, stddev: null };
-              for (var i = 0; i < this._series.length; i++) {
-                var s = this._series[i];
+              for (var i2 = 0; i2 < this._series.length; i2++) {
+                var s = this._series[i2];
                 var faname = s.fillAxis == "x" ? s._xaxis.name : s._yaxis.name;
                 if (this.name == faname) {
                   var vals = s._plotValues[s.fillAxis];
@@ -26230,12 +26230,12 @@
             this.tickOptions.formatString = this._autoFormatString;
           }
           var t, to;
-          for (var i = 0; i < this.numberTicks; i++) {
-            tt = this.min + i * this.tickInterval;
+          for (var i2 = 0; i2 < this.numberTicks; i2++) {
+            tt = this.min + i2 * this.tickInterval;
             t = new this.tickRenderer(this.tickOptions);
             t.setTick(tt, this.name);
             this._ticks.push(t);
-            if (i < this.numberTicks - 1) {
+            if (i2 < this.numberTicks - 1) {
               for (var j = 0; j < this.minorTicks; j++) {
                 tt += this.tickInterval / (this.minorTicks + 1);
                 to = _jquery2.default.extend(true, {}, this.tickOptions, { name: this.name, value: tt, label: "", isMinorTick: true });
@@ -26255,10 +26255,10 @@
       _jqplot2.default.LinearAxisRenderer.prototype.resetTickValues = function(opts) {
         if (_jquery2.default.isArray(opts) && opts.length == this._ticks.length) {
           var t;
-          for (var i = 0; i < opts.length; i++) {
-            t = this._ticks[i];
-            t.value = opts[i];
-            t.label = t.formatter(t.formatString, opts[i]);
+          for (var i2 = 0; i2 < opts.length; i2++) {
+            t = this._ticks[i2];
+            t.value = opts[i2];
+            t.label = t.formatter(t.formatString, opts[i2]);
             t.label = t.prefix + t.label;
             t._elem.html(t.label);
           }
@@ -26352,8 +26352,8 @@
         }
         if (this.show) {
           if (this.name == "xaxis" || this.name == "x2axis") {
-            for (var i = 0; i < ticks.length; i++) {
-              var t = ticks[i];
+            for (var i2 = 0; i2 < ticks.length; i2++) {
+              var t = ticks[i2];
               if (t.show && t.showLabel) {
                 var shim;
                 if (t.constructor == _jqplot2.default.CanvasAxisTickRenderer && t.angle) {
@@ -26398,8 +26398,8 @@
               this._label.pack();
             }
           } else {
-            for (var i = 0; i < ticks.length; i++) {
-              var t = ticks[i];
+            for (var i2 = 0; i2 < ticks.length; i2++) {
+              var t = ticks[i2];
               if (t.show && t.showLabel) {
                 var shim;
                 if (t.constructor == _jqplot2.default.CanvasAxisTickRenderer && t.angle) {
@@ -26495,8 +26495,8 @@
         var fs;
         var currentNT;
         var bestPrec;
-        for (var i = 0, l = hi - low + 1; i < l; i++) {
-          currentNT = low + i;
+        for (var i2 = 0, l = hi - low + 1; i2 < l; i2++) {
+          currentNT = low + i2;
           temp = r / (currentNT - 1);
           sd = gsf(temp);
           temp = Math.abs(nttarget - currentNT) + sd.digitsRight;
@@ -26941,13 +26941,13 @@
             }
           } else if (points && points.length) {
             var move = true;
-            for (var i = 0; i < points.length; i++) {
-              if (points[i][0] != null && points[i][1] != null) {
+            for (var i2 = 0; i2 < points.length; i2++) {
+              if (points[i2][0] != null && points[i2][1] != null) {
                 if (move) {
-                  ctxPattern.moveTo(points[i][0], points[i][1]);
+                  ctxPattern.moveTo(points[i2][0], points[i2][1]);
                   move = false;
                 } else {
-                  ctxPattern.lineTo(points[i][0], points[i][1]);
+                  ctxPattern.lineTo(points[i2][0], points[i2][1]);
                 }
               } else {
                 move = true;
@@ -27045,13 +27045,13 @@
           }
         } else if (points && points.length) {
           var move = true;
-          for (var i = 0; i < points.length; i++) {
-            if (points[i][0] != null && points[i][1] != null) {
+          for (var i2 = 0; i2 < points.length; i2++) {
+            if (points[i2][0] != null && points[i2][1] != null) {
               if (move) {
-                ctxPattern.moveTo(points[i][0], points[i][1]);
+                ctxPattern.moveTo(points[i2][0], points[i2][1]);
                 move = false;
               } else {
-                ctxPattern.lineTo(points[i][0], points[i][1]);
+                ctxPattern.lineTo(points[i2][0], points[i2][1]);
               }
             } else {
               move = true;
@@ -27174,18 +27174,18 @@
             ss["marginRight"] = this.marginRight;
           }
           var pad = false, reverse = false, s;
-          for (var i = 0; i < series.length; i++) {
-            s = series[i];
+          for (var i2 = 0; i2 < series.length; i2++) {
+            s = series[i2];
             if (s._stack || s.renderer.constructor == _jqplot2.default.BezierCurveRenderer) {
               reverse = true;
             }
             if (s.show && s.showLabel) {
-              var lt = this.labels[i] || s.label.toString();
+              var lt = this.labels[i2] || s.label.toString();
               if (lt) {
                 var color = s.color;
-                if (reverse && i < series.length - 1) {
+                if (reverse && i2 < series.length - 1) {
                   pad = true;
-                } else if (reverse && i == series.length - 1) {
+                } else if (reverse && i2 == series.length - 1) {
                   pad = false;
                 }
                 this.renderer.addrow.call(this, lt, color, pad, reverse);
@@ -27372,7 +27372,7 @@
       };
       _jqplot2.default.ThemeEngine.prototype.init = function() {
         var th = new _jqplot2.default.Theme({ _name: "Default" });
-        var n, i, nn;
+        var n, i2, nn;
         for (n in th.target) {
           if (n == "textColor") {
             th.target[n] = this.target.css("color");
@@ -27405,8 +27405,8 @@
           }
         }
         var s;
-        for (i = 0; i < this.series.length; i++) {
-          s = this.series[i];
+        for (i2 = 0; i2 < this.series.length; i2++) {
+          s = this.series[i2];
           if (s.renderer.constructor == _jqplot2.default.LineRenderer) {
             th.series.push(new LineSeriesProperties());
           } else if (s.renderer.constructor == _jqplot2.default.BarRenderer) {
@@ -27422,8 +27422,8 @@
           } else {
             th.series.push({});
           }
-          for (n in th.series[i]) {
-            th.series[i][n] = s[n];
+          for (n in th.series[i2]) {
+            th.series[i2][n] = s[n];
           }
         }
         var a, ax;
@@ -27482,8 +27482,8 @@
           tn.push(n);
         }
         tn.sort(numericalOrder);
-        for (var i = 0; i < tn.length; i++) {
-          themes.push(this.themes[tn[i]]);
+        for (var i2 = 0; i2 < tn.length; i2++) {
+          themes.push(this.themes[tn[i2]]);
         }
         return themes;
       };
@@ -27499,8 +27499,8 @@
           this.activeTheme = th;
           var val, checkBorderColor = false, checkBorderWidth = false;
           var arr = ["xaxis", "x2axis", "yaxis", "y2axis"];
-          for (i = 0; i < arr.length; i++) {
-            var ax = arr[i];
+          for (i2 = 0; i2 < arr.length; i2++) {
+            var ax = arr[i2];
             if (th.axesStyles.borderColor != null) {
               plot.axes[ax].borderColor = th.axesStyles.borderColor;
             }
@@ -27567,26 +27567,26 @@
               }
             }
           }
-          var i;
-          for (i = 0; i < th.series.length; i++) {
+          var i2;
+          for (i2 = 0; i2 < th.series.length; i2++) {
             var opts = {};
             var redrawSeries = false;
-            for (n in th.series[i]) {
-              val = th.seriesStyles[n] != null ? th.seriesStyles[n] : th.series[i][n];
+            for (n in th.series[i2]) {
+              val = th.seriesStyles[n] != null ? th.seriesStyles[n] : th.series[i2][n];
               if (val != null) {
                 opts[n] = val;
                 if (n == "color") {
-                  plot.series[i].renderer.shapeRenderer.fillStyle = val;
-                  plot.series[i].renderer.shapeRenderer.strokeStyle = val;
-                  plot.series[i][n] = val;
+                  plot.series[i2].renderer.shapeRenderer.fillStyle = val;
+                  plot.series[i2].renderer.shapeRenderer.strokeStyle = val;
+                  plot.series[i2][n] = val;
                 } else if (n == "lineWidth" || n == "linePattern") {
-                  plot.series[i].renderer.shapeRenderer[n] = val;
-                  plot.series[i][n] = val;
+                  plot.series[i2].renderer.shapeRenderer[n] = val;
+                  plot.series[i2][n] = val;
                 } else if (n == "markerOptions") {
-                  merge(plot.series[i].markerOptions, val);
-                  merge(plot.series[i].markerRenderer, val);
+                  merge(plot.series[i2].markerOptions, val);
+                  merge(plot.series[i2].markerRenderer, val);
                 } else {
-                  plot.series[i][n] = val;
+                  plot.series[i2][n] = val;
                 }
                 redrawPlot = true;
               }
@@ -27667,17 +27667,17 @@
       }
       _jqplot2.default.merge = merge;
       _jqplot2.default.extend = function() {
-        var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options2;
+        var target = arguments[0] || {}, i2 = 1, length = arguments.length, deep = false, options2;
         if (typeof target === "boolean") {
           deep = target;
           target = arguments[1] || {};
-          i = 2;
+          i2 = 2;
         }
         if ((typeof target === "undefined" ? "undefined" : _typeof(target)) !== "object" && !toString.call(target) === "[object Function]") {
           target = {};
         }
-        for (; i < length; i++) {
-          if ((options2 = arguments[i]) != null) {
+        for (; i2 < length; i2++) {
+          if ((options2 = arguments[i2]) != null) {
             for (var name in options2) {
               var src = target[name], copy = options2[name];
               if (target === copy) {
@@ -27890,8 +27890,8 @@
         var css = window.getComputedStyle ? window.getComputedStyle(this[0], "") : this[0].currentStyle;
         var attrs = css["font-style"] ? ["font-style", "font-weight", "font-size", "font-family"] : ["fontStyle", "fontWeight", "fontSize", "fontFamily"];
         var style = [];
-        for (var i = 0; i < attrs.length; ++i) {
-          var attr = String(css[attrs[i]]);
+        for (var i2 = 0; i2 < attrs.length; ++i2) {
+          var attr = String(css[attrs[i2]]);
           if (attr && attr != "normal") {
             style.push(attr);
           }
@@ -27918,8 +27918,8 @@
         var transx = 0, transy = 0;
         var clses = ["jqplot-table-legend", "jqplot-xaxis-tick", "jqplot-x2axis-tick", "jqplot-yaxis-tick", "jqplot-y2axis-tick", "jqplot-y3axis-tick", "jqplot-y4axis-tick", "jqplot-y5axis-tick", "jqplot-y6axis-tick", "jqplot-y7axis-tick", "jqplot-y8axis-tick", "jqplot-y9axis-tick", "jqplot-xaxis-label", "jqplot-x2axis-label", "jqplot-yaxis-label", "jqplot-y2axis-label", "jqplot-y3axis-label", "jqplot-y4axis-label", "jqplot-y5axis-label", "jqplot-y6axis-label", "jqplot-y7axis-label", "jqplot-y8axis-label", "jqplot-y9axis-label"];
         var temptop, templeft, tempbottom, tempright;
-        for (var i = 0; i < clses.length; i++) {
-          (0, _jquery2.default)(this).find("." + clses[i]).each(function() {
+        for (var i2 = 0; i2 < clses.length; i2++) {
+          (0, _jquery2.default)(this).find("." + clses[i2]).each(function() {
             temptop = (0, _jquery2.default)(this).offset().top - plottop;
             templeft = (0, _jquery2.default)(this).offset().left - plotleft;
             tempright = templeft + (0, _jquery2.default)(this).outerWidth(true) + transx;
@@ -27967,12 +27967,12 @@
           var breaks = [];
           var temptop2 = top;
           var templeft2 = left;
-          for (var i2 = 0; i2 < wl; i2++) {
-            w2 += words[i2];
-            if (context.measureText(w2).width > tagwidth && w2.length > words[i2].length) {
-              breaks.push(i2);
+          for (var i3 = 0; i3 < wl; i3++) {
+            w2 += words[i3];
+            if (context.measureText(w2).width > tagwidth && w2.length > words[i3].length) {
+              breaks.push(i3);
               w2 = "";
-              i2--;
+              i3--;
             }
           }
           if (breaks.length === 0) {
@@ -27987,15 +27987,15 @@
             }
             context.fillText(w2, templeft2, temptop2);
             temptop2 += lineheight;
-            for (var i2 = 1, l = breaks.length; i2 < l; i2++) {
-              w2 = words.slice(breaks[i2 - 1], breaks[i2]).join(" ");
+            for (var i3 = 1, l = breaks.length; i3 < l; i3++) {
+              w2 = words.slice(breaks[i3 - 1], breaks[i3]).join(" ");
               if ((0, _jquery2.default)(el).css("textAlign") === "center") {
                 templeft2 = left + (canvasWidth - context.measureText(w2).width) / 2 - transx;
               }
               context.fillText(w2, templeft2, temptop2);
               temptop2 += lineheight;
             }
-            w2 = words.slice(breaks[i2 - 1], words.length).join(" ");
+            w2 = words.slice(breaks[i3 - 1], words.length).join(" ");
             if ((0, _jquery2.default)(el).css("textAlign") === "center") {
               templeft2 = left + (canvasWidth - context.measureText(w2).width) / 2 - transx;
             }
@@ -28123,8 +28123,8 @@
             break;
           default:
             var a = [];
-            for (var i = 0; i < arguments.length; i++) {
-              a.push(arguments[i]);
+            for (var i2 = 0; i2 < arguments.length; i2++) {
+              a.push(arguments[i2]);
             }
             this.proxy = new Date();
             this.proxy.setFullYear.apply(this.proxy, a.slice(0, 3));
@@ -28306,8 +28306,8 @@
             break;
           default:
             var a = [];
-            for (var i = 0; i < arguments.length; i++) {
-              a.push(arguments[i]);
+            for (var i2 = 0; i2 < arguments.length; i2++) {
+              a.push(arguments[i2]);
             }
             this.proxy = new Date();
             this.proxy.setFullYear.apply(this.proxy, a.slice(0, 3));
@@ -28464,8 +28464,8 @@
       var day = 24 * 60 * 60 * 1e3;
       var addZeros = function addZeros2(num, digits) {
         num = String(num);
-        var i = digits - num.length;
-        var s = String(Math.pow(10, i)).slice(1);
+        var i2 = digits - num.length;
+        var s = String(Math.pow(10, i2)).slice(1);
         return s.concat(num);
       };
       var multipliers = {
@@ -28696,15 +28696,15 @@
         if (match && match.length > 3) {
           parsable = h1(parsable, match);
         }
-        var i = 0;
+        var i2 = 0;
         var length = jsDate.matchers.length;
         var pattern, ms, current = parsable, obj;
-        while (i < length) {
+        while (i2 < length) {
           ms = Date.parse(current);
           if (!isNaN(ms)) {
             return new Date(ms);
           }
-          pattern = jsDate.matchers[i];
+          pattern = jsDate.matchers[i2];
           if (typeof pattern == "function") {
             obj = pattern.call(jsDate, current);
             if (obj instanceof Date) {
@@ -28713,7 +28713,7 @@
           } else {
             current = parsable.replace(pattern[0], pattern[1]);
           }
-          i++;
+          i2++;
         }
         return NaN;
       };
@@ -28798,9 +28798,9 @@
         if (array.indexOf) {
           return array.indexOf(elem);
         }
-        for (var i = 0, length = array.length; i < length; i++) {
-          if (array[i] === elem) {
-            return i;
+        for (var i2 = 0, length = array.length; i2 < length; i2++) {
+          if (array[i2] === elem) {
+            return i2;
           }
         }
         return -1;
@@ -28832,7 +28832,7 @@
         }
         function thousand_separate(value) {
           var value_str = new String(value);
-          for (var i2 = 10; i2 > 0; i2--) {
+          for (var i3 = 10; i3 > 0; i3--) {
             if (value_str == (value_str = value_str.replace(/^(\d+)(\d{3})/, "$1" + _jqplot2.default.sprintf.thousandsSeparator + "$2")))
               break;
           }
@@ -28865,7 +28865,7 @@
           }
           return justify(value, "", leftJustify, minWidth, zeroPad, htmlSpace);
         }
-        var a = arguments, i = 0, format = a[i++];
+        var a = arguments, i2 = 0, format = a[i2++];
         return format.replace(_jqplot2.default.sprintf.regex, function(substring, valueIndex, flags, minWidth, _, precision, type) {
           if (substring == "%%") {
             return "%";
@@ -28899,7 +28899,7 @@
           if (!minWidth) {
             minWidth = 0;
           } else if (minWidth == "*") {
-            minWidth = +a[i++];
+            minWidth = +a[i2++];
           } else if (minWidth.charAt(0) == "*") {
             minWidth = +a[minWidth.slice(1, -1)];
           } else {
@@ -28915,13 +28915,13 @@
           if (!precision) {
             precision = "fFeE".indexOf(type) > -1 ? 6 : type == "d" ? 0 : void 0;
           } else if (precision == "*") {
-            precision = +a[i++];
+            precision = +a[i2++];
           } else if (precision.charAt(0) == "*") {
             precision = +a[precision.slice(1, -1)];
           } else {
             precision = +precision;
           }
-          var value = valueIndex ? a[valueIndex.slice(0, -1)] : a[i++];
+          var value = valueIndex ? a[valueIndex.slice(0, -1)] : a[i2++];
           switch (type) {
             case "s": {
               if (value == null) {
@@ -29053,16 +29053,16 @@
       _jquery2.default.extend(_jqplot2.default.effects, {
         version: "1.9pre",
         save: function save(element, set) {
-          for (var i = 0; i < set.length; i++) {
-            if (set[i] !== null) {
-              element.data(dataSpace + set[i], element[0].style[set[i]]);
+          for (var i2 = 0; i2 < set.length; i2++) {
+            if (set[i2] !== null) {
+              element.data(dataSpace + set[i2], element[0].style[set[i2]]);
             }
           }
         },
         restore: function restore(element, set) {
-          for (var i = 0; i < set.length; i++) {
-            if (set[i] !== null) {
-              element.css(set[i], element.data(dataSpace + set[i]));
+          for (var i2 = 0; i2 < set.length; i2++) {
+            if (set[i2] !== null) {
+              element.css(set[i2], element.data(dataSpace + set[i2]));
             }
           }
         },
@@ -29103,7 +29103,7 @@
               position: element.css("position"),
               zIndex: element.css("z-index")
             });
-            _jquery2.default.each(["top", "left", "bottom", "right"], function(i, pos) {
+            _jquery2.default.each(["top", "left", "bottom", "right"], function(i2, pos) {
               props[pos] = element.css(pos);
               if (isNaN(parseInt(props[pos], 10))) {
                 props[pos] = "auto";
@@ -29528,10 +29528,12 @@
   var import_leaflet = __toESM(require_leaflet_src());
   var Catalog = {
     nmax: 1e4,
+    vizierURL: "https://vizier.unistra.fr/viz-bin",
+    mastURL: "https://archive.stsci.edu",
     _csvToGeoJSON: function(str2) {
       var badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
-      for (var i in lines) {
-        var line = lines[i];
+      for (var i2 in lines) {
+        var line = lines[i2];
         if (badreg.test(line) === false) {
           var feature = {
             type: "Feature",
@@ -29575,11 +29577,11 @@
         str2 += "ID: " + feature.id + "</div>";
       }
       str2 += '<TABLE style="margin:auto;"><TBODY style="vertical-align:top;text-align:left;">';
-      for (var i in this.properties) {
-        if (this.propertyMask === void 0 || this.propertyMask[i] === true) {
-          str2 += "<TR><TD>" + this.properties[i] + ":</TD><TD>" + feature.properties.items[i].toString() + " ";
-          if (this.units[i]) {
-            str2 += this.units[i];
+      for (var i2 in this.properties) {
+        if (this.propertyMask === void 0 || this.propertyMask[i2] === true) {
+          str2 += "<TR><TD>" + this.properties[i2] + ":</TD><TD>" + feature.properties.items[i2].toString() + " ";
+          if (this.units[i2]) {
+            str2 += this.units[i2];
           }
           str2 += "</TD></TR>";
         }
@@ -29595,9 +29597,7 @@
     },
     filter: function(feature) {
       return true;
-    },
-    vizierURL: "https://vizier.unistra.fr/viz-bin",
-    mastURL: "https://archive.stsci.edu"
+    }
   };
 
   // js/catalog/Abell.js
@@ -30106,9 +30106,9 @@
         return;
       }
       var attribs = [];
-      for (var i in this._attributions) {
-        if (this._attributions[i]) {
-          attribs.push(i);
+      for (var i2 in this._attributions) {
+        if (this._attributions[i2]) {
+          attribs.push(i2);
         }
       }
       var prefixAndAttribs = [];
@@ -30341,8 +30341,8 @@
     getCookie: function(cname) {
       var name = cname + "=";
       var ca = document.cookie.split(";");
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
+      for (var i2 = 0; i2 < ca.length; i2++) {
+        var c = ca[i2];
         while (c.charAt(0) === " ") {
           c = c.substring(1);
         }
@@ -30365,8 +30365,7 @@
     options: {
       checked: false,
       title: "Click to switch",
-      className: "leaflet-flipswitch",
-      id: "leaflet-flipswitch"
+      className: "leaflet-flipswitch"
     },
     initialize: function(parent, options2) {
       options2 = import_leaflet20.Util.setOptions(this, options2);
@@ -30637,7 +30636,10 @@
       }
     },
     onAdd: function(map2) {
-      var className = this._className, id = this._id, container = this._container = import_leaflet22.DomUtil.create("div", className + " leaflet-bar");
+      const className = this._className, id = this._id, container = this._container = import_leaflet22.DomUtil.create(
+        "div",
+        className + " leaflet-bar"
+      );
       container.setAttribute("aria-haspopup", true);
       import_leaflet22.DomEvent.disableClickPropagation(container).disableScrollPropagation(container);
       this._dialog = import_leaflet22.DomUtil.create("div", className + "-dialog", container);
@@ -30645,7 +30647,11 @@
         if (!import_leaflet22.Browser.android) {
           import_leaflet22.DomEvent.on(container, "mouseover", this._expand, this).on(container, "mouseout", this._collapse, this);
         }
-        var toggle = this._toggle = import_leaflet22.DomUtil.create("a", className + "-toggle leaflet-bar", container);
+        const toggle = this._toggle = import_leaflet22.DomUtil.create(
+          "a",
+          className + "-toggle leaflet-bar",
+          container
+        );
         toggle.href = "#";
         toggle.id = id + "-toggle";
         toggle.title = this.options.title;
@@ -30662,7 +30668,7 @@
       return this._container;
     },
     _checkVisiomatic: function(e) {
-      var layer = e.layer;
+      const layer = e.layer;
       if (!layer || !layer.visioDefault) {
         return;
       }
@@ -30681,14 +30687,22 @@
       this._initDialog();
     },
     _addDialogBox: function(id) {
-      var box = import_leaflet22.DomUtil.create("div", this._className + "-box", this._dialog);
+      const box = import_leaflet22.DomUtil.create(
+        "div",
+        this._className + "-box",
+        this._dialog
+      );
       if (id) {
         box.id = id;
       }
       return box;
     },
     _addDialogLine: function(label, dialogBox) {
-      var line = import_leaflet22.DomUtil.create("div", this._className + "-line", dialogBox), text = import_leaflet22.DomUtil.create("div", this._className + "-label", line);
+      const line = import_leaflet22.DomUtil.create(
+        "div",
+        this._className + "-line",
+        dialogBox
+      ), text = import_leaflet22.DomUtil.create("div", this._className + "-label", line);
       text.innerHTML = label;
       return line;
     },
@@ -30699,16 +30713,20 @@
       import_leaflet22.DomUtil.addClass(this._container, this._className + "-expanded");
     },
     _collapse: function() {
-      this._container.className = this._container.className.replace(" " + this._className + "-expanded", "");
+      this._container.className = this._container.className.replace(
+        " " + this._className + "-expanded",
+        ""
+      );
     },
     getActiveBaseLayer: function() {
       return this._activeBaseLayer;
     },
     _findActiveBaseLayer: function() {
-      var layers = this._layers;
+      const layers = this._layers;
       this._prelayer = void 0;
-      for (var layername in layers) {
-        var layer = layers[layername];
+      for (var l in layers) {
+        console.log(l);
+        var layer = layers[l];
         if (!layer.overlay) {
           if (!layer._map) {
             this._prelayer = layer;
@@ -30719,8 +30737,8 @@
       }
       return void 0;
     },
-    _createButton: function(className, parent, subClassName, fn, title) {
-      var button = import_leaflet22.DomUtil.create("a", className, parent);
+    _addButton: function(className, parent, subClassName = void 0, title = void 0, fn = void 0) {
+      const button = import_leaflet22.DomUtil.create("a", className, parent);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;
@@ -30733,8 +30751,8 @@
       }
       return button;
     },
-    _createRadioButton: function(className, parent, value, checked, fn, title) {
-      var button = import_leaflet22.DomUtil.create("input", className, parent);
+    _addRadioButton: function(className, parent, value, checked, title = void 0, fn = void 0) {
+      const button = import_leaflet22.DomUtil.create("input", className, parent);
       button.type = "radio";
       button.name = className;
       button.value = value;
@@ -30744,23 +30762,23 @@
           fn(value);
         }, this);
       }
-      var label = import_leaflet22.DomUtil.create("label", className, parent);
+      const label = import_leaflet22.DomUtil.create("label", className, parent);
       label.htmlFor = button.id = className + "-" + value;
       if (title) {
         label.title = title;
       }
       return button;
     },
-    _createSelectMenu: function(className, parent, items, disabled, selected, fn, title) {
-      var div = import_leaflet22.DomUtil.create("div", className, parent), select = import_leaflet22.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [], index;
+    _addSelectMenu: function(className, parent, items, disabled = void 0, selected = void 0, title = void 0, fn = void 0) {
+      const div = import_leaflet22.DomUtil.create("div", className, parent), select = import_leaflet22.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [];
       choose.text = "choose";
       choose.disabled = true;
       if (!selected || selected < 0) {
         choose.selected = true;
       }
       select.add(choose, null);
-      for (var i in items) {
-        index = parseInt(i, 10);
+      for (var i2 in items) {
+        var index = parseInt(i2, 10);
         opt[index] = document.createElement("option");
         opt[index].text = items[index];
         opt[index].value = index;
@@ -30791,8 +30809,8 @@
       }
       return select;
     },
-    _createColorPicker: function(className, parent, subClassName, defaultColor, fn, storageKey, title) {
-      var _this = this, colpick = import_leaflet22.DomUtil.create("input", className, parent);
+    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, title = void 0, fn = void 0) {
+      const _this = this, colpick = import_leaflet22.DomUtil.create("input", className, parent);
       colpick.type = "color";
       colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
@@ -30820,10 +30838,9 @@
       });
       return colpick;
     },
-    _addSwitchInput: function(layer, box, label, attr, title, id, checked) {
-      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = new FlipSwitch(elem, {
+    _addSwitchInput: function(layer, attr, box, label, title = void 0, checked) {
+      const line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = new FlipSwitch(elem, {
         checked,
-        id,
         title
       });
       flip.on("change", function() {
@@ -30831,8 +30848,8 @@
       }, this);
       return elem;
     },
-    _addNumericalInput: function(layer, box, label, attr, title, id, initValue, step, min, max, func) {
-      var line = this._addDialogLine(label, box), elem = this._addDialogElement(line), spinbox = elem.spinbox = new Spinbox(elem, {
+    _addNumericalInput: function(layer, attr, box, label, title = void 0, initValue, step, min = void 0, max = void 0, fn = void 0) {
+      const line = this._addDialogLine(label, box), elem = this._addDialogElement(line), spinbox = elem.spinbox = new Spinbox(elem, {
         step,
         dmin: min,
         dmax: max,
@@ -30841,7 +30858,7 @@
       });
       spinbox.on("change", function() {
         VUtil.flashElement(spinbox._input);
-        this._onInputChange(layer, attr, spinbox.value(), func);
+        this._onInputChange(layer, attr, spinbox.value(), fn);
       }, this);
       return elem;
     },
@@ -30853,18 +30870,18 @@
       }
     },
     _spinboxStep: function(min, max) {
-      var step = parseFloat((Math.abs(max === min ? max : max - min) * 1e-3).toPrecision(1));
+      const step = parseFloat((Math.abs(max === min ? max : max - min) * 1e-3).toPrecision(1));
       return step === 0 ? 1 : step;
     },
-    _onInputChange: function(layer, pname, value, func) {
-      const pnamearr = pname.split(/\[|\]/);
-      if (pnamearr[1]) {
-        layer.visio[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+    _onInputChange: function(layer, attr, value, fn = void 0) {
+      const attrarr = attr.split(/\[|\]/);
+      if (attrarr[1]) {
+        layer.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
       } else {
-        layer.visio[pnamearr[0]] = value;
+        layer.visio[attrarr[0]] = value;
       }
-      if (func) {
-        func(layer);
+      if (fn) {
+        fn(layer);
       }
       layer.redraw();
     },
@@ -30881,8 +30898,8 @@
           this._dialog
         );
       }
-      for (var i in this._layers) {
-        this._addLayerItem(this._layers[i]);
+      for (var i2 in this._layers) {
+        this._addLayerItem(this._layers[i2]);
       }
       return this;
     },
@@ -30895,52 +30912,55 @@
       if (obj.layer.notReady) {
         import_leaflet22.DomUtil.create("div", "visiomatic-control-activity", inputdiv);
       } else {
-        var input, checked = this._map.hasLayer(obj.layer);
-        input = document.createElement("input");
-        input.type = "checkbox";
-        input.className = "visiomatic-control-selector";
-        input.defaultChecked = checked;
-        input.layerId = import_leaflet22.Util.stamp(obj.layer);
-        import_leaflet22.DomEvent.on(input, "click", function() {
-          var i, input2, obj2, inputs = this._layerList.getElementsByTagName("input"), inputsLen = inputs.length;
+        const checked = this._map.hasLayer(obj.layer), newInput = document.createElement("input");
+        newInput.type = "checkbox";
+        newInput.className = "visiomatic-control-selector";
+        newInput.defaultChecked = checked;
+        newInput.layerId = import_leaflet22.Util.stamp(obj.layer);
+        import_leaflet22.DomEvent.on(newInput, "click", function() {
+          const inputs = this._layerList.getElementsByTagName("input"), inputsLen = inputs.length;
           this._handlingClick = true;
           for (i = 0; i < inputsLen; i++) {
-            input2 = inputs[i];
-            if (!("layerId" in input2)) {
+            var input = inputs[i];
+            if (!("layerId" in input)) {
               continue;
             }
-            obj2 = this._layers[input2.layerId];
-            if (input2.checked && !this._map.hasLayer(obj2.layer)) {
+            var obj2 = this._layers[input.layerId];
+            if (input.checked && !this._map.hasLayer(obj2.layer)) {
               obj2.layer.addTo(this._map);
-            } else if (!input2.checked && this._map.hasLayer(obj2.layer)) {
+            } else if (!input.checked && this._map.hasLayer(obj2.layer)) {
               this._map.removeLayer(obj2.layer);
             }
           }
           this._handlingClick = false;
         }, this);
-        inputdiv.appendChild(input);
+        inputdiv.appendChild(newInput);
       }
-      var name = import_leaflet22.DomUtil.create("div", "visiomatic-control-layername", layerItem);
-      name.innerHTML = " " + obj.name;
-      name.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
-      this._createButton(
+      const layerName = import_leaflet22.DomUtil.create(
+        "div",
+        "visiomatic-control-layername",
+        layerItem
+      );
+      layerName.innerHTML = " " + obj.name;
+      layerName.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
+      this._addButton(
         "visiomatic-control-trash",
         layerItem,
         void 0,
+        "Delete layer",
         function() {
           _this.removeLayer(obj.layer);
           if (!obj.notReady) {
             _this._map.removeLayer(obj.layer);
           }
-        },
-        "Delete layer"
+        }
       );
       this._layerList.appendChild(layerItem);
       return layerItem;
     },
     addLayer: function(layer, name, index) {
       layer.on("add remove", this._onLayerChange, this);
-      var id = import_leaflet22.Util.stamp(layer);
+      const id = import_leaflet22.Util.stamp(layer);
       this._layers[id] = {
         layer,
         name,
@@ -30959,7 +30979,7 @@
       if (!this._handlingClick) {
         this._updateLayerList();
       }
-      var obj = this._layers[import_leaflet22.Util.stamp(e.target)], type = e.type === "add" ? "overlayadd" : "overlayremove";
+      const obj = this._layers[import_leaflet22.Util.stamp(e.target)], type = e.type === "add" ? "overlayadd" : "overlayremove";
       this._map.fire(type, obj);
     }
   });
@@ -30970,8 +30990,7 @@
       Gaia_DR3,
       TwoMASS,
       SDSS,
-      PPMXL,
-      Abell
+      PanSTARRS1
     ],
     options: {
       title: "Catalog overlays",
@@ -30992,16 +31011,15 @@
       this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
     },
     _initDialog: function() {
-      var className = this._className, catalogs = this._catalogs, box = this._addDialogBox(), line = this._addDialogLine("", box), elem = this._addDialogElement(line), colpick = this._createColorPicker(
+      var className = this._className, catalogs = this._catalogs, box = this._addDialogBox(), line = this._addDialogLine("", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
         className + "-color",
         elem,
         "catalog",
         this.options.color,
-        false,
         "visiomaticCatalog",
         "Click to set catalog color"
       );
-      var catselect = this._createSelectMenu(
+      var catselect = this._addSelectMenu(
         this._className + "-select",
         elem,
         catalogs.map(function(catalog) {
@@ -31009,6 +31027,7 @@
         }),
         void 0,
         -1,
+        "Select Catalog",
         function() {
           var className2 = catalogs[catselect.selectedIndex - 1].className;
           if (className2 === void 0) {
@@ -31016,25 +31035,30 @@
           }
           import_leaflet23.DomUtil.setClass(catselect, this._className + "-select " + className2);
           return;
-        },
-        "Select Catalog"
+        }
       );
       import_leaflet23.DomEvent.on(catselect, "change keyup", function() {
         var catalog = catalogs[catselect.selectedIndex - 1];
         catselect.title = catalog.attribution + " from " + catalog.service;
       }, this);
       elem = this._addDialogElement(line);
-      this._createButton(className + "-button", elem, "catalog", function() {
-        var index = catselect.selectedIndex - 1;
-        if (index >= 0) {
-          var catalog = catalogs[index];
-          catalog.color = colpick.value;
-          catselect.selectedIndex = 0;
-          catselect.title = "Select Catalog";
-          import_leaflet23.DomUtil.setClass(catselect, this._className + "-select ");
-          this._getCatalog(catalog, this.options.timeOut);
+      this._addButton(
+        className + "-button",
+        elem,
+        "catalog",
+        "Query catalog",
+        function() {
+          const index = catselect.selectedIndex - 1;
+          if (index >= 0) {
+            const catalog = catalogs[index];
+            catalog.color = colpick.value;
+            catselect.selectedIndex = 0;
+            catselect.title = "Select Catalog";
+            import_leaflet23.DomUtil.setClass(catselect, this._className + "-select ");
+            this._getCatalog(catalog, this.options.timeOut);
+          }
         }
-      }, "Query catalog");
+      );
     },
     _resetDialog: function() {
     },
@@ -31241,11 +31265,12 @@
       this.saveSettings(layer, this._settings, "color");
       this._mode = this.options.mixingMode ? this.options.mixingMode : layer.visio.mixingMode;
       const box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet24.DomUtil.create("div", className + "-radios", modelem);
-      var modebutton = this._createRadioButton(
+      var modebutton = this._addRadioButton(
         className + "-radio",
         modeinput,
         "mono",
         this._mode === "mono",
+        "Select mono-channel palettized mode",
         function() {
           _this.saveSettings(layer, _this._settings, _this._mode);
           for (let elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -31258,14 +31283,14 @@
           _this.loadSettings(layer, _this._settings, "mono");
           _this._initMonoDialog(layer, box);
           _this._mode = "mono";
-        },
-        "Select mono-channel palettized mode"
+        }
       );
-      var modebutton = this._createRadioButton(
+      var modebutton = this._addRadioButton(
         className + "-radio",
         modeinput,
         "color",
         this._mode !== "mono",
+        "Select color mixing mode",
         function() {
           _this.saveSettings(layer, _this._settings, _this._mode);
           for (let elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -31278,8 +31303,7 @@
           _this._channelList = void 0;
           _this._initColorDialog(layer, box);
           _this._mode = "color";
-        },
-        "Select color mixing mode"
+        }
       );
       if (_this._mode === "mono") {
         _this._initMonoDialog(layer, box);
@@ -31291,12 +31315,13 @@
       const _this = this, channels = layer.visio.channelLabels, className = this._className;
       var line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line);
       layer.updateMono();
-      this._chanSelect = this._createSelectMenu(
+      this._chanSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
         layer.visio.channelLabels,
         void 0,
         layer.visio.channel,
+        "Select image channel",
         function() {
           layer.visio.channel = parseInt(
             this._chanSelect.selectedIndex - 1,
@@ -31304,73 +31329,73 @@
           );
           this._updateChannel(layer, layer.visio.channel);
           layer.redraw();
-        },
-        "Select image channel"
+        }
       );
       var line = this._addDialogLine("LUT:", box), elem = this._addDialogElement(line);
       const cmapinput = import_leaflet24.DomUtil.create("div", className + "-cmaps", elem), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
         _this._onInputChange(layer, "cMap", value);
       };
       for (let c in cmaps) {
-        cbutton[c] = this._createRadioButton(
+        cbutton[c] = this._addRadioButton(
           "leaflet-cmap",
           cmapinput,
           cmaps[c],
           cmaps[c] === this.options.cMap,
-          _changeMap,
-          '"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) + '" color-map'
+          '"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) + '" color-map',
+          _changeMap
         );
       }
       this._addMinMax(layer, layer.visio.channel, box);
       layer.redraw();
     },
     _initColorDialog: function(layer, box) {
-      const _this = this, visio = layer.visio, className = this._className, line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line), colpick = this._chanColPick = this._createColorPicker(
+      const _this = this, visio = layer.visio, className = this._className, line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line), colpick = this._chanColPick = this._addColorPicker(
         className + "-color",
         elem,
         "channel",
         visio.rgb[visio.channel].toStr(),
+        "visiomaticChannel",
+        "Click to set channel color",
         function() {
           const chan = visio.channel, hex = $(colpick).val();
           _this._updateMix(layer, chan, rgb(hex));
           _this.collapsedOff = true;
-        },
-        "visiomaticChannel",
-        "Click to set channel color"
+        }
       );
       this._onInputChange(layer, "cMap", "grey");
       layer.updateMix();
-      this._chanSelect = this._createSelectMenu(
+      this._chanSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
         visio.channelLabels,
         void 0,
         visio.channel,
+        "Select image channel",
         function() {
           visio.channel = this._chanSelect.selectedIndex - 1;
           this._updateChannel(layer, visio.channel, colpick);
-        },
-        "Select image channel"
+        }
       );
       this._addMinMax(layer, visio.channel, box);
       const line2 = this._addDialogLine("Colors:", box), elem2 = this._addDialogElement(line2);
-      this._createButton(
+      this._addButton(
         className + "-button",
         elem2,
         "colormix-reset",
+        "Reset color mix",
         function() {
           _this.loadSettings(layer, _this._initsettings, "color", true);
           layer.updateMix();
           this._updateColPick(layer);
           this._updateChannelList(layer);
           layer.redraw();
-        },
-        "Reset color mix"
+        }
       );
-      this._createButton(
+      this._addButton(
         className + "-button",
         elem2,
         "colormix-auto",
+        "Re-color active channels",
         function() {
           const nchan = visio.nChannel, rgb3 = visio.rgb, defcol = layer.visioDefault.channelColors;
           let cc = 0, nchanon = 0;
@@ -31391,8 +31416,7 @@
           this._updateColPick(layer);
           this._updateChannelList(layer);
           layer.redraw();
-        },
-        "Re-color active channels"
+        }
       );
       _this._updateChannelList(layer);
       layer.redraw();
@@ -31404,21 +31428,19 @@
       );
       this._minElem = this._addNumericalInput(
         layer,
+        "minValue[" + chan + "]",
         box,
         "Min:",
-        "minValue[" + chan + "]",
         "Lower clipping limit in " + visio.channelUnits[chan] + ".",
-        "leaflet-channel-minvalue",
         visio.minValue[chan],
         step
       );
       this._maxElem = this._addNumericalInput(
         layer,
-        box,
-        "Max:",
         "maxValue[" + chan + "]",
+        box,
         "Upper clipping limit in " + visio.channelUnits[chan] + ".",
-        "leaflet-channel-maxvalue",
+        "Max:",
         visio.maxValue[chan],
         step
       );
@@ -31490,10 +31512,9 @@
           );
           label.innerHTML = chanLabels[c];
           this._activateChanElem(label, layer, chan);
-          var trashElem = this._createButton(
+          var trashElem = this._addButton(
             "visiomatic-control-trash",
             chanElem,
-            void 0,
             void 0,
             "Delete channel"
           );
@@ -31767,33 +31788,32 @@
       this._ignore = false;
       import_leaflet26.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
       var box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
-      this._homeButton = this._createButton(
+      this._homeButton = this._addButton(
         className + "-button",
         elem,
         "home",
-        this._homeNav,
-        "Navigate home"
+        "Navigate home",
+        this._homeNav
       );
-      this._backButton = this._createButton(
+      this._backButton = this._addButton(
         className + "-button",
         elem,
         "back",
-        this._backNav,
-        "Navigate backward"
+        "Navigate backward",
+        this._backNav
       );
-      this._forwardButton = this._createButton(
+      this._forwardButton = this._addButton(
         className + "-button",
         elem,
         "forward",
-        this._forwardNav,
-        "Navigate forward"
+        "Navigate forward",
+        this._forwardNav
       );
       if (this.options.pdflink) {
-        var pdfButton = this._createButton(
+        var pdfButton = this._addButton(
           className + "-button",
           elem,
           "pdf",
-          void 0,
           "Download PDF version"
         );
         pdfButton.href = this.options.pdflink;
@@ -31829,9 +31849,9 @@
     _onloadNav: function() {
       if (true) {
         var as = this._iframe.contentDocument.getElementsByTagName("a");
-        for (var i = 0; i < as.length; i++) {
-          if (VUtil.isExternal(as[i].href)) {
-            as[i].setAttribute("target", "_blank");
+        for (var i2 = 0; i2 < as.length; i2++) {
+          if (VUtil.isExternal(as[i2].href)) {
+            as[i2].setAttribute("target", "_blank");
           }
         }
         this._iframeLoad1 = true;
@@ -31949,7 +31969,7 @@
       this._extraMap.addLayer(this._layer);
     },
     _addToggleButton: function() {
-      this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
+      this._toggleDisplayButton = this.options.toggleDisplay ? this._addButton(
         "",
         this.options.strings.hideText,
         "leaflet-control-extramap-toggle-display leaflet-control-extramap-toggle-display-" + this.options.position,
@@ -31960,7 +31980,7 @@
       this._toggleDisplayButton.style.width = this.options.collapsedWidth + "px";
       this._toggleDisplayButton.style.height = this.options.collapsedHeight + "px";
     },
-    _createButton: function(html, title, className, container, fn, context) {
+    _addButton: function(html, title, className, container, fn, context) {
       var link = import_leaflet27.DomUtil.create("a", className, container);
       link.innerHTML = html;
       link.href = "#";
@@ -32127,15 +32147,15 @@
   if (typeof document.exitFullscreen !== "undefined") {
     fullScreenApi.supportsFullScreen = true;
   } else {
-    for (i = 0, il = browserPrefixes.length; i < il; i++) {
-      fullScreenApi.prefix = browserPrefixes[i];
+    for (i2 = 0, il = browserPrefixes.length; i2 < il; i2++) {
+      fullScreenApi.prefix = browserPrefixes[i2];
       if (typeof document[fullScreenApi.prefix + "CancelFullScreen"] !== "undefined") {
         fullScreenApi.supportsFullScreen = true;
         break;
       }
     }
   }
-  var i;
+  var i2;
   var il;
   if (fullScreenApi.supportsFullScreen) {
     fullScreenApi.fullScreenEventName = fullScreenApi.prefix + "fullscreenchange";
@@ -32170,10 +32190,10 @@
       } else {
         container = import_leaflet28.DomUtil.create("div", "leaflet-bar");
       }
-      this._createButton(this.options.title, className, container, this.toogleFullScreen, map2);
+      this._addButton(this.options.title, className, container, this.toogleFullScreen, map2);
       return container;
     },
-    _createButton: function(title, className, container, fn, context) {
+    _addButton: function(title, className, container, fn, context) {
       var link = import_leaflet28.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
@@ -32271,20 +32291,18 @@
       this.saveSettings(layer, this._initsettings);
       this._input.invertCMap = this._addSwitchInput(
         layer,
+        "invertCMap",
         this._dialog,
         "Invert:",
-        "invertCMap",
         "Invert color map(s)",
-        "leaflet-invertCMap",
         visio.invertCMap
       );
       this._input.contrast = this._addNumericalInput(
         layer,
+        "contrast",
         this._dialog,
         "Contrast:",
-        "contrast",
         "Adjust Contrast. 1.0: normal.",
-        "leaflet-contrastValue",
         visio.contrast,
         0.05,
         0,
@@ -32292,11 +32310,10 @@
       );
       this._input.colorSat = this._addNumericalInput(
         layer,
+        "colorSat",
         this._dialog,
         "Color Sat.:",
-        "colorSat",
         "Adjust Color Saturation. 0: B&W, 1.0: normal.",
-        "leaflet-colorsatvalue",
         visio.colorSat,
         0.05,
         0,
@@ -32305,11 +32322,10 @@
       );
       this._input.gamma = this._addNumericalInput(
         layer,
+        "gamma",
         this._dialog,
         "Gamma:",
-        "gamma",
         "Adjust Gamma correction. The standard value is 2.2.",
-        "leaflet-gammavalue",
         visio.gamma,
         0.05,
         0.5,
@@ -32317,27 +32333,26 @@
       );
       this._input.quality = this._addNumericalInput(
         layer,
+        "quality",
         this._dialog,
         "JPEG quality:",
-        "quality",
         "Adjust JPEG compression quality. 1: lowest, 100: highest",
-        "leaflet-qualvalue",
         visio.quality,
         1,
         1,
         100
       );
       const line = this._addDialogLine("Reset:", this._dialog), elem = this._addDialogElement(line);
-      this._createButton(
+      this._addButton(
         className + "-button",
         elem,
         "image-reset",
+        "Reset image settings",
         function() {
           _this.loadSettings(layer, _this._initsettings);
           layer.updateMix();
           layer.redraw();
-        },
-        "Reset image settings"
+        }
       );
     },
     _updateMix: function(layer) {
@@ -32662,19 +32677,19 @@
     _initDialog: function() {
       const _this = this, options2 = this.options, className = this._className, box = this._addDialogBox();
       if (options2.profile) {
-        const line = this._addDialogLine("Profile:", box), elem = this._addDialogElement(line), linecolpick = this._createColorPicker(
+        const line = this._addDialogLine("Profile:", box), elem = this._addDialogElement(line), linecolpick = this._addColorPicker(
           className + "-color",
           elem,
           "profile",
           options2.profileColor,
-          false,
           "visiomaticProfile",
           "Click to set line color"
         );
-        this._createButton(
+        this._addButton(
           className + "-button",
           elem,
           "start",
+          "Start drawing a profile line",
           function() {
             if (this._currProfileLine) {
               this._updateLine();
@@ -32691,32 +32706,31 @@
               line2.addTo(map2);
               map2.on("drag", this._updateLine, this);
             }
-          },
-          "Start drawing a profile line"
+          }
         );
-        this._createButton(
+        this._addButton(
           className + "-button",
           elem,
           "end",
-          this._profileEnd,
-          "End line and plot"
+          "End line and plot",
+          this._profileEnd
         );
       }
       if (options2.spectrum) {
         const line = this._addDialogLine("Spectrum:", box), elem = this._addDialogElement(line);
-        const speccolpick = this._createColorPicker(
+        const speccolpick = this._addColorPicker(
           className + "-color",
           elem,
           "spectrum",
           options2.spectrumColor,
-          false,
           "visiomaticSpectra",
           "Click to set marker color"
         );
-        this._createButton(
+        this._addButton(
           className + "-button",
           elem,
           "spectrum",
+          "Plot a spectrum at the current map position",
           function() {
             const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point8 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet31.circleMarker)(rLatLng, {
               color: speccolpick.value,
@@ -32745,8 +32759,7 @@
               this._plotSpectrum,
               this
             );
-          },
-          "Plot a spectrum at the current map position"
+          }
         );
       }
     },
@@ -32897,8 +32910,8 @@
     },
     _extractProfile: function(layer, rawprof, chan) {
       const nchan = layer.visio.nChannel, npix = rawprof.length / nchan, prof = [];
-      for (let i = 0; i < npix; i++) {
-        prof.push(rawprof[i * nchan + chan]);
+      for (let i2 = 0; i2 < npix; i2++) {
+        prof.push(rawprof[i2 * nchan + chan]);
       }
       return prof;
     },
@@ -32966,8 +32979,8 @@
       if (npix === 0) {
         return 0;
       }
-      for (let i = 0; i < npix; i++) {
-        val += rawprof[i * nchan + chan];
+      for (let i2 = 0; i2 < npix; i2++) {
+        val += rawprof[i2 * nchan + chan];
       }
       return val / npix;
     }
@@ -32997,16 +33010,15 @@
       this._regions = regions && regions[0] ? regions : [];
     },
     _initDialog: function() {
-      var className = this._className, regions = this._regions, box = this._addDialogBox(), line = this._addDialogLine("Regions:", box), elem = this._addDialogElement(line), colpick = this._createColorPicker(
+      var className = this._className, regions = this._regions, box = this._addDialogBox(), line = this._addDialogLine("Regions:", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
         className + "-color",
         elem,
         "region",
         this.options.color,
-        false,
         "visiomaticRegion",
         "Click to set region color"
       );
-      var select = this._regionSelect = this._createSelectMenu(
+      var select = this._regionSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
         regions.map(function(o) {
@@ -33016,14 +33028,14 @@
           return o.load ? true : false;
         }),
         -1,
-        void 0,
         "Select region"
       );
       elem = this._addDialogElement(line);
-      this._createButton(
+      this._addButton(
         className + "-button",
         elem,
         "region",
+        "Display region",
         function() {
           var index2 = select.selectedIndex - 1;
           if (index2 >= 0) {
@@ -33033,8 +33045,7 @@
             select.opt[index2].disabled = true;
             this._getRegion(region2, this.options.timeOut);
           }
-        },
-        "Display region"
+        }
       );
       var region;
       for (var index = 0; index < regions.length; index++) {
@@ -33273,7 +33284,7 @@
       forceSeparateButton: false
     },
     initialize: function(options2) {
-      var i, child;
+      var i2, child;
       import_leaflet35.Util.setOptions(this, options2);
       this._sidebar = import_leaflet35.DomUtil.create("div", "leaflet-container sidebar");
       if (this.options.collapsed) {
@@ -33302,7 +33313,7 @@
       } else {
         buttonContainer = import_leaflet35.DomUtil.create("div", "leaflet-bar");
       }
-      this._toggleButton = this._createButton(
+      this._toggleButton = this._addButton(
         this.options.title,
         className + (this.options.collapsed ? " collapsed" : ""),
         buttonContainer
@@ -33337,22 +33348,22 @@
       return pane;
     },
     removeFrom: function(map2) {
-      var i, child;
+      var i2, child;
       this._map = null;
-      for (i = this._tabitems.length - 1; i >= 0; i--) {
-        child = this._tabitems[i];
+      for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
+        child = this._tabitems[i2];
         import_leaflet35.DomEvent.off(child.querySelector("a"), "click", this._onClick);
       }
-      for (i = this._closeButtons.length - 1; i >= 0; i--) {
-        child = this._closeButtons[i];
+      for (i2 = this._closeButtons.length - 1; i2 >= 0; i2--) {
+        child = this._closeButtons[i2];
         import_leaflet35.DomEvent.off(child, "click", this._onCloseClick, this);
       }
       return this;
     },
     open: function(id) {
-      var i, child;
-      for (i = this._panes.length - 1; i >= 0; i--) {
-        child = this._panes[i];
+      var i2, child;
+      for (i2 = this._panes.length - 1; i2 >= 0; i2--) {
+        child = this._panes[i2];
         if (child.id === id) {
           import_leaflet35.DomUtil.addClass(child, "active");
           if (child.sideClass) {
@@ -33365,8 +33376,8 @@
           }
         }
       }
-      for (i = this._tabitems.length - 1; i >= 0; i--) {
-        child = this._tabitems[i];
+      for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
+        child = this._tabitems[i2];
         if (child.querySelector("a").hash === "#" + id) {
           import_leaflet35.DomUtil.addClass(child, "active");
         } else if (import_leaflet35.DomUtil.hasClass(child, "active")) {
@@ -33381,8 +33392,8 @@
       return this;
     },
     close: function() {
-      for (var i = this._tabitems.length - 1; i >= 0; i--) {
-        var child = this._tabitems[i];
+      for (var i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
+        var child = this._tabitems[i2];
         if (import_leaflet35.DomUtil.hasClass(child, "active")) {
           import_leaflet35.DomUtil.removeClass(child, "active");
           if (child.sideClass) {
@@ -33420,7 +33431,7 @@
     _onCloseClick: function() {
       this.close();
     },
-    _createButton: function(title, className, container) {
+    _addButton: function(title, className, container) {
       var link = import_leaflet35.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
@@ -33450,22 +33461,23 @@
       const _this = this, className = this._className, layer = this._layer, visio = layer.visio, map2 = this._map;
       var line = this._addDialogLine("Snap:", this._dialog), elem = this._addDialogElement(line), items = ["Screen pixels", "Native pixels"];
       this._snapType = 0;
-      this._snapSelect = this._createSelectMenu(
+      this._snapSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
         items,
         void 0,
         this._snapType,
+        "Select snapshot resolution",
         function() {
           this._snapType = parseInt(this._snapSelect.selectedIndex - 1, 10);
-        },
-        "Select snapshot resolution"
+        }
       );
       const hiddenlink = document.createElement("a");
-      var button = this._createButton(
+      var button = this._addButton(
         className + "-button",
         elem,
         "snapshot",
+        "Take a snapshot of the displayed image",
         function(event) {
           const latlng = map2.getCenter(), bounds3 = map2.getPixelBounds();
           let z = map2.getZoom();
@@ -33485,15 +33497,15 @@
           );
           hiddenlink.download = layer._title + "_" + VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, "") + ".jpg";
           hiddenlink.click();
-        },
-        "Take a snapshot of the displayed image"
+        }
       );
       document.body.appendChild(hiddenlink);
       var line = this._addDialogLine("Print:", this._dialog), elem = this._addDialogElement(line);
-      button = this._createButton(
+      button = this._addButton(
         className + "-button",
         elem,
         "print",
+        "Print current map",
         function(event) {
           var control2 = document.querySelector(
             "#map > .leaflet-control-container"
@@ -33501,8 +33513,7 @@
           control2.style.display = "none";
           window.print();
           control2.style.display = "unset";
-        },
-        "Print current map"
+        }
       );
     }
   });
@@ -34049,7 +34060,7 @@
       this.projection = this.getProjection(header, options2);
       if (nimages > 1) {
         this.projections = new Array(nimages);
-        for (const [i, image] of images2.entries()) {
+        for (const [i2, image] of images2.entries()) {
           imOptions = {
             naticeCelsys: options2.nativeCelsys,
             dataslice: image.dataslice,
@@ -34057,10 +34068,10 @@
           };
           projection = this.getProjection(image.header, imOptions);
           if (projection.name === "") {
-            projection.name = "#" + str(i + 1);
+            projection.name = "#" + str(i2 + 1);
           }
           projection._getCenter(this.projection);
-          this.projections[i] = projection;
+          this.projections[i2] = projection;
         }
         this.latLngToPoint = this.multiLatLngToPoint;
         this.pointToLatLng = this.multiPointToLatLng;

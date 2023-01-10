@@ -76,61 +76,60 @@ export const ImageUI = UI.extend({
 		// Invert
 		this._input.invertCMap = this._addSwitchInput(
 			layer,
+			'invertCMap',
 			this._dialog,
 			'Invert:',
-			'invertCMap',
 			'Invert color map(s)',
-			'leaflet-invertCMap',
 			visio.invertCMap
 		);
 
 		// Contrast
 		this._input.contrast = this._addNumericalInput(
 			layer,
+			'contrast',
 			this._dialog,
 			'Contrast:',
-			'contrast',
 			'Adjust Contrast. 1.0: normal.',
-			'leaflet-contrastValue',
 			visio.contrast,
-			0.05, 0.0, 10.0
+			0.05,
+			0.0, 10.0
 		);
 
 		// Colour saturation
 		this._input.colorSat = this._addNumericalInput(
 			layer,
+			'colorSat',
 			this._dialog,
 			'Color Sat.:',
-			'colorSat',
 			'Adjust Color Saturation. 0: B&W, 1.0: normal.',
-			'leaflet-colorsatvalue',
 			visio.colorSat,
-			0.05, 0.0, 5.0,
+			0.05,
+			0.0, 5.0,
 			this._updateMix
 		);
 
 		// Gamma
 		this._input.gamma = this._addNumericalInput(
 			layer,
+			'gamma',
 			this._dialog,
 			'Gamma:',
-			'gamma',
 			'Adjust Gamma correction. The standard value is 2.2.',
-			'leaflet-gammavalue',
 			visio.gamma,
-			0.05, 0.5, 5.0
+			0.05,
+			0.5, 5.0
 		);
 
 		// JPEG quality
 		this._input.quality = this._addNumericalInput(
 			layer,
+			'quality',
 			this._dialog,
 			'JPEG quality:',
-			'quality',
 			'Adjust JPEG compression quality. 1: lowest, 100: highest',
-			'leaflet-qualvalue',
 			visio.quality,
-			1, 1, 100
+			1,
+			1, 100
 		);
 
 		// Reset settings button
@@ -141,12 +140,12 @@ export const ImageUI = UI.extend({
 			className + '-button',
 			elem,
 			'image-reset',
+			'Reset image settings',
 			function () {
 				_this.loadSettings(layer, _this._initsettings);
 				layer.updateMix();
 				layer.redraw();
-			},
-			'Reset image settings'
+			}
 		);
 
 	},

@@ -11,8 +11,7 @@
 		"monospaceLinks": false
     },
 	"plugins": [
-		"plugins/markdown",
-		"plugins/summarize"
+		"plugins/markdown"
 	],
 	"metadata": {
 		"title": "VisiOmatic web client"

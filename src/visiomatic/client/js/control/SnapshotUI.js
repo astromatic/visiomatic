@@ -46,15 +46,16 @@ export const SnapshotUI = UI.extend({
 			items,
 			undefined,
 			this._snapType,
+			'Select snapshot resolution',
 			function () {
 				this._snapType = parseInt(this._snapSelect.selectedIndex - 1, 10);
-			},
-			'Select snapshot resolution'
+			}
 		);
 
 		const	hiddenlink = document.createElement('a');
 		var	button = this._addButton(
 			className + '-button', elem, 'snapshot',
+			'Take a snapshot of the displayed image',
 			function (event) {
 				const	latlng = map.getCenter(),
 					bounds = map.getPixelBounds();
@@ -88,8 +89,7 @@ export const SnapshotUI = UI.extend({
 					VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
 					'.jpg';
 				hiddenlink.click();
-			},
-			'Take a snapshot of the displayed image'
+			}
 		);
 
 		document.body.appendChild(hiddenlink);
@@ -101,6 +101,7 @@ export const SnapshotUI = UI.extend({
 			className + '-button',
 			elem,
 			'print',
+			'Print current map',
 			function (event) {
 				var	control = document.querySelector(
 					'#map > .leaflet-control-container'
@@ -108,8 +109,7 @@ export const SnapshotUI = UI.extend({
 				control.style.display = 'none';
 				window.print();
 				control.style.display = 'unset';
-			},
-			'Print current map'
+			}
 		);
 	}
 
