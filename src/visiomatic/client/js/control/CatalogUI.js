@@ -1,6 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
- * @file Base User Interface for VisiOmatic dialogs.
+ * @file User Interface for catalog queries and catalog overlays.
 
  * @requires util/VUtil
  * @requires control/UI.js
@@ -54,12 +54,11 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * VisiOmatic dialog for catalog queries and catalog overlays.
 	 * @extends UI
 	 * @memberof module:control/CatalogUI.js
-	 * @name CatalogUI
 	 * @constructs
 	 * @param {Catalog[]} catalogs - Array of catalogs
 	 * @param {object} [options] - Options.
 
-	 * @param {?string} [options.title='Catalog overlay']
+	 * @param {string} [options.title='Catalog overlay']
 	   Title of the dialog window or panel.
 
 	 * @param {boolean} [options.nativeCelSys=false]
@@ -72,8 +71,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @param {number} [options.timeOut=30]
 	   Time out delay for catalog queries, in seconds.
 
-	 * @see [Leaflet API reference]{@link https://leafletjs.com/reference.html#control}
-	   for additional control options.
+	 * @see {@link UI} for additional control options.
 
 	 * @returns {CatalogUI} VisiOmatic CatalogUI instance.
 	 */
@@ -87,7 +85,12 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
-	// CDS catalog overlay
+	/**
+	 * Initialize the catalog query dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_initDialog: function () {
 		const	className = this._className,
 			catalogs = this._catalogs,
@@ -106,16 +109,23 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		const	catselect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
-			catalogs.map(function (catalog) { return catalog.name; }),
+			catalogs.map(
+				function (catalog) {
+					return catalog.name;
+				}
+			),
 			undefined,
 			-1,
 			'Select Catalog',
 			function () {
-				var className = catalogs[catselect.selectedIndex - 1].className;
+				let	className = catalogs[catselect.selectedIndex - 1].className;
 				if (className === undefined) {
 					className = '';
 				}
-				DomUtil.setClass(catselect, this._className + '-select ' + className);
+				DomUtil.setClass(
+					catselect,
+					this._className + '-select ' + className
+				);
 				return;
 			}
 		);
@@ -148,12 +158,28 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		);
 	},
 
+	/**
+	 * Reset the catalog query dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_resetDialog: function () {
 	// Do nothing: no need to reset with layer changes
 	},
 
+	/**
+	 * Query catalog.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {Catalog} catalog
+	   Catalog.
+	 * @param {number} [timeout]
+	   Query time out delay, in seconds. Defaults to no time out.
+	 */
 	_getCatalog: function (catalog, timeout) {
-		var	_this = this,
+		const	_this = this,
 		    map = this._map,
 			wcs = map.options.crs,
 			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
@@ -173,7 +199,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		}
 
 		// Compute the search cone
-		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+		const	lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
 				   [wcs.celsysToEq(map.unproject(b.min, z)),
 			      wcs.celsysToEq(map.unproject(point(b.min.x, b.max.y), z)),
@@ -182,8 +208,9 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			                    [map.unproject(b.min, z),
 			                     map.unproject(point(b.min.x, b.max.y), z),
 			                     map.unproject(b.max, z),
-			                     map.unproject(point(b.max.x, b.min.y), z)],
-			  sys;
+			                     map.unproject(point(b.max.x, b.min.y), z)];
+		var	  sys;
+
 		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
 			switch (wcs.celsyscode) {
 			case 'ecliptic':
@@ -205,7 +232,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 		if (catalog.regionType === 'box') {
 			// CDS box search
-			var	dlng = (Math.max(wcs._deltaLng(c[0], center),
+			let	dlng = (Math.max(wcs._deltaLng(c[0], center),
 				                   wcs._deltaLng(c[1], center),
 				                   wcs._deltaLng(c[2], center),
 				                   wcs._deltaLng(c[3], center)) -
@@ -234,14 +261,19 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				})),
 				'getting ' + catalog.service + ' data',
 				function (context, httpRequest) {
-					_this._loadCatalog(catalog, templayer, context, httpRequest);
+					_this._loadCatalog(
+						catalog,
+						templayer,
+						context,
+						httpRequest
+					);
 				},
 				this,
 				timeout
 			);
 		} else {
 			// Regular cone search
-			var	dr = Math.max(wcs.distance(c[0], center),
+			const	dr = Math.max(wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center));
@@ -253,16 +285,40 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					dr: dr.toFixed(4),
 					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
-				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
-					_this._loadCatalog(catalog, templayer, context, httpRequest);
-				}, this, this.options.timeOut);
+				})),
+				'querying ' + catalog.service + ' data',
+				function (context, httpRequest) {
+					_this._loadCatalog(
+						catalog,
+						templayer,
+						context,
+						httpRequest
+					);
+				},
+				this,
+				this.options.timeOut
+			);
 		}
 	},
 
-	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
+	/**
+	 * Load catalog data.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {Catalog} catalog
+	   Catalog.
+	 * @param {leaflet.Layer} templayer
+	   "Dummy" layer to activate a spinner sign.
+	 * @param {object} context
+	   This (control object).
+	 * @param {object} httpRequest
+	   HTTP request
+	 */
+	_loadCatalog: function (catalog, templayer, context, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var	wcs = _this._map.options.crs,
+				const	wcs = context._map.options.crs,
 					response = httpRequest.responseText,
 					geo = catalog.toGeoJSON(response),
 					geocatalog = geoJson(geo, {
@@ -273,10 +329,20 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 						},
 						coordsToLatLng: function (coords) {
 							if (wcs.forceNativeCelsys) {
-								var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
-								return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+								const	latLng = wcs.eqToCelsys(
+									L.latLng(coords[1], coords[0])
+								);
+								return new L.LatLng(
+									latLng.lat,
+									latLng.lng,
+									coords[2]
+								);
 							} else {
-								return new L.LatLng(coords[1], coords[0], coords[2]);
+								return new L.LatLng(
+									coords[1],
+									coords[0],
+									coords[2]
+								);
 							}
 						},
 						filter: function (feature) {
@@ -288,10 +354,10 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 						style: function (feature) {
 							return {color: catalog.color, weight: 2};
 						}
-					}),
-					excessflag;
+					});
+				let	excessflag = false;
 				geocatalog.nameColor = catalog.color;
-				geocatalog.addTo(_this._map);
+				geocatalog.addTo(context._map);
 				this.removeLayer(templayer);
 				if (geo.features.length > catalog.nmax) {
 					geo.features.pop();
@@ -301,13 +367,16 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				  ' (' + geo.features.length.toString() +
 				  (excessflag ? '+ entries)' : ' entries)'));
 				if (excessflag) {
-					alert('Selected area is too large: ' + catalog.name +
-					  ' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
+					alert(
+						'Selected area is too large: ' + catalog.name +
+						' sample has been truncated to the brightest ' +
+						catalog.nmax + ' sources.'
+					);
 				}
 			} else {
 				if (httpRequest.status !== 0) {
 					alert('Error ' + httpRequest.status + ' while querying ' +
-					  catalog.service + '.');
+						catalog.service + '.');
 				}
 				this.removeLayer(templayer);
 			}
@@ -316,6 +385,13 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 });
 
+/**
+ * Instantiate a new VisiOmatic dialog for catalog queries and catalog overlays.
+ * @function
+ * @param {Catalog[]} catalogs - Array of catalogs
+ * @param {object} [options] - Options: see {@link CatalogUI}
+ * @returns {CatalogUI} VisiOmatic CatalogUI instance.
+	 */
 export const catalogUI = function (catalogs, options) {
 	return new CatalogUI(catalogs, options);
 };

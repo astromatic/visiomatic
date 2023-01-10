@@ -30725,7 +30725,6 @@
       const layers = this._layers;
       this._prelayer = void 0;
       for (var l in layers) {
-        console.log(l);
         var layer = layers[l];
         if (!layer.overlay) {
           if (!layer._map) {
@@ -31011,7 +31010,7 @@
       this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
     },
     _initDialog: function() {
-      var className = this._className, catalogs = this._catalogs, box = this._addDialogBox(), line = this._addDialogLine("", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
+      const className = this._className, catalogs = this._catalogs, box = this._addDialogBox(), line = this._addDialogLine("", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
         className + "-color",
         elem,
         "catalog",
@@ -31019,32 +31018,37 @@
         "visiomaticCatalog",
         "Click to set catalog color"
       );
-      var catselect = this._addSelectMenu(
+      const catselect = this._addSelectMenu(
         this._className + "-select",
         elem,
-        catalogs.map(function(catalog) {
-          return catalog.name;
-        }),
+        catalogs.map(
+          function(catalog) {
+            return catalog.name;
+          }
+        ),
         void 0,
         -1,
         "Select Catalog",
         function() {
-          var className2 = catalogs[catselect.selectedIndex - 1].className;
+          let className2 = catalogs[catselect.selectedIndex - 1].className;
           if (className2 === void 0) {
             className2 = "";
           }
-          import_leaflet23.DomUtil.setClass(catselect, this._className + "-select " + className2);
+          import_leaflet23.DomUtil.setClass(
+            catselect,
+            this._className + "-select " + className2
+          );
           return;
         }
       );
       import_leaflet23.DomEvent.on(catselect, "change keyup", function() {
-        var catalog = catalogs[catselect.selectedIndex - 1];
+        const catalog = catalogs[catselect.selectedIndex - 1];
         catselect.title = catalog.attribution + " from " + catalog.service;
       }, this);
-      elem = this._addDialogElement(line);
+      const elem2 = this._addDialogElement(line);
       this._addButton(
         className + "-button",
-        elem,
+        elem2,
         "catalog",
         "Query catalog",
         function() {
@@ -31063,7 +31067,7 @@
     _resetDialog: function() {
     },
     _getCatalog: function(catalog, timeout) {
-      var _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet23.LayerGroup(null);
+      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet23.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
       if (catalog.authenticate) {
@@ -31071,7 +31075,7 @@
       } else {
         this.options.authenticate = false;
       }
-      var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
+      const lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
         wcs.celsysToEq(map2.unproject(b.min, z)),
         wcs.celsysToEq(map2.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z)),
         wcs.celsysToEq(map2.unproject(b.max, z)),
@@ -31081,7 +31085,8 @@
         map2.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z),
         map2.unproject(b.max, z),
         map2.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z)
-      ], sys;
+      ];
+      var sys;
       if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
         switch (wcs.celsyscode) {
           case "ecliptic":
@@ -31101,7 +31106,7 @@
         sys = "J2000.0";
       }
       if (catalog.regionType === "box") {
-        var dlng = (Math.max(
+        let dlng = (Math.max(
           wcs._deltaLng(c[0], center),
           wcs._deltaLng(c[1], center),
           wcs._deltaLng(c[2], center),
@@ -31130,13 +31135,18 @@
           })),
           "getting " + catalog.service + " data",
           function(context, httpRequest) {
-            _this._loadCatalog(catalog, templayer, context, httpRequest);
+            _this._loadCatalog(
+              catalog,
+              templayer,
+              context,
+              httpRequest
+            );
           },
           this,
           timeout
         );
       } else {
-        var dr = Math.max(
+        const dr = Math.max(
           wcs.distance(c[0], center),
           wcs.distance(c[0], center),
           wcs.distance(c[0], center),
@@ -31153,17 +31163,22 @@
           })),
           "querying " + catalog.service + " data",
           function(context, httpRequest) {
-            _this._loadCatalog(catalog, templayer, context, httpRequest);
+            _this._loadCatalog(
+              catalog,
+              templayer,
+              context,
+              httpRequest
+            );
           },
           this,
           this.options.timeOut
         );
       }
     },
-    _loadCatalog: function(catalog, templayer, _this, httpRequest) {
+    _loadCatalog: function(catalog, templayer, context, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var wcs = _this._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet23.geoJson)(geo, {
+          const wcs = context._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet23.geoJson)(geo, {
             onEachFeature: function(feature, layer) {
               if (feature.properties && feature.properties.items) {
                 layer.bindPopup(catalog.popup(feature));
@@ -31171,10 +31186,20 @@
             },
             coordsToLatLng: function(coords2) {
               if (wcs.forceNativeCelsys) {
-                var latLng11 = wcs.eqToCelsys(L.latLng(coords2[1], coords2[0]));
-                return new L.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
+                const latLng11 = wcs.eqToCelsys(
+                  L.latLng(coords2[1], coords2[0])
+                );
+                return new L.LatLng(
+                  latLng11.lat,
+                  latLng11.lng,
+                  coords2[2]
+                );
               } else {
-                return new L.LatLng(coords2[1], coords2[0], coords2[2]);
+                return new L.LatLng(
+                  coords2[1],
+                  coords2[0],
+                  coords2[2]
+                );
               }
             },
             filter: function(feature) {
@@ -31186,9 +31211,10 @@
             style: function(feature) {
               return { color: catalog.color, weight: 2 };
             }
-          }), excessflag;
+          });
+          let excessflag = false;
           geocatalog.nameColor = catalog.color;
-          geocatalog.addTo(_this._map);
+          geocatalog.addTo(context._map);
           this.removeLayer(templayer);
           if (geo.features.length > catalog.nmax) {
             geo.features.pop();
@@ -31196,7 +31222,9 @@
           }
           this.addLayer(geocatalog, catalog.name + " (" + geo.features.length.toString() + (excessflag ? "+ entries)" : " entries)"));
           if (excessflag) {
-            alert("Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources.");
+            alert(
+              "Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources."
+            );
           }
         } else {
           if (httpRequest.status !== 0) {
