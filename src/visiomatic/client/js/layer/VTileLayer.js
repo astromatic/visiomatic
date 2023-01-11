@@ -486,19 +486,19 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
-	 * Update the color mixing matrix with the RGB contribution from a given
+	 * Update the color mixing matrix with the RGB contribution of a given
 	   channel.
 	 * @method
 	 * @static
-	 * @param {number} chan - Input channel.
+	 * @param {number} channel - Input channel.
 	 * @param {RGB} rgb - RGB color.
 	 */
-	rgbToMix: function (chan, rgb) {
+	rgbToMix: function (channel, rgb) {
 		const	visio = this.visio;
 		if (rgb) {
-			visio.rgb[chan] = rgb.clone();
+			visio.rgb[channel] = rgb.clone();
 		} else {
-			rgb = visio.rgb[chan];
+			rgb = visio.rgb[channel];
 		}
 
 		const	cr = this._gammaCorr(rgb.r),
@@ -507,9 +507,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			lum = (cr + cg + cb) / 3.0,
 			alpha = visio.colorSat / 3.0;
 
-		visio.mix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
-		visio.mix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
-		visio.mix[chan][2] = lum + alpha * (2.0 * cb - cr - cg);
+		visio.mix[channel][0] = lum + alpha * (2.0 * cr - cg - cb);
+		visio.mix[channel][1] = lum + alpha * (2.0 * cg - cr - cb);
+		visio.mix[channel][2] = lum + alpha * (2.0 * cb - cr - cg);
 
 		return;
 	},

@@ -42,12 +42,12 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	options: {
 		title: 'Catalog overlays',
-		collapsed: true,
-		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
 		timeOut: 30,	// seconds
-		authenticate: false // string define a method used to authenticate
+		authenticate: false, // Force authentication
+		collapsed: true,
+		position: 'topleft'
 	},
 
 	/**
@@ -70,6 +70,9 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	 * @param {number} [options.timeOut=30]
 	   Time out delay for catalog queries, in seconds.
+
+	 * @param {boolean} [options.authenticate=false]
+	   Force authentification for querying catalogs?
 
 	 * @see {@link UI} for additional control options.
 
@@ -390,8 +393,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
  * @function
  * @param {Catalog[]} catalogs - Array of catalogs
  * @param {object} [options] - Options: see {@link CatalogUI}
- * @returns {CatalogUI} VisiOmatic CatalogUI instance.
-	 */
+ * @returns {CatalogUI} Instance of a VisiOmatic catalog interface.
+ */
 export const catalogUI = function (catalogs, options) {
 	return new CatalogUI(catalogs, options);
 };
