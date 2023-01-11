@@ -31798,7 +31798,7 @@
       this._url = url;
     },
     _initDialog: function() {
-      var _this = this, className = this._className, layer = this._layer, frameBox = import_leaflet26.DomUtil.create(
+      const _this = this, className = this._className, layer = this._layer, frameBox = import_leaflet26.DomUtil.create(
         "div",
         this._className + "-framebox",
         this._dialog
@@ -31813,7 +31813,7 @@
       this._navPos = 0;
       this._ignore = false;
       import_leaflet26.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
-      var box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
+      const box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
       this._homeButton = this._addButton(
         className + "-button",
         elem,
@@ -31836,7 +31836,7 @@
         this._forwardNav
       );
       if (this.options.pdflink) {
-        var pdfButton = this._addButton(
+        const pdfButton = this._addButton(
           className + "-button",
           elem,
           "pdf",
@@ -31874,7 +31874,7 @@
     },
     _onloadNav: function() {
       if (true) {
-        var as = this._iframe.contentDocument.getElementsByTagName("a");
+        const as = this._iframe.contentDocument.getElementsByTagName("a");
         for (var i2 = 0; i2 < as.length; i2++) {
           if (VUtil.isExternal(as[i2].href)) {
             as[i2].setAttribute("target", "_blank");
@@ -31883,7 +31883,7 @@
         this._iframeLoad1 = true;
       }
       if (!this._navIgnore) {
-        var href = this._iframe.contentWindow.location.href;
+        const href = this._iframe.contentWindow.location.href;
         if (href !== this._navHistory[this._navPos - 1]) {
           this._navHistory.splice(this._navPos, this._navHistory.length - this._navPos);
           this._navHistory.push(href);
