@@ -147,7 +147,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			modeinput = DomUtil.create('div', className + '-radios', modelem);
 
 		// Create Mode selection control section
-		var modebutton = this._addRadioButton(
+		this._addRadioButton(
 			className + '-radio',
 			modeinput,
 			'mono',
@@ -156,7 +156,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			function () {
 				// Save previous settings 
 				_this.saveSettings(layer, _this._settings, _this._mode);
-
 				// Remove previous dialogs
 				for (let elem = box.lastChild;
 					elem !== modeline;
@@ -174,8 +173,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				_this._mode = 'mono';
 			}
 		);
-
-		var	modebutton = this._addRadioButton(
+		this._addRadioButton(
 			className + '-radio',
 			modeinput,
 			'color',
@@ -225,7 +223,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			channels = layer.visio.channelLabels,
 			className = this._className;
 
-		var	line = this._addDialogLine('Channel:', box),
+		const	line = this._addDialogLine('Channel:', box),
 			elem = this._addDialogElement(line);
 
 		layer.updateMono();
@@ -247,10 +245,10 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			}
 		);
 
-		var line = this._addDialogLine('LUT:', box),
-			elem = this._addDialogElement(line);
+		const	line2 = this._addDialogLine('LUT:', box),
+			elem2 = this._addDialogElement(line2);
 
-		const	cmapinput = DomUtil.create('div', className + '-cmaps', elem),
+		const	cmapinput = DomUtil.create('div', className + '-cmaps', elem2),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function (value) {

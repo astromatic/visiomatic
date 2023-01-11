@@ -1,10 +1,12 @@
-/*
-#	UI for image profile diagrams.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for plotting image profiles and spectra.
+
+ * @requires util/VUtil
+ * @requires control/UI.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
@@ -21,7 +23,7 @@ import {VUtil} from '../util';
 import {UI} from './UI';
 
 
-export const ProfileUI = UI.extend({
+export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	options: {
 		title: 'Profile overlays',
@@ -33,6 +35,33 @@ export const ProfileUI = UI.extend({
 		spectrumColor: '#A000FF'
 	},
 
+	/**
+	 * VisiOmatic dialog for plotting image profiles and spectra.
+	 * @extends UI
+	 * @memberof module:control/ProfileUI.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Profile overlays']
+	   Title of the dialog window or panel.
+
+	 * @param {boolean} [options.profile=True]
+	   Include Profile plotting dialog?
+
+	 * @param {string} [options.profileColor='#FF00FF']
+	   Default profile overlay color
+
+	 * @param {boolean} [options.spectrum=True]
+	   Include spectrum plotting dialog?
+
+	 * @param {string} [options.spectrumColor='A000FF']
+	   Default spectrumoverlay color
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
+	   plotting user interface.
+	 */
 	initialize: function (options) {
 		Util.setOptions(this, options);
 		this._className = 'visiomatic-control';
@@ -42,6 +71,12 @@ export const ProfileUI = UI.extend({
 		this._handlingClick = false;
 	},
 
+	/**
+	 * Initialize the catalog query dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_initDialog: function () {
 		const _this = this,
 			options = this.options,
@@ -164,6 +199,14 @@ export const ProfileUI = UI.extend({
 		}
 	},
 
+	/**
+	 * Update plotted line parameters.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {event} e
+	   Triggering event (e.g., ``'drag'``).
+	 */
 	_updateLine: function (e) {
 		const	map = this._map,
 			latLng = map.getCenter(),
@@ -181,6 +224,12 @@ export const ProfileUI = UI.extend({
 		this._currProfileLine.redraw();
 	},
 
+	/**
+	 * End interactive profile line definition and do the profile query. 
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_profileEnd: function () {
 		const	map = this._map,
 			point = map.getCenter(),
@@ -228,6 +277,13 @@ export const ProfileUI = UI.extend({
 		);
 	},
 
+	/**
+	 * Compute distance and set up measurement string.
+	 * @method
+	 * @static
+	 * @private
+	 * @returns {string} Measurement string.
+	 */
 	_getMeasurementString: function () {
 		const	currentLatLng = this._currentLatLng,
 			previousLatLng = this._markers[this._markers.length - 1].getLatLng();
@@ -255,6 +311,16 @@ export const ProfileUI = UI.extend({
 		return distanceStr;
 	},
 
+	/**
+	 * Load and plot image profile data.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} self
+	   Calling control object (``this``).
+	 * @param {object} httpRequest
+	   HTTP request.
+	 */
 	_plotProfile: function (self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
@@ -353,19 +419,42 @@ export const ProfileUI = UI.extend({
 		}
 	},
 
-	// Extract the image profile in a given channel
-	_extractProfile: function (layer, rawprof, chan) {
+	/**
+	 * Extract the image profile in a given channel from the multichannel
+	   profiles of a given VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number[]} rawprof
+	   Input "raw" (multiplexed) image profiles.
+	 * @param {number} channel
+	   Image channel.
+	 * @returns {number[]} Extracted image profile.
+	 */
+	_extractProfile: function (layer, rawprof, channel) {
 		const	nchan = layer.visio.nChannel,
 			npix = rawprof.length / nchan,
 			prof = [];
 
 		for (let i = 0; i < npix; i++) {
-			prof.push(rawprof[i * nchan + chan]);
+			prof.push(rawprof[i * nchan + channel]);
 		}
 
 		return prof;
 	},
 
+	/**
+	 * Load and plot spectrum data.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} self
+	   Calling control object (``this``).
+	 * @param {object} httpRequest
+	   HTTP request.
+	 */
 	_plotSpectrum: function (self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
@@ -439,8 +528,21 @@ export const ProfileUI = UI.extend({
 		}
 	},
 
-	// Extract the average of a series of pixels in a given channel
-	_extractAverage: function (layer, rawprof, chan) {
+	/**
+	 * Extract the average pixel value in a given channel from the multichannel
+	   profiles of a given VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number[]} rawprof
+	   Input "raw" (multiplexed) image profiles.
+	 * @param {number} channel
+	   Image channel.
+	 * @returns {number} Average value.
+	 */
+	_extractAverage: function (layer, rawprof, channel) {
 		const	nchan = layer.visio.nChannel,
 			npix = rawprof.length / nchan;
 		let	val = 0.0;
@@ -450,7 +552,7 @@ export const ProfileUI = UI.extend({
 		}
 
 		for (let i = 0; i < npix; i++) {
-			val += rawprof[i * nchan + chan];
+			val += rawprof[i * nchan + channel];
 		}
 
 		return val / npix;
@@ -458,6 +560,13 @@ export const ProfileUI = UI.extend({
 
 });
 
+/**
+ * Instantiate a VisiOmatic dialog for plotting image profiles and spectra.
+ * @function
+ * @param {object} [options] - Options: see {@link ProfileUI}
+ * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
+   plotting user interface.
+ */
 export const profileUI = function (options) {
 	return new ProfileUI(options);
 };

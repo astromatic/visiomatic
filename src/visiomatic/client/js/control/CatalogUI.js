@@ -58,7 +58,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @param {Catalog[]} catalogs - Array of catalogs
 	 * @param {object} [options] - Options.
 
-	 * @param {string} [options.title='Catalog overlay']
+	 * @param {string} [options.title='Catalog overlays']
 	   Title of the dialog window or panel.
 
 	 * @param {boolean} [options.nativeCelSys=false]
@@ -263,11 +263,11 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
-				function (context, httpRequest) {
+				function (self, httpRequest) {
 					_this._loadCatalog(
 						catalog,
 						templayer,
-						context,
+						self,
 						httpRequest
 					);
 				},
@@ -290,11 +290,11 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					nmax: catalog.nmax + 1
 				})),
 				'querying ' + catalog.service + ' data',
-				function (context, httpRequest) {
+				function (self, httpRequest) {
 					_this._loadCatalog(
 						catalog,
 						templayer,
-						context,
+						self,
 						httpRequest
 					);
 				},
@@ -313,15 +313,15 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	   Catalog.
 	 * @param {leaflet.Layer} templayer
 	   "Dummy" layer to activate a spinner sign.
-	 * @param {object} context
-	   This (control object).
+	 * @param {object} self
+	   Calling control object (``this``).
 	 * @param {object} httpRequest
-	   HTTP request
+	   HTTP request.
 	 */
-	_loadCatalog: function (catalog, templayer, context, httpRequest) {
+	_loadCatalog: function (catalog, templayer, self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				const	wcs = context._map.options.crs,
+				const	wcs = self._map.options.crs,
 					response = httpRequest.responseText,
 					geo = catalog.toGeoJSON(response),
 					geocatalog = geoJson(geo, {
@@ -360,7 +360,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					});
 				let	excessflag = false;
 				geocatalog.nameColor = catalog.color;
-				geocatalog.addTo(context._map);
+				geocatalog.addTo(self._map);
 				this.removeLayer(templayer);
 				if (geo.features.length > catalog.nmax) {
 					geo.features.pop();
