@@ -8,9 +8,9 @@
 import {Util, circleMarker, extend} from 'leaflet';
 
 /**
- * @namespace Catalog
- * @summary Catalog base object.
-*/
+ * Catalog base object.
+ * @interface Catalog
+ */
 export const Catalog = {
 	/**
 	 * Maximum number of sources per query.

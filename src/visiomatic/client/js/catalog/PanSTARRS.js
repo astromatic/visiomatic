@@ -13,8 +13,8 @@ import {Catalog} from './Catalog'
 
 
 /**
- * @namespace PanSTARRS1
- * @summary PanSTARRS 1 catalog.
+ * PanSTARRS 1 catalog.
+ * @interface PanSTARRS1
  * @extends Catalog
 */
 export const PanSTARRS1 = extend({}, Catalog, {

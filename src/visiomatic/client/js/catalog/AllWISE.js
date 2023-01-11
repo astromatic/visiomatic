@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace AllWISE
- * @summary AllWISE catalog.
+ * AllWISE catalog.
+ * @interface AllWISE
  * @extends Catalog
 */
 export const AllWISE = extend({}, Catalog, {

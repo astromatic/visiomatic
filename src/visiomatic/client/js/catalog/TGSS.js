@@ -15,8 +15,8 @@ import {ellipse} from '../vector';
 
 
 /**
- * @namespace TGSS
- * @summary TGSS catalog.
+ * TGSS catalog.
+ * @interface TGSS
  * @extends Catalog
 */
 export const TGSS = extend({}, Catalog, {

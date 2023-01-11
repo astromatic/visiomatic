@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace PPMXL
- * @summary PPMXL catalog.
+ * PPMXL catalog.
+ * @interface PPMXL
  * @extends Catalog
 */
 export const PPMXL = extend({}, Catalog, {

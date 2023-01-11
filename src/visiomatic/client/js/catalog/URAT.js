@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace URAT_1
- * @summary URAT1 catalog.
+ * URAT1 catalog.
+ * @interface URAT_1
  * @extends Catalog
 */
 export const URAT_1 = extend({}, Catalog, {

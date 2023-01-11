@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace GALEX
- * @summary GALEX catalog.
+ * GALEX catalog.
+ * @interface GALEX
  * @extends Catalog
 */
 export const GALEX_AIS = extend({}, Catalog, {

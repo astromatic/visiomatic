@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace Abell
- * @summary Abell catalog.
+ * Abell catalog.
+ * @interface Abell
  * @extends Catalog
 */
 export const Abell = extend({}, Catalog, {

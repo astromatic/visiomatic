@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace Gaia_DR1
- * @summary Gaia DR1 catalog.
+ * Gaia DR1 catalog.
+ * @interface Gaia_DR1
  * @extends Catalog
 */
 export const Gaia_DR1 = extend({}, Catalog, {
@@ -34,8 +34,8 @@ export const Gaia_DR1 = extend({}, Catalog, {
 });
 
 /**
- * @namespace Gaia_DR2
- * @summary Gaia DR2 catalog.
+ * Gaia DR2 catalog.
+ * @interface Gaia_DR2
  * @extends Catalog
 */
 export const Gaia_DR2 = extend({}, Catalog, {
@@ -56,8 +56,8 @@ export const Gaia_DR2 = extend({}, Catalog, {
 });
 
 /**
- * @namespace Gaia_DR3
- * @summary Gaia DR3 catalog.
+ * Gaia DR3 catalog.
+ * @interface Gaia_DR3
  * @extends Catalog
 */
 export const Gaia_DR3 = extend({}, Catalog, {

@@ -15,8 +15,8 @@ import {ellipse} from '../vector';
 
 
 /**
- * @namespace NVSS
- * @summary NVSS catalog.
+ * NVSS catalog.
+ * @interface NVSS
  * @extends Catalog
 */
 export const NVSS = extend({}, Catalog, {

@@ -15,8 +15,8 @@ import {ellipse} from '../vector';
 
 
 /**
- * @namespace GLEAM
- * @summary GLEAM catalog.
+ * GLEAM catalog.
+ * @interface GLEAM
  * @extends Catalog
 */
 export const GLEAM = extend({}, Catalog, {

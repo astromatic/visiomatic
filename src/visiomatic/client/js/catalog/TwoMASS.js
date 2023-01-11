@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace TwoMASS
- * @summary 2MASS catalog.
+ * 2MASS catalog.
+ * @interface TwoMASS
  * @extends Catalog
 */
 export const TwoMASS = extend({}, Catalog, {

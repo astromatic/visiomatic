@@ -13,8 +13,8 @@ import {Catalog} from './Catalog';
 
 
 /**
- * @namespace SDSS
- * @summary SDSS catalog.
+ * SDSS catalog.
+ * @interface SDSS
  * @extends Catalog
 */
 export const SDSS = extend({}, Catalog, {

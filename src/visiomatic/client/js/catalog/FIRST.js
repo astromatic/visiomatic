@@ -15,8 +15,8 @@ import {ellipse} from '../vector';
 
 
 /**
- * @namespace FIRST
- * @summary FIRST catalog.
+ * FIRST catalog.
+ * @interface FIRST
  * @extends Catalog
 */
 export const FIRST = extend({}, Catalog, {
