@@ -896,7 +896,7 @@ export const UI = Control.extend( /** @lends UI */ {
 });
 
 /**
- * Instantiate a new UI.
+ * Instantiate a VisiOmatic UI.
  * @function
  * @param {VTileLayer[]} baseLayers - Array of layers
  * @param {object} [options] - Options: see {@link UI}

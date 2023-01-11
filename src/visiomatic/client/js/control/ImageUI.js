@@ -1,23 +1,39 @@
-/*
-#	UI for basic rendering options of a VisiOmatic layer.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for setting the rendering of a VisiOmatic layer.
+
+ * @requires control/UI.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {Util} from 'leaflet';
 
 import {UI} from './UI';
 
 
-export const ImageUI = UI.extend({
+export const ImageUI = UI.extend( /** @lends ImageUI */ {
 	options: {
 		title: 'Image preferences',
 		collapsed: true,
 		position: 'topleft'
 	},
 
+	/**
+	 * VisiOmatic dialog for setting the rendering of a VisiOmatic layer.
+	 * @extends UI
+	 * @memberof module:control/ImageUI.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Image preferences']
+	   Title of the dialog window or panel.
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {ImageUI} Instance of a user interface for the rendering
+	 * preferences.
+	 */
 	initialize: function (options) {
 		Util.setOptions(this, options);
 
@@ -27,7 +43,15 @@ export const ImageUI = UI.extend({
 		this._initsettings = {};
 	},
 
-	// Copy image settings from layer
+	/**
+	 * Copy rendering settings from a VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} settings
+	   Object where to save the settings properties.
+	 */
 	saveSettings: function (layer, settings) {
 		if (!settings) {
 			return;
@@ -41,7 +65,15 @@ export const ImageUI = UI.extend({
 		settings.quality = visio.quality;
 	},
 
-	// Copy image settings back to layer and update widget values
+	/**
+	 * Copy rendering settings to a VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} settings
+	   Object where to save the settings properties.
+	 */
 	loadSettings: function (layer, settings) {
 		if (!settings) {
 			return;
@@ -60,6 +92,12 @@ export const ImageUI = UI.extend({
 		this._updateInput(this._input.quality, settings.quality);
 	},
 
+	/**
+	 * Initialize the rendering preference dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_initDialog: function () {
 		const	_this = this,
 			className = this._className,
@@ -150,6 +188,14 @@ export const ImageUI = UI.extend({
 
 	},
 
+	/**
+	   Update the color mixing matrix of a VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 */
 	_updateMix: function (layer) {
 		const	nchannel = layer.visio.nChannel;
 		for (let c = 0; c < nchannel; c++) {
@@ -160,6 +206,14 @@ export const ImageUI = UI.extend({
 
 });
 
+/**
+ * Instantiate a VisiOmatic dialog for setting the rendering of a VisiOmatic
+ * layer.
+ * @function
+ * @param {object} [options] - Options: see {@link ImageUI}
+ * @returns {ImageUI} Instance of a user interface for the rendering
+ * preferences.
+ */
 export const imageUI = function (options) {
 	return new ImageUI(options);
 };

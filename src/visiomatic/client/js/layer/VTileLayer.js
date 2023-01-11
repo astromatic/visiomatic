@@ -859,7 +859,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 });
 
 /**
- * Instantiate a new VTileLayer.
+ * Instantiate a VisiOmatic tile layer.
  * @function
  * @param {string} url - URL of the tile server
  * @param {object} [options] - Options: see {@link VTileLayer}

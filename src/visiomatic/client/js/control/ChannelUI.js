@@ -498,9 +498,9 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	   Update the list of channels in the dialog.
 	 * @method
 	 * @static
-	 * @param {VTileLayer} layer
 	 * @private
-	   VisiOmatic layer.
+	 * @param {VTileLayer} layer
+	 * VisiOmatic layer.
 	 */
 	_updateChannelList: function (layer) {
 		const	visio = layer.visio,
@@ -622,8 +622,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 });
 
 /**
- * Instantiate a new VisiOmatic dialog for managing channels in a VisiOmatic
- * layer.
+ * Instantiate a VisiOmatic dialog for managing channels in a VisiOmatic layer.
  * @function
  * @param {object} [options] - Options: see {@link ChannelUI}
  * @returns {ChannelUI} Instance of a channel mixing user interface.

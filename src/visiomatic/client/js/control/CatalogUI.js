@@ -389,7 +389,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 });
 
 /**
- * Instantiate a new VisiOmatic dialog for catalog queries and catalog overlays.
+ * Instantiate a VisiOmatic dialog for catalog queries and catalog overlays.
  * @function
  * @param {Catalog[]} catalogs - Array of catalogs
  * @param {object} [options] - Options: see {@link CatalogUI}
