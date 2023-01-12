@@ -26,7 +26,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for managing the channels of a VisiOmatic layer.
+	 * Create a VisiOmatic dialog for managing the VisiOmatic layer channels.
+
 	 * @extends UI
 	 * @memberof module:control/ChannelUI.js
 	 * @constructs

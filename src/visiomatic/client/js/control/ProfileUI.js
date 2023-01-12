@@ -36,7 +36,8 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for plotting image profiles and spectra.
+	 * Create a VisiOmatic dialog for plotting image profiles and spectra.
+
 	 * @extends UI
 	 * @memberof module:control/ProfileUI.js
 	 * @constructs

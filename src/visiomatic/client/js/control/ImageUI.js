@@ -20,7 +20,8 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for setting the rendering of a VisiOmatic layer.
+	 * Create a VisiOmatic dialog for setting the VisiOmatic layer rendering.
+
 	 * @extends UI
 	 * @memberof module:control/ImageUI.js
 	 * @constructs

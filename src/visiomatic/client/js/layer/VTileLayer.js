@@ -103,7 +103,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 
 	/**
-	 * Layer with tiled image data queried from a VisiOmatic server.
+	 * Create a layer with tiled image data queried from a VisiOmatic server.
+
 	 * @extends leaflet.TileLayer
 	 * @memberof module:layer/VTileLayer.js
 	 

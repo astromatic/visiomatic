@@ -38,7 +38,8 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	},
 
 	/**
-	 * Catalog base class.
+	 * Create a catalog.
+	 *
 	 * @extends leaflet.Class
 	 * @memberof module:catalog/Catalog.js
 	 * @constructs

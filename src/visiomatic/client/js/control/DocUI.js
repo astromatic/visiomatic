@@ -27,7 +27,8 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for the online documentation.
+	 * Create a VisiOmatic dialog for the online documentation.
+
 	 * @extends UI
 	 * @memberof module:control/DocUI.js
 	 * @constructs
@@ -224,7 +225,7 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 });
 
 /**
- * Instantiate a VisiOmatic dialog for the online documentation
+ * Instantiate a VisiOmatic dialog for the online documentation.
  * @function
  * @param {string} [url] - Documentation URL.
  * @param {object} [options] - Options: see {@link DocUI}

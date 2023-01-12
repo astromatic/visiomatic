@@ -22,7 +22,9 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for taking snapshots of the current screen/image.
+	 * Create a VisiOmatic dialog for taking snapshots of the current
+	 screen/image.
+
 	 * @extends UI
 	 * @memberof module:control/SnapshotUI.js
 	 * @constructs

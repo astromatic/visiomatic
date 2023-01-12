@@ -51,7 +51,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog for catalog queries and catalog overlays.
+	 * Create a VisiOmatic dialog for catalog queries and catalog overlays.
+
 	 * @extends UI
 	 * @memberof module:control/CatalogUI.js
 	 * @constructs

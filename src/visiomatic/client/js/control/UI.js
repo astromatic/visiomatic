@@ -50,7 +50,8 @@ export const UI = Control.extend( /** @lends UI */ {
 	},
 
 	/**
-	 * VisiOmatic dialog control base.
+	 * Base class for VisiOmatic dialog controls.
+
 	 * @extends leaflet.Control
 	 * @memberof module:control/UI.js
 	 * @constructs
