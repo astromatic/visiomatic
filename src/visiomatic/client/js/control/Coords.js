@@ -1,11 +1,12 @@
-/*
-#	Coordinate display and input.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Responsive sidebar.
+ * @requires util/VUtil
+
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
+
 import {
 	Control,
 	DomEvent,
@@ -15,10 +16,23 @@ import {
 
 import {VUtil} from '../util'
 
-export const Coords = Control.extend({
+
+export const Coords = Control.extend( /** @lends Coords */ {
 	options: {
-		position: 'topright',
 		title: 'Center coordinates. Click to change',
+		position: 'topright',
+		/**
+		 * Coordinates settings.
+		 * @typedef coordinate
+		 * @property {string} label
+		   Coordinate name.
+		 * @property {string} units
+		   Coordinate units.
+		 * @property {boolean} [nativeCelSys=false]
+		   Use native coordinates (e.g., galactic coordinates) instead of
+		   equatorial coordinates?
+		 * @default
+		 */
 		coordinates: [{
 			label: 'RA, Dec',
 			units: 'HMS',
@@ -29,9 +43,41 @@ export const Coords = Control.extend({
 		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
 	},
 
+	/**
+	 * Create a new coordinate display/control.
+
+	 * @extends leaflet.Control
+	 * @memberof module:control/Coords.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Center coordinates. Click to change']
+	   Title of the control.
+
+	 * @param {'bottomleft'|'bottomright'|'topleft'|'topright'} [options.position='topright']
+	   Position of the coordinate display.
+
+	 * @param {coordinate[]} [options.coordinates]
+	   Coordinate settings for every instance of coordinates.
+
+	 * @returns {Coords} Instance of a coordinate display/control.
+	 */
+	initialize: function (options) {
+		Util.setOptions(this, options);
+	},
+
+	/**
+	 * Add the coordinate display/control box directly to the map and wait for
+	   a new layer to be ready.
+	 * @memberof control/Coords
+	 * @method
+	 * @static
+	 * @override
+	 * @param {object} map - Leaflet map the control has been added to.
+	 * @returns {object} The newly created container of the control.
+	 */
 	onAdd: function (map) {
-		// Create coordinate input/display box
-		var	_this = this,
+		const	_this = this,
 			className = 'leaflet-control-coords';
 
 		this._wcsdialog =  DomUtil.create('div', className + '-dialog');
@@ -39,8 +85,15 @@ export const Coords = Control.extend({
 		return	this._wcsdialog;
 	},
 
+	/**
+	 * Check that the layer being loaded is a VisiOmatic layer.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {event} e - Leaflet map the control has been added to.
+	 */
 	_checkVisiomatic: function (e) {
-		var layer = e.layer;
+		const	layer = e.layer;
 
 		// Exit if not a VisiOmatic layer
 		if (!layer || !layer.visioDefault) {
@@ -55,21 +108,27 @@ export const Coords = Control.extend({
 		}
 	},
 
+	/**
+	 * Initialize the coordinate display/control dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_initDialog: function () {
-		var	_this = this,
+		const	_this = this,
 			wcs = this._map.options.crs,
+			projections = wcs.projections,
 			coords = this.options.coordinates,
 			className = 'leaflet-control-coords',
 			dialog = this._wcsdialog;
 
-		if ((projections=wcs.projections)) {
-			var	extSelect = this._wcsext = DomUtil.create(
+		if ((projections)) {
+			const	extSelect = this._wcsext = DomUtil.create(
 					'select',
 					className + '-ext',
 					dialog
 				),
-				extOpt = [],
-				extIndex;
+				extOpt = [];
 
 			DomEvent.disableClickPropagation(extSelect);
 			extSelect.id = 'leaflet-ext-select';
@@ -77,7 +136,7 @@ export const Coords = Control.extend({
 			for (var p in projections) {
 				extOpt[p] = document.createElement('option');
 				extOpt[p].text = projections[p].name;
-				extIndex = parseInt(p, 10);
+				var	extIndex = parseInt(p, 10);
 				extOpt[p].value = extIndex;
 				if (extIndex === 0) {
 					extOpt[p].selected = true;
@@ -85,7 +144,7 @@ export const Coords = Control.extend({
 				extSelect.add(extOpt[p], null);
 			}
 			DomEvent.on(extSelect, 'change', function (e) {
-				var	map = _this._map,
+				const	map = _this._map,
 					wcs = map.options.crs;
 
 				map.panTo(wcs.unproject(
@@ -93,13 +152,12 @@ export const Coords = Control.extend({
 			});
 		}
 
-		var	coordSelect = DomUtil.create(
+		const	coordSelect = DomUtil.create(
 				'select',
 				className + '-select',
 				dialog
 			),
-			coordOpt = [],
-			coordIndex;
+			coordOpt = [];
 
 		DomEvent.disableClickPropagation(coordSelect);
 		this._currentCoord = 0;
@@ -108,7 +166,7 @@ export const Coords = Control.extend({
 		for (var c in coords) {
 			coordOpt[c] = document.createElement('option');
 			coordOpt[c].text = coords[c].label;
-			coordIndex = parseInt(c, 10);
+			var	coordIndex = parseInt(c, 10);
 			coordOpt[c].value = coordIndex;
 			if (coordIndex === 0) {
 				coordOpt[c].selected = true;
@@ -126,7 +184,7 @@ export const Coords = Control.extend({
 			coordSelect.style['border-radius'] = '0px';
 		}
 
-		var input = this._wcsinput = DomUtil.create(
+		const input = this._wcsinput = DomUtil.create(
 			'input',
 			className + '-input',
 			dialog
@@ -149,12 +207,17 @@ export const Coords = Control.extend({
 			this.panTo(this._wcsinput.value);
 		}, this);
 
-		var	clipboardbutton = DomUtil.create('div', className + '-clipboard', dialog);
+		const	clipboardbutton = DomUtil.create(
+			'div',
+			className + '-clipboard',
+			dialog
+		);
 		clipboardbutton.title = 'Copy to clipboard';
 		DomEvent.on(clipboardbutton, 'click', function () {
-			var stateObj = {},
-				url = location.href,
+			const	stateObj = {},
 				latlng = map.getCenter();
+			let	url = location.href;
+
 			VUtil.flashElement(this._wcsinput);
 			url = VUtil.updateURL(url, this.options.centerQueryKey,
 			  VUtil.latLngToHMSDMS(latlng));
@@ -172,15 +235,16 @@ export const Coords = Control.extend({
 	},
 
 	_onDrag: function (e) {
-		var	latlng = this._map.getCenter(),
-			wcs = this._map.options.crs,
+		const	wcs = this._map.options.crs,
 			coord = this.options.coordinates[this._currentCoord];
-
+		let	latlng = this._map.getCenter();
+			
 		if (wcs.projections) {
 			this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true; 
 		}
 		if (wcs.pixelFlag) {
-			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
+			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
+				latlng.lat.toFixed(0);
 		} else {
 			if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
 				latlng = wcs.celsysToEq(latlng);
@@ -192,19 +256,21 @@ export const Coords = Control.extend({
 				this._wcsinput.value = VUtil.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
-				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +
+					latlng.lat.toFixed(5);
 				break;
 			default:
-				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' +
+					latlng.lat.toFixed(1);
 				break;
 			}
 		}
 	},
 
 	panTo: function (str) {
-		var	wcs = this._map.options.crs,
-			coord = this.options.coordinates[this._currentCoord],
-			latlng = wcs.parseCoords(str);
+		const	wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord];
+		let	latlng = wcs.parseCoords(str);
 
 		if (latlng) {
 			if (wcs.pixelFlag) {
@@ -227,7 +293,7 @@ export const Coords = Control.extend({
 	_getCoordinates: function (_this, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var str = httpRequest.responseText,
+				const	str = httpRequest.responseText,
 					latlng = _this._map.options.crs.parseCoords(str);
 
 				if (latlng) {

@@ -320,7 +320,7 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
  * @returns {Sidebar} Instance of a sidebar.
 
  * @example
- * var sb = sidebar({position: right}).addTo(map);
+ * const sb = sidebar({position: right}).addTo(map);
  */
 export const sidebar = function (map, options) {
 	return new Sidebar(map, options);

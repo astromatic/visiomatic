@@ -195,7 +195,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @method
 	 * @static
 	 * @private
-	 * @param {event} e - Leaflet map the control has been added to.
 	 */
 	_initDialog: function () {
 		/*

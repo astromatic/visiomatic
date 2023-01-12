@@ -173,7 +173,7 @@
             cancelFn.call(window, id);
           }
         }
-        var Util20 = {
+        var Util21 = {
           __proto__: null,
           extend: extend4,
           create: create$2,
@@ -8100,7 +8100,7 @@
         exports2.TileLayer = TileLayer2;
         exports2.Tooltip = Tooltip;
         exports2.Transformation = Transformation2;
-        exports2.Util = Util20;
+        exports2.Util = Util21;
         exports2.VideoOverlay = VideoOverlay;
         exports2.bind = bind;
         exports2.bounds = toBounds;
@@ -31539,8 +31539,8 @@
   var import_leaflet13 = __toESM(require_leaflet_src());
   var Coords = import_leaflet13.Control.extend({
     options: {
-      position: "topright",
       title: "Center coordinates. Click to change",
+      position: "topright",
       coordinates: [{
         label: "RA, Dec",
         units: "HMS",
@@ -31550,14 +31550,17 @@
       fovQueryKey: "fov",
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
     },
+    initialize: function(options2) {
+      Util.setOptions(this, options2);
+    },
     onAdd: function(map2) {
-      var _this = this, className = "leaflet-control-coords";
+      const _this = this, className = "leaflet-control-coords";
       this._wcsdialog = import_leaflet13.DomUtil.create("div", className + "-dialog");
       this._map.on("layeradd", this._checkVisiomatic, this);
       return this._wcsdialog;
     },
     _checkVisiomatic: function(e) {
-      var layer = e.layer;
+      const layer = e.layer;
       if (!layer || !layer.visioDefault) {
         return;
       }
@@ -31570,20 +31573,20 @@
       }
     },
     _initDialog: function() {
-      var _this = this, wcs = this._map.options.crs, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
-      if (projections = wcs.projections) {
-        var extSelect = this._wcsext = import_leaflet13.DomUtil.create(
+      const _this = this, wcs = this._map.options.crs, projections = wcs.projections, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
+      if (projections) {
+        const extSelect = this._wcsext = import_leaflet13.DomUtil.create(
           "select",
           className + "-ext",
           dialog
-        ), extOpt = [], extIndex;
+        ), extOpt = [];
         import_leaflet13.DomEvent.disableClickPropagation(extSelect);
         extSelect.id = "leaflet-ext-select";
         extSelect.title = "Switch detector";
         for (var p in projections) {
           extOpt[p] = document.createElement("option");
           extOpt[p].text = projections[p].name;
-          extIndex = parseInt(p, 10);
+          var extIndex = parseInt(p, 10);
           extOpt[p].value = extIndex;
           if (extIndex === 0) {
             extOpt[p].selected = true;
@@ -31591,17 +31594,17 @@
           extSelect.add(extOpt[p], null);
         }
         import_leaflet13.DomEvent.on(extSelect, "change", function(e) {
-          var map2 = _this._map, wcs2 = map2.options.crs;
+          const map2 = _this._map, wcs2 = map2.options.crs;
           map2.panTo(wcs2.unproject(
             wcs2.projections[extSelect.value].centerPnt
           ));
         });
       }
-      var coordSelect = import_leaflet13.DomUtil.create(
+      const coordSelect = import_leaflet13.DomUtil.create(
         "select",
         className + "-select",
         dialog
-      ), coordOpt = [], coordIndex;
+      ), coordOpt = [];
       import_leaflet13.DomEvent.disableClickPropagation(coordSelect);
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
@@ -31609,7 +31612,7 @@
       for (var c in coords2) {
         coordOpt[c] = document.createElement("option");
         coordOpt[c].text = coords2[c].label;
-        coordIndex = parseInt(c, 10);
+        var coordIndex = parseInt(c, 10);
         coordOpt[c].value = coordIndex;
         if (coordIndex === 0) {
           coordOpt[c].selected = true;
@@ -31623,7 +31626,7 @@
       if (projections) {
         coordSelect.style["border-radius"] = "0px";
       }
-      var input = this._wcsinput = import_leaflet13.DomUtil.create(
+      const input = this._wcsinput = import_leaflet13.DomUtil.create(
         "input",
         className + "-input",
         dialog
@@ -31641,10 +31644,15 @@
       import_leaflet13.DomEvent.on(input, "change", function() {
         this.panTo(this._wcsinput.value);
       }, this);
-      var clipboardbutton = import_leaflet13.DomUtil.create("div", className + "-clipboard", dialog);
+      const clipboardbutton = import_leaflet13.DomUtil.create(
+        "div",
+        className + "-clipboard",
+        dialog
+      );
       clipboardbutton.title = "Copy to clipboard";
       import_leaflet13.DomEvent.on(clipboardbutton, "click", function() {
-        var stateObj = {}, url = location.href, latlng = map.getCenter();
+        const stateObj = {}, latlng = map.getCenter();
+        let url = location.href;
         VUtil.flashElement(this._wcsinput);
         url = VUtil.updateURL(
           url,
@@ -31665,7 +31673,8 @@
       map2.off("drag", this._onDrag);
     },
     _onDrag: function(e) {
-      var latlng = this._map.getCenter(), wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      const wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      let latlng = this._map.getCenter();
       if (wcs.projections) {
         this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true;
       }
@@ -31691,7 +31700,8 @@
       }
     },
     panTo: function(str2) {
-      var wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord], latlng = wcs.parseCoords(str2);
+      const wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      let latlng = wcs.parseCoords(str2);
       if (latlng) {
         if (wcs.pixelFlag) {
           this._map.panTo(latlng);
@@ -31716,7 +31726,7 @@
     _getCoordinates: function(_this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var str2 = httpRequest.responseText, latlng = _this._map.options.crs.parseCoords(str2);
+          const str2 = httpRequest.responseText, latlng = _this._map.options.crs.parseCoords(str2);
           if (latlng) {
             _this._map.panTo(latlng);
             _this._onDrag();
@@ -32979,8 +32989,8 @@
   var Sidebar = import_leaflet22.Control.extend({
     includes: import_leaflet22.Evented && import_leaflet22.Evented.prototype,
     options: {
-      position: "left",
       title: "Toggle advanced menu",
+      position: "left",
       collapsed: true,
       forceSeparateButton: false
     },
