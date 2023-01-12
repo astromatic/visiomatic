@@ -232,7 +232,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	},
 
 	/**
-	 * Remove map dragging event when a base layer is removed.
+	 * Remove map dragging event when the coordinate display/control is removed.
 	 * @method
 	 * @static
 	 * @private
@@ -341,7 +341,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 });
 
 /**
- * Deactivate Leaflet's built-in position control.
+ * Deactivate mouse position control.
  * @method
  * @static
  * @memberof leaflet.Map
@@ -351,7 +351,7 @@ Map.mergeOptions({
 });
 
 /**
- * Add a hook to maps for mouse position control (not sure what for...).
+ * Add a hook to maps for mouse position control.
  * @method
  * @static
  * @memberof leaflet.Map
@@ -366,7 +366,6 @@ Map.addInitHook(function () {
 /**
  * Instantiate a coordinate display/control .
  * @function
- * @param {VTileLayer[]} baseLayers - Array of layers
  * @param {object} [options] - Options: see {@link Coords}
  * @returns {Coords} Instance of a coordinate display/control interface.
 */

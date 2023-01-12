@@ -31874,17 +31874,17 @@
   var import_leaflet15 = __toESM(require_leaflet_src());
   var ExtraMap = import_leaflet15.Control.extend({
     options: {
-      position: "topright",
       title: "Navigation mini-map. Grab to navigate",
-      toggleDisplay: true,
-      zoomLevelFixed: false,
-      zoomLevelOffset: -5,
-      zoomAnimation: false,
-      autoToggleDisplay: false,
+      position: "topright",
       width: 150,
       height: 150,
       collapsedWidth: 24,
       collapsedHeight: 24,
+      toggleDisplay: true,
+      autoToggleDisplay: false,
+      zoomLevelFixed: false,
+      zoomLevelOffset: -5,
+      zoomAnimation: false,
       aimingRectOptions: {
         color: "#FFFFFF",
         weight: 1,
@@ -31893,9 +31893,9 @@
       shadowRectOptions: {
         color: "#FDC82F",
         weight: 1,
-        clickable: false,
         opacity: 0,
-        fillOpacity: 0
+        fillOpacity: 0,
+        clickable: false
       },
       strings: { hideText: "Hide map", showText: "Show map" }
     },
@@ -31941,18 +31941,21 @@
           ).addTo(this._extraMap);
           this._mainMap.on("moveend", this._onMainMapMoved, this);
           this._mainMap.on("move", this._onMainMapMoving, this);
-          this._extraMap.on("movestart", this._onExtraMapMoveStarted, this);
+          this._extraMap.on(
+            "movestart",
+            this._onExtraMapMoveStarted,
+            this
+          );
           this._extraMap.on("move", this._onExtraMapMoving, this);
           this._extraMap.on("moveend", this._onExtraMapMoved, this);
-          this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+          this._extraMap.setView(
+            this._mainMap.getCenter(),
+            this._decideZoom(true)
+          );
           this._setDisplay(this._decideMinimized());
         }, this));
       }, this));
       return this._container;
-    },
-    addTo: function(map2) {
-      import_leaflet15.Control.prototype.addTo.call(this, map2);
-      return this;
     },
     onRemove: function(map2) {
       this._mainMap.off("moveend", this._onMainMapMoved, this);
@@ -31978,11 +31981,11 @@
       this._toggleDisplayButton.style.height = this.options.collapsedHeight + "px";
     },
     _addButton: function(html, title, className, container, fn, context) {
-      var link = import_leaflet15.DomUtil.create("a", className, container);
+      const link = import_leaflet15.DomUtil.create("a", className, container);
       link.innerHTML = html;
       link.href = "#";
       link.title = title;
-      var stop = import_leaflet15.DomEvent.stopPropagation;
+      const stop = import_leaflet15.DomEvent.stopPropagation;
       import_leaflet15.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet15.DomEvent.preventDefault).on(link, "click", fn, context);
       return link;
     },
@@ -32028,7 +32031,10 @@
     _onMainMapMoved: function(e) {
       if (!this._extraMapMoving) {
         this._mainMapMoving = true;
-        this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+        this._extraMap.setView(
+          this._mainMap.getCenter(),
+          this._decideZoom(true)
+        );
         this._setDisplay(this._decideMinimized());
       } else {
         this._extraMapMoving = false;
@@ -32039,16 +32045,22 @@
       this._aimingRect.setBounds(this._mainMap.getBounds());
     },
     _onExtraMapMoveStarted: function(e) {
-      var lastAimingRect = this._aimingRect.getBounds();
-      var sw = this._extraMap.latLngToContainerPoint(lastAimingRect.getSouthWest());
-      var ne = this._extraMap.latLngToContainerPoint(lastAimingRect.getNorthEast());
+      const lastAimingRect = this._aimingRect.getBounds(), sw = this._extraMap.latLngToContainerPoint(
+        lastAimingRect.getSouthWest()
+      ), ne = this._extraMap.latLngToContainerPoint(
+        lastAimingRect.getNorthEast()
+      );
       this._lastAimingRectPosition = { sw, ne };
     },
     _onExtraMapMoving: function(e) {
       if (!this._mainMapMoving && this._lastAimingRectPosition) {
         this._shadowRect.setBounds(new import_leaflet15.LatLngBounds(
-          this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
-          this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
+          this._extraMap.containerPointToLatLng(
+            this._lastAimingRectPosition.sw
+          ),
+          this._extraMap.containerPointToLatLng(
+            this._lastAimingRectPosition.ne
+          )
         ));
         this._shadowRect.setStyle({ opacity: 1, fillOpacity: 0.3 });
       }
@@ -32056,14 +32068,17 @@
     _onExtraMapMoved: function(e) {
       if (!this._mainMapMoving) {
         this._extraMapMoving = true;
-        this._mainMap.setView(this._extraMap.getCenter(), this._decideZoom(false));
+        this._mainMap.setView(
+          this._extraMap.getCenter(),
+          this._decideZoom(false)
+        );
         this._shadowRect.setStyle({ opacity: 0, fillOpacity: 0 });
       } else {
         this._mainMapMoving = false;
       }
     },
     _isZoomLevelFixed: function() {
-      var zoomLevelFixed = this.options.zoomLevelFixed;
+      const zoomLevelFixed = this.options.zoomLevelFixed;
       return this._isDefined(zoomLevelFixed) && this._isInteger(zoomLevelFixed);
     },
     _decideZoom: function(fromMaintoExtra) {
@@ -32071,8 +32086,7 @@
         if (fromMaintoExtra) {
           return this._mainMap.getZoom() + this.options.zoomLevelOffset;
         } else {
-          var currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom();
-          var proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
+          const currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom(), proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
           var toRet;
           if (currentDiff > this.options.zoomLevelOffset && this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
             if (this._extraMap.getZoom() > this._lastExtraMapZoom) {

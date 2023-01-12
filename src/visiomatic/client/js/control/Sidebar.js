@@ -2,12 +2,10 @@
  #	This file part of:	VisiOmatic
  * @file Responsive sidebar.
 
- * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
-#
-#	Add responsive side bars 
-#	Adapted from the leaflet-sidebar plugin by Tobias Bieniek
-#	(original copyright notice reproduced below).
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU.
+   Adapted from the leaflet-sidebar plugin by Tobias Bieniek
+   (original copyright notice follows).
 
 The MIT License (MIT)
 
