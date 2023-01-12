@@ -33148,7 +33148,7 @@
   var import_leaflet23 = __toESM(require_leaflet_src());
   var SnapshotUI = UI.extend({
     options: {
-      title: "Field snapshot",
+      title: "Snapshots",
       collapsed: true,
       position: "topleft"
     },
@@ -33160,7 +33160,7 @@
     },
     _initDialog: function() {
       const _this = this, className = this._className, layer = this._layer, visio = layer.visio, map2 = this._map;
-      var line = this._addDialogLine("Snap:", this._dialog), elem = this._addDialogElement(line), items = ["Screen pixels", "Native pixels"];
+      const line = this._addDialogLine("Snap:", this._dialog), elem = this._addDialogElement(line), items = ["Screen pixels", "Native pixels"];
       this._snapType = 0;
       this._snapSelect = this._addSelectMenu(
         this._className + "-select",
@@ -33174,7 +33174,7 @@
         }
       );
       const hiddenlink = document.createElement("a");
-      var button = this._addButton(
+      const button = this._addButton(
         className + "-button",
         elem,
         "snapshot",
@@ -33201,10 +33201,10 @@
         }
       );
       document.body.appendChild(hiddenlink);
-      var line = this._addDialogLine("Print:", this._dialog), elem = this._addDialogElement(line);
-      button = this._addButton(
+      const line2 = this._addDialogLine("Print:", this._dialog);
+      this._addButton(
         className + "-button",
-        elem,
+        this._addDialogElement(line2),
         "print",
         "Print current map",
         function(event) {

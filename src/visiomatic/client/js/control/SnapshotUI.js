@@ -1,10 +1,12 @@
-/*
-#	UI for taking snapshots of the current image/field
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for taking snapshots of the current screen/image.
+
+ * @requires util/VUtil
+ * @requires control/UI.js
+
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {Util} from 'leaflet';
 
@@ -12,13 +14,27 @@ import {VUtil} from '../util';
 import {UI} from './UI';
 
 
-export const SnapshotUI = UI.extend({
+export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 	options: {
-		title: 'Field snapshot',
+		title: 'Snapshots',
 		collapsed: true,
 		position: 'topleft'
 	},
 
+	/**
+	 * VisiOmatic dialog for taking snapshots of the current screen/image.
+	 * @extends UI
+	 * @memberof module:control/SnapshotUI.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Snapshots']
+	   Title of the dialog window or panel.
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {SnapshotUI} Instance of a VisiOmatic snapshot interface.
+	 */
 	initialize: function (options) {
 		Util.setOptions(this, options);
 
@@ -27,6 +43,12 @@ export const SnapshotUI = UI.extend({
 		this._sideClass = 'snapshot';
 	},
 
+	/**
+	 * Initialize the snapshot dialog.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_initDialog: function () {
 		const _this = this,
 			className = this._className,
@@ -35,7 +57,7 @@ export const SnapshotUI = UI.extend({
 			map = this._map;
 
 		// Image snapshot
-		var	line = this._addDialogLine('Snap:', this._dialog),
+		const	line = this._addDialogLine('Snap:', this._dialog),
 			elem = this._addDialogElement(line),
 			items = ['Screen pixels', 'Native pixels'];
 
@@ -53,8 +75,10 @@ export const SnapshotUI = UI.extend({
 		);
 
 		const	hiddenlink = document.createElement('a');
-		var	button = this._addButton(
-			className + '-button', elem, 'snapshot',
+		const	button = this._addButton(
+			className + '-button',
+			elem,
+			'snapshot',
 			'Take a snapshot of the displayed image',
 			function (event) {
 				const	latlng = map.getCenter(),
@@ -94,12 +118,12 @@ export const SnapshotUI = UI.extend({
 
 		document.body.appendChild(hiddenlink);
 
-		var	line = this._addDialogLine('Print:', this._dialog),
-			elem = this._addDialogElement(line);
+		// Print snapshot
+		const	line2 = this._addDialogLine('Print:', this._dialog);
 
-		button = this._addButton(
+		this._addButton(
 			className + '-button',
-			elem,
+			this._addDialogElement(line2),
 			'print',
 			'Print current map',
 			function (event) {
@@ -115,6 +139,12 @@ export const SnapshotUI = UI.extend({
 
 });
 
+/**
+ * Instantiate a VisiOmatic dialog for taking snapshots.
+ * @function
+ * @param {object} [options] - Options: see {@link SnapshotUI}
+ * @returns {SnapshotUI} Instance of a VisiOmatic snapshot interface.
+ */
 export const snapshotUI = function (options) {
 	return new SnapshotUI(options);
 };

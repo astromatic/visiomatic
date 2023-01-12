@@ -1,7 +1,6 @@
-
 /**
  #	This file part of:	VisiOmatic
- * @file User Interface for the online documentation./
+ * @file User Interface for the online documentation.
 
  * @requires util/VUtil
  * @requires control/UI.js
@@ -55,7 +54,7 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	},
 
 	/**
-	 * Initialize the catalog query dialog.
+	 * Initialize the documentation dialog.
 	 * @method
 	 * @static
 	 * @private
