@@ -118,13 +118,13 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 			);
 
 		const	select = this._regionSelect = this._addSelectMenu(
-				this._className + '-select',
-				elem,
-				regions.map(function (o) { return o.name; }),
-				regions.map(function (o) { return (o.load ? true : false); }),
-				-1,
-				'Select region'
-			);
+			this._className + '-select',
+			elem,
+			regions.map(function (o) { return o.name; }),
+			regions.map(function (o) { return (o.load ? true : false); }),
+			-1,
+			'Select region'
+		);
 
 		this._addButton(className + '-button',
 			this._addDialogElement(line),
