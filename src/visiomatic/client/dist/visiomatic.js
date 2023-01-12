@@ -29507,7 +29507,7 @@
   var catalog_exports = {};
   __export(catalog_exports, {
     Catalog: () => Catalog,
-    builtin: () => builtin_exports
+    catalogs: () => catalogs_exports
   });
 
   // js/catalog/Catalog.js
@@ -29517,10 +29517,11 @@
       name: "A catalog",
       attribution: "",
       color: "yellow",
-      magLim: 20,
       properties: ["mag"],
-      propertyMask: [],
+      propertyMask: void 0,
       units: [""],
+      magLim: 20,
+      magIndex: 0,
       regionType: "box",
       service: "Vizier@CDS",
       className: "logo-catalog-vizier",
@@ -29533,7 +29534,12 @@
     },
     initialize: function(options2) {
       import_leaflet.Util.setOptions(this, options2);
-      Object.assign(this, this.options);
+      for (var key in this.options) {
+        if (this.options[key] !== void 0) {
+          this[key] = this.options[key];
+        }
+      }
+      this.url = this.serviceURL + this.catalogURL;
       if (this.objectURL) {
         this.objURL = this.serviceURL + this.objectURL;
       }
@@ -29598,9 +29604,9 @@
       return str2;
     },
     draw: function(feature, latlng) {
-      var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
+      var refmag = feature.properties.items[this.magIndex];
       return (0, import_leaflet.circleMarker)(latlng, {
-        radius: refmag ? this.maglim + 5 - refmag : 8
+        radius: refmag ? this.magLim + 5 - refmag : 8
       });
     },
     filter: function(feature) {
@@ -29608,9 +29614,9 @@
     }
   });
 
-  // js/catalog/builtin.js
-  var builtin_exports = {};
-  __export(builtin_exports, {
+  // js/catalog/catalogs.js
+  var catalogs_exports = {};
+  __export(catalogs_exports, {
     abell: () => abell,
     allWISE: () => allWISE,
     first: () => first,
@@ -29800,14 +29806,14 @@
     return new Ellipse(latlng, options2);
   };
 
-  // js/catalog/builtin.js
+  // js/catalog/catalogs.js
   var abell = new Catalog({
     service: "Vizier@CDS",
     name: "Abell clusters",
     className: "logo-catalog-vizier",
     attribution: "Rich Clusters of Galaxies (Abell et al. 1989) ",
     color: "orange",
-    maglim: 30,
+    magLim: 30,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=VII/110A&-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10",
     properties: ["m<sub>10</sub>", "Richness", "D<sub>class</sub>"],
@@ -29815,10 +29821,11 @@
     objectURL: "/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2"
   });
   var allWISE = new Catalog({
+    service: "Vizier@CDS",
     name: "AllWISE",
     attribution: "AllWISE Data Release (Cutri et al. 2013)",
     color: "red",
-    maglim: 18,
+    magLim: 18,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=II/328/allwise&-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag",
     properties: [
@@ -29836,7 +29843,7 @@
     className: "logo-catalog-vizier",
     attribution: "The FIRST Survey Catalog (Helfand et al. 2015)",
     color: "blue",
-    maglim: 30,
+    magLim: 30,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/92/first14&-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak",
     properties: ["F<sub>peak</sub>(1.4GHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
@@ -29856,7 +29863,7 @@
     className: "logo-catalog-vizier",
     attribution: "Third Gaia Data Release (2022)",
     color: "green",
-    maglim: 21,
+    magLim: 21,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=I/355/gaiadr3&-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag",
     properties: [
@@ -29875,7 +29882,7 @@
     className: "logo-catalog-vizier",
     attribution: "GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)",
     color: "magenta",
-    maglim: 21,
+    magLim: 21,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=II/312/ais&-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV",
     properties: ["FUV<sub>AB</sub>", "NUV<sub>AB</sub>"],
@@ -29888,7 +29895,7 @@
     className: "logo-catalog-vizier",
     attribution: "GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM) low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)",
     color: "blue",
-    maglim: 30,
+    magLim: 30,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide",
     properties: ["F<sub>int</sub>(170-231MHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
@@ -29908,7 +29915,7 @@
     className: "logo-catalog-vizier",
     attribution: "1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)",
     color: "magenta",
-    maglim: 30,
+    magLim: 30,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4",
     properties: ["S<sub>1.4GHz</sub>", "Major axis", "Minor axis", "Position angle"],
@@ -29928,7 +29935,7 @@
     className: "logo-catalog-vizier",
     attribution: "Pan-STARRS release 1 (PS1) Survey (Chambers et al. 2016)",
     color: "yellow",
-    maglim: 24,
+    magLim: 24,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=II/349&-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["g", "r", "i", "z", "y"],
@@ -29941,7 +29948,7 @@
     className: "logo-catalog-vizier",
     attribution: "PPM-Extended, positions and proper motions (Roeser et al. 2008)",
     color: "green",
-    maglim: 20,
+    magLim: 20,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=I/317&-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
     properties: [
@@ -29965,7 +29972,7 @@
     className: "logo-catalog-vizier",
     attribution: "SDSS Photometric Catalog, Release 12 (Alam et al. 2015)",
     color: "yellow",
-    maglim: 25,
+    magLim: 25,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=V/147&-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["u", "g", "r", "i", "z"],
@@ -29978,7 +29985,7 @@
     className: "logo-catalog-vizier",
     attribution: "The GMRT 150 MHz all-sky radio survey. TGSS ADR1 (Intema et al. 2017)",
     color: "blue",
-    maglim: 30,
+    magLim: 30,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal",
     properties: ["F<sub>peak</sub>(150MHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
@@ -29998,7 +30005,7 @@
     className: "logo-catalog-vizier",
     attribution: "2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)",
     color: "red",
-    maglim: 17,
+    magLim: 17,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=II/246&-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
     properties: ["J", "H", "K"],
@@ -30011,7 +30018,7 @@
     className: "logo-catalog-vizier",
     attribution: "The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)",
     color: "yellow",
-    maglim: 17,
+    magLim: 17,
     regionType: "box",
     catalogURL: "/asu-tsv?&-mime=csv&-source=I/329&-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag",
     properties: ["f<sub>mag</sub>", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],

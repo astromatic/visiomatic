@@ -181,6 +181,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @param {number} [timeout]
 	   Query time out delay, in seconds. Defaults to no time out.
 	 */
+
 	_getCatalog: function (catalog, timeout) {
 		const	_this = this,
 		    map = this._map,

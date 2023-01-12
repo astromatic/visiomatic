@@ -29,7 +29,7 @@ export const abell = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'Rich Clusters of Galaxies (Abell et al. 1989) ',
 	color: 'orange',
-	maglim: 30.0,
+	magLim: 30.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=VII/110A&' +
 	 '-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
@@ -51,7 +51,7 @@ export const allWISE = new Catalog({
 	name: 'AllWISE',
 	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
 	color: 'red',
-	maglim: 18.0,
+	magLim: 18.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
 	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
@@ -75,7 +75,7 @@ export const first = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
 	color: 'blue',
-	maglim: 30.0,
+	magLim: 30.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
 	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
@@ -105,7 +105,7 @@ export const gaiaDR3 = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'Third Gaia Data Release (2022)',
 	color: 'green',
-	maglim: 21.0,
+	magLim: 21.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=I/355/gaiadr3&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&' +
@@ -129,7 +129,7 @@ export const galexAIS = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
 	color: 'magenta',
-	maglim: 21.0,
+	magLim: 21.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
 	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
@@ -153,7 +153,7 @@ export const gleam = new Catalog({
 	attribution: 'GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM)' +
 	    ' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
 	color: 'blue',
-	maglim: 30.0,
+	magLim: 30.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&' +
 	 '-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&' +
@@ -183,7 +183,7 @@ export const nvss = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
 	color: 'magenta',
-	maglim: 30.0,
+	magLim: 30.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
 	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
@@ -213,7 +213,7 @@ export const panstarrs1 = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'Pan-STARRS release 1 (PS1) Survey (Chambers et al. 2016)',
 	color: 'yellow',
-	maglim: 24.0,
+	magLim: 24.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=II/349&' +
 	 '-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&' +
@@ -236,7 +236,7 @@ export const ppmXL = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'PPM-Extended, positions and proper motions (Roeser et al. 2008)',
 	color: 'green',
-	maglim: 20.0,
+	magLim: 20.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=I/317&' +
 	 '-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
@@ -261,7 +261,7 @@ export const sdss = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'SDSS Photometric Catalog, Release 12 (Alam et al. 2015)',
 	color: 'yellow',
-	maglim: 25.0,
+	magLim: 25.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=V/147&' +
 	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
@@ -284,7 +284,7 @@ export const tgss = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'The GMRT 150 MHz all-sky radio survey. TGSS ADR1 (Intema et al. 2017)',
 	color: 'blue',
-	maglim: 30.0,
+	magLim: 30.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&' +
 	 '-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&' +
@@ -314,7 +314,7 @@ export const twomass = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',
 	color: 'red',
-	maglim: 17.0,
+	magLim: 17.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=II/246&' +
 	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
@@ -338,7 +338,7 @@ export const urat1 = new Catalog({
 	className: 'logo-catalog-vizier',
 	attribution: 'The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)',
 	color: 'yellow',
-	maglim: 17.0,
+	magLim: 17.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=I/329&' +
 	 '-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +

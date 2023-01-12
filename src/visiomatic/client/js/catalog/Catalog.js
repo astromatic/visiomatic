@@ -21,10 +21,11 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		name: 'A catalog',
 		attribution: '',
 		color: 'yellow',
-		magLim: 20.0,
 		properties: ['mag'],
-		propertyMask: [],
+		propertyMask: undefined,
 		units: [''],
+		magLim: 20.0,
+		magIndex: 0,
 		regionType: 'box',
 		service: 'Vizier@CDS',
 		className: 'logo-catalog-vizier',
@@ -50,10 +51,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	   Reference or copyright.
 
 	 * @param {RGB} [options.color='yellow']
-	   Default display color.
-
-	 * @param {number} [options.magLim=20.0]
-	   Reference magnitude limit (for scaling symbols).
+	   Default display color. Currently unused.
 
 	 * @param {string[]} [options.properties=['mag']]
 	   Names of catalog object properties.
@@ -63,6 +61,12 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	 * @param {string[]} [options.units=['']]
 	   Property units.
+
+	 * @param {number} [options.magLim=20.0]
+	   Reference magnitude limit (for scaling symbols).
+
+	 * @param {number} [options.magIndex=0]
+	   Index of the property member that stores the reference magnitude.
 
 	 * @param {'box'|'cone'} [options.regionType='box']
 	   Geometry of the query region.
@@ -95,7 +99,13 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 */
 	initialize: function (options) {
 		Util.setOptions(this, options);
-		Object.assign(this, this.options);
+		// Stupid copy all option properties to this (FIXME).
+		for (var key in this.options) {
+			if (this.options[key] !== undefined) {
+				this[key] = this.options[key];
+			}
+		}
+		this.url = this.serviceURL + this.catalogURL;
 		if (this.objectURL) {
 			this.objURL = this.serviceURL + this.objectURL;
 		}		
@@ -216,9 +226,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 * @return {leaflet.circleMarker} Circle marker.
 	 */
 	draw: function (feature, latlng) {
-		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
+		var refmag = feature.properties.items[this.magIndex];
 		return circleMarker(latlng, {
-			radius: refmag ? this.maglim + 5 - refmag : 8
+			radius: refmag ? this.magLim + 5 - refmag : 8
 		});
 	},
 
