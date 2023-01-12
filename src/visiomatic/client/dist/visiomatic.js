@@ -31551,7 +31551,7 @@
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
     },
     initialize: function(options2) {
-      Util.setOptions(this, options2);
+      import_leaflet13.Util.setOptions(this, options2);
     },
     onAdd: function(map2) {
       const _this = this, className = "leaflet-control-coords";
@@ -31723,13 +31723,13 @@
         );
       }
     },
-    _getCoordinates: function(_this, httpRequest) {
+    _getCoordinates: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const str2 = httpRequest.responseText, latlng = _this._map.options.crs.parseCoords(str2);
+          const str2 = httpRequest.responseText, latlng = _self._map.options.crs.parseCoords(str2);
           if (latlng) {
-            _this._map.panTo(latlng);
-            _this._onDrag();
+            self2._map.panTo(latlng);
+            self2._onDrag();
           } else {
             alert(str2 + ": Unknown location");
           }

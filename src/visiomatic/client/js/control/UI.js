@@ -172,7 +172,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @method
 	 * @static
 	 * @private
-	 * @param {event} e - Leaflet map the control has been added to.
+	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */
 	_checkVisiomatic: function (e) {
 		const	layer = e.layer;
@@ -876,11 +876,11 @@ export const UI = Control.extend( /** @lends UI */ {
 	},
 
 	/**
-	 * Action performed when an (overlay) layer is added or removed.
+	 * Trigger layer list update when an (overlay) layer is added or removed.
 	 * @method
 	 * @static
 	 * @private
-	 * @param {event} e - layer event (``add`` or ``remove``).
+	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */
 	_onLayerChange: function (e) {
 		if (!this._handlingClick) {
