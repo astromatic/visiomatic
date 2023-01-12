@@ -42,8 +42,7 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 	},
 
 	/**
-	 * Create a VisiOmatic dialog for regions and Points of Interest (PoIs).
-
+	 * Region object.
 	 * @typedef region
 	 * @property {string} url
 	   URL for accessing the GeoJSON data.
@@ -64,7 +63,8 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 	 */
 
 	/**
-	 * VisiOmatic dialog for overlaying region and Point of Interest (PoI).
+	 * Create a VisiOmatic dialog for overlaying region and Point of Interest
+	   (PoI).
 	 * @extends UI
 	 * @memberof module:control/RegionUI.js
 	 * @constructs

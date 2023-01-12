@@ -1,11 +1,13 @@
-/*
+/**
+ #	This file part of:	VisiOmatic
+ * @file Responsive sidebar.
+
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+#
 #	Add responsive side bars 
 #	Adapted from the leaflet-sidebar plugin by Tobias Bieniek
 #	(original copyright notice reproduced below).
-#
-#	This file part of:	VisiOmatic
-#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
 
 The MIT License (MIT)
 
@@ -31,23 +33,37 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import {Browser, Control, DomEvent, DomUtil, Evented, Util} from 'leaflet';
 
 
-export const Sidebar = Control.extend({
+export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	includes: Evented && Evented.prototype,
 
 	options: {
-		position: 'left',
 		title: 'Toggle advanced menu',
+		position: 'left',
 		collapsed: true,
 		forceSeparateButton: false
 	},
 
 	/**
-	 * Create a new sidebar on this jQuery object.
-	 *
-	 * @constructor
-	 * @param {string} id - The id of the sidebar element (without the # character)
-	 * @param {Object} [options] - Optional options object
-	 * @param {string} [options.position=left] - Position of the sidebar: 'left' or 'right'
+	 * Create a new sidebar.
+
+	 * @extends leaflet.Control
+	 * @memberof module:control/Sidebar.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Toggle advanced menu']
+	   Title of the panel.
+
+	 * @param {'left'|'right'} [options.position='left']
+	   Position of the sidebar.
+
+	 * @param {boolean} [options.collapsed=true]
+	   Sidebar initially in closed position?
+
+	 * @param {boolean} [options.forceSeparateButton=false]
+	   Sidebar button separate from zoom control?
+
+	 * @returns {Sidebar} Instance of a sidebar.
 	 */
 	initialize: function (options) {
 		var i, child;
@@ -297,15 +313,14 @@ export const Sidebar = Control.extend({
 });
 
 /**
- * Create a new sidebar on this jQuery object.
+ * Instantiate a new sidebar.
  *
+ * @function
+ * @param {object} [options] - Options: see {@link Sidebar}
+ * @returns {Sidebar} Instance of a sidebar.
+
  * @example
- * var sidebar = L.control.sidebar('sidebar').addTo(map);
- *
- * @param {string} id - The id of the sidebar element (without the # character)
- * @param {Object} [options] - Optional options object
- * @param {string} [options.position=left] - Position of the sidebar: 'left' or 'right'
- * @returns {L.Control.Sidebar} A new sidebar instance
+ * var sb = sidebar({position: right}).addTo(map);
  */
 export const sidebar = function (map, options) {
 	return new Sidebar(map, options);
