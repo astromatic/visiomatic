@@ -33,7 +33,7 @@
       })(exports, function(exports2) {
         "use strict";
         var version = "1.9.3";
-        function extend16(dest) {
+        function extend4(dest) {
           var i2, j, len, src;
           for (j = 1, len = arguments.length; j < len; j++) {
             src = arguments[j];
@@ -175,7 +175,7 @@
         }
         var Util20 = {
           __proto__: null,
-          extend: extend16,
+          extend: extend4,
           create: create$2,
           bind,
           get lastId() {
@@ -199,9 +199,9 @@
           requestAnimFrame,
           cancelAnimFrame
         };
-        function Class3() {
+        function Class4() {
         }
-        Class3.extend = function(props) {
+        Class4.extend = function(props) {
           var NewClass = function() {
             setOptions(this);
             if (this.initialize) {
@@ -219,18 +219,18 @@
             }
           }
           if (props.statics) {
-            extend16(NewClass, props.statics);
+            extend4(NewClass, props.statics);
           }
           if (props.includes) {
             checkDeprecatedMixinEvents(props.includes);
-            extend16.apply(null, [proto].concat(props.includes));
+            extend4.apply(null, [proto].concat(props.includes));
           }
-          extend16(proto, props);
+          extend4(proto, props);
           delete proto.statics;
           delete proto.includes;
           if (proto.options) {
             proto.options = parentProto.options ? create$2(parentProto.options) : {};
-            extend16(proto.options, props.options);
+            extend4(proto.options, props.options);
           }
           proto._initHooks = [];
           proto.callInitHooks = function() {
@@ -247,20 +247,20 @@
           };
           return NewClass;
         };
-        Class3.include = function(props) {
+        Class4.include = function(props) {
           var parentOptions = this.prototype.options;
-          extend16(this.prototype, props);
+          extend4(this.prototype, props);
           if (props.options) {
             this.prototype.options = parentOptions;
             this.mergeOptions(props.options);
           }
           return this;
         };
-        Class3.mergeOptions = function(options2) {
-          extend16(this.prototype.options, options2);
+        Class4.mergeOptions = function(options2) {
+          extend4(this.prototype.options, options2);
           return this;
         };
-        Class3.addInitHook = function(fn) {
+        Class4.addInitHook = function(fn) {
           var args = Array.prototype.slice.call(arguments, 1);
           var init = typeof fn === "function" ? fn : function() {
             this[fn].apply(this, args);
@@ -369,7 +369,7 @@
             if (!this.listens(type, propagate)) {
               return this;
             }
-            var event = extend16({}, data, {
+            var event = extend4({}, data, {
               type,
               target: this,
               sourceTarget: data && data.sourceTarget || this
@@ -463,7 +463,7 @@
           },
           _propagateEvent: function(e) {
             for (var id in this._eventParents) {
-              this._eventParents[id].fire(e.type, extend16({
+              this._eventParents[id].fire(e.type, extend4({
                 layer: e.target,
                 propagatedFrom: e.target
               }, e), true);
@@ -475,7 +475,7 @@
         Events.addOneTimeEventListener = Events.once;
         Events.fireEvent = Events.fire;
         Events.hasEventListeners = Events.listens;
-        var Evented4 = Class3.extend(Events);
+        var Evented4 = Class4.extend(Events);
         function Point2(x, y, round) {
           this.x = round ? Math.round(x) : x;
           this.y = round ? Math.round(y) : y;
@@ -921,7 +921,7 @@
             return new LatLngBounds3(newSw, newNe);
           }
         };
-        var Earth = extend16({}, CRS2, {
+        var Earth = extend4({}, CRS2, {
           wrapLng: [-180, 180],
           R: 6371e3,
           distance: function(latlng1, latlng2) {
@@ -986,7 +986,7 @@
         function toTransformation(a, b, c, d2) {
           return new Transformation2(a, b, c, d2);
         }
-        var EPSG3857 = extend16({}, Earth, {
+        var EPSG3857 = extend4({}, Earth, {
           code: "EPSG:3857",
           projection: SphericalMercator,
           transformation: function() {
@@ -994,7 +994,7 @@
             return toTransformation(scale3, 0.5, -scale3, 0.5);
           }()
         });
-        var EPSG900913 = extend16({}, EPSG3857, {
+        var EPSG900913 = extend4({}, EPSG3857, {
           code: "EPSG:900913"
         });
         function svgCreate(name) {
@@ -1778,8 +1778,8 @@
             this._stop();
             if (this._loaded && !options2.reset && options2 !== true) {
               if (options2.animate !== void 0) {
-                options2.zoom = extend16({ animate: options2.animate }, options2.zoom);
-                options2.pan = extend16({ animate: options2.animate, duration: options2.duration }, options2.pan);
+                options2.zoom = extend4({ animate: options2.animate }, options2.zoom);
+                options2.pan = extend4({ animate: options2.animate, duration: options2.duration }, options2.pan);
               }
               var moved = this._zoom !== zoom2 ? this._tryAnimatedZoom && this._tryAnimatedZoom(center, zoom2, options2.zoom) : this._tryAnimatedPan(center, options2.pan);
               if (moved) {
@@ -1990,7 +1990,7 @@
             if (!this._loaded) {
               return this;
             }
-            options2 = extend16({
+            options2 = extend4({
               animate: false,
               pan: true
             }, options2 === true ? { animate: true } : options2);
@@ -2028,7 +2028,7 @@
             return this._stop();
           },
           locate: function(options2) {
-            options2 = this._locateOptions = extend16({
+            options2 = this._locateOptions = extend4({
               timeout: 1e4,
               watch: false
             }, options2);
@@ -2459,7 +2459,7 @@
           _mouseEvents: ["click", "dblclick", "mouseover", "mouseout", "contextmenu"],
           _fireDOMEvent: function(e, type, canvasTargets) {
             if (e.type === "click") {
-              var synth = extend16({}, e);
+              var synth = extend4({}, e);
               synth.type = "preclick";
               this._fireDOMEvent(synth, synth.type, canvasTargets);
             }
@@ -2684,7 +2684,7 @@
         function createMap(id, options2) {
           return new Map5(id, options2);
         }
-        var Control9 = Class3.extend({
+        var Control9 = Class4.extend({
           options: {
             position: "topright"
           },
@@ -3285,7 +3285,7 @@
         control2.zoom = zoom;
         control2.scale = scale2;
         control2.attribution = attribution;
-        var Handler = Class3.extend({
+        var Handler = Class4.extend({
           initialize: function(map2) {
             this._map = map2;
           },
@@ -3370,8 +3370,8 @@
               return;
             }
             this.fire("down");
-            var first = e.touches ? e.touches[0] : e, sizedParent = getSizedParentNode(this._element);
-            this._startPoint = new Point2(first.clientX, first.clientY);
+            var first2 = e.touches ? e.touches[0] : e, sizedParent = getSizedParentNode(this._element);
+            this._startPoint = new Point2(first2.clientX, first2.clientY);
             this._startPos = getPosition(this._element);
             this._parentScale = getScale(sizedParent);
             var mouseevent = e.type === "mousedown";
@@ -3386,7 +3386,7 @@
               this._moved = true;
               return;
             }
-            var first = e.touches && e.touches.length === 1 ? e.touches[0] : e, offset = new Point2(first.clientX, first.clientY)._subtract(this._startPoint);
+            var first2 = e.touches && e.touches.length === 1 ? e.touches[0] : e, offset = new Point2(first2.clientX, first2.clientY)._subtract(this._startPoint);
             if (!offset.x && !offset.y) {
               return;
             }
@@ -3470,10 +3470,10 @@
           }
           return newPoints;
         }
-        function _simplifyDPStep(points, markers, sqTolerance, first, last) {
+        function _simplifyDPStep(points, markers, sqTolerance, first2, last) {
           var maxSqDist = 0, index2, i2, sqDist;
-          for (i2 = first + 1; i2 <= last - 1; i2++) {
-            sqDist = _sqClosestPointOnSegment(points[i2], points[first], points[last], true);
+          for (i2 = first2 + 1; i2 <= last - 1; i2++) {
+            sqDist = _sqClosestPointOnSegment(points[i2], points[first2], points[last], true);
             if (sqDist > maxSqDist) {
               index2 = i2;
               maxSqDist = sqDist;
@@ -3481,7 +3481,7 @@
           }
           if (maxSqDist > sqTolerance) {
             markers[index2] = 1;
-            _simplifyDPStep(points, markers, sqTolerance, first, index2);
+            _simplifyDPStep(points, markers, sqTolerance, first2, index2);
             _simplifyDPStep(points, markers, sqTolerance, index2, last);
           }
         }
@@ -3728,7 +3728,7 @@
           Mercator,
           SphericalMercator
         };
-        var EPSG3395 = extend16({}, Earth, {
+        var EPSG3395 = extend4({}, Earth, {
           code: "EPSG:3395",
           projection: Mercator,
           transformation: function() {
@@ -3736,12 +3736,12 @@
             return toTransformation(scale3, 0.5, -scale3, 0.5);
           }()
         });
-        var EPSG4326 = extend16({}, Earth, {
+        var EPSG4326 = extend4({}, Earth, {
           code: "EPSG:4326",
           projection: LonLat,
           transformation: toTransformation(1 / 180, 1, -1 / 180, 0.5)
         });
-        var Simple = extend16({}, CRS2, {
+        var Simple = extend4({}, CRS2, {
           projection: LonLat,
           transformation: toTransformation(1, 0, -1, 0),
           scale: function(zoom2) {
@@ -4010,7 +4010,7 @@
         var featureGroup = function(layers2, options2) {
           return new FeatureGroup(layers2, options2);
         };
-        var Icon = Class3.extend({
+        var Icon = Class4.extend({
           options: {
             popupAnchor: [0, 0],
             tooltipAnchor: [0, 0],
@@ -4554,7 +4554,7 @@
         var Circle = CircleMarker.extend({
           initialize: function(latlng, options2, legacyOptions) {
             if (typeof options2 === "number") {
-              options2 = extend16({}, legacyOptions, { radius: options2 });
+              options2 = extend4({}, legacyOptions, { radius: options2 });
             }
             setOptions(this, options2);
             this._latlng = toLatLng(latlng);
@@ -4883,7 +4883,7 @@
             if (layer === void 0) {
               return this.eachLayer(this.resetStyle, this);
             }
-            layer.options = extend16({}, layer.defaultOptions);
+            layer.options = extend4({}, layer.defaultOptions);
             this._setLayerStyle(layer, this.options.style);
             return this;
           },
@@ -4977,7 +4977,7 @@
           return coords2;
         }
         function getFeature(layer, newGeometry) {
-          return layer.feature ? extend16({}, layer.feature, { geometry: newGeometry }) : asFeature(newGeometry);
+          return layer.feature ? extend4({}, layer.feature, { geometry: newGeometry }) : asFeature(newGeometry);
         }
         function asFeature(geojson) {
           if (geojson.type === "Feature" || geojson.type === "FeatureCollection") {
@@ -6685,7 +6685,7 @@
               }
               data["-y"] = invertedY;
             }
-            return template(this._url, extend16(data, this.options));
+            return template(this._url, extend4(data, this.options));
           },
           _tileOnLoad: function(done, tile) {
             if (Browser4.ielt9) {
@@ -6769,7 +6769,7 @@
           },
           initialize: function(url, options2) {
             this._url = url;
-            var wmsParams = extend16({}, this.defaultWmsParams);
+            var wmsParams = extend4({}, this.defaultWmsParams);
             for (var i2 in options2) {
               if (!(i2 in this.options)) {
                 wmsParams[i2] = options2[i2];
@@ -6794,7 +6794,7 @@
             return url + getParamString(this.wmsParams, url, this.options.uppercase) + (this.options.uppercase ? "&BBOX=" : "&bbox=") + bbox;
           },
           setParams: function(params, noRedraw) {
-            extend16(this.wmsParams, params);
+            extend4(this.wmsParams, params);
             if (!noRedraw) {
               this.redraw();
             }
@@ -7925,8 +7925,8 @@
             if (e.touches.length !== 1) {
               return;
             }
-            var first = e.touches[0];
-            this._startPos = this._newPos = new Point2(first.clientX, first.clientY);
+            var first2 = e.touches[0];
+            this._startPos = this._newPos = new Point2(first2.clientX, first2.clientY);
             this._holdTimeout = setTimeout(bind(function() {
               this._cancel();
               if (!this._isTapValid()) {
@@ -7934,7 +7934,7 @@
               }
               on(document, "touchend", preventDefault);
               on(document, "touchend touchcancel", this._cancelClickPrevent);
-              this._simulateEvent("contextmenu", first);
+              this._simulateEvent("contextmenu", first2);
             }, this), tapHoldDelay);
             on(document, "touchend touchcancel contextmenu", this._cancel, this);
             on(document, "touchmove", this._onMove, this);
@@ -7949,8 +7949,8 @@
             off(document, "touchmove", this._onMove, this);
           },
           _onMove: function(e) {
-            var first = e.touches[0];
-            this._newPos = new Point2(first.clientX, first.clientY);
+            var first2 = e.touches[0];
+            this._newPos = new Point2(first2.clientX, first2.clientY);
           },
           _isTapValid: function() {
             return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
@@ -8063,7 +8063,7 @@
         exports2.Canvas = Canvas2;
         exports2.Circle = Circle;
         exports2.CircleMarker = CircleMarker;
-        exports2.Class = Class3;
+        exports2.Class = Class4;
         exports2.Control = Control9;
         exports2.DivIcon = DivIcon;
         exports2.DivOverlay = DivOverlay;
@@ -8109,7 +8109,7 @@
         exports2.circleMarker = circleMarker3;
         exports2.control = control2;
         exports2.divIcon = divIcon;
-        exports2.extend = extend16;
+        exports2.extend = extend4;
         exports2.featureGroup = featureGroup;
         exports2.geoJSON = geoJSON;
         exports2.geoJson = geoJson3;
@@ -8373,13 +8373,13 @@
           inArray: function(elem, arr2, i2) {
             return arr2 == null ? -1 : indexOf.call(arr2, elem, i2);
           },
-          merge: function(first, second) {
-            var len = +second.length, j = 0, i2 = first.length;
+          merge: function(first2, second) {
+            var len = +second.length, j = 0, i2 = first2.length;
             for (; j < len; j++) {
-              first[i2++] = second[j];
+              first2[i2++] = second[j];
             }
-            first.length = i2;
-            return first;
+            first2.length = i2;
+            return first2;
           },
           grep: function(elems, callback, invert) {
             var callbackInverse, matches = [], i2 = 0, length = elems.length, callbackExpect = !invert;
@@ -8973,9 +8973,9 @@
                   return operator === "=" ? result === check : operator === "!=" ? result !== check : operator === "^=" ? check && result.indexOf(check) === 0 : operator === "*=" ? check && result.indexOf(check) > -1 : operator === "$=" ? check && result.slice(-check.length) === check : operator === "~=" ? (" " + result.replace(rwhitespace, " ") + " ").indexOf(check) > -1 : operator === "|=" ? result === check || result.slice(0, check.length + 1) === check + "-" : false;
                 };
               },
-              "CHILD": function(type, what, argument, first, last) {
+              "CHILD": function(type, what, argument, first2, last) {
                 var simple = type.slice(0, 3) !== "nth", forward = type.slice(-4) !== "last", ofType = what === "of-type";
-                return first === 1 && last === 0 ? function(elem) {
+                return first2 === 1 && last === 0 ? function(elem) {
                   return !!elem.parentNode;
                 } : function(elem, context, xml) {
                   var cache, outerCache, node, diff, nodeIndex, start, dir = simple !== forward ? "nextSibling" : "previousSibling", parent = elem.parentNode, name = ofType && elem.nodeName.toLowerCase(), useCache = !xml && !ofType;
@@ -9020,7 +9020,7 @@
                       }
                     }
                     diff -= last;
-                    return diff === first || diff % first === 0 && diff / first >= 0;
+                    return diff === first2 || diff % first2 === 0 && diff / first2 >= 0;
                   }
                 };
               },
@@ -11262,7 +11262,7 @@
           },
           domManip: function(args, callback) {
             args = concat.apply([], args);
-            var fragment, first, scripts, hasScripts, node, doc, i2 = 0, l = this.length, set = this, iNoClone = l - 1, value = args[0], isFunction = jQuery5.isFunction(value);
+            var fragment, first2, scripts, hasScripts, node, doc, i2 = 0, l = this.length, set = this, iNoClone = l - 1, value = args[0], isFunction = jQuery5.isFunction(value);
             if (isFunction || l > 1 && typeof value === "string" && !support.checkClone && rchecked.test(value)) {
               return this.each(function(index) {
                 var self2 = set.eq(index);
@@ -11274,11 +11274,11 @@
             }
             if (l) {
               fragment = jQuery5.buildFragment(args, this[0].ownerDocument, false, this);
-              first = fragment.firstChild;
+              first2 = fragment.firstChild;
               if (fragment.childNodes.length === 1) {
-                fragment = first;
+                fragment = first2;
               }
-              if (first) {
+              if (first2) {
                 scripts = jQuery5.map(getAll(fragment, "script"), disableScript);
                 hasScripts = scripts.length;
                 for (; i2 < l; i2++) {
@@ -15574,13 +15574,13 @@
           inArray: function(elem, arr2, i2) {
             return arr2 == null ? -1 : indexOf.call(arr2, elem, i2);
           },
-          merge: function(first, second) {
-            var len = +second.length, j = 0, i2 = first.length;
+          merge: function(first2, second) {
+            var len = +second.length, j = 0, i2 = first2.length;
             for (; j < len; j++) {
-              first[i2++] = second[j];
+              first2[i2++] = second[j];
             }
-            first.length = i2;
-            return first;
+            first2.length = i2;
+            return first2;
           },
           grep: function(elems, callback, invert) {
             var callbackInverse, matches = [], i2 = 0, length = elems.length, callbackExpect = !invert;
@@ -16232,9 +16232,9 @@
                   return operator === "=" ? result === check : operator === "!=" ? result !== check : operator === "^=" ? check && result.indexOf(check) === 0 : operator === "*=" ? check && result.indexOf(check) > -1 : operator === "$=" ? check && result.slice(-check.length) === check : operator === "~=" ? (" " + result.replace(rwhitespace, " ") + " ").indexOf(check) > -1 : operator === "|=" ? result === check || result.slice(0, check.length + 1) === check + "-" : false;
                 };
               },
-              "CHILD": function(type, what, _argument, first, last) {
+              "CHILD": function(type, what, _argument, first2, last) {
                 var simple = type.slice(0, 3) !== "nth", forward = type.slice(-4) !== "last", ofType = what === "of-type";
-                return first === 1 && last === 0 ? function(elem) {
+                return first2 === 1 && last === 0 ? function(elem) {
                   return !!elem.parentNode;
                 } : function(elem, _context, xml) {
                   var cache, uniqueCache, outerCache, node, nodeIndex, start, dir2 = simple !== forward ? "nextSibling" : "previousSibling", parent = elem.parentNode, name = ofType && elem.nodeName.toLowerCase(), useCache = !xml && !ofType, diff = false;
@@ -16291,7 +16291,7 @@
                       }
                     }
                     diff -= last;
-                    return diff === first || diff % first === 0 && diff / first >= 0;
+                    return diff === first2 || diff % first2 === 0 && diff / first2 >= 0;
                   }
                 };
               },
@@ -18599,7 +18599,7 @@
         }
         function domManip(collection, args, callback, ignored) {
           args = flat(args);
-          var fragment, first, scripts, hasScripts, node, doc, i2 = 0, l = collection.length, iNoClone = l - 1, value = args[0], valueIsFunction = isFunction(value);
+          var fragment, first2, scripts, hasScripts, node, doc, i2 = 0, l = collection.length, iNoClone = l - 1, value = args[0], valueIsFunction = isFunction(value);
           if (valueIsFunction || l > 1 && typeof value === "string" && !support.checkClone && rchecked.test(value)) {
             return collection.each(function(index) {
               var self2 = collection.eq(index);
@@ -18611,11 +18611,11 @@
           }
           if (l) {
             fragment = buildFragment(args, collection[0].ownerDocument, false, collection, ignored);
-            first = fragment.firstChild;
+            first2 = fragment.firstChild;
             if (fragment.childNodes.length === 1) {
-              fragment = first;
+              fragment = first2;
             }
-            if (first || ignored) {
+            if (first2 || ignored) {
               scripts = jQuery5.map(getAll(fragment, "script"), disableScript);
               hasScripts = scripts.length;
               for (; i2 < l; i2++) {
@@ -29506,30 +29506,38 @@
   // js/catalog/index.js
   var catalog_exports = {};
   __export(catalog_exports, {
-    Abell: () => Abell,
-    AllWISE: () => AllWISE,
     Catalog: () => Catalog,
-    FIRST: () => FIRST,
-    GALEX_AIS: () => GALEX_AIS,
-    GLEAM: () => GLEAM,
-    Gaia_DR1: () => Gaia_DR1,
-    Gaia_DR2: () => Gaia_DR2,
-    Gaia_DR3: () => Gaia_DR3,
-    NVSS: () => NVSS,
-    PPMXL: () => PPMXL,
-    PanSTARRS1: () => PanSTARRS1,
-    SDSS: () => SDSS,
-    TGSS: () => TGSS,
-    TwoMASS: () => TwoMASS,
-    URAT_1: () => URAT_1
+    builtin: () => builtin_exports
   });
 
   // js/catalog/Catalog.js
   var import_leaflet = __toESM(require_leaflet_src());
-  var Catalog = {
-    nmax: 1e4,
-    vizierURL: "https://vizier.unistra.fr/viz-bin",
-    mastURL: "https://archive.stsci.edu",
+  var Catalog = import_leaflet.Class.extend({
+    options: {
+      name: "A catalog",
+      attribution: "",
+      color: "yellow",
+      magLim: 20,
+      properties: ["mag"],
+      propertyMask: [],
+      units: [""],
+      regionType: "box",
+      service: "Vizier@CDS",
+      className: "logo-catalog-vizier",
+      serviceURL: "https://vizier.unistra.fr/viz-bin",
+      catalogURL: "/",
+      objectURL: "/",
+      authenticate: "false",
+      nmax: 1e4,
+      draw: void 0
+    },
+    initialize: function(options2) {
+      import_leaflet.Util.setOptions(this, options2);
+      Object.assign(this, this.options);
+      if (this.objectURL) {
+        this.objURL = this.serviceURL + this.objectURL;
+      }
+    },
     _csvToGeoJSON: function(str2) {
       var badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
       for (var i2 in lines) {
@@ -29568,8 +29576,8 @@
     },
     popup: function(feature) {
       var str2 = "<div>";
-      if (this.objurl) {
-        str2 += 'ID: <a href="' + import_leaflet.Util.template(this.objurl, (0, import_leaflet.extend)({
+      if (this.objURL) {
+        str2 += 'ID: <a href="' + import_leaflet.Util.template(this.objURL, (0, import_leaflet.extend)({
           ra: feature.geometry.coordinates[0].toFixed(6),
           dec: feature.geometry.coordinates[1].toFixed(6)
         })) + '" target="_blank">' + feature.id + "</a></div>";
@@ -29598,47 +29606,26 @@
     filter: function(feature) {
       return true;
     }
-  };
-
-  // js/catalog/Abell.js
-  var import_leaflet2 = __toESM(require_leaflet_src());
-  var Abell = (0, import_leaflet2.extend)({}, Catalog, {
-    service: "Vizier@CDS",
-    name: "Abell clusters",
-    className: "logo-catalog-vizier",
-    attribution: "Rich Clusters of Galaxies (Abell et al. 1989) ",
-    color: "orange",
-    maglim: 30,
-    regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=VII/110A&-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10",
-    properties: ["m<sub>10</sub>", "Richness", "D<sub>class</sub>"],
-    units: ["", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2"
   });
 
-  // js/catalog/AllWISE.js
-  var import_leaflet3 = __toESM(require_leaflet_src());
-  var AllWISE = (0, import_leaflet3.extend)({}, Catalog, {
-    service: "Vizier@CDS",
-    name: "AllWISE",
-    className: "logo-catalog-vizier",
-    attribution: "AllWISE Data Release (Cutri et al. 2013)",
-    color: "red",
-    maglim: 18,
-    regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/328/allwise&-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag",
-    properties: [
-      "W1<sub>mag</sub> (3.4\xB5m)",
-      "W2<sub>mag</sub> (4.6\xB5m)",
-      "W3<sub>mag</sub> (12\xB5m)",
-      "W4<sub>mag</sub> (22\xB5m)"
-    ],
-    units: ["", "", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2"
+  // js/catalog/builtin.js
+  var builtin_exports = {};
+  __export(builtin_exports, {
+    abell: () => abell,
+    allWISE: () => allWISE,
+    first: () => first,
+    gaiaDR3: () => gaiaDR3,
+    galexAIS: () => galexAIS,
+    gleam: () => gleam,
+    nvss: () => nvss,
+    panstarrs1: () => panstarrs1,
+    ppmXL: () => ppmXL,
+    sdss: () => sdss,
+    tgss: () => tgss,
+    twomass: () => twomass,
+    urat1: () => urat1
   });
-
-  // js/catalog/FIRST.js
-  var import_leaflet6 = __toESM(require_leaflet_src());
+  var import_leaflet4 = __toESM(require_leaflet_src());
 
   // js/vector/index.js
   var vector_exports = {};
@@ -29650,11 +29637,11 @@
   });
 
   // js/vector/Ellipse.js
-  var import_leaflet5 = __toESM(require_leaflet_src());
+  var import_leaflet3 = __toESM(require_leaflet_src());
 
   // js/vector/EllipseMarker.js
-  var import_leaflet4 = __toESM(require_leaflet_src());
-  var EllipseMarker = import_leaflet4.Path.extend({
+  var import_leaflet2 = __toESM(require_leaflet_src());
+  var EllipseMarker = import_leaflet2.Path.extend({
     CANVAS: true,
     SVG: false,
     options: {
@@ -29664,11 +29651,11 @@
       posAngle: 0
     },
     initialize: function(latlng, options2) {
-      import_leaflet4.Util.setOptions(this, options2);
+      import_leaflet2.Util.setOptions(this, options2);
       this._majAxis = this.options.majAxis;
       this._minAxis = this.options.majAxis;
       this._posAngle = this.options.posAngle;
-      this._latlng = (0, import_leaflet4.latLng)(latlng);
+      this._latlng = (0, import_leaflet2.latLng)(latlng);
       var deg = Math.PI / 180, cpa = Math.cos(this._posAngle * deg), spa = Math.sin(this._posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this._majAxis * this._majAxis, b2 = this._minAxis * this._minAxis, mx2 = a2 * cpa2 + b2 * spa2, my2 = a2 * spa2 + b2 * cpa2, mxy = (a2 - b2) * cpa * spa, c = mx2 * my2 - mxy * mxy;
       this._limX = Math.sqrt(mx2);
       this._limY = Math.sqrt(my2);
@@ -29682,7 +29669,7 @@
       this._cXY = -2 * mxy / c;
     },
     setLatLng: function(latlng) {
-      this._latlng = (0, import_leaflet4.latLng)(latlng);
+      this._latlng = (0, import_leaflet2.latLng)(latlng);
       this.redraw();
       return this.fire("move", { latlng: this._latlng });
     },
@@ -29702,14 +29689,14 @@
       ellipseParams.posAngle = this._posAngle;
       return ellipseParams;
     },
-    setStyle: import_leaflet4.Path.prototype.setStyle,
+    setStyle: import_leaflet2.Path.prototype.setStyle,
     _project: function() {
       this._point = this._map.latLngToLayerPoint(this._latlng);
       this._updateBounds();
     },
     _updateBounds: function() {
       var w = this._clickTolerance(), p = [this._limX + w, this._limY + w];
-      this._pxBounds = new import_leaflet4.Bounds(this._point.subtract(p), this._point.add(p));
+      this._pxBounds = new import_leaflet2.Bounds(this._point.subtract(p), this._point.add(p));
     },
     _update: function() {
       if (this._map) {
@@ -29730,7 +29717,7 @@
   var ellipseMarker = function(latlng, options2) {
     return new EllipseMarker(latlng, options2);
   };
-  import_leaflet4.Canvas.include({
+  import_leaflet2.Canvas.include({
     _updateEllipse: function(layer) {
       if (layer._empty()) {
         return;
@@ -29746,7 +29733,7 @@
       this._fillStroke(ctx, layer);
     }
   });
-  import_leaflet4.SVG.include({
+  import_leaflet2.SVG.include({
     _updateEllipse: function(layer) {
       var deg = Math.PI / 180, p = layer._point, r = layer._minAxis, r2 = layer._majAxis, dx = r * Math.cos(layer._posAngle * deg), dy = r * Math.sin(layer._posAngle * deg), arc = "a" + r + "," + r2 + " " + layer._posAngle + " 1,0 ";
       var d2 = layer._empty() ? "M0 0" : "M" + (p.x - dx) + "," + (p.y - dy) + arc + dx * 2 + "," + dy * 2 + " " + arc + -dx * 2 + "," + -dy * 2 + " ";
@@ -29760,16 +29747,16 @@
       fill: true
     },
     initialize: function(latlng, options2) {
-      import_leaflet5.Util.setOptions(this, options2);
+      import_leaflet3.Util.setOptions(this, options2);
       var deg = Math.PI / 180, cpa = Math.cos(this.options.posAngle * deg), spa = Math.sin(this.options.posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this.options.majAxis * this.options.majAxis, b2 = this.options.minAxis * this.options.minAxis;
-      this._latlng = (0, import_leaflet5.latLng)(latlng);
+      this._latlng = (0, import_leaflet3.latLng)(latlng);
       this._mLat2 = a2 * cpa2 + b2 * spa2;
       this._mLng2 = a2 * spa2 + b2 * cpa2;
       this._mLatLng = (a2 - b2) * cpa * spa;
     },
     getBounds: function() {
       var half = [this._limX, this._limY];
-      return new import_leaflet5.LatLngBounds(
+      return new import_leaflet3.LatLngBounds(
         this._map.layerPointToLatLng(this._point.subtract(half)),
         this._map.layerPointToLatLng(this._point.add(half))
       );
@@ -29778,8 +29765,8 @@
       var map2 = this._map, crs = map2.options.crs;
       this._point = map2.latLngToLayerPoint(this._latlng);
       if (!this._majAxis1) {
-        var lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet5.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
-          (0, import_leaflet5.latLng)(
+        var lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet3.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
+          (0, import_leaflet3.latLng)(
             lat,
             lng + dl * 1 / (clat > dl ? clat : dl)
           )
@@ -29813,8 +29800,37 @@
     return new Ellipse(latlng, options2);
   };
 
-  // js/catalog/FIRST.js
-  var FIRST = (0, import_leaflet6.extend)({}, Catalog, {
+  // js/catalog/builtin.js
+  var abell = new Catalog({
+    service: "Vizier@CDS",
+    name: "Abell clusters",
+    className: "logo-catalog-vizier",
+    attribution: "Rich Clusters of Galaxies (Abell et al. 1989) ",
+    color: "orange",
+    maglim: 30,
+    regionType: "box",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=VII/110A&-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10",
+    properties: ["m<sub>10</sub>", "Richness", "D<sub>class</sub>"],
+    units: ["", "", ""],
+    objectURL: "/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2"
+  });
+  var allWISE = new Catalog({
+    name: "AllWISE",
+    attribution: "AllWISE Data Release (Cutri et al. 2013)",
+    color: "red",
+    maglim: 18,
+    regionType: "box",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=II/328/allwise&-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag",
+    properties: [
+      "W1<sub>mag</sub> (3.4\xB5m)",
+      "W2<sub>mag</sub> (4.6\xB5m)",
+      "W3<sub>mag</sub> (12\xB5m)",
+      "W4<sub>mag</sub> (22\xB5m)"
+    ],
+    units: ["", "", "", ""],
+    objectURL: "/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2"
+  });
+  var first = new Catalog({
     service: "Vizier@CDS",
     name: "FIRST",
     className: "logo-catalog-vizier",
@@ -29822,10 +29838,10 @@
     color: "blue",
     maglim: 30,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=VIII/92/first14&-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/92/first14&-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak",
     properties: ["F<sub>peak</sub>(1.4GHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
     units: ["mJy", "&#8243;", "&#8243;", "&#176;"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2",
+    objectURL: "/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2",
     draw: function(feature, latlng) {
       return ellipse(latlng, {
         majAxis: feature.properties.items[1] / 7200,
@@ -29834,42 +29850,7 @@
       });
     }
   });
-
-  // js/catalog/Gaia.js
-  var import_leaflet7 = __toESM(require_leaflet_src());
-  var Gaia_DR1 = (0, import_leaflet7.extend)({}, Catalog, {
-    service: "Vizier@CDS",
-    name: "Gaia DR1",
-    className: "logo-catalog-vizier",
-    attribution: "First Gaia Data Release (2016)",
-    color: "green",
-    maglim: 21,
-    regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/337/gaia&-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>",
-    properties: ["G", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
-    units: ["", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/337/gaia&-c={ra},{dec},eq=J2000&-c.rs=0.1"
-  });
-  var Gaia_DR2 = (0, import_leaflet7.extend)({}, Catalog, {
-    service: "Vizier@CDS",
-    name: "Gaia DR2",
-    className: "logo-catalog-vizier",
-    attribution: "Second Gaia Data Release (2018)",
-    color: "green",
-    maglim: 21,
-    regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/345/gaia2&-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag",
-    properties: [
-      "G",
-      "B<sub>P</sub>",
-      "R<sub>P</sub>",
-      "&#956;<sub>&#593;</sub> cos &#948;",
-      "&#956;<sub>&#948;</sub>"
-    ],
-    units: ["", "", "", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/345/gaia2&-c={ra},{dec},eq=J2000&-c.rs=0.1"
-  });
-  var Gaia_DR3 = (0, import_leaflet7.extend)({}, Catalog, {
+  var gaiaDR3 = new Catalog({
     service: "Vizier@CDS",
     name: "Gaia DR3",
     className: "logo-catalog-vizier",
@@ -29877,7 +29858,7 @@
     color: "green",
     maglim: 21,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/355/gaiadr3&-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=I/355/gaiadr3&-out=Source,RA_ICRS,DE_ICRS,Gmag,BPmag,RPmag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag",
     properties: [
       "G",
       "B<sub>P</sub>",
@@ -29886,12 +29867,9 @@
       "&#956;<sub>&#948;</sub>"
     ],
     units: ["", "", "", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+    objectURL: "/VizieR-5?-source=I/355/gaiadr3&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
-
-  // js/catalog/GALEX.js
-  var import_leaflet8 = __toESM(require_leaflet_src());
-  var GALEX_AIS = (0, import_leaflet8.extend)({}, Catalog, {
+  var galexAIS = new Catalog({
     service: "Vizier@CDS",
     name: "GALEX AIS",
     className: "logo-catalog-vizier",
@@ -29899,15 +29877,12 @@
     color: "magenta",
     maglim: 21,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/312/ais&-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=II/312/ais&-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV",
     properties: ["FUV<sub>AB</sub>", "NUV<sub>AB</sub>"],
     units: ["", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2"
+    objectURL: "/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2"
   });
-
-  // js/catalog/GLEAM.js
-  var import_leaflet9 = __toESM(require_leaflet_src());
-  var GLEAM = (0, import_leaflet9.extend)({}, Catalog, {
+  var gleam = new Catalog({
     service: "Vizier@CDS",
     name: "GLEAM",
     className: "logo-catalog-vizier",
@@ -29915,10 +29890,10 @@
     color: "blue",
     maglim: 30,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide",
     properties: ["F<sub>int</sub>(170-231MHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
     units: ["Jy", "&#8243;", "&#8243;", "&#176;"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2",
+    objectURL: "/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2",
     draw: function(feature, latlng) {
       return ellipse(latlng, {
         majAxis: feature.properties.items[1] / 3600,
@@ -29927,10 +29902,7 @@
       });
     }
   });
-
-  // js/catalog/NVSS.js
-  var import_leaflet10 = __toESM(require_leaflet_src());
-  var NVSS = (0, import_leaflet10.extend)({}, Catalog, {
+  var nvss = new Catalog({
     service: "Vizier@CDS",
     name: "NVSS",
     className: "logo-catalog-vizier",
@@ -29938,10 +29910,10 @@
     color: "magenta",
     maglim: 30,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4",
     properties: ["S<sub>1.4GHz</sub>", "Major axis", "Minor axis", "Position angle"],
     units: ["mJy", "&#8243;", "&#8243;", "&#176;"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2",
+    objectURL: "/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2",
     draw: function(feature, latlng) {
       return ellipse(latlng, {
         majAxis: feature.properties.items[1] / 7200,
@@ -29950,10 +29922,7 @@
       });
     }
   });
-
-  // js/catalog/PanSTARRS.js
-  var import_leaflet11 = __toESM(require_leaflet_src());
-  var PanSTARRS1 = (0, import_leaflet11.extend)({}, Catalog, {
+  var panstarrs1 = new Catalog({
     service: "Vizier@CDS",
     name: "PanSTARRS 1",
     className: "logo-catalog-vizier",
@@ -29961,15 +29930,12 @@
     color: "yellow",
     maglim: 24,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/349&-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=II/349&-out=objID,RAJ2000,DEJ2000,gKmag,rKmag,iKmag,zKmag,yKmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["g", "r", "i", "z", "y"],
     units: ["", "", "", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+    objectURL: "/VizieR-5?-source=II/349/ps1&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
-
-  // js/catalog/PPMXL.js
-  var import_leaflet12 = __toESM(require_leaflet_src());
-  var PPMXL = (0, import_leaflet12.extend)({}, Catalog, {
+  var ppmXL = new Catalog({
     service: "Vizier@CDS",
     name: "PPMXL",
     className: "logo-catalog-vizier",
@@ -29977,7 +29943,7 @@
     color: "green",
     maglim: 20,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/317&-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=I/317&-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
     properties: [
       "J",
       "H",
@@ -29991,12 +29957,9 @@
       "&#956;<sub>&#948;</sub>"
     ],
     units: ["", "", "", "", "", "", "", "", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01"
+    objectURL: "/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01"
   });
-
-  // js/catalog/SDSS.js
-  var import_leaflet13 = __toESM(require_leaflet_src());
-  var SDSS = (0, import_leaflet13.extend)({}, Catalog, {
+  var sdss = new Catalog({
     service: "Vizier@CDS",
     name: "SDSS release 12",
     className: "logo-catalog-vizier",
@@ -30004,15 +29967,12 @@
     color: "yellow",
     maglim: 25,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=V/147&-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=V/147&-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag",
     properties: ["u", "g", "r", "i", "z"],
     units: ["", "", "", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+    objectURL: "/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
-
-  // js/catalog/TGSS.js
-  var import_leaflet14 = __toESM(require_leaflet_src());
-  var TGSS = (0, import_leaflet14.extend)({}, Catalog, {
+  var tgss = new Catalog({
     service: "Vizier@CDS",
     name: "TGSS",
     className: "logo-catalog-vizier",
@@ -30020,10 +29980,10 @@
     color: "blue",
     maglim: 30,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal",
     properties: ["F<sub>peak</sub>(150MHz)", "Major axis FWHM", "Minor axis FWHM", "Position angle"],
     units: ["mJy", "&#8243;", "&#8243;", "&#176;"],
-    objurl: Catalog.vizierURL + "/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2",
+    objectURL: "/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2",
     draw: function(feature, latlng) {
       return ellipse(latlng, {
         majAxis: feature.properties.items[1] / 7200,
@@ -30032,10 +29992,7 @@
       });
     }
   });
-
-  // js/catalog/TwoMASS.js
-  var import_leaflet15 = __toESM(require_leaflet_src());
-  var TwoMASS = (0, import_leaflet15.extend)({}, Catalog, {
+  var twomass = new Catalog({
     service: "Vizier@CDS",
     name: "2MASS",
     className: "logo-catalog-vizier",
@@ -30043,15 +30000,12 @@
     color: "red",
     maglim: 17,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=II/246&-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=II/246&-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag",
     properties: ["J", "H", "K"],
     units: ["", "", ""],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+    objectURL: "/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
-
-  // js/catalog/URAT.js
-  var import_leaflet16 = __toESM(require_leaflet_src());
-  var URAT_1 = (0, import_leaflet16.extend)({}, Catalog, {
+  var urat1 = new Catalog({
     service: "Vizier@CDS",
     name: "URAT1",
     className: "logo-catalog-vizier",
@@ -30059,10 +30013,10 @@
     color: "yellow",
     maglim: 17,
     regionType: "box",
-    url: Catalog.vizierURL + "/asu-tsv?&-mime=csv&-source=I/329&-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=I/329&-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag",
     properties: ["f<sub>mag</sub>", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
     units: ["", "mas/yr", "mas/yr"],
-    objurl: Catalog.vizierURL + "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+    objectURL: "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1"
   });
 
   // js/control/index.js
@@ -30097,8 +30051,8 @@
   });
 
   // js/control/logo.js
-  var import_leaflet17 = __toESM(require_leaflet_src());
-  import_leaflet17.Control.Attribution.include({
+  var import_leaflet5 = __toESM(require_leaflet_src());
+  import_leaflet5.Control.Attribution.include({
     _update: function() {
       if (!this._map) {
         return;
@@ -30119,7 +30073,7 @@
       this._container.innerHTML = prefixAndAttribs.join(" &#169; ");
     }
   });
-  import_leaflet17.Map.addInitHook(function() {
+  import_leaflet5.Map.addInitHook(function() {
     if (this.options.visiomaticLogo !== false && this.options.attributionControl) {
       this.attributionControl.setPrefix(
         '<a id="logo-visiomatic" class="leaflet-control-attribution-logo"href="http://visiomatic.org">&nbsp;</a>'
@@ -30128,7 +30082,7 @@
   });
 
   // js/control/CatalogUI.js
-  var import_leaflet23 = __toESM(require_leaflet_src());
+  var import_leaflet11 = __toESM(require_leaflet_src());
 
   // js/util/index.js
   var util_exports = {};
@@ -30139,7 +30093,7 @@
   });
 
   // js/util/RGB.js
-  var import_leaflet18 = __toESM(require_leaflet_src());
+  var import_leaflet6 = __toESM(require_leaflet_src());
   var RGB = function(r, g, b) {
     this.r = r;
     this.g = g;
@@ -30184,7 +30138,7 @@
         (bigint & 255) / 255
       );
     }
-    if (import_leaflet18.Util.isArray(r)) {
+    if (import_leaflet6.Util.isArray(r)) {
       return new RGB(r[0], r[1], r[2]);
     }
     if (r === void 0 || r === null) {
@@ -30194,7 +30148,7 @@
   };
 
   // js/util/VUtil.js
-  var import_leaflet19 = __toESM(require_leaflet_src());
+  var import_leaflet7 = __toESM(require_leaflet_src());
   var VUtil = {
     REG_PDEC: "(\\d+\\.\\d*)",
     REG_FLOAT: "([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)",
@@ -30277,9 +30231,9 @@
       }
     },
     flashElement: function(elem) {
-      import_leaflet19.DomUtil.addClass(elem, "leaflet-control-flash");
+      import_leaflet7.DomUtil.addClass(elem, "leaflet-control-flash");
       setTimeout(function() {
-        import_leaflet19.DomUtil.removeClass(elem, "leaflet-control-flash");
+        import_leaflet7.DomUtil.removeClass(elem, "leaflet-control-flash");
       }, 400);
     },
     readFITSKey: function(keyword, str2) {
@@ -30328,7 +30282,7 @@
       result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str2);
       if (result && result.length >= 8) {
         var sgn = Number(result[4] + "1");
-        return (0, import_leaflet19.latLng)(
+        return (0, import_leaflet7.latLng)(
           sgn * (Number(result[5]) + Number(result[6]) / 60 + Number(result[7]) / 3600),
           Number(result[1]) * 15 + Number(result[2]) / 4 + Number(result[3]) / 240
         );
@@ -30355,19 +30309,19 @@
   // js/control/UI.js
   var import_jquery = __toESM(require_jquery());
   var import_spectrum_colorpicker = __toESM(require_spectrum());
-  var import_leaflet22 = __toESM(require_leaflet_src());
+  var import_leaflet10 = __toESM(require_leaflet_src());
 
   // js/control/widget/FlipSwitch.js
-  var import_leaflet20 = __toESM(require_leaflet_src());
-  var FlipSwitch = import_leaflet20.Evented.extend({
+  var import_leaflet8 = __toESM(require_leaflet_src());
+  var FlipSwitch = import_leaflet8.Evented.extend({
     options: {
       checked: false,
       title: "Click to switch",
       className: "leaflet-flipswitch"
     },
     initialize: function(parent, options2) {
-      options2 = import_leaflet20.Util.setOptions(this, options2);
-      var _this = this, className = options2.className, button = import_leaflet20.DomUtil.create("div", className, parent), input = this._input = L.DomUtil.create("input", className, button), label = import_leaflet20.DomUtil.create("label", className, button);
+      options2 = import_leaflet8.Util.setOptions(this, options2);
+      var _this = this, className = options2.className, button = import_leaflet8.DomUtil.create("div", className, parent), input = this._input = L.DomUtil.create("input", className, button), label = import_leaflet8.DomUtil.create("label", className, button);
       input.type = "checkbox";
       input.name = options2.className;
       input.checked = options2.checked;
@@ -30375,10 +30329,10 @@
       if (options2.title) {
         label.title = options2.title;
       }
-      import_leaflet20.DomUtil.create("span", className + "-inner", label);
-      import_leaflet20.DomUtil.create("span", className + "-button", label);
-      import_leaflet20.DomEvent.disableClickPropagation(button).disableScrollPropagation(button);
-      import_leaflet20.DomEvent.on(input, "change", function() {
+      import_leaflet8.DomUtil.create("span", className + "-inner", label);
+      import_leaflet8.DomUtil.create("span", className + "-button", label);
+      import_leaflet8.DomEvent.disableClickPropagation(button).disableScrollPropagation(button);
+      import_leaflet8.DomEvent.on(input, "change", function() {
         this.fire("change");
       }, this);
       return button;
@@ -30394,8 +30348,8 @@
   });
 
   // js/control/widget/Spinbox.js
-  var import_leaflet21 = __toESM(require_leaflet_src());
-  var Spinbox = import_leaflet21.Evented.extend({
+  var import_leaflet9 = __toESM(require_leaflet_src());
+  var Spinbox = import_leaflet9.Evented.extend({
     options: {
       dmin: void 0,
       dmax: void 0,
@@ -30408,7 +30362,7 @@
       className: "leaflet-spinbox"
     },
     initialize: function(parent, options2) {
-      options2 = import_leaflet21.Util.setOptions(this, options2);
+      options2 = import_leaflet9.Util.setOptions(this, options2);
       var _this = this, drag = this._drag = {
         startEvent: "touchstart mousedown",
         stopEvent: "touchend mouseup mouseout touchcancel",
@@ -30422,10 +30376,10 @@
         cnt: 0,
         step: options2.step,
         prec: this._prec(options2.step)
-      }, wrap = this._wrap = import_leaflet21.DomUtil.create("div", options2.className, parent), input = this._input = import_leaflet21.DomUtil.create("input", options2.className + "-input", wrap), down = this._down = import_leaflet21.DomUtil.create("div", options2.className + "-down", wrap), up = this._up = import_leaflet21.DomUtil.create("div", options2.className + "-up", wrap);
+      }, wrap = this._wrap = import_leaflet9.DomUtil.create("div", options2.className, parent), input = this._input = import_leaflet9.DomUtil.create("input", options2.className + "-input", wrap), down = this._down = import_leaflet9.DomUtil.create("div", options2.className + "-down", wrap), up = this._up = import_leaflet9.DomUtil.create("div", options2.className + "-up", wrap);
       input.type = "number";
       input.step = 0.1;
-      import_leaflet21.DomEvent.disableClickPropagation(wrap).disableScrollPropagation(wrap);
+      import_leaflet9.DomEvent.disableClickPropagation(wrap).disableScrollPropagation(wrap);
       if (input.disabled === true) {
         options2.disabled = true;
       }
@@ -30445,20 +30399,20 @@
       input.title = options2.title;
       down.title = "Decrease number by " + options2.step;
       up.title = "Increase number by " + options2.step;
-      import_leaflet21.DomEvent.on(this._input, "change", function() {
+      import_leaflet9.DomEvent.on(this._input, "change", function() {
         this.fire("change");
       }, this);
       if (options2.repButton === false) {
-        import_leaflet21.DomEvent.on(down, options2.clickEvent, function(e) {
+        import_leaflet9.DomEvent.on(down, options2.clickEvent, function(e) {
           e.preventDefault();
           this._offset(e.currentTarget, -1);
         }, this);
-        import_leaflet21.DomEvent.on(up, options2.clickEvent, function(e) {
+        import_leaflet9.DomEvent.on(up, options2.clickEvent, function(e) {
           e.preventDefault();
           this._offset(e.currentTarget, 1);
         }, this);
       } else {
-        import_leaflet21.DomEvent.on(down, drag.startEvent, function(e) {
+        import_leaflet9.DomEvent.on(down, drag.startEvent, function(e) {
           input.blur();
           drag.move = true;
           drag.cnt = 0;
@@ -30473,7 +30427,7 @@
             }, 500);
           }
         }, this);
-        import_leaflet21.DomEvent.on(up, drag.startEvent, function(e) {
+        import_leaflet9.DomEvent.on(up, drag.startEvent, function(e) {
           input.blur();
           drag.move = true;
           drag.cnt = 0;
@@ -30488,7 +30442,7 @@
             }, 500);
           }
         }, this);
-        import_leaflet21.DomEvent.on(down, drag.stopEvent, function(e) {
+        import_leaflet9.DomEvent.on(down, drag.stopEvent, function(e) {
           if (drag.move) {
             e.preventDefault();
             clearTimeout(this.runButton);
@@ -30499,7 +30453,7 @@
             }
           }
         }, this);
-        import_leaflet21.DomEvent.on(up, drag.stopEvent, function(e) {
+        import_leaflet9.DomEvent.on(up, drag.stopEvent, function(e) {
           if (drag.move) {
             e.preventDefault();
             clearTimeout(this.runButton);
@@ -30536,17 +30490,17 @@
       var cname = "disabled";
       this._input.disabled = true;
       this._input.blur();
-      import_leaflet21.DomUtil.addClass(this._wrap, cname);
-      import_leaflet21.DomUtil.addClass(this._down, cname);
-      import_leaflet21.DomUtil.addClass(this._up, cname);
+      import_leaflet9.DomUtil.addClass(this._wrap, cname);
+      import_leaflet9.DomUtil.addClass(this._down, cname);
+      import_leaflet9.DomUtil.addClass(this._up, cname);
       this.options.disabled = true;
     },
     enable: function() {
       var cname = "disabled";
       this._input.disabled = false;
-      import_leaflet21.DomUtil.removeClass(this._wrap, cname);
-      import_leaflet21.DomUtil.removeClass(this._down, cname);
-      import_leaflet21.DomUtil.removeClass(this._up, cname);
+      import_leaflet9.DomUtil.removeClass(this._wrap, cname);
+      import_leaflet9.DomUtil.removeClass(this._down, cname);
+      import_leaflet9.DomUtil.removeClass(this._up, cname);
       this.options.disabled = false;
     },
     _sboxRun: function() {
@@ -30603,14 +30557,14 @@
 
   // js/control/UI.js
   window.$ = window.jQuery = import_jquery.default;
-  var UI = import_leaflet22.Control.extend({
+  var UI = import_leaflet10.Control.extend({
     options: {
       title: "a control related to VisiOmatic",
       collapsed: true,
       position: "topleft"
     },
     initialize: function(baseLayers, options2) {
-      import_leaflet22.Util.setOptions(this, options2);
+      import_leaflet10.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-image";
       this._layers = baseLayers;
@@ -30619,7 +30573,7 @@
       if (dest._sidebar) {
         this._sidebar = dest;
         this._map = dest._map;
-        this._dialog = import_leaflet22.DomUtil.create("div", this._className + "-dialog");
+        this._dialog = import_leaflet10.DomUtil.create("div", this._className + "-dialog");
         dest.addTab(
           this._id,
           this._className,
@@ -30630,22 +30584,22 @@
         this._map.on("layeradd", this._checkVisiomatic, this);
         return dest;
       } else {
-        return import_leaflet22.Control.prototype.addTo.call(this, dest);
+        return import_leaflet10.Control.prototype.addTo.call(this, dest);
       }
     },
     onAdd: function(map2) {
-      const className = this._className, id = this._id, container = this._container = import_leaflet22.DomUtil.create(
+      const className = this._className, id = this._id, container = this._container = import_leaflet10.DomUtil.create(
         "div",
         className + " leaflet-bar"
       );
       container.setAttribute("aria-haspopup", true);
-      import_leaflet22.DomEvent.disableClickPropagation(container).disableScrollPropagation(container);
-      this._dialog = import_leaflet22.DomUtil.create("div", className + "-dialog", container);
+      import_leaflet10.DomEvent.disableClickPropagation(container).disableScrollPropagation(container);
+      this._dialog = import_leaflet10.DomUtil.create("div", className + "-dialog", container);
       if (this.options.collapsed) {
-        if (!import_leaflet22.Browser.android) {
-          import_leaflet22.DomEvent.on(container, "mouseover", this._expand, this).on(container, "mouseout", this._collapse, this);
+        if (!import_leaflet10.Browser.android) {
+          import_leaflet10.DomEvent.on(container, "mouseover", this._expand, this).on(container, "mouseout", this._collapse, this);
         }
-        const toggle = this._toggle = import_leaflet22.DomUtil.create(
+        const toggle = this._toggle = import_leaflet10.DomUtil.create(
           "a",
           className + "-toggle leaflet-bar",
           container
@@ -30653,10 +30607,10 @@
         toggle.href = "#";
         toggle.id = id + "-toggle";
         toggle.title = this.options.title;
-        if (import_leaflet22.Browser.touch) {
-          import_leaflet22.DomEvent.on(toggle, "click", import_leaflet22.DomEvent.stop, this).on(toggle, "click", this._expand, this);
+        if (import_leaflet10.Browser.touch) {
+          import_leaflet10.DomEvent.on(toggle, "click", import_leaflet10.DomEvent.stop, this).on(toggle, "click", this._expand, this);
         } else {
-          import_leaflet22.DomEvent.on(toggle, "focus", this._expand, this);
+          import_leaflet10.DomEvent.on(toggle, "focus", this._expand, this);
         }
         this._map.on("click", this._collapse, this);
       } else {
@@ -30685,7 +30639,7 @@
       this._initDialog();
     },
     _addDialogBox: function(id) {
-      const box = import_leaflet22.DomUtil.create(
+      const box = import_leaflet10.DomUtil.create(
         "div",
         this._className + "-box",
         this._dialog
@@ -30696,19 +30650,19 @@
       return box;
     },
     _addDialogLine: function(label, dialogBox) {
-      const line = import_leaflet22.DomUtil.create(
+      const line = import_leaflet10.DomUtil.create(
         "div",
         this._className + "-line",
         dialogBox
-      ), text = import_leaflet22.DomUtil.create("div", this._className + "-label", line);
+      ), text = import_leaflet10.DomUtil.create("div", this._className + "-label", line);
       text.innerHTML = label;
       return line;
     },
     _addDialogElement: function(line) {
-      return import_leaflet22.DomUtil.create("div", this._className + "-element", line);
+      return import_leaflet10.DomUtil.create("div", this._className + "-element", line);
     },
     _expand: function() {
-      import_leaflet22.DomUtil.addClass(this._container, this._className + "-expanded");
+      import_leaflet10.DomUtil.addClass(this._container, this._className + "-expanded");
     },
     _collapse: function() {
       this._container.className = this._container.className.replace(
@@ -30735,13 +30689,13 @@
       return void 0;
     },
     _addButton: function(className, parent, subClassName = void 0, title = void 0, fn = void 0) {
-      const button = import_leaflet22.DomUtil.create("a", className, parent);
+      const button = import_leaflet10.DomUtil.create("a", className, parent);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;
       }
       if (fn) {
-        import_leaflet22.DomEvent.on(button, "click touch", fn, this);
+        import_leaflet10.DomEvent.on(button, "click touch", fn, this);
       }
       if (title) {
         button.title = title;
@@ -30749,17 +30703,17 @@
       return button;
     },
     _addRadioButton: function(className, parent, value, checked, title = void 0, fn = void 0) {
-      const button = import_leaflet22.DomUtil.create("input", className, parent);
+      const button = import_leaflet10.DomUtil.create("input", className, parent);
       button.type = "radio";
       button.name = className;
       button.value = value;
       button.checked = checked;
       if (fn) {
-        import_leaflet22.DomEvent.on(button, "click touch", function() {
+        import_leaflet10.DomEvent.on(button, "click touch", function() {
           fn(value);
         }, this);
       }
-      const label = import_leaflet22.DomUtil.create("label", className, parent);
+      const label = import_leaflet10.DomUtil.create("label", className, parent);
       label.htmlFor = button.id = className + "-" + value;
       if (title) {
         label.title = title;
@@ -30767,7 +30721,7 @@
       return button;
     },
     _addSelectMenu: function(className, parent, items, disabled = void 0, selected = void 0, title = void 0, fn = void 0) {
-      const div = import_leaflet22.DomUtil.create("div", className, parent), select = import_leaflet22.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [];
+      const div = import_leaflet10.DomUtil.create("div", className, parent), select = import_leaflet10.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [];
       choose.text = "choose";
       choose.disabled = true;
       if (!selected || selected < 0) {
@@ -30786,20 +30740,20 @@
         }
         select.add(opt[index], null);
       }
-      if (this._container && !import_leaflet22.Browser.android && this.options.collapsed) {
-        import_leaflet22.DomEvent.on(select, "mousedown", function() {
-          import_leaflet22.DomEvent.off(this._container, "mouseout", this._collapse, this);
+      if (this._container && !import_leaflet10.Browser.android && this.options.collapsed) {
+        import_leaflet10.DomEvent.on(select, "mousedown", function() {
+          import_leaflet10.DomEvent.off(this._container, "mouseout", this._collapse, this);
           this.collapsedOff = true;
         }, this);
-        import_leaflet22.DomEvent.on(this._container, "mouseover", function() {
+        import_leaflet10.DomEvent.on(this._container, "mouseover", function() {
           if (this.collapsedOff) {
-            import_leaflet22.DomEvent.on(this._container, "mouseout", this._collapse, this);
+            import_leaflet10.DomEvent.on(this._container, "mouseout", this._collapse, this);
             this.collapsedOff = false;
           }
         }, this);
       }
       if (fn) {
-        import_leaflet22.DomEvent.on(select, "change keyup", fn, this);
+        import_leaflet10.DomEvent.on(select, "change keyup", fn, this);
       }
       if (title) {
         div.title = title;
@@ -30807,7 +30761,7 @@
       return select;
     },
     _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, title = void 0, fn = void 0) {
-      const _this = this, colpick = import_leaflet22.DomUtil.create("input", className, parent);
+      const _this = this, colpick = import_leaflet10.DomUtil.create("input", className, parent);
       colpick.type = "color";
       colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
@@ -30823,7 +30777,7 @@
           }
         }).on("show.spectrum", function() {
           if (_this._container) {
-            import_leaflet22.DomEvent.off(_this._container, "mouseout", _this._collapse);
+            import_leaflet10.DomEvent.off(_this._container, "mouseout", _this._collapse);
           }
         });
         if (fn) {
@@ -30887,9 +30841,9 @@
         return this;
       }
       if (this._layerList) {
-        import_leaflet22.DomUtil.empty(this._layerList);
+        import_leaflet10.DomUtil.empty(this._layerList);
       } else {
-        this._layerList = import_leaflet22.DomUtil.create(
+        this._layerList = import_leaflet10.DomUtil.create(
           "div",
           "visiomatic-control-layerlist",
           this._dialog
@@ -30901,20 +30855,20 @@
       return this;
     },
     _addLayerItem: function(obj) {
-      const _this = this, layerItem = import_leaflet22.DomUtil.create("div", "visiomatic-control-layer"), inputdiv = import_leaflet22.DomUtil.create(
+      const _this = this, layerItem = import_leaflet10.DomUtil.create("div", "visiomatic-control-layer"), inputdiv = import_leaflet10.DomUtil.create(
         "div",
         "visiomatic-control-layerswitch",
         layerItem
       );
       if (obj.layer.notReady) {
-        import_leaflet22.DomUtil.create("div", "visiomatic-control-activity", inputdiv);
+        import_leaflet10.DomUtil.create("div", "visiomatic-control-activity", inputdiv);
       } else {
         const checked = this._map.hasLayer(obj.layer), newInput = document.createElement("input");
         newInput.type = "checkbox";
         newInput.className = "visiomatic-control-selector";
         newInput.defaultChecked = checked;
-        newInput.layerId = import_leaflet22.Util.stamp(obj.layer);
-        import_leaflet22.DomEvent.on(newInput, "click", function() {
+        newInput.layerId = import_leaflet10.Util.stamp(obj.layer);
+        import_leaflet10.DomEvent.on(newInput, "click", function() {
           const inputs = this._layerList.getElementsByTagName("input"), inputsLen = inputs.length;
           this._handlingClick = true;
           for (i = 0; i < inputsLen; i++) {
@@ -30933,7 +30887,7 @@
         }, this);
         inputdiv.appendChild(newInput);
       }
-      const layerName = import_leaflet22.DomUtil.create(
+      const layerName = import_leaflet10.DomUtil.create(
         "div",
         "visiomatic-control-layername",
         layerItem
@@ -30957,7 +30911,7 @@
     },
     addLayer: function(layer, name, index) {
       layer.on("add remove", this._onLayerChange, this);
-      const id = import_leaflet22.Util.stamp(layer);
+      const id = import_leaflet10.Util.stamp(layer);
       this._layers[id] = {
         layer,
         name,
@@ -30967,16 +30921,16 @@
     },
     removeLayer: function(layer) {
       layer.off("add remove", this._onLayerChange, this);
-      layer.fire("trash", { index: this._layers[import_leaflet22.Util.stamp(layer)].index });
+      layer.fire("trash", { index: this._layers[import_leaflet10.Util.stamp(layer)].index });
       layer.off("trash");
-      delete this._layers[import_leaflet22.Util.stamp(layer)];
+      delete this._layers[import_leaflet10.Util.stamp(layer)];
       return this._updateLayerList();
     },
     _onLayerChange: function(e) {
       if (!this._handlingClick) {
         this._updateLayerList();
       }
-      const obj = this._layers[import_leaflet22.Util.stamp(e.target)], type = e.type === "add" ? "overlayadd" : "overlayremove";
+      const obj = this._layers[import_leaflet10.Util.stamp(e.target)], type = e.type === "add" ? "overlayadd" : "overlayremove";
       this._map.fire(type, obj);
     }
   });
@@ -30984,10 +30938,10 @@
   // js/control/CatalogUI.js
   var CatalogUI = UI.extend({
     defaultCatalogs: [
-      Gaia_DR3,
-      TwoMASS,
-      SDSS,
-      PanSTARRS1
+      gaiaDR3,
+      twomass,
+      sdss,
+      panstarrs1
     ],
     options: {
       title: "Catalog overlays",
@@ -30999,7 +30953,7 @@
       position: "topleft"
     },
     initialize: function(catalogs, options2) {
-      import_leaflet23.Util.setOptions(this, options2);
+      import_leaflet11.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-catalog";
       this._layers = {};
@@ -31032,14 +30986,14 @@
           if (className2 === void 0) {
             className2 = "";
           }
-          import_leaflet23.DomUtil.setClass(
+          import_leaflet11.DomUtil.setClass(
             catselect,
             this._className + "-select " + className2
           );
           return;
         }
       );
-      import_leaflet23.DomEvent.on(catselect, "change keyup", function() {
+      import_leaflet11.DomEvent.on(catselect, "change keyup", function() {
         const catalog = catalogs[catselect.selectedIndex - 1];
         catselect.title = catalog.attribution + " from " + catalog.service;
       }, this);
@@ -31056,7 +31010,7 @@
             catalog.color = colpick.value;
             catselect.selectedIndex = 0;
             catselect.title = "Select Catalog";
-            import_leaflet23.DomUtil.setClass(catselect, this._className + "-select ");
+            import_leaflet11.DomUtil.setClass(catselect, this._className + "-select ");
             this._getCatalog(catalog, this.options.timeOut);
           }
         }
@@ -31065,7 +31019,7 @@
     _resetDialog: function() {
     },
     _getCatalog: function(catalog, timeout) {
-      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet23.LayerGroup(null);
+      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet11.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
       if (catalog.authenticate) {
@@ -31075,14 +31029,14 @@
       }
       const lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
         wcs.celsysToEq(map2.unproject(b.min, z)),
-        wcs.celsysToEq(map2.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z)),
+        wcs.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z)),
         wcs.celsysToEq(map2.unproject(b.max, z)),
-        wcs.celsysToEq(map2.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z))
+        wcs.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z))
       ] : [
         map2.unproject(b.min, z),
-        map2.unproject((0, import_leaflet23.point)(b.min.x, b.max.y), z),
+        map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z),
         map2.unproject(b.max, z),
-        map2.unproject((0, import_leaflet23.point)(b.max.x, b.min.y), z)
+        map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z)
       ];
       var sys;
       if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
@@ -31122,7 +31076,7 @@
           dlng = 1e-4;
         }
         VUtil.requestURL(
-          import_leaflet23.Util.template(catalog.url, import_leaflet23.Util.extend({
+          import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
@@ -31151,7 +31105,7 @@
           wcs.distance(c[0], center)
         );
         VUtil.requestURL(
-          import_leaflet23.Util.template(catalog.url, import_leaflet23.Util.extend({
+          import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
@@ -31176,7 +31130,7 @@
     _loadCatalog: function(catalog, templayer, self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const wcs = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet23.geoJson)(geo, {
+          const wcs = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet11.geoJson)(geo, {
             onEachFeature: function(feature, layer) {
               if (feature.properties && feature.properties.items) {
                 layer.bindPopup(catalog.popup(feature));
@@ -31239,7 +31193,7 @@
 
   // js/control/ChannelUI.js
   var import_jquery2 = __toESM(require_jquery());
-  var import_leaflet24 = __toESM(require_leaflet_src());
+  var import_leaflet12 = __toESM(require_leaflet_src());
   window.$ = window.jQuery = import_jquery2.default;
   var ChannelUI = UI.extend({
     options: {
@@ -31250,7 +31204,7 @@
       position: "topleft"
     },
     initialize: function(options2) {
-      import_leaflet24.Util.setOptions(this, options2);
+      import_leaflet12.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-channel";
       this._sideClass = "channel";
@@ -31290,7 +31244,7 @@
       this.saveSettings(layer, this._settings, "mono");
       this.saveSettings(layer, this._settings, "color");
       this._mode = this.options.mixingMode ? this.options.mixingMode : layer.visio.mixingMode;
-      const box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet24.DomUtil.create("div", className + "-radios", modelem);
+      const box = this._addDialogBox(), modeline = this._addDialogLine("Mode:", box), modelem = this._addDialogElement(modeline), modeinput = import_leaflet12.DomUtil.create("div", className + "-radios", modelem);
       this._addRadioButton(
         className + "-radio",
         modeinput,
@@ -31358,7 +31312,7 @@
         }
       );
       const line2 = this._addDialogLine("LUT:", box), elem2 = this._addDialogElement(line2);
-      const cmapinput = import_leaflet24.DomUtil.create("div", className + "-cmaps", elem2), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
+      const cmapinput = import_leaflet12.DomUtil.create("div", className + "-cmaps", elem2), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
         _this._onInputChange(layer, "cMap", value);
       };
       for (let c in cmaps) {
@@ -31507,9 +31461,9 @@
       const visio = layer.visio, chanLabels = visio.channelLabels;
       let chanList = this._channelList, chanElems = this._channelElems, trashElems = this._trashElems;
       if (chanList) {
-        import_leaflet24.DomUtil.empty(this._channelList);
+        import_leaflet12.DomUtil.empty(this._channelList);
       } else {
-        chanList = this._channelList = import_leaflet24.DomUtil.create(
+        chanList = this._channelList = import_leaflet12.DomUtil.create(
           "div",
           this._className + "-chanlist",
           this._dialog
@@ -31520,18 +31474,18 @@
       for (let c in chanLabels) {
         var chan = parseInt(c, 10), rgb3 = visio.rgb[chan];
         if (rgb3.isOn()) {
-          var chanElem = import_leaflet24.DomUtil.create(
+          var chanElem = import_leaflet12.DomUtil.create(
             "div",
             this._className + "-channel",
             chanList
-          ), color = import_leaflet24.DomUtil.create(
+          ), color = import_leaflet12.DomUtil.create(
             "div",
             this._className + "-chancolor",
             chanElem
           );
           color.style.backgroundColor = rgb3.toStr();
           this._activateChanElem(color, layer, chan);
-          var label = import_leaflet24.DomUtil.create(
+          var label = import_leaflet12.DomUtil.create(
             "div",
             this._className + "-chanlabel",
             chanElem
@@ -31556,7 +31510,7 @@
       $(this._chanColPick).val(visio.rgb[visio.channel].toStr());
     },
     _activateTrashElem: function(trashElem, layer, channel) {
-      import_leaflet24.DomEvent.on(trashElem, "click touch", function() {
+      import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
         this._updateMix(layer, channel, rgb(0, 0, 0));
         if (layer === this._layer && channel === layer.visio.channel) {
           this._updateColPick(layer);
@@ -31564,7 +31518,7 @@
       }, this);
     },
     _activateChanElem: function(chanElem, layer, channel) {
-      import_leaflet24.DomEvent.on(chanElem, "click touch", function() {
+      import_leaflet12.DomEvent.on(chanElem, "click touch", function() {
         layer.visio.channel = channel;
         this._updateChannel(layer, channel, this._chanColPick);
       }, this);
@@ -31575,8 +31529,8 @@
   };
 
   // js/control/Coords.js
-  var import_leaflet25 = __toESM(require_leaflet_src());
-  var Coords = import_leaflet25.Control.extend({
+  var import_leaflet13 = __toESM(require_leaflet_src());
+  var Coords = import_leaflet13.Control.extend({
     options: {
       position: "topright",
       title: "Center coordinates. Click to change",
@@ -31591,7 +31545,7 @@
     },
     onAdd: function(map2) {
       var _this = this, className = "leaflet-control-coords";
-      this._wcsdialog = import_leaflet25.DomUtil.create("div", className + "-dialog");
+      this._wcsdialog = import_leaflet13.DomUtil.create("div", className + "-dialog");
       this._map.on("layeradd", this._checkVisiomatic, this);
       return this._wcsdialog;
     },
@@ -31611,12 +31565,12 @@
     _initDialog: function() {
       var _this = this, wcs = this._map.options.crs, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
       if (projections = wcs.projections) {
-        var extSelect = this._wcsext = import_leaflet25.DomUtil.create(
+        var extSelect = this._wcsext = import_leaflet13.DomUtil.create(
           "select",
           className + "-ext",
           dialog
         ), extOpt = [], extIndex;
-        import_leaflet25.DomEvent.disableClickPropagation(extSelect);
+        import_leaflet13.DomEvent.disableClickPropagation(extSelect);
         extSelect.id = "leaflet-ext-select";
         extSelect.title = "Switch detector";
         for (var p in projections) {
@@ -31629,19 +31583,19 @@
           }
           extSelect.add(extOpt[p], null);
         }
-        import_leaflet25.DomEvent.on(extSelect, "change", function(e) {
+        import_leaflet13.DomEvent.on(extSelect, "change", function(e) {
           var map2 = _this._map, wcs2 = map2.options.crs;
           map2.panTo(wcs2.unproject(
             wcs2.projections[extSelect.value].centerPnt
           ));
         });
       }
-      var coordSelect = import_leaflet25.DomUtil.create(
+      var coordSelect = import_leaflet13.DomUtil.create(
         "select",
         className + "-select",
         dialog
       ), coordOpt = [], coordIndex;
-      import_leaflet25.DomEvent.disableClickPropagation(coordSelect);
+      import_leaflet13.DomEvent.disableClickPropagation(coordSelect);
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
       coordSelect.title = "Switch coordinate system";
@@ -31655,34 +31609,34 @@
         }
         coordSelect.add(coordOpt[c], null);
       }
-      import_leaflet25.DomEvent.on(coordSelect, "change", function(e) {
+      import_leaflet13.DomEvent.on(coordSelect, "change", function(e) {
         _this._currentCoord = coordSelect.value;
         _this._onDrag();
       });
       if (projections) {
         coordSelect.style["border-radius"] = "0px";
       }
-      var input = this._wcsinput = import_leaflet25.DomUtil.create(
+      var input = this._wcsinput = import_leaflet13.DomUtil.create(
         "input",
         className + "-input",
         dialog
       );
-      import_leaflet25.DomEvent.disableClickPropagation(input);
+      import_leaflet13.DomEvent.disableClickPropagation(input);
       input.type = "text";
       input.title = this.options.title;
       if ("webkitSpeechRecognition" in window) {
         input.setAttribute("x-webkit-speech", "x-webkit-speech");
       }
       map.on("move zoomend", this._onDrag, this);
-      import_leaflet25.DomEvent.on(input, "focus", function() {
+      import_leaflet13.DomEvent.on(input, "focus", function() {
         this.setSelectionRange(0, this.value.length);
       }, input);
-      import_leaflet25.DomEvent.on(input, "change", function() {
+      import_leaflet13.DomEvent.on(input, "change", function() {
         this.panTo(this._wcsinput.value);
       }, this);
-      var clipboardbutton = import_leaflet25.DomUtil.create("div", className + "-clipboard", dialog);
+      var clipboardbutton = import_leaflet13.DomUtil.create("div", className + "-clipboard", dialog);
       clipboardbutton.title = "Copy to clipboard";
-      import_leaflet25.DomEvent.on(clipboardbutton, "click", function() {
+      import_leaflet13.DomEvent.on(clipboardbutton, "click", function() {
         var stateObj = {}, url = location.href, latlng = map.getCenter();
         VUtil.flashElement(this._wcsinput);
         url = VUtil.updateURL(
@@ -31768,12 +31722,12 @@
       }
     }
   });
-  import_leaflet25.Map.mergeOptions({
+  import_leaflet13.Map.mergeOptions({
     positionControl: false
   });
-  import_leaflet25.Map.addInitHook(function() {
+  import_leaflet13.Map.addInitHook(function() {
     if (this.options.positionControl) {
-      this.positionControl = new import_leaflet25.Control.MousePosition();
+      this.positionControl = new import_leaflet13.Control.MousePosition();
       this.addControl(this.positionControl);
     }
   });
@@ -31782,27 +31736,27 @@
   };
 
   // js/control/DocUI.js
-  var import_leaflet26 = __toESM(require_leaflet_src());
+  var import_leaflet14 = __toESM(require_leaflet_src());
   var DocUI = UI.extend({
     options: {
       title: "Documentation",
+      pdflink: void 0,
       collapsed: true,
-      position: "topleft",
-      pdflink: void 0
+      position: "topleft"
     },
     initialize: function(url, options2) {
-      import_leaflet26.Util.setOptions(this, options2);
+      import_leaflet14.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-doc";
       this._sideClass = "doc";
       this._url = url;
     },
     _initDialog: function() {
-      const _this = this, className = this._className, layer = this._layer, frameBox = import_leaflet26.DomUtil.create(
+      const _this = this, className = this._className, layer = this._layer, frameBox = import_leaflet14.DomUtil.create(
         "div",
         this._className + "-framebox",
         this._dialog
-      ), iframe = this._iframe = import_leaflet26.DomUtil.create(
+      ), iframe = this._iframe = import_leaflet14.DomUtil.create(
         "iframe",
         this._className + "-doc",
         frameBox
@@ -31812,7 +31766,7 @@
       this._navHistory = [];
       this._navPos = 0;
       this._ignore = false;
-      import_leaflet26.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
+      import_leaflet14.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
       const box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
       this._homeButton = this._addButton(
         className + "-button",
@@ -31900,8 +31854,8 @@
   };
 
   // js/control/ExtraMap.js
-  var import_leaflet27 = __toESM(require_leaflet_src());
-  var ExtraMap = import_leaflet27.Control.extend({
+  var import_leaflet15 = __toESM(require_leaflet_src());
+  var ExtraMap = import_leaflet15.Control.extend({
     options: {
       position: "topright",
       title: "Navigation mini-map. Grab to navigate",
@@ -31929,20 +31883,20 @@
       strings: { hideText: "Hide map", showText: "Show map" }
     },
     initialize: function(layer, options2) {
-      import_leaflet27.Util.setOptions(this, options2);
+      import_leaflet15.Util.setOptions(this, options2);
       this.options.aimingRectOptions.clickable = false;
       this.options.shadowRectOptions.clickable = false;
       this._layer = layer;
     },
     onAdd: function(map2) {
       this._mainMap = map2;
-      this._container = import_leaflet27.DomUtil.create("div", "leaflet-control-extramap");
+      this._container = import_leaflet15.DomUtil.create("div", "leaflet-control-extramap");
       this._container.style.width = this.options.width + "px";
       this._container.style.height = this.options.height + "px";
       this._container.title = this.options.title;
-      import_leaflet27.DomEvent.disableClickPropagation(this._container);
-      import_leaflet27.DomEvent.on(this._container, "mousewheel", import_leaflet27.DomEvent.stopPropagation);
-      this._extraMap = new import_leaflet27.Map(this._container, {
+      import_leaflet15.DomEvent.disableClickPropagation(this._container);
+      import_leaflet15.DomEvent.on(this._container, "mousewheel", import_leaflet15.DomEvent.stopPropagation);
+      this._extraMap = new import_leaflet15.Map(this._container, {
         attributionControl: false,
         zoomControl: false,
         zoomAnimation: this.options.zoomAnimation,
@@ -31958,13 +31912,13 @@
       if (this.options.toggleDisplay) {
         this._addToggleButton();
       }
-      this._mainMap.whenReady(import_leaflet27.Util.bind(function() {
-        this._extraMap.whenReady(import_leaflet27.Util.bind(function() {
-          this._aimingRect = (0, import_leaflet27.rectangle)(
+      this._mainMap.whenReady(import_leaflet15.Util.bind(function() {
+        this._extraMap.whenReady(import_leaflet15.Util.bind(function() {
+          this._aimingRect = (0, import_leaflet15.rectangle)(
             this._mainMap.getBounds(),
             this.options.aimingRectOptions
           ).addTo(this._extraMap);
-          this._shadowRect = (0, import_leaflet27.rectangle)(
+          this._shadowRect = (0, import_leaflet15.rectangle)(
             this._mainMap.getBounds(),
             this.options.shadowRectOptions
           ).addTo(this._extraMap);
@@ -31980,7 +31934,7 @@
       return this._container;
     },
     addTo: function(map2) {
-      import_leaflet27.Control.prototype.addTo.call(this, map2);
+      import_leaflet15.Control.prototype.addTo.call(this, map2);
       return this;
     },
     onRemove: function(map2) {
@@ -32007,12 +31961,12 @@
       this._toggleDisplayButton.style.height = this.options.collapsedHeight + "px";
     },
     _addButton: function(html, title, className, container, fn, context) {
-      var link = import_leaflet27.DomUtil.create("a", className, container);
+      var link = import_leaflet15.DomUtil.create("a", className, container);
       link.innerHTML = html;
       link.href = "#";
       link.title = title;
-      var stop = import_leaflet27.DomEvent.stopPropagation;
-      import_leaflet27.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet27.DomEvent.preventDefault).on(link, "click", fn, context);
+      var stop = import_leaflet15.DomEvent.stopPropagation;
+      import_leaflet15.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet15.DomEvent.preventDefault).on(link, "click", fn, context);
       return link;
     },
     _toggleDisplayButtonClicked: function() {
@@ -32075,7 +32029,7 @@
     },
     _onExtraMapMoving: function(e) {
       if (!this._mainMapMoving && this._lastAimingRectPosition) {
-        this._shadowRect.setBounds(new import_leaflet27.LatLngBounds(
+        this._shadowRect.setBounds(new import_leaflet15.LatLngBounds(
           this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
           this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
         ));
@@ -32143,12 +32097,12 @@
       return typeof value !== "undefined";
     }
   });
-  import_leaflet27.Map.mergeOptions({
+  import_leaflet15.Map.mergeOptions({
     extraMapControl: false
   });
-  import_leaflet27.Map.addInitHook(function() {
+  import_leaflet15.Map.addInitHook(function() {
     if (this.options.extraMapControl) {
-      this.extraMapControl = new import_leaflet27.Control.ExtraMap().addTo(this);
+      this.extraMapControl = new import_leaflet15.Control.ExtraMap().addTo(this);
     }
   });
   var extraMap = function(layer, options2) {
@@ -32156,7 +32110,7 @@
   };
 
   // js/control/FullScreen.js
-  var import_leaflet28 = __toESM(require_leaflet_src());
+  var import_leaflet16 = __toESM(require_leaflet_src());
   var fullScreenApi = {
     supportsFullScreen: false,
     isFullScreen: function() {
@@ -32203,7 +32157,7 @@
     };
   }
   window.fullScreenApi = fullScreenApi;
-  var FullScreen = import_leaflet28.Control.extend({
+  var FullScreen = import_leaflet16.Control.extend({
     options: {
       position: "topleft",
       title: "Toggle full screen mode",
@@ -32214,17 +32168,17 @@
       if (map2.zoomControl && !this.options.forceSeparateButton) {
         container = map2.zoomControl._container;
       } else {
-        container = import_leaflet28.DomUtil.create("div", "leaflet-bar");
+        container = import_leaflet16.DomUtil.create("div", "leaflet-bar");
       }
       this._addButton(this.options.title, className, container, this.toogleFullScreen, map2);
       return container;
     },
     _addButton: function(title, className, container, fn, context) {
-      var link = import_leaflet28.DomUtil.create("a", className, container);
+      var link = import_leaflet16.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
-      import_leaflet28.DomEvent.addListener(link, "click", import_leaflet28.DomEvent.stopPropagation).addListener(link, "click", import_leaflet28.DomEvent.preventDefault).addListener(link, "click", fn, context);
-      import_leaflet28.DomEvent.addListener(container, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.stopPropagation).addListener(container, fullScreenApi.fullScreenEventName, import_leaflet28.DomEvent.preventDefault).addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+      import_leaflet16.DomEvent.addListener(link, "click", import_leaflet16.DomEvent.stopPropagation).addListener(link, "click", import_leaflet16.DomEvent.preventDefault).addListener(link, "click", fn, context);
+      import_leaflet16.DomEvent.addListener(container, fullScreenApi.fullScreenEventName, import_leaflet16.DomEvent.stopPropagation).addListener(container, fullScreenApi.fullScreenEventName, import_leaflet16.DomEvent.preventDefault).addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
       return link;
     },
     toogleFullScreen: function() {
@@ -32234,7 +32188,7 @@
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.cancelFullScreen(container);
         } else {
-          import_leaflet28.DomUtil.removeClass(container, "leaflet-pseudo-fullscreen");
+          import_leaflet16.DomUtil.removeClass(container, "leaflet-pseudo-fullscreen");
         }
         this.invalidateSize();
         this.fire("exitFullscreen");
@@ -32244,7 +32198,7 @@
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.requestFullScreen(container);
         } else {
-          import_leaflet28.DomUtil.addClass(container, "leaflet-pseudo-fullscreen");
+          import_leaflet16.DomUtil.addClass(container, "leaflet-pseudo-fullscreen");
         }
         this.invalidateSize();
         this.fire("enterFullscreen");
@@ -32262,7 +32216,7 @@
   var fullScreen = function(options2) {
     return new FullScreen(options2);
   };
-  import_leaflet28.Map.addInitHook(function() {
+  import_leaflet16.Map.addInitHook(function() {
     if (this.options.fullScreenControl) {
       this.fullScreenControl = control.fullscreen(this.options.fullScreenControlOptions);
       this.addControl(this.fullScreenControl);
@@ -32270,7 +32224,7 @@
   });
 
   // js/control/ImageUI.js
-  var import_leaflet29 = __toESM(require_leaflet_src());
+  var import_leaflet17 = __toESM(require_leaflet_src());
   var ImageUI = UI.extend({
     options: {
       title: "Image preferences",
@@ -32278,7 +32232,7 @@
       position: "topleft"
     },
     initialize: function(options2) {
-      import_leaflet29.Util.setOptions(this, options2);
+      import_leaflet17.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-image";
       this._sideClass = "image";
@@ -32396,20 +32350,20 @@
   // js/control/ProfileUI.js
   var import_jquery3 = __toESM(require_jquery());
   var import_jqplot_exported = __toESM(require_jqplot());
-  var import_leaflet30 = __toESM(require_leaflet_src());
+  var import_leaflet18 = __toESM(require_leaflet_src());
   window.$ = window.jQuery = import_jquery3.default;
   var ProfileUI = UI.extend({
     options: {
       title: "Profile overlays",
-      collapsed: true,
-      position: "topleft",
       profile: true,
       profileColor: "#FF00FF",
       spectrum: true,
-      spectrumColor: "#A000FF"
+      spectrumColor: "#A000FF",
+      collapsed: true,
+      position: "topleft"
     },
     initialize: function(options2) {
-      import_leaflet30.Util.setOptions(this, options2);
+      import_leaflet18.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-profile";
       this._layers = {};
@@ -32436,7 +32390,7 @@
             if (this._currProfileLine) {
               this._updateLine();
             } else {
-              const map2 = _this._map, point7 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet30.polyline)(
+              const map2 = _this._map, point7 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet18.polyline)(
                 [point7, point7],
                 {
                   color: linecolpick.value,
@@ -32474,14 +32428,14 @@
           "spectrum",
           "Plot a spectrum at the current map position",
           function() {
-            const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point7 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point7, zoom), marker2 = this._spectrumMarker = (0, import_leaflet30.circleMarker)(rLatLng, {
+            const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point7 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point7, zoom), marker2 = this._spectrumMarker = (0, import_leaflet18.circleMarker)(rLatLng, {
               color: speccolpick.value,
               radius: 6,
               title: "Spectrum"
-            }).addTo(map2), popdiv = import_leaflet30.DomUtil.create(
+            }).addTo(map2), popdiv = import_leaflet18.DomUtil.create(
               "div",
               this._className + "-popup"
-            ), activity = import_leaflet30.DomUtil.create(
+            ), activity = import_leaflet18.DomUtil.create(
               "div",
               this._className + "-activity",
               popdiv
@@ -32519,7 +32473,7 @@
       const map2 = this._map, point7 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
       map2.off("drag", this._updateLine, this);
       this._currProfileLine = void 0;
-      const popdiv = import_leaflet30.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet30.DomUtil.create(
+      const popdiv = import_leaflet18.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet18.DomUtil.create(
         "div",
         this._className + "-activity",
         popdiv
@@ -32732,18 +32686,18 @@
   };
 
   // js/control/RegionUI.js
-  var import_leaflet31 = __toESM(require_leaflet_src());
+  var import_leaflet19 = __toESM(require_leaflet_src());
   var RegionUI = UI.extend({
     options: {
       title: "Region overlays",
-      collapsed: true,
-      position: "topleft",
       nativeCelsys: true,
       color: "#00FFFF",
-      timeOut: 30
+      timeOut: 30,
+      collapsed: true,
+      position: "topleft"
     },
     initialize: function(regions, options2) {
-      import_leaflet31.Util.setOptions(this, options2);
+      import_leaflet19.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-region";
       this._layers = {};
@@ -32752,7 +32706,7 @@
       this._regions = regions && regions[0] ? regions : [];
     },
     _initDialog: function() {
-      var className = this._className, regions = this._regions, box = this._addDialogBox(), line = this._addDialogLine("Regions:", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
+      const className = this._className, regions = this._regions, box = this._addDialogBox(), line = this._addDialogLine("Regions:", box), elem = this._addDialogElement(line), colpick = this._addColorPicker(
         className + "-color",
         elem,
         "region",
@@ -32760,7 +32714,7 @@
         "visiomaticRegion",
         "Click to set region color"
       );
-      var select = this._regionSelect = this._addSelectMenu(
+      const select = this._regionSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
         regions.map(function(o) {
@@ -32772,16 +32726,15 @@
         -1,
         "Select region"
       );
-      elem = this._addDialogElement(line);
       this._addButton(
         className + "-button",
-        elem,
+        this._addDialogElement(line),
         "region",
         "Display region",
         function() {
-          var index2 = select.selectedIndex - 1;
+          const index2 = select.selectedIndex - 1;
           if (index2 >= 0) {
-            var region2 = this._regions[index2];
+            const region2 = this._regions[index2];
             region2.color = colpick.value;
             select.selectedIndex = 0;
             select.opt[index2].disabled = true;
@@ -32789,9 +32742,8 @@
           }
         }
       );
-      var region;
       for (var index = 0; index < regions.length; index++) {
-        region = regions[index];
+        var region = regions[index];
         region.index = index;
         if (region.load === true) {
           if (!region.color) {
@@ -32804,7 +32756,7 @@
     _resetDialog: function() {
     },
     _getRegion: function(region, timeout) {
-      var _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet31.LayerGroup(null);
+      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet19.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, region.name);
       VUtil.requestURL(
@@ -32820,7 +32772,7 @@
     _loadRegion: function(region, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          var wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet31.geoJson)(
+          const wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet19.geoJson)(
             JSON.parse(response),
             {
               onEachFeature: function(feature, layer) {
@@ -32832,17 +32784,17 @@
               },
               coordsToLatLng: function(coords2) {
                 if (wcs.forceNativeCelsys) {
-                  var latLng11 = wcs.eqToCelsys(latLng11(coords2[1], coords2[0]));
-                  return new import_leaflet31.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
+                  const latLng11 = wcs.eqToCelsys(latLng11(coords2[1], coords2[0]));
+                  return new import_leaflet19.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
                 } else {
-                  return new import_leaflet31.LatLng(coords2[1], coords2[0], coords2[2]);
+                  return new import_leaflet19.LatLng(coords2[1], coords2[0], coords2[2]);
                 }
               },
               style: function(feature) {
                 return { color: region.color, weight: 2 };
               },
               pointToLayer: function(feature, latlng) {
-                return region.drawPoint ? region.drawPoint(feature, latlng) : (0, import_leaflet31.marker)(latlng);
+                return region.drawPoint ? region.drawPoint(feature, latlng) : (0, import_leaflet19.marker)(latlng);
               }
             }
           );
@@ -32850,7 +32802,7 @@
           geoRegion.addTo(_this._map);
           _this.removeLayer(templayer);
           _this.addLayer(geoRegion, region.name, region.index);
-          import_leaflet31.DomEvent.on(geoRegion, "trash", function(e) {
+          import_leaflet19.DomEvent.on(geoRegion, "trash", function(e) {
             if (e.index || e.index === 0) {
               _this._regionSelect.opt[e.index].disabled = false;
             }
@@ -32870,13 +32822,13 @@
   };
 
   // js/control/Reticle.js
-  var import_leaflet32 = __toESM(require_leaflet_src());
-  var Reticle = import_leaflet32.Control.extend({
+  var import_leaflet20 = __toESM(require_leaflet_src());
+  var Reticle = import_leaflet20.Control.extend({
     options: {
       position: "bottomleft"
     },
     onAdd: function(map2) {
-      var reticle2 = this._reticle = import_leaflet32.DomUtil.create("div", "leaflet-reticle", this._map._controlContainer), style = reticle2.style;
+      var reticle2 = this._reticle = import_leaflet20.DomUtil.create("div", "leaflet-reticle", this._map._controlContainer), style = reticle2.style;
       style.position = "absolute";
       style.left = "50%";
       style.bottom = "50%";
@@ -32884,7 +32836,7 @@
       style.verticalAlign = "middle";
       style.pointerEvents = "none";
       reticle2.innerHTML = "";
-      var container = this._container = import_leaflet32.DomUtil.create("div", "leaflet-dummy");
+      var container = this._container = import_leaflet20.DomUtil.create("div", "leaflet-dummy");
       return container;
     },
     onRemove: function(map2) {
@@ -32896,8 +32848,8 @@
   };
 
   // js/control/Scale.js
-  var import_leaflet33 = __toESM(require_leaflet_src());
-  var Scale = import_leaflet33.Control.Scale.extend({
+  var import_leaflet21 = __toESM(require_leaflet_src());
+  var Scale = import_leaflet21.Control.Scale.extend({
     options: {
       position: "bottomleft",
       title: "Scale",
@@ -32914,23 +32866,23 @@
     },
     _addScales: function(options2, className, container) {
       if (options2.metric) {
-        this._mScale = import_leaflet33.DomUtil.create("div", className, container);
+        this._mScale = import_leaflet21.DomUtil.create("div", className, container);
         this._mScale.title = options2.metricTitle ? options2.metricTitle : options2.title;
       }
       if (options2.imperial) {
-        this._iScale = import_leaflet33.DomUtil.create("div", className, container);
+        this._iScale = import_leaflet21.DomUtil.create("div", className, container);
         this._iScale.title = options2.imperialTitle ? options2.imperialTitle : options2.title;
       }
       if (options2.degrees) {
-        this._dScale = import_leaflet33.DomUtil.create("div", className, container);
+        this._dScale = import_leaflet21.DomUtil.create("div", className, container);
         this._dScale.title = options2.degreesTitle ? options2.degreesTitle : options2.title;
       }
       if (options2.pixels) {
-        this._pScale = import_leaflet33.DomUtil.create("div", className, container);
+        this._pScale = import_leaflet21.DomUtil.create("div", className, container);
         this._pScale.title = options2.pixelsTitle ? options2.pixelsTitle : options2.title;
       }
       if (options2.custom) {
-        this._cScale = import_leaflet33.DomUtil.create("div", className, container);
+        this._cScale = import_leaflet21.DomUtil.create("div", className, container);
         this._cScale.title = options2.customTitle ? options2.customTitle : options2.title;
       }
       this.angular = options2.metric || options2.imperial || options2.degrees;
@@ -33016,9 +32968,9 @@
   };
 
   // js/control/Sidebar.js
-  var import_leaflet34 = __toESM(require_leaflet_src());
-  var Sidebar = import_leaflet34.Control.extend({
-    includes: import_leaflet34.Evented && import_leaflet34.Evented.prototype,
+  var import_leaflet22 = __toESM(require_leaflet_src());
+  var Sidebar = import_leaflet22.Control.extend({
+    includes: import_leaflet22.Evented && import_leaflet22.Evented.prototype,
     options: {
       position: "left",
       title: "Toggle advanced menu",
@@ -33027,33 +32979,33 @@
     },
     initialize: function(options2) {
       var i2, child;
-      import_leaflet34.Util.setOptions(this, options2);
-      this._sidebar = import_leaflet34.DomUtil.create("div", "leaflet-container sidebar");
+      import_leaflet22.Util.setOptions(this, options2);
+      this._sidebar = import_leaflet22.DomUtil.create("div", "leaflet-container sidebar");
       if (this.options.collapsed) {
-        import_leaflet34.DomUtil.addClass(this._sidebar, "collapsed");
+        import_leaflet22.DomUtil.addClass(this._sidebar, "collapsed");
       } else {
-        import_leaflet34.DomUtil.addClass(this._sidebar, "closed");
+        import_leaflet22.DomUtil.addClass(this._sidebar, "closed");
       }
-      import_leaflet34.DomUtil.addClass(this._sidebar, "sidebar-" + this.options.position);
-      if (import_leaflet34.Browser.touch) {
-        import_leaflet34.DomUtil.addClass(this._sidebar, "leaflet-touch");
+      import_leaflet22.DomUtil.addClass(this._sidebar, "sidebar-" + this.options.position);
+      if (import_leaflet22.Browser.touch) {
+        import_leaflet22.DomUtil.addClass(this._sidebar, "leaflet-touch");
       }
-      this._tabs = import_leaflet34.DomUtil.create("div", "sidebar-tabs", this._sidebar);
+      this._tabs = import_leaflet22.DomUtil.create("div", "sidebar-tabs", this._sidebar);
       this._tabitems = [];
-      this._container = import_leaflet34.DomUtil.create("div", "sidebar-content", this._sidebar);
+      this._container = import_leaflet22.DomUtil.create("div", "sidebar-content", this._sidebar);
       this._panes = [];
       this._closeButtons = [];
     },
     addTo: function(map2) {
       var className = "leaflet-control-zoom-sidebar", parent = map2._controlContainer, buttonContainer;
-      import_leaflet34.DomUtil.addClass(map2._container, "sidebar-map");
+      import_leaflet22.DomUtil.addClass(map2._container, "sidebar-map");
       parent.insertBefore(this._sidebar, parent.firstChild);
-      import_leaflet34.DomEvent.disableClickPropagation(this._sidebar).disableScrollPropagation(this._sidebar);
+      import_leaflet22.DomEvent.disableClickPropagation(this._sidebar).disableScrollPropagation(this._sidebar);
       this._map = map2;
       if (map2.zoomControl && !this.options.forceSeparateButton) {
         buttonContainer = map2.zoomControl._container;
       } else {
-        buttonContainer = import_leaflet34.DomUtil.create("div", "leaflet-bar");
+        buttonContainer = import_leaflet22.DomUtil.create("div", "leaflet-bar");
       }
       this._toggleButton = this._addButton(
         this.options.title,
@@ -33063,26 +33015,26 @@
       return this;
     },
     addTabList: function() {
-      this._tablist = import_leaflet34.DomUtil.create("ul", "", this._tabs);
+      this._tablist = import_leaflet22.DomUtil.create("ul", "", this._tabs);
       this._tablist.setAttribute("role", "tablist");
       return this._tablist;
     },
     addTab: function(id, tabClass, title, content, sideClass) {
-      var tablist = this._tablist ? this._tablist : this.addTabList(), item = import_leaflet34.DomUtil.create("li", "", tablist), button = import_leaflet34.DomUtil.create("a", tabClass, item);
+      var tablist = this._tablist ? this._tablist : this.addTabList(), item = import_leaflet22.DomUtil.create("li", "", tablist), button = import_leaflet22.DomUtil.create("a", tabClass, item);
       item.setAttribute("role", "tab");
       item._sidebar = this;
       button.href = "#" + id;
       button.id = id + "-toggle";
       button.title = title;
-      import_leaflet34.DomEvent.on(button, "click", L.DomEvent.preventDefault);
-      import_leaflet34.DomEvent.on(button, "click", this._onClick, item);
+      import_leaflet22.DomEvent.on(button, "click", L.DomEvent.preventDefault);
+      import_leaflet22.DomEvent.on(button, "click", this._onClick, item);
       item.sideClass = sideClass;
       this._tabitems.push(item);
-      var pane = import_leaflet34.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet34.DomUtil.create("h1", "sidebar-header", pane);
+      var pane = import_leaflet22.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet22.DomUtil.create("h1", "sidebar-header", pane);
       header.innerHTML = title;
-      var closeButton = import_leaflet34.DomUtil.create("div", "sidebar-close", header);
+      var closeButton = import_leaflet22.DomUtil.create("div", "sidebar-close", header);
       this._closeButtons.push(closeButton);
-      import_leaflet34.DomEvent.on(closeButton, "click", this._onCloseClick, this);
+      import_leaflet22.DomEvent.on(closeButton, "click", this._onCloseClick, this);
       pane.id = id;
       pane.sideClass = sideClass;
       pane.appendChild(content);
@@ -33094,11 +33046,11 @@
       this._map = null;
       for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
         child = this._tabitems[i2];
-        import_leaflet34.DomEvent.off(child.querySelector("a"), "click", this._onClick);
+        import_leaflet22.DomEvent.off(child.querySelector("a"), "click", this._onClick);
       }
       for (i2 = this._closeButtons.length - 1; i2 >= 0; i2--) {
         child = this._closeButtons[i2];
-        import_leaflet34.DomEvent.off(child, "click", this._onCloseClick, this);
+        import_leaflet22.DomEvent.off(child, "click", this._onCloseClick, this);
       }
       return this;
     },
@@ -33107,66 +33059,66 @@
       for (i2 = this._panes.length - 1; i2 >= 0; i2--) {
         child = this._panes[i2];
         if (child.id === id) {
-          import_leaflet34.DomUtil.addClass(child, "active");
+          import_leaflet22.DomUtil.addClass(child, "active");
           if (child.sideClass) {
-            import_leaflet34.DomUtil.addClass(this._sidebar, child.sideClass);
+            import_leaflet22.DomUtil.addClass(this._sidebar, child.sideClass);
           }
-        } else if (import_leaflet34.DomUtil.hasClass(child, "active")) {
-          import_leaflet34.DomUtil.removeClass(child, "active");
+        } else if (import_leaflet22.DomUtil.hasClass(child, "active")) {
+          import_leaflet22.DomUtil.removeClass(child, "active");
           if (child.sideClass) {
-            import_leaflet34.DomUtil.removeClass(this._sidebar, child.sideClass);
+            import_leaflet22.DomUtil.removeClass(this._sidebar, child.sideClass);
           }
         }
       }
       for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
         child = this._tabitems[i2];
         if (child.querySelector("a").hash === "#" + id) {
-          import_leaflet34.DomUtil.addClass(child, "active");
-        } else if (import_leaflet34.DomUtil.hasClass(child, "active")) {
-          import_leaflet34.DomUtil.removeClass(child, "active");
+          import_leaflet22.DomUtil.addClass(child, "active");
+        } else if (import_leaflet22.DomUtil.hasClass(child, "active")) {
+          import_leaflet22.DomUtil.removeClass(child, "active");
         }
       }
       this.fire("content", { id });
-      if (import_leaflet34.DomUtil.hasClass(this._sidebar, "closed")) {
+      if (import_leaflet22.DomUtil.hasClass(this._sidebar, "closed")) {
         this.fire("opening");
-        import_leaflet34.DomUtil.removeClass(this._sidebar, "closed");
+        import_leaflet22.DomUtil.removeClass(this._sidebar, "closed");
       }
       return this;
     },
     close: function() {
       for (var i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
         var child = this._tabitems[i2];
-        if (import_leaflet34.DomUtil.hasClass(child, "active")) {
-          import_leaflet34.DomUtil.removeClass(child, "active");
+        if (import_leaflet22.DomUtil.hasClass(child, "active")) {
+          import_leaflet22.DomUtil.removeClass(child, "active");
           if (child.sideClass) {
-            import_leaflet34.DomUtil.removeClass(this._sidebar, child.sideClass);
+            import_leaflet22.DomUtil.removeClass(this._sidebar, child.sideClass);
           }
         }
       }
-      if (!import_leaflet34.DomUtil.hasClass(this._sidebar, "closed")) {
+      if (!import_leaflet22.DomUtil.hasClass(this._sidebar, "closed")) {
         this.fire("closing");
-        import_leaflet34.DomUtil.addClass(this._sidebar, "closed");
+        import_leaflet22.DomUtil.addClass(this._sidebar, "closed");
       }
       return this;
     },
     toggle: function() {
       this.close();
-      if (import_leaflet34.DomUtil.hasClass(this._sidebar, "collapsed")) {
-        import_leaflet34.DomUtil.addClass(this._sidebar, "closed");
+      if (import_leaflet22.DomUtil.hasClass(this._sidebar, "collapsed")) {
+        import_leaflet22.DomUtil.addClass(this._sidebar, "closed");
         this.fire("expanding");
-        import_leaflet34.DomUtil.removeClass(this._sidebar, "collapsed");
-        import_leaflet34.DomUtil.removeClass(this._toggleButton, "collapsed");
+        import_leaflet22.DomUtil.removeClass(this._sidebar, "collapsed");
+        import_leaflet22.DomUtil.removeClass(this._toggleButton, "collapsed");
       } else {
-        import_leaflet34.DomUtil.removeClass(this._sidebar, "closed");
+        import_leaflet22.DomUtil.removeClass(this._sidebar, "closed");
         this.fire("collapsing");
-        import_leaflet34.DomUtil.addClass(this._sidebar, "collapsed");
-        import_leaflet34.DomUtil.addClass(this._toggleButton, "collapsed");
+        import_leaflet22.DomUtil.addClass(this._sidebar, "collapsed");
+        import_leaflet22.DomUtil.addClass(this._toggleButton, "collapsed");
       }
     },
     _onClick: function() {
-      if (import_leaflet34.DomUtil.hasClass(this, "active")) {
+      if (import_leaflet22.DomUtil.hasClass(this, "active")) {
         this._sidebar.close();
-      } else if (!import_leaflet34.DomUtil.hasClass(this, "disabled")) {
+      } else if (!import_leaflet22.DomUtil.hasClass(this, "disabled")) {
         this._sidebar.open(this.querySelector("a").hash.slice(1));
       }
     },
@@ -33174,10 +33126,10 @@
       this.close();
     },
     _addButton: function(title, className, container) {
-      var link = import_leaflet34.DomUtil.create("a", className, container);
+      var link = import_leaflet22.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
-      import_leaflet34.DomEvent.addListener(link, "click", import_leaflet34.DomEvent.stopPropagation).addListener(link, "click", import_leaflet34.DomEvent.preventDefault).addListener(link, "click", this.toggle, this);
+      import_leaflet22.DomEvent.addListener(link, "click", import_leaflet22.DomEvent.stopPropagation).addListener(link, "click", import_leaflet22.DomEvent.preventDefault).addListener(link, "click", this.toggle, this);
       return link;
     }
   });
@@ -33186,7 +33138,7 @@
   };
 
   // js/control/SnapshotUI.js
-  var import_leaflet35 = __toESM(require_leaflet_src());
+  var import_leaflet23 = __toESM(require_leaflet_src());
   var SnapshotUI = UI.extend({
     options: {
       title: "Field snapshot",
@@ -33194,7 +33146,7 @@
       position: "topleft"
     },
     initialize: function(options2) {
-      import_leaflet35.Util.setOptions(this, options2);
+      import_leaflet23.Util.setOptions(this, options2);
       this._className = "visiomatic-control";
       this._id = "visiomatic-snapshot";
       this._sideClass = "snapshot";
@@ -33276,15 +33228,15 @@
   });
 
   // js/crs/WCS.js
-  var import_leaflet41 = __toESM(require_leaflet_src());
+  var import_leaflet29 = __toESM(require_leaflet_src());
 
   // js/crs/Conical.js
-  var import_leaflet37 = __toESM(require_leaflet_src());
+  var import_leaflet25 = __toESM(require_leaflet_src());
 
   // js/crs/Projection.js
-  var import_leaflet36 = __toESM(require_leaflet_src());
-  var Projection = import_leaflet36.Class.extend({
-    bounds: (0, import_leaflet36.bounds)([-0.5, -0.5], [0.5, 0.5]),
+  var import_leaflet24 = __toESM(require_leaflet_src());
+  var Projection = import_leaflet24.Class.extend({
+    bounds: (0, import_leaflet24.bounds)([-0.5, -0.5], [0.5, 0.5]),
     defaultparam: {
       name: "",
       ctype: { x: "PIXEL", y: "PIXEL" },
@@ -33387,13 +33339,13 @@
         projparam.ctype = { x: paramsrc.ctype.x, y: paramsrc.ctype.y };
       }
       if (paramsrc.naxis) {
-        projparam.naxis = (0, import_leaflet36.point)(paramsrc.naxis);
+        projparam.naxis = (0, import_leaflet24.point)(paramsrc.naxis);
       }
       if (paramsrc.crval) {
-        projparam.crval = projparam.cpole = (0, import_leaflet36.latLng)(paramsrc.crval);
+        projparam.crval = projparam.cpole = (0, import_leaflet24.latLng)(paramsrc.crval);
       }
       if (paramsrc.crpix) {
-        projparam.crpix = (0, import_leaflet36.point)(paramsrc.crpix);
+        projparam.crpix = (0, import_leaflet24.point)(paramsrc.crpix);
       }
       if (paramsrc.cd) {
         projparam.cd = [
@@ -33402,10 +33354,10 @@
         ];
       }
       if (paramsrc.natrval) {
-        projparam.natrval = (0, import_leaflet36.latLng)(paramsrc.natrval);
+        projparam.natrval = (0, import_leaflet24.latLng)(paramsrc.natrval);
       }
       if (paramsrc.natpole) {
-        projparam.natpole = (0, import_leaflet36.latLng)(paramsrc.natpole);
+        projparam.natpole = (0, import_leaflet24.latLng)(paramsrc.natpole);
       }
       if (paramsrc.pv) {
         projparam.pv = [];
@@ -33483,20 +33435,20 @@
       var deg = Math.PI / 180, corig, cpole, cmat = [];
       switch (celcode) {
         case "galactic":
-          corig = (0, import_leaflet36.latLng)(-28.93617242, 266.40499625);
-          cpole = (0, import_leaflet36.latLng)(27.1282512, 192.85948123);
+          corig = (0, import_leaflet24.latLng)(-28.93617242, 266.40499625);
+          cpole = (0, import_leaflet24.latLng)(27.1282512, 192.85948123);
           break;
         case "ecliptic":
-          corig = (0, import_leaflet36.latLng)(0, 0);
-          cpole = (0, import_leaflet36.latLng)(66.99111111, 273.85261111);
+          corig = (0, import_leaflet24.latLng)(0, 0);
+          cpole = (0, import_leaflet24.latLng)(66.99111111, 273.85261111);
           break;
         case "supergalactic":
-          corig = (0, import_leaflet36.latLng)(59.52315, 42.29235);
-          cpole = (0, import_leaflet36.latLng)(15.7048, 283.7514);
+          corig = (0, import_leaflet24.latLng)(59.52315, 42.29235);
+          cpole = (0, import_leaflet24.latLng)(15.7048, 283.7514);
           break;
         default:
-          corig = (0, import_leaflet36.latLng)(0, 0);
-          cpole = (0, import_leaflet36.latLng)(0, 0);
+          corig = (0, import_leaflet24.latLng)(0, 0);
+          cpole = (0, import_leaflet24.latLng)(0, 0);
           break;
       }
       cmat[0] = cpole.lng * deg;
@@ -33522,13 +33474,13 @@
     _getCenter(projection2) {
       const projparam = this.projparam, detslice = projparam.detslice;
       this.centerPnt = projection2.project(
-        this.unproject((0, import_leaflet36.point)(detslice[0][0], detslice[1][0]))
+        this.unproject((0, import_leaflet24.point)(detslice[0][0], detslice[1][0]))
       )._add(projection2.project(
-        this.unproject((0, import_leaflet36.point)(detslice[0][1], detslice[1][1]))
+        this.unproject((0, import_leaflet24.point)(detslice[0][1], detslice[1][1]))
       ))._divideBy(2);
     },
     _natpole: function() {
-      var deg = Math.PI / 180, projparam = this.projparam, natpole = (0, import_leaflet36.latLng)(90, 180);
+      var deg = Math.PI / 180, projparam = this.projparam, natpole = (0, import_leaflet24.latLng)(90, 180);
       if (projparam.natrval.lat === 90) {
         if (projparam.natpole.lng === 999) {
           natpole.lng = 180;
@@ -33562,7 +33514,7 @@
         sdphip * ct0 / cd0,
         (st0 - Math.sin(deltap * deg) * sd0) / (Math.cos(deltap * deg) * cd0)
       ) / deg;
-      return (0, import_leaflet36.latLng)(deltap, alphap);
+      return (0, import_leaflet24.latLng)(deltap, alphap);
     },
     _phiThetaToRADec: function(phiTheta) {
       var projparam = this.projparam, deg = Math.PI / 180, rad = 180 / Math.PI, t = phiTheta.lat * deg, ct = Math.cos(t), st = Math.sin(t), dp = projparam.cpole.lat * deg, cdp = Math.cos(dp), sdp = Math.sin(dp), dphi = (phiTheta.lng - projparam.natpole.lng) * deg, cdphi = Math.cos(dphi), asinarg = st * sdp + ct * cdp * cdphi;
@@ -33571,7 +33523,7 @@
       } else if (asinarg < -1) {
         asinarg = -1;
       }
-      return (0, import_leaflet36.latLng)(
+      return (0, import_leaflet24.latLng)(
         Math.asin(asinarg) * rad,
         projparam.cpole.lng + Math.atan2(
           -ct * Math.sin(dphi),
@@ -33580,7 +33532,7 @@
       );
     },
     _raDecToPhiTheta: function(raDec) {
-      var projparam = this.projparam, deg = Math.PI / 180, rad = 180 / Math.PI, da = (raDec.lng - projparam.cpole.lng) * deg, cda = Math.cos(da), sda = Math.sin(da), d2 = raDec.lat * deg, cd = Math.cos(d2), sd = Math.sin(d2), dp = projparam.cpole.lat * deg, cdp = Math.cos(dp), sdp = Math.sin(dp), asinarg = sd * sdp + cd * cdp * cda, phitheta = (0, import_leaflet36.latLng)(
+      var projparam = this.projparam, deg = Math.PI / 180, rad = 180 / Math.PI, da = (raDec.lng - projparam.cpole.lng) * deg, cda = Math.cos(da), sda = Math.sin(da), d2 = raDec.lat * deg, cd = Math.cos(d2), sd = Math.sin(d2), dp = projparam.cpole.lat * deg, cdp = Math.cos(dp), sdp = Math.sin(dp), asinarg = sd * sdp + cd * cdp * cda, phitheta = (0, import_leaflet24.latLng)(
         Math.asin(asinarg > 1 ? 1 : asinarg < -1 ? -1 : asinarg) * rad,
         projparam.natpole.lng + Math.atan2(
           -cd * sda,
@@ -33596,14 +33548,14 @@
     },
     _pixToRed: function(pix) {
       var projparam = this.projparam, cd = projparam.cd, red = pix.subtract(projparam.crpix);
-      return (0, import_leaflet36.point)(
+      return (0, import_leaflet24.point)(
         red.x * cd[0][0] + red.y * cd[0][1],
         red.x * cd[1][0] + red.y * cd[1][1]
       );
     },
     _redToPix: function(red) {
       var projparam = this.projparam, cdinv = projparam.cdinv;
-      return (0, import_leaflet36.point)(
+      return (0, import_leaflet24.point)(
         red.x * cdinv[0][0] + red.y * cdinv[0][1],
         red.x * cdinv[1][0] + red.y * cdinv[1][1]
       ).add(projparam.crpix);
@@ -33621,11 +33573,11 @@
   Conical = Projection.extend({
     _redToPhiR: function(red) {
       var deg = Math.PI / 180, projparam = this.projparam, dy = projparam.y0 - red.y, rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
-      return (0, import_leaflet37.latLng)(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
+      return (0, import_leaflet25.latLng)(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
     },
     _phiRToRed: function(phiR) {
       var deg = Math.PI / 180, p = this.projparam.c * phiR.lng * deg;
-      return (0, import_leaflet37.point)(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p) + this.projparam.y0);
+      return (0, import_leaflet25.point)(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p) + this.projparam.y0);
     }
   });
   var COE = Conical.extend({
@@ -33641,7 +33593,7 @@
       projparam.s1s2p1 = s1 * s2 + 1;
       projparam.c = projparam.gamma / 2;
       projparam.y0 = 2 / projparam.gamma * Math.sqrt(projparam.s1s2p1 - projparam.gamma * Math.sin(projparam.thetaA * deg)) / deg;
-      projparam.natrval = (0, import_leaflet37.latLng)(projparam.thetaA, 0);
+      projparam.natrval = (0, import_leaflet25.latLng)(projparam.thetaA, 0);
       projparam.natpole = this._natpole();
       projparam.cpole = this._cpole();
       projparam.infinite = true;
@@ -33663,7 +33615,7 @@
   });
 
   // js/crs/Cylindrical.js
-  var import_leaflet38 = __toESM(require_leaflet_src());
+  var import_leaflet26 = __toESM(require_leaflet_src());
   Cylindrical = Projection.extend({
     _projInit: function() {
       var deg = Math.PI / 180;
@@ -33673,7 +33625,7 @@
       if (projparam.lambda === 0) {
         projparam.lambda = 1;
       }
-      projparam.natrval = (0, import_leaflet38.latLng)(0, 0);
+      projparam.natrval = (0, import_leaflet26.latLng)(0, 0);
       projparam.natpole = this._natpole();
       projparam.cpole = this._cpole();
       projparam.infinite = true;
@@ -33688,20 +33640,20 @@
   });
   var CAR = Cylindrical.extend({
     _redToPhiR: function(red) {
-      return (0, import_leaflet38.latLng)(red.y, red.x);
+      return (0, import_leaflet26.latLng)(red.y, red.x);
     },
     _phiRToRed: function(phiR) {
-      return (0, import_leaflet38.point)(phiR.lng, phiR.lat);
+      return (0, import_leaflet26.point)(phiR.lng, phiR.lat);
     }
   });
   var CEA = Cylindrical.extend({
     _redToPhiR: function(red) {
       var deg = Math.PI / 180, slat = red.y * this.projparam.lambda * deg;
-      return (0, import_leaflet38.latLng)(slat > -1 ? slat < 1 ? Math.asin(slat) / deg : 90 : -90, red.x);
+      return (0, import_leaflet26.latLng)(slat > -1 ? slat < 1 ? Math.asin(slat) / deg : 90 : -90, red.x);
     },
     _phiRToRed: function(phiR) {
       var deg = Math.PI / 180;
-      return (0, import_leaflet38.point)(
+      return (0, import_leaflet26.point)(
         phiR.lng,
         Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg)
       );
@@ -33709,26 +33661,26 @@
   });
 
   // js/crs/Zenithal.js
-  var import_leaflet39 = __toESM(require_leaflet_src());
+  var import_leaflet27 = __toESM(require_leaflet_src());
   Zenithal = Projection.extend({
     _projInit: function() {
       var projparam = this.projparam;
       projparam.cdinv = this._invertCD(projparam.cd);
-      projparam.natrval = (0, import_leaflet39.latLng)(90, 0);
+      projparam.natrval = (0, import_leaflet27.latLng)(90, 0);
       projparam.natpole = this._natpole();
       projparam.cpole = this._cpole();
       projparam.infinite = true;
       projparam.pixelFlag = false;
     },
     _redToPhiR: function(red) {
-      return (0, import_leaflet39.latLng)(
+      return (0, import_leaflet27.latLng)(
         Math.sqrt(red.x * red.x + red.y * red.y),
         Math.atan2(red.x, -red.y) * 180 / Math.PI
       );
     },
     _phiRToRed: function(phiR) {
       var deg = Math.PI / 180, p = phiR.lng * deg;
-      return new import_leaflet39.Point(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p));
+      return new import_leaflet27.Point(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p));
     }
   });
   var TAN = Zenithal.extend({
@@ -33756,13 +33708,13 @@
   });
 
   // js/crs/Pixel.js
-  var import_leaflet40 = __toESM(require_leaflet_src());
+  var import_leaflet28 = __toESM(require_leaflet_src());
   var Pixel = Projection.extend({
     code: "PIX",
     _projInit: function() {
       var projparam = this.projparam;
       if (!options.crval) {
-        projparam.crval = (0, import_leaflet40.latLng)(
+        projparam.crval = (0, import_leaflet28.latLng)(
           (projparam.naxis.y + 1) / 2,
           (projparam.naxis.x + 1) / 2
         );
@@ -33771,7 +33723,7 @@
       projparam.wrapLat = [this.projparam.y - 0.5, 0.5];
       projparam.cdinv = this._invertCD(projparam.cd);
       projparam.cpole = projparam.crval;
-      this.bounds = (0, import_leaflet40.bounds)(
+      this.bounds = (0, import_leaflet28.bounds)(
         [0.5, this.projparam.naxis.y - 0.5],
         [this.projparam.naxis.x - 0.5, 0.5]
       );
@@ -33779,15 +33731,15 @@
       projparam.infinite = false;
     },
     project: function(latlng) {
-      return (0, import_leaflet40.point)(latlng.lng, latlng.lat);
+      return (0, import_leaflet28.point)(latlng.lng, latlng.lat);
     },
     unproject: function(point7) {
-      return (0, import_leaflet40.latLng)(point7.y, point7.x);
+      return (0, import_leaflet28.latLng)(point7.y, point7.x);
     }
   });
 
   // js/crs/WCS.js
-  WCSObj = (0, import_leaflet41.extend)({}, import_leaflet41.CRS, {
+  WCSObj = (0, import_leaflet29.extend)({}, import_leaflet29.CRS, {
     code: "WCS",
     options: {
       nzoom: 9,
@@ -33796,8 +33748,8 @@
     },
     initialize: function(header, images2, options2) {
       var nimages = images2.length;
-      options2 = import_leaflet41.Util.setOptions(this, options2);
-      this.tileSize = (0, import_leaflet41.point)(options2.tileSize);
+      options2 = import_leaflet29.Util.setOptions(this, options2);
+      this.tileSize = (0, import_leaflet29.point)(options2.tileSize);
       this.nzoom = options2.nzoom;
       this.projection = this.getProjection(header, options2);
       if (nimages > 1) {
@@ -33824,7 +33776,7 @@
       this.crval = this.projection.projparam.crval;
       this.wrapLng = [0.5, this.naxis.x - 0.5];
       this.wrapLat = [this.naxis.y - 0.5, 0.5];
-      this.transformation = new import_leaflet41.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
+      this.transformation = new import_leaflet29.Transformation(1, -0.5, -1, this.naxis.y + 0.5);
       this.code += ":" + this.projection.code;
     },
     multiLatLngToPoint(latlng, zoom) {
@@ -33940,7 +33892,7 @@
       if (typeof latlng === "undefined") {
         result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str2);
         if (result && result.length >= 3) {
-          latlng = (0, import_leaflet41.latLng)(Number(result[2]), Number(result[1]));
+          latlng = (0, import_leaflet29.latLng)(Number(result[2]), Number(result[1]));
         }
       }
       if (latlng) {
@@ -33957,7 +33909,7 @@
       return dlng > 180 ? dlng - 360 : dlng < -180 ? dlng + 360 : dlng;
     }
   });
-  var WCS = import_leaflet41.Class.extend(WCSObj);
+  var WCS = import_leaflet29.Class.extend(WCSObj);
 
   // js/layer/index.js
   var layer_exports = {};
@@ -33967,8 +33919,8 @@
   });
 
   // js/layer/VTileLayer.js
-  var import_leaflet42 = __toESM(require_leaflet_src());
-  var VTileLayer = import_leaflet42.TileLayer.extend({
+  var import_leaflet30 = __toESM(require_leaflet_src());
+  var VTileLayer = import_leaflet30.TileLayer.extend({
     options: {
       title: null,
       crs: null,
@@ -34016,7 +33968,7 @@
     initialize: function(url, options2) {
       this.type = "tilelayer";
       this._url = url.replace(/\&.*$/g, "");
-      options2 = import_leaflet42.Util.setOptions(this, options2);
+      options2 = import_leaflet30.Util.setOptions(this, options2);
       if (options2.detectRetina && L.Browser.retina && options2.maxZoom > 0) {
         options2.tileSize = Math.floor(options2.tileSize / 2);
         options2.zoomOffset++;
@@ -34052,7 +34004,7 @@
       };
       this._title = options2.title ? options2.title : this._url.match(/^.*\/(.*)\..*$/)[1];
       this.getMetaData(this._url);
-      if (!import_leaflet42.Browser.android) {
+      if (!import_leaflet30.Browser.android) {
         this.on("tileunload", this._onTileRemove);
       }
       return this;
@@ -34154,7 +34106,7 @@
           this.rgbToMix(c);
         }
         if (options2.bounds) {
-          options2.bounds = (0, import_leaflet42.latLngBounds)(options2.bounds);
+          options2.bounds = (0, import_leaflet30.latLngBounds)(options2.bounds);
         }
         this.wcs = options2.crs ? options2.crs : new WCS(
           meta.header,
@@ -34205,7 +34157,7 @@
       if (this.visio.metaReady) {
         this._addToMap(map2);
       } else {
-        this._loadActivity = import_leaflet42.DomUtil.create(
+        this._loadActivity = import_leaflet30.DomUtil.create(
           "div",
           "visiomatic-layer-activity-",
           map2._controlContainer
@@ -34225,7 +34177,7 @@
         curcrs._prevZoom = map2.getZoom();
       }
       map2._prevcrs = map2.options.crs = newcrs;
-      import_leaflet42.TileLayer.prototype.addTo.call(this, map2);
+      import_leaflet30.TileLayer.prototype.addTo.call(this, map2);
       if (prevcrs && newcrs !== curcrs && maploadedflag && newcrs.pixelFlag === curcrs.pixelFlag) {
         center = curcrs._prevLatLng;
         zoom = curcrs._prevZoom;
@@ -34306,12 +34258,12 @@
       if (!this.options.bounds) {
         return true;
       }
-      return (0, import_leaflet42.latLngBounds)(this.options.bounds).intersects(
+      return (0, import_leaflet30.latLngBounds)(this.options.bounds).intersects(
         this._tileCoordsToBounds(coords2)
       );
     },
     createTile: function(coords2, done) {
-      const tile = import_leaflet42.TileLayer.prototype.createTile.call(this, coords2, done);
+      const tile = import_leaflet30.TileLayer.prototype.createTile.call(this, coords2, done);
       tile.coords = coords2;
       return tile;
     },
@@ -34362,16 +34314,16 @@
       return str2 + "&JTL=" + z.toString() + "," + (coords2.x + visio.gridSize[z].x * coords2.y).toString();
     },
     _initTile: function(tile) {
-      import_leaflet42.DomUtil.addClass(tile, "leaflet-tile");
+      import_leaflet30.DomUtil.addClass(tile, "leaflet-tile");
       if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
         tile.style.imageRendering = "pixelated";
       }
-      tile.onselectstart = import_leaflet42.Util.falseFn;
-      tile.onmousemove = import_leaflet42.Util.falseFn;
-      if (import_leaflet42.Browser.ielt9 && this.options.opacity < 1) {
-        import_leaflet42.DomUtil.setOpacity(tile, this.options.opacity);
+      tile.onselectstart = import_leaflet30.Util.falseFn;
+      tile.onmousemove = import_leaflet30.Util.falseFn;
+      if (import_leaflet30.Browser.ielt9 && this.options.opacity < 1) {
+        import_leaflet30.DomUtil.setOpacity(tile, this.options.opacity);
       }
-      if (import_leaflet42.Browser.android && !import_leaflet42.Browser.android23) {
+      if (import_leaflet30.Browser.android && !import_leaflet30.Browser.android23) {
         tile.style.WebkitBackfaceVisibility = "hidden";
       }
     }

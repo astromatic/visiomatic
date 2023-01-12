@@ -23,7 +23,7 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {Gaia_DR3, TwoMASS, SDSS, PanSTARRS1} from '../catalog';
+import {gaiaDR3, twomass, sdss, panstarrs1} from '../catalog/catalogs';
 
 
 export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
@@ -34,10 +34,10 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @default
 	 */
 	defaultCatalogs: [
-		Gaia_DR3,
-		TwoMASS,
-		SDSS,
-		PanSTARRS1
+		gaiaDR3,
+		twomass,
+		sdss,
+		panstarrs1
 	],
 
 	options: {
@@ -66,13 +66,13 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	   equatorial coordinates?
 
 	 * @param {string} [options.color='#FFFF00']
-	   Default catalog overlay color
+	   Default catalog overlay color.
 
 	 * @param {number} [options.timeOut=30]
 	   Time out delay for catalog queries, in seconds.
 
 	 * @param {boolean} [options.authenticate=false]
-	   Force authentification for querying catalogs?
+	   Force authentication for querying catalogs?
 
 	 * @see {@link UI} for additional control options.
 
@@ -305,7 +305,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	},
 
 	/**
-	 * Load catalog data.
+	 * Load catalog data and display the overlay layer.
 	 * @method
 	 * @static
 	 * @private

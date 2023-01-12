@@ -22,9 +22,9 @@ import {UI} from './UI'
 export const DocUI = UI.extend( /** @lends DocUI */ {
 	options: {
 		title: 'Documentation',
+		pdflink: undefined,
 		collapsed: true,
-		position: 'topleft',
-		pdflink: undefined
+		position: 'topleft'
 	},
 
 	/**

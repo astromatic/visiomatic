@@ -27,12 +27,12 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	options: {
 		title: 'Profile overlays',
-		collapsed: true,
-		position: 'topleft',
 		profile: true,
 		profileColor: '#FF00FF',
 		spectrum: true,
-		spectrumColor: '#A000FF'
+		spectrumColor: '#A000FF',
+		collapsed: true,
+		position: 'topleft'
 	},
 
 	/**
@@ -72,7 +72,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	},
 
 	/**
-	 * Initialize the catalog query dialog.
+	 * Initialize the profile/spectrum plotting dialog.
 	 * @method
 	 * @static
 	 * @private
