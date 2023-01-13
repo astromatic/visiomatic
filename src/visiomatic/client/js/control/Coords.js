@@ -73,7 +73,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	 * @memberof control/Coords
 	 * @method
 	 * @static
-	 * @override
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the control.
 	 */
@@ -235,8 +234,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	 * Remove map dragging event when the coordinate display/control is removed.
 	 * @method
 	 * @static
-	 * @private
-	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
+	 * @param {leaflet.map} [map] - The parent map.
 	 */
 	onRemove: function (map) {
 		map.off('drag', this._onDrag);

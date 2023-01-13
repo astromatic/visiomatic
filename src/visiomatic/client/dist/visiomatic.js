@@ -173,7 +173,7 @@
             cancelFn.call(window, id);
           }
         }
-        var Util21 = {
+        var Util23 = {
           __proto__: null,
           extend: extend4,
           create: create$2,
@@ -8100,7 +8100,7 @@
         exports2.TileLayer = TileLayer2;
         exports2.Tooltip = Tooltip;
         exports2.Transformation = Transformation2;
-        exports2.Util = Util21;
+        exports2.Util = Util23;
         exports2.VideoOverlay = VideoOverlay;
         exports2.bind = bind;
         exports2.bounds = toBounds;
@@ -30064,13 +30064,13 @@
       if (!this._map) {
         return;
       }
-      var attribs = [];
+      const attribs = [];
       for (var i2 in this._attributions) {
         if (this._attributions[i2]) {
           attribs.push(i2);
         }
       }
-      var prefixAndAttribs = [];
+      const prefixAndAttribs = [];
       if (this.options.prefix) {
         prefixAndAttribs.push(this.options.prefix);
       }
@@ -32855,8 +32855,8 @@
   // js/control/Reticle.js
   var import_leaflet20 = __toESM(require_leaflet_src());
   var Reticle = import_leaflet20.Control.extend({
-    options: {
-      position: "bottomleft"
+    initialize: function(options2) {
+      Util.setOptions(this, options2);
     },
     onAdd: function(map2) {
       var reticle2 = this._reticle = import_leaflet20.DomUtil.create("div", "leaflet-reticle", this._map._controlContainer), style = reticle2.style;
@@ -32882,18 +32882,21 @@
   var import_leaflet21 = __toESM(require_leaflet_src());
   var Scale = import_leaflet21.Control.Scale.extend({
     options: {
-      position: "bottomleft",
       title: "Scale",
+      position: "bottomleft",
       maxWidth: 128,
       metric: false,
       imperial: false,
       degrees: true,
-      pixels: true,
+      pixels: false,
       custom: false,
       customScale: 1,
       customUnits: "",
       planetRadius: 6378137,
       updateWhenIdle: false
+    },
+    initialize: function(options2) {
+      import_leaflet21.Util.setOptions(this, options2);
     },
     _addScales: function(options2, className, container) {
       if (options2.metric) {
@@ -32919,25 +32922,35 @@
       this.angular = options2.metric || options2.imperial || options2.degrees;
     },
     _update: function() {
-      var options2 = this.options, map2 = this._map, crs = map2.options.crs;
+      const options2 = this.options, map2 = this._map, crs = map2.options.crs;
       if (options2.pixels && crs.options && crs.options.nzoom) {
-        var pixelScale = Math.pow(2, crs.options.nzoom - 1 - map2.getZoom());
+        const pixelScale = Math.pow(
+          2,
+          crs.options.nzoom - 1 - map2.getZoom()
+        );
         this._updatePixels(pixelScale * options2.maxWidth);
       }
       if (options2.custom && crs.options && crs.options.nzoom) {
-        var customScale = Math.pow(
+        const customScale = Math.pow(
           2,
           crs.options.nzoom - 1 - map2.getZoom()
         ) * options2.customScale;
-        this._updateCustom(customScale * options2.maxWidth, options2.customUnits);
+        this._updateCustom(
+          customScale * options2.maxWidth,
+          options2.customUnits
+        );
       }
       if (this.angular) {
-        var center = map2.getCenter(), cosLat = Math.cos(center.lat * Math.PI / 180), dist = Math.sqrt(this._jacobian(center)) * cosLat, maxDegrees = dist * options2.maxWidth;
+        const center = map2.getCenter(), cosLat = Math.cos(center.lat * Math.PI / 180), dist = Math.sqrt(this._jacobian(center)) * cosLat, maxDegrees = dist * options2.maxWidth;
         if (options2.metric) {
-          this._updateMetric(maxDegrees * Math.PI / 180 * options2.planetRadius);
+          this._updateMetric(
+            maxDegrees * Math.PI / 180 * options2.planetRadius
+          );
         }
         if (options2.imperial) {
-          this._updateImperial(maxDegrees * Math.PI / 180 * options2.planetRadius);
+          this._updateImperial(
+            maxDegrees * Math.PI / 180 * options2.planetRadius
+          );
         }
         if (options2.degrees) {
           this._updateDegrees(maxDegrees);
@@ -32945,11 +32958,11 @@
       }
     },
     _jacobian: function(latlng) {
-      var map2 = this._map, p0 = map2.project(latlng), latlngdx = map2.unproject(p0.add([10, 0])), latlngdy = map2.unproject(p0.add([0, 10]));
+      const map2 = this._map, p0 = map2.project(latlng), latlngdx = map2.unproject(p0.add([10, 0])), latlngdy = map2.unproject(p0.add([0, 10]));
       return 0.01 * Math.abs((latlngdx.lng - latlng.lng) * (latlngdy.lat - latlng.lat) - (latlngdy.lng - latlng.lng) * (latlngdx.lat - latlng.lat));
     },
     _updateCustom: function(maxCust, units) {
-      var scale2 = this._cScale;
+      const scale2 = this._cScale;
       if (maxCust > 1e9) {
         var maxGCust = maxCust * 1e-9, gCust = this._getRoundNum(maxGCust);
         this._updateScale(scale2, gCust + " G" + units, gCust / maxGCust);
@@ -32965,7 +32978,7 @@
       }
     },
     _updatePixels: function(maxPix) {
-      var scale2 = this._pScale;
+      const scale2 = this._pScale;
       if (maxPix > 1e6) {
         var maxMPix = maxPix * 1e-6, mPix = this._getRoundNum(maxMPix);
         this._updateScale(scale2, mPix + " Mpx", mPix / maxMPix);
@@ -32978,7 +32991,7 @@
       }
     },
     _updateDegrees: function(maxDegrees) {
-      var maxSeconds = maxDegrees * 3600, scale2 = this._dScale;
+      const maxSeconds = maxDegrees * 3600, scale2 = this._dScale;
       if (maxSeconds < 1) {
         var maxMas = maxSeconds * 1e3, mas = this._getRoundNum(maxMas);
         this._updateScale(scale2, mas + " mas", mas / maxMas);

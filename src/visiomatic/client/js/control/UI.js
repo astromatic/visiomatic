@@ -109,7 +109,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @memberof UI
 	 * @method
 	 * @static
-	 * @override
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the dialog.
 	 */
@@ -299,7 +298,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * Get the base layer currently active on the map.
 	 * @method
 	 * @static
-	 * @overrides
 	 * @returns {object} Tile- or overlay layer.
 	 */
 	getActiveBaseLayer: function () {

@@ -147,7 +147,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 	 * @memberof control/ExtraMap
 	 * @method
 	 * @static
-	 * @override
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the control.
 	 */
@@ -221,7 +220,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 	 * Remove map move event when the extra map display/control is removed.
 	 * @method
 	 * @static
-	 * @overrides
 	 * @param {leaflet.map} [map] - The parent map.
 	 */
 	onRemove: function (map) {

@@ -311,7 +311,7 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 });
 
 /**
- * Instantiate a new sidebar.
+ * Instantiate a sidebar.
  *
  * @function
  * @param {object} [options] - Options: see {@link Sidebar}
