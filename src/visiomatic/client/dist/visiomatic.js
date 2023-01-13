@@ -30322,13 +30322,13 @@
   var import_leaflet8 = __toESM(require_leaflet_src());
   var FlipSwitch = import_leaflet8.Evented.extend({
     options: {
-      checked: false,
       title: "Click to switch",
+      checked: false,
       className: "leaflet-flipswitch"
     },
     initialize: function(parent, options2) {
       options2 = import_leaflet8.Util.setOptions(this, options2);
-      var _this = this, className = options2.className, button = import_leaflet8.DomUtil.create("div", className, parent), input = this._input = L.DomUtil.create("input", className, button), label = import_leaflet8.DomUtil.create("label", className, button);
+      const _this = this, className = options2.className, button = import_leaflet8.DomUtil.create("div", className, parent), input = this._input = L.DomUtil.create("input", className, button), label = import_leaflet8.DomUtil.create("label", className, button);
       input.type = "checkbox";
       input.name = options2.className;
       input.checked = options2.checked;
@@ -30358,6 +30358,7 @@
   var import_leaflet9 = __toESM(require_leaflet_src());
   var Spinbox = import_leaflet9.Evented.extend({
     options: {
+      title: "Enter value",
       dmin: void 0,
       dmax: void 0,
       step: void 0,
@@ -30365,12 +30366,11 @@
       repButton: true,
       clickEvent: "click",
       instantUpdate: false,
-      title: "Enter value",
       className: "leaflet-spinbox"
     },
     initialize: function(parent, options2) {
       options2 = import_leaflet9.Util.setOptions(this, options2);
-      var _this = this, drag = this._drag = {
+      const _this = this, drag = this._drag = {
         startEvent: "touchstart mousedown",
         stopEvent: "touchend mouseup mouseout touchcancel",
         move: false,
@@ -30383,7 +30383,23 @@
         cnt: 0,
         step: options2.step,
         prec: this._prec(options2.step)
-      }, wrap = this._wrap = import_leaflet9.DomUtil.create("div", options2.className, parent), input = this._input = import_leaflet9.DomUtil.create("input", options2.className + "-input", wrap), down = this._down = import_leaflet9.DomUtil.create("div", options2.className + "-down", wrap), up = this._up = import_leaflet9.DomUtil.create("div", options2.className + "-up", wrap);
+      }, wrap = this._wrap = import_leaflet9.DomUtil.create(
+        "div",
+        options2.className,
+        parent
+      ), input = this._input = import_leaflet9.DomUtil.create(
+        "input",
+        options2.className + "-input",
+        wrap
+      ), down = this._down = import_leaflet9.DomUtil.create(
+        "div",
+        options2.className + "-down",
+        wrap
+      ), up = this._up = import_leaflet9.DomUtil.create(
+        "div",
+        options2.className + "-up",
+        wrap
+      );
       input.type = "number";
       input.step = 0.1;
       import_leaflet9.DomEvent.disableClickPropagation(wrap).disableScrollPropagation(wrap);
@@ -30494,7 +30510,7 @@
       }
     },
     disable: function() {
-      var cname = "disabled";
+      const cname = "disabled";
       this._input.disabled = true;
       this._input.blur();
       import_leaflet9.DomUtil.addClass(this._wrap, cname);
@@ -30503,7 +30519,7 @@
       this.options.disabled = true;
     },
     enable: function() {
-      var cname = "disabled";
+      const cname = "disabled";
       this._input.disabled = false;
       import_leaflet9.DomUtil.removeClass(this._wrap, cname);
       import_leaflet9.DomUtil.removeClass(this._down, cname);
@@ -30511,7 +30527,8 @@
       this.options.disabled = false;
     },
     _sboxRun: function() {
-      var _this = this, timer = 150, options2 = this.options, drag = this._drag;
+      const _this = this, options2 = this.options, drag = this._drag;
+      let timer = 150;
       if (drag.cnt === 20) {
         timer = 50;
         drag.step = 10 * options2.step;
@@ -30535,14 +30552,16 @@
       }, timer);
     },
     _prec: function(step) {
-      var dprec = -0.4342944 * Math.log(step);
+      const dprec = -0.4342944 * Math.log(step);
       return dprec > 0 ? Math.ceil(dprec) : 0;
     },
     _offset: function(obj, direction) {
-      var tmp, options2 = this.options, input = this._input, drag = this._drag;
+      const options2 = this.options, input = this._input, drag = this._drag;
       if (!this.disabled) {
         if (direction < 1) {
-          tmp = (parseFloat(input.value) - drag.step).toFixed(drag.prec);
+          var tmp = (parseFloat(input.value) - drag.step).toFixed(
+            drag.prec
+          );
           if (tmp >= options2.dmin) {
             input.value = tmp;
             if (options2.instantUpdate === true) {
@@ -30550,7 +30569,9 @@
             }
           }
         } else {
-          tmp = (parseFloat(input.value) + drag.step).toFixed(drag.prec);
+          var tmp = (parseFloat(input.value) + drag.step).toFixed(
+            drag.prec
+          );
           if (tmp <= options2.dmax) {
             input.value = tmp;
             if (options2.instantUpdate === true) {
@@ -32856,10 +32877,14 @@
   var import_leaflet20 = __toESM(require_leaflet_src());
   var Reticle = import_leaflet20.Control.extend({
     initialize: function(options2) {
-      Util.setOptions(this, options2);
+      import_leaflet20.Util.setOptions(this, options2);
     },
     onAdd: function(map2) {
-      var reticle2 = this._reticle = import_leaflet20.DomUtil.create("div", "leaflet-reticle", this._map._controlContainer), style = reticle2.style;
+      const reticle2 = this._reticle = import_leaflet20.DomUtil.create(
+        "div",
+        "leaflet-reticle",
+        this._map._controlContainer
+      ), style = reticle2.style;
       style.position = "absolute";
       style.left = "50%";
       style.bottom = "50%";
@@ -32867,7 +32892,7 @@
       style.verticalAlign = "middle";
       style.pointerEvents = "none";
       reticle2.innerHTML = "";
-      var container = this._container = import_leaflet20.DomUtil.create("div", "leaflet-dummy");
+      const container = this._container = import_leaflet20.DomUtil.create("div", "leaflet-dummy");
       return container;
     },
     onRemove: function(map2) {

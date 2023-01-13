@@ -27,7 +27,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		 * @typedef coordinate
 		 * @property {string} label
 		   Coordinate name.
-		 * @property {string} units
+		 * @property {'deg'|'HMS'} units
 		   Coordinate units.
 		 * @property {boolean} [nativeCelSys=false]
 		   Use native coordinates (e.g., galactic coordinates) instead of

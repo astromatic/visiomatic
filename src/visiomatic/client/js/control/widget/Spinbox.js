@@ -1,17 +1,14 @@
-/*
-#	A number spinbox with adaptive step increment
-#	Adapted from JTSage's spinbox (original attribution below),
-#	with all the jQuery and jQuery Mobile stuff removed.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-*/
-/*
- * jQuery Mobile Framework : plugin to provide number spinbox.
- * Copyright (c) JTSage
- * CC 3.0 Attribution.  May be relicensed without permission/notification.
- * https://github.com/jtsage/jquery-mobile-spinbox
+/**
+ #	This file part of:	VisiOmatic
+ * @file Provide a number spinbox with adaptive step increment.
+
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU.
+   Adapted from jQuery Mobile Framework plugin to provide number spinbox
+   (original copyright notice follows).
+   Copyright (c) JTSage
+   CC 3.0 Attribution.  May be relicensed without permission/notification.
+   https://github.com/jtsage/jquery-mobile-spinbox
  */
 import {
 	Evented,
@@ -21,9 +18,9 @@ import {
 } from 'leaflet';
 
 
-export const Spinbox = Evented.extend({
+export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 	options: {
-		// All widget options
+		title: 'Enter value',
 		dmin: undefined,
 		dmax: undefined,
 		step: undefined,
@@ -31,13 +28,48 @@ export const Spinbox = Evented.extend({
 		repButton: true,
 		clickEvent: 'click',
 		instantUpdate: false,
-		title: 'Enter value',
 		className: 'leaflet-spinbox'
 	},
 
+	/**
+	 * Create a new spinbox widget.
+
+	 * @extends leaflet.Evented
+	 * @memberof module:control/widget/Spinbox.js
+	 * @constructs
+	 * @override
+	 * @param {object} [parent] - Parent element.
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Enter value']
+	   Title of the control.
+
+	 * @param {number} [options.dmin]
+	   Minimum value.
+
+	 * @param {number} [options.dmax]
+	   Maximum value.
+
+	 * @param {number} [options.step]
+	   Initial value increment between autorepeat updates.
+
+	 * @param {number} [options.initValue]
+	   Initial value.
+
+	 * @param {boolean} [options.repButton=true]
+	   Up/Down spin buttons have autorepeat?
+
+	 * @param {boolean} [options.instantUpdate=false]
+	   Return updated value at each autorepeat update?
+
+	 * @param {string} [options.className]
+	   Element class name for the widget.
+
+	 * @returns {Spinbox} Spinbox widget element.
+	 */
 	initialize: function (parent, options) {
 		options = Util.setOptions(this, options);
-		var _this = this,
+		const	_this = this,
 			drag = this._drag = {
 				startEvent: 'touchstart mousedown',
 				stopEvent : 'touchend mouseup mouseout touchcancel',
@@ -52,10 +84,26 @@ export const Spinbox = Evented.extend({
 				step      : options.step,
 				prec      : this._prec(options.step)
 			},
-			wrap = this._wrap = DomUtil.create('div', options.className, parent),
-			input = this._input = DomUtil.create('input', options.className + '-input', wrap),
-			down = this._down = DomUtil.create('div', options.className + '-down', wrap),
-			up = this._up = DomUtil.create('div', options.className + '-up', wrap);
+			wrap = this._wrap = DomUtil.create(
+				'div',
+				options.className,
+				parent
+			),
+			input = this._input = DomUtil.create(
+				'input',
+				options.className + '-input',
+				wrap
+			),
+			down = this._down = DomUtil.create(
+				'div',
+				options.className + '-down',
+				wrap
+			),
+			up = this._up = DomUtil.create(
+				'div',
+				options.className + '-up',
+				wrap
+			);
 
 		input.type = 'number';
 		input.step = 0.1;	// Tells input that decimal numbers are valid
@@ -184,7 +232,7 @@ export const Spinbox = Evented.extend({
 
 	disable: function () {
 		// Disable the element
-		var cname = 'disabled';
+		const	cname = 'disabled';
 
 		this._input.disabled = true;
 		this._input.blur();
@@ -196,7 +244,7 @@ export const Spinbox = Evented.extend({
 
 	enable: function () {
 		// Enable the element
-		var cname = 'disabled';
+		const	cname = 'disabled';
 
 		this._input.disabled = false;
 		DomUtil.removeClass(this._wrap, cname);
@@ -206,10 +254,11 @@ export const Spinbox = Evented.extend({
 	},
 
 	_sboxRun: function () {
-		var	_this = this,
-			timer = 150,
+		const	_this = this,
 			options = this.options,
 			drag = this._drag;
+
+		let	timer = 150;
 
 		if (drag.cnt === 20) {
 			timer = 50;
@@ -235,19 +284,20 @@ export const Spinbox = Evented.extend({
 	},
 
 	_prec: function (step) {
-		var dprec = -0.4342944 * Math.log(step);
+		const	dprec = -0.4342944 * Math.log(step);
 		return dprec > 0.0 ? Math.ceil(dprec) : 0;
 	},
 
 	_offset: function (obj, direction) {
-		var	tmp,
-			options = this.options,
+		const	options = this.options,
 			input = this._input,
 			drag = this._drag;
 
 		if (!this.disabled) {
 			if (direction < 1) {
-				tmp = (parseFloat(input.value) - drag.step).toFixed(drag.prec);
+				var	tmp = (parseFloat(input.value) - drag.step).toFixed(
+					drag.prec
+				);
 				if (tmp >= options.dmin) {
 					input.value = tmp;
 					if (options.instantUpdate === true) {
@@ -255,7 +305,9 @@ export const Spinbox = Evented.extend({
 					}
 				}
 			} else {
-				tmp = (parseFloat(input.value) + drag.step).toFixed(drag.prec);
+				var	tmp = (parseFloat(input.value) + drag.step).toFixed(
+					drag.prec
+				);
 				if (tmp <= options.dmax) {
 					input.value = tmp;
 					if (options.instantUpdate === true) {
@@ -267,6 +319,19 @@ export const Spinbox = Evented.extend({
 	}
 });
 
+/**
+ * Instantiate a spinbox widget.
+ *
+ * @function
+ * @param {object} [parent] - Parent element.
+ * @param {object} [options] - Options: see {@link Spinbox}
+ * @returns {Spinbox} Spinbox widget element.
+
+ * @example
+   ...
+   const elem = DomUtil.create('div', 'myelement', divParent);
+   const spinElem = Spinbox(elem, {initValue: 42.0, step: 2.0});
+ */
 export const spinbox = function (parent, options) {
 	return new Spinbox(parent, options);
 };

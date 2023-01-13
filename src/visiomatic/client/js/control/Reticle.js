@@ -5,7 +5,7 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import {Control, DomUtil} from 'leaflet';
+import {Control, DomUtil, Util} from 'leaflet';
 
 
 export const Reticle = Control.extend( /** @lends Reticle */ {
@@ -33,7 +33,11 @@ export const Reticle = Control.extend( /** @lends Reticle */ {
 	 */
 	onAdd: function (map) {
 		// Create central reticle
-		var reticle = this._reticle = DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
+		const	reticle = this._reticle = DomUtil.create(
+				'div',
+				'leaflet-reticle',
+				this._map._controlContainer
+			),
 			style = reticle.style;
 		style.position = 'absolute';
 		style.left = '50%';
@@ -43,7 +47,8 @@ export const Reticle = Control.extend( /** @lends Reticle */ {
 		style.pointerEvents = 'none';
 		reticle.innerHTML = '';
 
-		var container = this._container = DomUtil.create('div', 'leaflet-dummy');
+		const	container = this._container =
+			DomUtil.create('div', 'leaflet-dummy');
 
 		return container;
 	},
@@ -60,6 +65,15 @@ export const Reticle = Control.extend( /** @lends Reticle */ {
 
 });
 
+/**
+ * Instantiate a reticle.
+ *
+ * @function
+ * @returns {Reticle} Instance of a reticle.
+
+ * @example
+ * const ret = reticle().addTo(map);
+ */
 export const reticle = function (options) {
 	return new Reticle(options);
 };
