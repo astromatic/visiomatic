@@ -210,6 +210,15 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		return wrap;
 	},
 
+	/**
+	 * Return or set the current value of the spinbox.
+	 * @method
+	 * @static
+	 * @param {number} [val]
+	   If provided, set the spinbox value to that of `val`.
+
+	 * @returns {number} Spinbox value.
+	 */
 	value: function (val) {
 		if (val === undefined) {
 			return parseFloat(this._input.value);
@@ -220,6 +229,15 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		}
 	},
 
+	/**
+	 * Return or set the current increment value of the spinbox.
+	 * @method
+	 * @static
+	 * @param {number} [val]
+	   If provided, set the spinbox increment value to that of `val`.
+
+	 * @returns {number} Spinbox increment value.
+	 */
 	step: function (val) {
 		if (val === undefined) {
 			return this.options.step;
@@ -230,6 +248,11 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		}
 	},
 
+	/**
+	 * Disable the spinbox widget.
+	 * @method
+	 * @static
+	 */
 	disable: function () {
 		// Disable the element
 		const	cname = 'disabled';
@@ -242,6 +265,11 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		this.options.disabled = true;
 	},
 
+	/**
+	 * Enable the spinbox widget.
+	 * @method
+	 * @static
+	 */
 	enable: function () {
 		// Enable the element
 		const	cname = 'disabled';
@@ -253,6 +281,12 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		this.options.disabled = false;
 	},
 
+	/**
+	 * Run one step of the spinbox.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_sboxRun: function () {
 		const	_this = this,
 			options = this.options,
@@ -283,11 +317,31 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		}, timer);
 	},
 
+	/**
+	 * Set spinbox value precision.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} step
+	   Increment value.
+
+	 * @returns {number} Number of decimals.
+	 */
 	_prec: function (step) {
 		const	dprec = -0.4342944 * Math.log(step);
 		return dprec > 0.0 ? Math.ceil(dprec) : 0;
 	},
 
+	/**
+	 * Incement or decrement spinbox value.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {object} target
+	   Element that triggered the action.
+	 * @param {number} direction
+	   Step direction (-1 or +1).
+	 */
 	_offset: function (obj, direction) {
 		const	options = this.options,
 			input = this._input,

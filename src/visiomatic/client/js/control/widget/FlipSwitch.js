@@ -71,12 +71,11 @@ export const FlipSwitch = Evented.extend( /** @lends FlipsSwitch */ {
 	},
 
 	/**
-	 * Return the flip switch status.
+	 * Return or set the flip switch status.
 	 * @method
 	 * @static
-	 * @param {*} [val=undefined]
-	   If `undefined` (default), return the switch status, else return the
-	   "falsiness" of `val`.
+	 * @param {boolean} [val]
+	   If provided, set the flip switch (boolean) value to that of `val`.
 
 	 * @returns {boolean} Flip switch status.
 	 */
