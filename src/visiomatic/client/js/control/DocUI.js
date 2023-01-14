@@ -2,7 +2,7 @@
  #	This file part of:	VisiOmatic
  * @file User Interface for the online documentation.
 
- * @requires util/VUtil
+ * @requires util/VUtil.js
  * @requires control/UI.js
 
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU

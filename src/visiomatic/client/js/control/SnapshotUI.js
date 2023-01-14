@@ -2,7 +2,7 @@
  #	This file part of:	VisiOmatic
  * @file User Interface for taking snapshots of the current screen/image.
 
- * @requires util/VUtil
+ * @requires util/VUtil.js
  * @requires control/UI.js
 
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU

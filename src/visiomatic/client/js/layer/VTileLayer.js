@@ -1,13 +1,13 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Support for VisiOmatic layers in Leaflet
- * @requires util/VUtil
- * @requires util/RGB
- * @requires crs/WCS
+ * @requires util/VUtil.js
+ * @requires util/RGB.js
+ * @requires crs/WCS.js
 
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
-*/
+ */
 import {
 	Browser,
 	DomUtil,
@@ -862,8 +862,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 /**
  * Instantiate a VisiOmatic tile layer.
  * @function
- * @param {string} url - URL of the tile server
- * @param {object} [options] - Options: see {@link VTileLayer}
+ * @param {string} url - URL of the tile server.
+ * @param {object} [options] - Options: see {@link VTileLayer}.
  * @returns {VTileLayer} VisiOmatic TileLayer instance.
 */
 export const vTileLayer = function (url, options) {

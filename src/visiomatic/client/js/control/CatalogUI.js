@@ -2,12 +2,9 @@
  #	This file part of:	VisiOmatic
  * @file User Interface for catalog queries and catalog overlays.
 
- * @requires util/VUtil
+ * @requires util/VUtil.js
  * @requires control/UI.js
- * @requires catalog/Gaia.js
- * @requires catalog/TwoMASS.js
- * @requires catalog/SDSS.js
- * @requires catalog/PanSTARRS1js
+ * @requires catalog/catalogs.js
 
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>

@@ -1,11 +1,11 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Responsive sidebar.
- * @requires util/VUtil
+ * @requires util/VUtil.js
 
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
-*/
+ */
 
 import {
 	Control,
@@ -364,7 +364,7 @@ Map.addInitHook(function () {
 /**
  * Instantiate a coordinate display/control .
  * @function
- * @param {object} [options] - Options: see {@link Coords}
+ * @param {object} [options] - Options: see {@link Coords}.
  * @returns {Coords} Instance of a coordinate display/control interface.
 */
 export const coords = function (options) {

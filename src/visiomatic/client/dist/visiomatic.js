@@ -31047,7 +31047,7 @@
     _resetDialog: function() {
     },
     _getCatalog: function(catalog, timeout) {
-      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet11.LayerGroup(null);
+      const _this = this, map2 = this._map, wcs2 = map2.options.crs, sysflag = wcs2.forceNativeCelsys && !this.options.nativeCelsys, center = sysflag ? wcs2.celsysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet11.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
       if (catalog.authenticate) {
@@ -31056,10 +31056,10 @@
         this.options.authenticate = false;
       }
       const lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
-        wcs.celsysToEq(map2.unproject(b.min, z)),
-        wcs.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z)),
-        wcs.celsysToEq(map2.unproject(b.max, z)),
-        wcs.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z))
+        wcs2.celsysToEq(map2.unproject(b.min, z)),
+        wcs2.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z)),
+        wcs2.celsysToEq(map2.unproject(b.max, z)),
+        wcs2.celsysToEq(map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z))
       ] : [
         map2.unproject(b.min, z),
         map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z),
@@ -31067,8 +31067,8 @@
         map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z)
       ];
       var sys;
-      if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
-        switch (wcs.celsyscode) {
+      if (wcs2.forceNativeCelsys && this.options.nativeCelsys) {
+        switch (wcs2.celsyscode) {
           case "ecliptic":
             sys = "E2000.0";
             break;
@@ -31087,15 +31087,15 @@
       }
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
-          wcs._deltaLng(c[0], center),
-          wcs._deltaLng(c[1], center),
-          wcs._deltaLng(c[2], center),
-          wcs._deltaLng(c[3], center)
+          wcs2._deltaLng(c[0], center),
+          wcs2._deltaLng(c[1], center),
+          wcs2._deltaLng(c[2], center),
+          wcs2._deltaLng(c[3], center)
         ) - Math.min(
-          wcs._deltaLng(c[0], center),
-          wcs._deltaLng(c[1], center),
-          wcs._deltaLng(c[2], center),
-          wcs._deltaLng(c[3], center)
+          wcs2._deltaLng(c[0], center),
+          wcs2._deltaLng(c[1], center),
+          wcs2._deltaLng(c[2], center),
+          wcs2._deltaLng(c[3], center)
         )) * lngfac, dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) - Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
         if (dlat < 1e-4) {
           dlat = 1e-4;
@@ -31127,10 +31127,10 @@
         );
       } else {
         const dr = Math.max(
-          wcs.distance(c[0], center),
-          wcs.distance(c[0], center),
-          wcs.distance(c[0], center),
-          wcs.distance(c[0], center)
+          wcs2.distance(c[0], center),
+          wcs2.distance(c[0], center),
+          wcs2.distance(c[0], center),
+          wcs2.distance(c[0], center)
         );
         VUtil.requestURL(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
@@ -31158,15 +31158,15 @@
     _loadCatalog: function(catalog, templayer, self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const wcs = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet11.geoJson)(geo, {
+          const wcs2 = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet11.geoJson)(geo, {
             onEachFeature: function(feature, layer) {
               if (feature.properties && feature.properties.items) {
                 layer.bindPopup(catalog.popup(feature));
               }
             },
             coordsToLatLng: function(coords2) {
-              if (wcs.forceNativeCelsys) {
-                const latLng11 = wcs.eqToCelsys(
+              if (wcs2.forceNativeCelsys) {
+                const latLng11 = wcs2.eqToCelsys(
                   L.latLng(coords2[1], coords2[0])
                 );
                 return new L.LatLng(
@@ -31594,7 +31594,7 @@
       }
     },
     _initDialog: function() {
-      const _this = this, wcs = this._map.options.crs, projections = wcs.projections, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
+      const _this = this, wcs2 = this._map.options.crs, projections = wcs2.projections, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
       if (projections) {
         const extSelect = this._wcsext = import_leaflet13.DomUtil.create(
           "select",
@@ -31615,9 +31615,9 @@
           extSelect.add(extOpt[p], null);
         }
         import_leaflet13.DomEvent.on(extSelect, "change", function(e) {
-          const map2 = _this._map, wcs2 = map2.options.crs;
-          map2.panTo(wcs2.unproject(
-            wcs2.projections[extSelect.value].centerPnt
+          const map2 = _this._map, wcs3 = map2.options.crs;
+          map2.panTo(wcs3.unproject(
+            wcs3.projections[extSelect.value].centerPnt
           ));
         });
       }
@@ -31683,7 +31683,7 @@
         url = VUtil.updateURL(
           url,
           this.options.fovQueryKey,
-          wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4)
+          wcs2.zoomToFov(map, map.getZoom(), latlng).toPrecision(4)
         );
         history.pushState(stateObj, "", url);
         VUtil.copyToClipboard(url);
@@ -31694,18 +31694,18 @@
       map2.off("drag", this._onDrag);
     },
     _onDrag: function(e) {
-      const wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
       let latlng = this._map.getCenter();
-      if (wcs.projections) {
-        this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true;
+      if (wcs2.projections) {
+        this._wcsext.options[wcs2.multiLatLngToIndex(latlng)].selected = true;
       }
-      if (wcs.pixelFlag) {
+      if (wcs2.pixelFlag) {
         this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
       } else {
-        if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
-          latlng = wcs.celsysToEq(latlng);
-        } else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
-          latlng = wcs.eqToCelsys(latlng);
+        if (!coord.nativeCelsys && wcs2.forceNativeCelsys) {
+          latlng = wcs2.celsysToEq(latlng);
+        } else if (coord.nativeCelsys && wcs2.forceNativeCelsys === false) {
+          latlng = wcs2.eqToCelsys(latlng);
         }
         switch (coord.units) {
           case "HMS":
@@ -31721,16 +31721,16 @@
       }
     },
     panTo: function(str2) {
-      const wcs = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
-      let latlng = wcs.parseCoords(str2);
+      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      let latlng = wcs2.parseCoords(str2);
       if (latlng) {
-        if (wcs.pixelFlag) {
+        if (wcs2.pixelFlag) {
           this._map.panTo(latlng);
         } else {
-          if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
-            latlng = wcs.eqToCelsys(latlng);
-          } else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
-            latlng = wcs.celsysToEq(latlng);
+          if (!coord.nativeCelsys && wcs2.forceNativeCelsys) {
+            latlng = wcs2.eqToCelsys(latlng);
+          } else if (coord.nativeCelsys && wcs2.forceNativeCelsys === false) {
+            latlng = wcs2.celsysToEq(latlng);
           }
           this._map.panTo(latlng);
         }
@@ -32808,7 +32808,7 @@
     _resetDialog: function() {
     },
     _getRegion: function(region, timeout) {
-      const _this = this, map2 = this._map, wcs = map2.options.crs, sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet19.LayerGroup(null);
+      const _this = this, map2 = this._map, wcs2 = map2.options.crs, sysflag = wcs2.forceNativeCelsys && !this.options.nativeCelsys, templayer = new import_leaflet19.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, region.name);
       VUtil.requestURL(
@@ -32824,7 +32824,7 @@
     _loadRegion: function(region, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const wcs = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet19.geoJson)(
+          const wcs2 = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet19.geoJson)(
             JSON.parse(response),
             {
               onEachFeature: function(feature, layer) {
@@ -32835,8 +32835,8 @@
                 }
               },
               coordsToLatLng: function(coords2) {
-                if (wcs.forceNativeCelsys) {
-                  const latLng11 = wcs.eqToCelsys(latLng11(coords2[1], coords2[0]));
+                if (wcs2.forceNativeCelsys) {
+                  const latLng11 = wcs2.eqToCelsys(latLng11(coords2[1], coords2[0]));
                   return new import_leaflet19.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
                 } else {
                   return new import_leaflet19.LatLng(coords2[1], coords2[0], coords2[2]);
@@ -33293,7 +33293,8 @@
     Pixel: () => Pixel,
     TAN: () => TAN,
     WCS: () => WCS,
-    ZEA: () => ZEA
+    ZEA: () => ZEA,
+    wcs: () => wcs
   });
 
   // js/crs/WCS.js
@@ -33808,7 +33809,8 @@
   });
 
   // js/crs/WCS.js
-  WCSObj = (0, import_leaflet29.extend)({}, import_leaflet29.CRS, {
+  CRSclass = import_leaflet29.Class.extend(import_leaflet29.CRS);
+  var WCS = CRSclass.extend({
     code: "WCS",
     options: {
       nzoom: 9,
@@ -33978,7 +33980,9 @@
       return dlng > 180 ? dlng - 360 : dlng < -180 ? dlng + 360 : dlng;
     }
   });
-  var WCS = import_leaflet29.Class.extend(WCSObj);
+  var wcs = function(header, images2, options2) {
+    return new WCS(header, images2, options2);
+  };
 
   // js/layer/index.js
   var layer_exports = {};

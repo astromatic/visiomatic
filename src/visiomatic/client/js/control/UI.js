@@ -2,7 +2,7 @@
  #	This file part of:	VisiOmatic
  * @file Base User Interface for VisiOmatic dialogs.
 
- * @requires util/VUtil
+ * @requires util/VUtil.js
  * @requires control/widget/FlipSwitch.js
  * @requires control/widget/Spinbox.js
 

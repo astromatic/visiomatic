@@ -1,12 +1,15 @@
-/*
-#	Emulate the FITS WCS (World Coordinate System) popular among
-#	the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
-*/
+/**
+ #	This file part of:	VisiOmatic
+ * @file Support for the WCS (World Coordinate System).
+ * @requires util/VUtil.js
+ * @requires crs/Conical.js
+ * @requires crs/Cylindrical.js
+ * @requires crs/Pixel.js
+ * @requires crs/Zenithal.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
 import {
 	Class,
 	CRS,
@@ -23,23 +26,61 @@ import {CAR, CEA} from './Cylindrical';
 import {TAN, ZEA} from './Zenithal';
 import {Pixel} from './Pixel';
 
+// Make a class out of the CRS object before extending it
+CRSclass = Class.extend(CRS);
 
-WCSObj = extend({}, CRS, {
+/**
+ * Image metadata sent in JSON by the VisiOmatic server.
+ * @typedef image
+ * @property {number[]} size
+   Shape of the image (FITS convention: NAXIS1 first).
+ * @property {number[][]} dataslice
+   Start index, end index, and direction (+1 only) of the used section of the
+   image data for each axis. The range notation follows the FITS convention
+   (start at index 1 and include the end index).
+ * @property {number[][]} detslice
+   Start index, end index, and direction (+1 or -1) of the used section of the
+   detector in the merged image for each axis. The range notation follows the
+   FITS convention (start at index 1 and include the end index).
+ * @property {number[][]} min_max
+   Minimum and maximum clipping limits of the pixel values on each image plane.
+ * @property {object} header
+   JSON representation of the merged image header.
+ */
+
+
+export const WCS = CRSclass.extend( /** @lends WCS */ {
+	/**
+	   Codename of the WCS coordinate reference system.
+	   @default
+	 */
 	code: 'WCS',
 
 	options: {
 		nzoom: 9,
-		tileSize: [256, 256],
 		// If true, world coordinates are returned
 		// in the native celestial system
 		nativeCelsys: false
 	},
 
+	/**
+	 * Create a new coordinate reference system that emulates the WCS
+	 * (World Coordinate System) used in astronomy.
+     *
+	 * @extends leaflet.CRS
+	 * @memberof module:crs/WCS.js
+	 * @constructs
+	 * @param {object} header - JSON representation of the merged image header.
+	 * @param {image[]} images - Array of image extension metadata.
+	 * @param {object} [options] - Options.
+
+
+	 * @returns {WCS} Instance of a World Coordinate System.
+	 */
 	initialize: function (header, images, options) {
 		var	nimages = images.length;
 
 		options = Util.setOptions(this, options);
-		this.tileSize = point(options.tileSize);
 		this.nzoom = options.nzoom;
 		this.projection = this.getProjection(header, options);
 		if (nimages > 1) {
@@ -242,5 +283,15 @@ WCSObj = extend({}, CRS, {
 	}
 });
 
-export const WCS = Class.extend(WCSObj);
+/**
+ * Instantiate a World Coordinate System.
+ * @function
+ * @param {object} header - JSON representation of the merged image header.
+ * @param {Image[]} images - Array of image extensions.
+ * @param {object} [options] - Options: see {@link Coords}.
+ * @returns {VTileLayer} VisiOmatic TileLayer instance.
+*/
+export const wcs = function (header, images, options) {
+	return new WCS(header, images, options);
+};
 

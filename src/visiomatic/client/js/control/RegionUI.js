@@ -2,7 +2,7 @@
  #	This file part of:	VisiOmatic
  * @file User Interface for region and Point of Interest (PoI) overlays.
 
- * @requires util/VUtil
+ * @requires util/VUtil.js
  * @requires control/UI.js
 
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
