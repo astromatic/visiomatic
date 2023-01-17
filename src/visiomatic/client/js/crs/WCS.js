@@ -165,9 +165,8 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 				dc = d;
 			}
 		}
-		var a = this.projections[pc].project(latlng);
-		console.log(a);
-		return a;
+
+		return this.projections[pc].project(latlng);
 	},
 	
 	/**
