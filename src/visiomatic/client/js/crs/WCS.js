@@ -66,7 +66,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	/**
 	 * Create a new coordinate reference system that emulates the WCS
 	 * (World Coordinate System) used in astronomy.
-     *
+	 *
 	 * @extends leaflet.CRS
 	 * @memberof module:crs/WCS.js
 	 * @constructs
@@ -78,7 +78,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @returns {WCS} Instance of a World Coordinate System.
 	 */
 	initialize: function (header, images, options) {
-		var	nimages = images.length;
+		const	nimages = images.length;
 
 		options = Util.setOptions(this, options);
 		this.nzoom = options.nzoom;
@@ -113,6 +113,15 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		this.code += ':' + this.projection.code;					
 	},
 
+	/**
+	 * Multi-WCS version of the projection to layer coordinates.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latlng - Input world coordinates.
+	 * @param {number} zoom - Zoom level.
+	 * @returns {leaflet.Point}
+	   Projected layer coordinates at the given zoom level.
+	 */
 	multiLatLngToPoint(latlng, zoom) {
 		const projectedPoint = this.multiProject(latlng),
 		    scale = this.scale(zoom);
@@ -120,6 +129,17 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return this.transformation._transform(projectedPoint, scale);
 	},
 
+	/**
+	 * Multi-WCS version of the de-projection from layer coordinates.
+	 * @method
+	 * @static
+	 * @param {leaflet.Point} pnt
+	   Input layer coordinates at the given zoom level.
+	 * @param {number} zoom
+	   Zoom level.
+	 * @returns {leaflet.LatLng}
+	   De-projected world coordinates.
+	 */
 	multiPointToLatLng(pnt, zoom) {
 		const scale = this.scale(zoom),
 		    untransformedPoint = this.transformation.untransform(pnt, scale);
@@ -127,23 +147,41 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return this.multiUnproject(untransformedPoint);
 	},
 
+	/**
+	 * Multi-WCS astrometric projection.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latlng - Input world coordinates.
+	 * @returns {leaflet.Point} Projected image coordinates.
+	 */
 	multiProject(latlng) {
-		dc = 1e+30;
-		pc = -1;
-		pnt = this.projection.project(latlng);
-		for (const p in this.projections) {
-			pntc = this.projections[p].centerPnt;
+		const	pnt = this.projection.project(latlng);
+		let	dc = 1e+30,
+			pc = -1;
+		for (var p in this.projections) {
+			var	pntc = this.projections[p].centerPnt;
 			if ((d = pnt.distanceTo(pntc)) < dc) {
 				pc = p;
 				dc = d;
 			}
 		}
-		return this.projections[pc].project(latlng);
+		var a = this.projections[pc].project(latlng);
+		console.log(a);
+		return a;
 	},
 	
+	/**
+	 * Multi-WCS version of the astrometric de-projection.
+	 * @method
+	 * @static
+	 * @param {leaflet.Point} pnt - Input image coordinates.
+	 * @returns {leaflet.LatLng} De-projected world coordinates.
+	 */
 	multiUnproject(pnt) {
-		for (const p in this.projections) {
-			pntc = this.projections[p].centerPnt;
+		let	dc = 1e+30,
+			pc = -1;
+		for (var p in this.projections) {
+			var	pntc = this.projections[p].centerPnt;
 			if ((d = pnt.distanceTo(pntc)) < dc) {
 				pc = p;
 				dc = d;
@@ -152,12 +190,19 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return this.projections[pc].unproject(pnt);
 	},
 
+	/**
+	 * Return chip index at the given world coordinates in a multi-WCS setting.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latlng - Input world coordinates.
+	 * @returns {number} Index of the closest chip (extension).
+	 */
 	multiLatLngToIndex(latlng) {
-		dc = 1e+30;
-		pc = -1;
-		pnt = this.projection.project(latlng);
-		for (const p in this.projections) {
-			pntc = this.projections[p].centerPnt;
+		const	pnt = this.projection.project(latlng);
+		let	dc = 1e+30,
+			pc = -1;
+		for (var p in this.projections) {
+			var	pntc = this.projections[p].centerPnt;
 			if ((d = pnt.distanceTo(pntc)) < dc) {
 				pc = p;
 				dc = d;
@@ -166,8 +211,17 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return pc;
 	},
 	
+	/**
+	 * Extract the WCS projection code from a JSON-encoded image header.
+	 * @method
+	 * @static
+	 * @param {object} header - JSON representation of the image header.
+	 * @param {object} [options] - Projection options.
+	 * @returns {string} WCS projection code.
+	 */
 	getProjection: function (header, options) {
-		ctype1 = header['CTYPE1'] || 'PIXEL';
+		const	ctype1 = header['CTYPE1'] || 'PIXEL';
+
 		switch (ctype1.substr(5, 3)) {
 		case 'ZEA':
 			projection = new ZEA(header, options);
@@ -191,21 +245,40 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return projection;
 	},
 
-
+	/**
+	 * Convert zoom level to relative scale.
+	 * @method
+	 * @static
+	 * @param {number} zoom - Zoom level.
+	 * @returns {number} Relative scale.
+	 */
 	scale: function (zoom) {
 		return Math.pow(2, zoom - this.nzoom + 1);
 	},
 
+	/**
+	 * Convert relative scale to zoom level.
+	 * @method
+	 * @static
+	 * @param {number} scale - Relative scale.
+	 * @returns {number} Zoom level.
+	 */
 	zoom: function (scale) {
 		return Math.log(scale) / Math.LN2 + this.nzoom - 1;
 	},
 
-	// return the raw pixel scale in degrees
+	/**
+	 * Compute the image pixel scale at the given world coordinates.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latlng - World coordinates.
+	 * @returns {number} Pixel scale (in degrees per pixel).
+	 */
 	rawPixelScale: function (latlng) {
-		var	p0 = this.projection.project(latlng),
+		const	p0 = this.projection.project(latlng),
 			latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
-			latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
-			dlngdx = latlngdx.lng - latlng.lng,
+			latlngdy = this.projection.unproject(p0.add([0.0, 10.0]));
+		let	dlngdx = latlngdx.lng - latlng.lng,
 			dlngdy = latlngdy.lng - latlng.lng;
 
 		if (dlngdx > 180.0) { dlngdx -= 360.0; }
@@ -218,32 +291,65 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		  Math.cos(latlng.lat * Math.PI / 180.0));
 	},
 
-	// return the current pixel scale in degrees
+	/**
+	 * Compute the layer pixel scale at the given world coordinates.
+	 * @method
+	 * @static
+	 * @param {number} zoom - Zoom level.
+	 * @param {leaflet.LatLng} latlng - World coordinates.
+	 * @returns {number} Layer pixel scale (in degrees per pixel).
+	 */
 	pixelScale: function (zoom, latlng) {
 		return this.rawPixelScale(latlng) / this.scale(zoom);
 	},
 
-	// return the zoom level that corresponds to the given FoV in degrees
+	/**
+	 * Compute the zoom level that corresponds to a given FoV at the provided
+	   coordinates.
+	 * @method
+	 * @static
+	 * @param {leaflet.Map} map - Leaflet map.
+	 * @param {number} fov - Field of View in degrees.
+	 * @param {leaflet.LatLng} latlng - World coordinates.
+	 * @returns {number} Zoom level.
+	 */
 	fovToZoom: function (map, fov, latlng) {
-		var scale = this.rawPixelScale(latlng),
-			size = map.getSize();
+		const	size = map.getSize();
+		let	scale = this.rawPixelScale(latlng);
 
 		if (fov < scale) { fov = scale; }
 		scale *= Math.sqrt(size.x * size.x + size.y * size.y);
 		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
 	},
 
-	// return the FoV in degrees that corresponds to the given zoom level
+	/**
+	 * Compute the FoV that corresponds to a given zoom level at the provided
+	 * coordinates.
+	 * @method
+	 * @static
+	 * @param {leaflet.Map} map - Leaflet map.
+	 * @param {number} zoom - Zoom level.
+	 * @param {leaflet.LatLng} latlng - World coordinates.
+	 * @returns {number} Field of View in degrees.
+	 */
 	zoomToFov: function (map, zoom, latlng) {
-		var size = map.getSize(),
+		const	size = map.getSize(),
 			scale = this.rawPixelScale(latlng) *
 			  Math.sqrt(size.x * size.x + size.y * size.y),
 			zscale = this.scale(zoom);
 		return  zscale > 0.0 ? scale / zscale : scale;
 	},
 
+	/**
+	 * Compute the distance between two points on the sphere.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latlng1 - World coordinates of the first point.
+	 * @param {leaflet.LatLng} latlng2 - World coordinates of the second point.
+	 * @returns {number} Spherical distance between the two points in degrees.
+	 */
 	distance: function (latlng1, latlng2) {
-		var rad = Math.PI / 180.0,
+		const	rad = Math.PI / 180.0,
 		    lat1 = latlng1.lat * rad,
 		    lat2 = latlng2.lat * rad,
 		    a = Math.sin(lat1) * Math.sin(lat2) +
@@ -252,15 +358,22 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		return 180.0 / Math.PI * Math.acos(Math.min(a, 1));
 	},
 
-	// Parse a string of coordinates. Return undefined if parsing failed
+	/**
+	 * Parse a string of world coordinates.
+	 * @method
+	 * @static
+	 * @param {string} str
+	   Input string.
+	 * @returns {leaflet.LatLng|undefined}
+	   World coordinates, or `undefined` if conversion failed.
+	 */
 	parseCoords: function (str) {
-		var result, latlng;
-
 		// Try VisiOmatic sexagesimal first
-		latlng = VUtil.hmsDMSToLatLng(str);
+		let	latlng = VUtil.hmsDMSToLatLng(str);
+
 		if (typeof latlng === 'undefined') {
 			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
-			result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
+			let	result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
 			if (result && result.length >= 3) {
 				latlng = latLng(Number(result[2]), Number(result[1]));
 			}
@@ -276,8 +389,19 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	},
 
 
+	/**
+	 * Compute the longitude of a point with respect to a reference point.
+	 * @method
+	 * @static
+	 * @param {leaflet.LatLng} latLng
+	   World coordinates of the point.
+	 * @param {leaflet.LatLng} latLng0
+	   World coordinates of the reference point.
+	 * @returns {number}
+	   Difference in longitude (in degrees) in the interval -180 to 180 deg.
+	 */
 	_deltaLng: function (latLng, latLng0) {
-		var	dlng = latLng.lng - latLng0.lng;
+		const	dlng = latLng.lng - latLng0.lng;
 
 		return dlng > 180.0 ? dlng - 360.0 : (dlng < -180.0 ? dlng + 360.0 : dlng);
 	}
@@ -288,8 +412,8 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
  * @function
  * @param {object} header - JSON representation of the merged image header.
  * @param {Image[]} images - Array of image extensions.
- * @param {object} [options] - Options: see {@link Coords}.
- * @returns {VTileLayer} VisiOmatic TileLayer instance.
+ * @param {object} [options] - Options: see {@link WCS}.
+ * @returns {WCS} WCS instance.
 */
 export const wcs = function (header, images, options) {
 	return new WCS(header, images, options);

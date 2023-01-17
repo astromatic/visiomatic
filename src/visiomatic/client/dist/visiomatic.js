@@ -15410,7 +15410,7 @@
           }
           return typeof obj === "object" || typeof obj === "function" ? class2type[toString2.call(obj)] || "object" : typeof obj;
         }
-        var version = "3.6.1", jQuery5 = function(selector, context) {
+        var version = "3.6.3", jQuery5 = function(selector, context) {
           return new jQuery5.fn.init(selector, context);
         };
         jQuery5.fn = jQuery5.prototype = {
@@ -15746,6 +15746,9 @@
                     newSelector = groups.join(",");
                   }
                   try {
+                    if (support2.cssSupportsSelector && !CSS.supports("selector(:is(" + newSelector + "))")) {
+                      throw new Error();
+                    }
                     push2.apply(
                       results,
                       newContext.querySelectorAll(newSelector)
@@ -15882,6 +15885,9 @@
               docElem.appendChild(el).appendChild(document3.createElement("div"));
               return typeof el.querySelectorAll !== "undefined" && !el.querySelectorAll(":scope fieldset div").length;
             });
+            support2.cssSupportsSelector = assert(function() {
+              return CSS.supports("selector(*)") && document3.querySelectorAll(":is(:jqfake)") && !CSS.supports("selector(:is(*,:jqfake))");
+            });
             support2.attributes = assert(function(el) {
               el.className = "i";
               return !el.getAttribute("className");
@@ -16016,11 +16022,14 @@
                 rbuggyMatches.push("!=", pseudos);
               });
             }
+            if (!support2.cssSupportsSelector) {
+              rbuggyQSA.push(":has");
+            }
             rbuggyQSA = rbuggyQSA.length && new RegExp(rbuggyQSA.join("|"));
             rbuggyMatches = rbuggyMatches.length && new RegExp(rbuggyMatches.join("|"));
             hasCompare = rnative.test(docElem.compareDocumentPosition);
             contains = hasCompare || rnative.test(docElem.contains) ? function(a, b) {
-              var adown = a.nodeType === 9 ? a.documentElement : a, bup = b && b.parentNode;
+              var adown = a.nodeType === 9 && a.documentElement || a, bup = b && b.parentNode;
               return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains ? adown.contains(bup) : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
             } : function(a, b) {
               if (b) {
@@ -18938,8 +18947,8 @@
           computed = computed || getStyles(elem);
           if (computed) {
             ret = computed.getPropertyValue(name) || computed[name];
-            if (isCustomProp) {
-              ret = ret.replace(rtrimCSS, "$1");
+            if (isCustomProp && ret) {
+              ret = ret.replace(rtrimCSS, "$1") || void 0;
             }
             if (ret === "" && !isAttached(elem)) {
               ret = jQuery5.style(elem, name);
@@ -33532,8 +33541,8 @@
       phiTheta.lat = this._thetaToR(phiTheta.lat);
       return this._redToPix(this._phiRToRed(phiTheta));
     },
-    unproject: function(pnt2) {
-      var phiTheta = this._redToPhiR(this._pixToRed(pnt2));
+    unproject: function(pnt) {
+      var phiTheta = this._redToPhiR(this._pixToRed(pnt));
       phiTheta.lat = this._rToTheta(phiTheta.lat);
       var latlng = this._phiThetaToRADec(phiTheta);
       if (latlng.lng < -180) {
@@ -33814,13 +33823,11 @@
     code: "WCS",
     options: {
       nzoom: 9,
-      tileSize: [256, 256],
       nativeCelsys: false
     },
     initialize: function(header, images2, options2) {
-      var nimages = images2.length;
+      const nimages = images2.length;
       options2 = import_leaflet29.Util.setOptions(this, options2);
-      this.tileSize = (0, import_leaflet29.point)(options2.tileSize);
       this.nzoom = options2.nzoom;
       this.projection = this.getProjection(header, options2);
       if (nimages > 1) {
@@ -33854,39 +33861,40 @@
       const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
       return this.transformation._transform(projectedPoint, scale2);
     },
-    multiPointToLatLng(pnt2, zoom) {
-      const scale2 = this.scale(zoom), untransformedPoint = this.transformation.untransform(pnt2, scale2);
+    multiPointToLatLng(pnt, zoom) {
+      const scale2 = this.scale(zoom), untransformedPoint = this.transformation.untransform(pnt, scale2);
       return this.multiUnproject(untransformedPoint);
     },
     multiProject(latlng) {
-      dc = 1e30;
-      pc = -1;
-      pnt = this.projection.project(latlng);
-      for (const p in this.projections) {
-        pntc = this.projections[p].centerPnt;
+      const pnt = this.projection.project(latlng);
+      let dc = 1e30, pc = -1;
+      for (var p in this.projections) {
+        var pntc = this.projections[p].centerPnt;
         if ((d = pnt.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }
       }
-      return this.projections[pc].project(latlng);
+      var a = this.projections[pc].project(latlng);
+      console.log(a);
+      return a;
     },
-    multiUnproject(pnt2) {
-      for (const p in this.projections) {
-        pntc = this.projections[p].centerPnt;
-        if ((d = pnt2.distanceTo(pntc)) < dc) {
+    multiUnproject(pnt) {
+      let dc = 1e30, pc = -1;
+      for (var p in this.projections) {
+        var pntc = this.projections[p].centerPnt;
+        if ((d = pnt.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }
       }
-      return this.projections[pc].unproject(pnt2);
+      return this.projections[pc].unproject(pnt);
     },
     multiLatLngToIndex(latlng) {
-      dc = 1e30;
-      pc = -1;
-      pnt = this.projection.project(latlng);
-      for (const p in this.projections) {
-        pntc = this.projections[p].centerPnt;
+      const pnt = this.projection.project(latlng);
+      let dc = 1e30, pc = -1;
+      for (var p in this.projections) {
+        var pntc = this.projections[p].centerPnt;
         if ((d = pnt.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
@@ -33895,7 +33903,7 @@
       return pc;
     },
     getProjection: function(header, options2) {
-      ctype1 = header["CTYPE1"] || "PIXEL";
+      const ctype1 = header["CTYPE1"] || "PIXEL";
       switch (ctype1.substr(5, 3)) {
         case "ZEA":
           projection = new ZEA(header, options2);
@@ -33925,7 +33933,8 @@
       return Math.log(scale2) / Math.LN2 + this.nzoom - 1;
     },
     rawPixelScale: function(latlng) {
-      var p0 = this.projection.project(latlng), latlngdx = this.projection.unproject(p0.add([10, 0])), latlngdy = this.projection.unproject(p0.add([0, 10])), dlngdx = latlngdx.lng - latlng.lng, dlngdy = latlngdy.lng - latlng.lng;
+      const p0 = this.projection.project(latlng), latlngdx = this.projection.unproject(p0.add([10, 0])), latlngdy = this.projection.unproject(p0.add([0, 10]));
+      let dlngdx = latlngdx.lng - latlng.lng, dlngdy = latlngdy.lng - latlng.lng;
       if (dlngdx > 180) {
         dlngdx -= 360;
       } else if (dlngdx < -180) {
@@ -33942,7 +33951,8 @@
       return this.rawPixelScale(latlng) / this.scale(zoom);
     },
     fovToZoom: function(map2, fov, latlng) {
-      var scale2 = this.rawPixelScale(latlng), size = map2.getSize();
+      const size = map2.getSize();
+      let scale2 = this.rawPixelScale(latlng);
       if (fov < scale2) {
         fov = scale2;
       }
@@ -33950,18 +33960,17 @@
       return fov > 0 ? this.zoom(scale2 / fov) : this.nzoom - 1;
     },
     zoomToFov: function(map2, zoom, latlng) {
-      var size = map2.getSize(), scale2 = this.rawPixelScale(latlng) * Math.sqrt(size.x * size.x + size.y * size.y), zscale = this.scale(zoom);
+      const size = map2.getSize(), scale2 = this.rawPixelScale(latlng) * Math.sqrt(size.x * size.x + size.y * size.y), zscale = this.scale(zoom);
       return zscale > 0 ? scale2 / zscale : scale2;
     },
     distance: function(latlng1, latlng2) {
-      var rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, a = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
+      const rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, a = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
       return 180 / Math.PI * Math.acos(Math.min(a, 1));
     },
     parseCoords: function(str2) {
-      var result, latlng;
-      latlng = VUtil.hmsDMSToLatLng(str2);
+      let latlng = VUtil.hmsDMSToLatLng(str2);
       if (typeof latlng === "undefined") {
-        result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str2);
+        let result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str2);
         if (result && result.length >= 3) {
           latlng = (0, import_leaflet29.latLng)(Number(result[2]), Number(result[1]));
         }
@@ -33976,7 +33985,7 @@
       }
     },
     _deltaLng: function(latLng11, latLng0) {
-      var dlng = latLng11.lng - latLng0.lng;
+      const dlng = latLng11.lng - latLng0.lng;
       return dlng > 180 ? dlng - 360 : dlng < -180 ? dlng + 360 : dlng;
     }
   });
@@ -34442,7 +34451,7 @@
  * Date: 2015-04-28T16:01Z
  */
 /*!
- * jQuery JavaScript Library v3.6.1
+ * jQuery JavaScript Library v3.6.3
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -34452,5 +34461,5 @@
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2022-08-26T17:52Z
+ * Date: 2022-12-20T21:28Z
  */
