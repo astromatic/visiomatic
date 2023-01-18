@@ -15410,7 +15410,7 @@
           }
           return typeof obj === "object" || typeof obj === "function" ? class2type[toString2.call(obj)] || "object" : typeof obj;
         }
-        var version = "3.6.3", jQuery5 = function(selector, context) {
+        var version = "3.6.1", jQuery5 = function(selector, context) {
           return new jQuery5.fn.init(selector, context);
         };
         jQuery5.fn = jQuery5.prototype = {
@@ -15746,9 +15746,6 @@
                     newSelector = groups.join(",");
                   }
                   try {
-                    if (support2.cssSupportsSelector && !CSS.supports("selector(:is(" + newSelector + "))")) {
-                      throw new Error();
-                    }
                     push2.apply(
                       results,
                       newContext.querySelectorAll(newSelector)
@@ -15885,9 +15882,6 @@
               docElem.appendChild(el).appendChild(document3.createElement("div"));
               return typeof el.querySelectorAll !== "undefined" && !el.querySelectorAll(":scope fieldset div").length;
             });
-            support2.cssSupportsSelector = assert(function() {
-              return CSS.supports("selector(*)") && document3.querySelectorAll(":is(:jqfake)") && !CSS.supports("selector(:is(*,:jqfake))");
-            });
             support2.attributes = assert(function(el) {
               el.className = "i";
               return !el.getAttribute("className");
@@ -16022,14 +16016,11 @@
                 rbuggyMatches.push("!=", pseudos);
               });
             }
-            if (!support2.cssSupportsSelector) {
-              rbuggyQSA.push(":has");
-            }
             rbuggyQSA = rbuggyQSA.length && new RegExp(rbuggyQSA.join("|"));
             rbuggyMatches = rbuggyMatches.length && new RegExp(rbuggyMatches.join("|"));
             hasCompare = rnative.test(docElem.compareDocumentPosition);
             contains = hasCompare || rnative.test(docElem.contains) ? function(a, b) {
-              var adown = a.nodeType === 9 && a.documentElement || a, bup = b && b.parentNode;
+              var adown = a.nodeType === 9 ? a.documentElement : a, bup = b && b.parentNode;
               return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains ? adown.contains(bup) : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
             } : function(a, b) {
               if (b) {
@@ -18947,8 +18938,8 @@
           computed = computed || getStyles(elem);
           if (computed) {
             ret = computed.getPropertyValue(name) || computed[name];
-            if (isCustomProp && ret) {
-              ret = ret.replace(rtrimCSS, "$1") || void 0;
+            if (isCustomProp) {
+              ret = ret.replace(rtrimCSS, "$1");
             }
             if (ret === "" && !isAttached(elem)) {
               ret = jQuery5.style(elem, name);
@@ -33316,7 +33307,7 @@
   var import_leaflet24 = __toESM(require_leaflet_src());
   var Projection = import_leaflet24.Class.extend({
     bounds: (0, import_leaflet24.bounds)([-0.5, -0.5], [0.5, 0.5]),
-    defaultparam: {
+    defaultProjParam: {
       name: "",
       ctype: { x: "PIXEL", y: "PIXEL" },
       naxis: [256, 256],
@@ -33373,7 +33364,7 @@
       ]
     },
     initialize: function(header, options2) {
-      const projparam = this._paramUpdate(this.defaultparam);
+      const projparam = this._paramUpdate(this.defaultProjParam);
       this.options = options2;
       this._readWCS(header);
       if (options2) {
@@ -33410,9 +33401,10 @@
       }
     },
     _paramUpdate: function(paramsrc) {
+      let projparam = {};
       if (!this.projparam) {
         this.projparam = {};
-        var projparam = this.projparam;
+        projparam = this.projparam;
       }
       if (paramsrc.ctype) {
         projparam.ctype = { x: paramsrc.ctype.x, y: paramsrc.ctype.y };
@@ -33446,7 +33438,8 @@
       return projparam;
     },
     _readWCS: function(header) {
-      var projparam = this.projparam, key = VUtil.readFITSKey, v;
+      const projparam = this.projparam;
+      var v;
       this.name = projparam.name;
       if (v = header["EXTNAME"]) {
         this.name = v;
@@ -33549,6 +33542,20 @@
         latlng.lng += 360;
       }
       return this.celsysflag ? this.celsysToEq(latlng) : latlng;
+    },
+    celsysToEq: function(latlng) {
+      const cmat = this.projparam.celsysmat, deg = Math.PI / 180, invdeg = 180 / Math.PI, a2 = latlng.lng * deg - cmat[1], d2 = latlng.lat * deg, sd2 = Math.sin(d2), cd2cp = Math.cos(d2) * cmat[2], sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
+      return L.latLng(
+        Math.asin(sd) * invdeg,
+        ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) + cmat[0]) * invdeg + 360) % 360
+      );
+    },
+    eqToCelsys: function(latlng) {
+      const cmat = this.projparam.celsysmat, deg = Math.PI / 180, invdeg = 180 / Math.PI, a = latlng.lng * deg - cmat[0], sd = Math.sin(latlng.lat * deg), cdcp = Math.cos(latlng.lat * deg) * cmat[2], sd2 = sd * cmat[3] + cdcp * Math.cos(a);
+      return L.latLng(
+        Math.asin(sd2) * invdeg,
+        ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) + cmat[1]) * invdeg + 360) % 360
+      );
     },
     _getCenter(projection2) {
       const projparam = this.projparam, detslice = projparam.detslice;
@@ -33833,12 +33840,14 @@
       if (nimages > 1) {
         this.projections = new Array(nimages);
         for (const [i2, image] of images2.entries()) {
-          imOptions = {
-            naticeCelsys: options2.nativeCelsys,
-            dataslice: image.dataslice,
-            detslice: image.detslice
-          };
-          projection = this.getProjection(image.header, imOptions);
+          projection = this.getProjection(
+            image.header,
+            {
+              naticeCelsys: options2.nativeCelsys,
+              dataslice: image.dataslice,
+              detslice: image.detslice
+            }
+          );
           if (projection.name === "") {
             projection.name = "#" + str(i2 + 1);
           }
@@ -33875,9 +33884,7 @@
           dc = d;
         }
       }
-      var a = this.projections[pc].project(latlng);
-      console.log(a);
-      return a;
+      return this.projections[pc].project(latlng);
     },
     multiUnproject(pnt) {
       let dc = 1e30, pc = -1;
@@ -34195,8 +34202,7 @@
           meta.images,
           {
             nativeCelsys: this.options.nativeCelsys,
-            nzoom: visio.maxZoom + 1,
-            tileSize: this.tileSize
+            nzoom: visio.maxZoom + 1
           }
         );
         visio.metaReady = true;
@@ -34451,7 +34457,7 @@
  * Date: 2015-04-28T16:01Z
  */
 /*!
- * jQuery JavaScript Library v3.6.3
+ * jQuery JavaScript Library v3.6.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -34461,5 +34467,5 @@
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2022-12-20T21:28Z
+ * Date: 2022-08-26T17:52Z
  */

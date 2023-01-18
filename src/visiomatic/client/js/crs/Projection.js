@@ -6,7 +6,7 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
- import {
+import {
 	Class,
 	bounds,
 	latLng,
@@ -86,13 +86,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
-	options: {
-		// If true, world coordinates are returned
-		// in the native celestial system
-		nativeCelsys: false,
-		dataslice: undefined,
-		detslice: undefined
-	},
 	/**
 	 * Base class for the WCS (World Coordinate System) projections used in
 	   astronomy.
@@ -101,21 +94,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @memberof module:crs/Projection.js
 	 * @constructs
 	 * @param {object} header - JSON representation of the image header.
-	 * @param {object} [options] - Options.
-
-	 * @param {number} [options.nativeCelsys=false]
-	   Return world coordinates in their native celestial system?
-
-	 * @param {number[][]} [options.dataslice=undefined]
-	   Start index, end index, and direction (+1 only) of the used section of
-	   the image data for each axis. The range notation follows the FITS
-	   convention (start at index 1 and include the end index).
-
-	 * @param {number[][]} [options.detslice=undefined]
-	   Start index, end index, and direction (+1 or -1) of the used section of
-	   the detector in the merged image for each axis. The range notation
-	   follows the FITS convention (start at index 1 and include the end index).
-
+	 * @param {projParam} [options] - Projection options.
 
 	 * @returns {Projection} Instance of a projection.
 	 */
@@ -306,6 +285,35 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			latlng.lng += 360.0;
 		}
 		return this.celsysflag ? this.celsysToEq(latlng) : latlng;
+	},
+
+	// convert celestial (angular) coordinates to equatorial
+	celsysToEq: function (latlng) {
+		const	cmat = this.projparam.celsysmat,
+		    deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a2 = latlng.lng * deg - cmat[1],
+			d2 = latlng.lat * deg,
+			sd2 = Math.sin(d2),
+			cd2cp = Math.cos(d2) * cmat[2],
+			sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
+		return L.latLng(Math.asin(sd) * invdeg,
+		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
+		                 cmat[0]) * invdeg + 360.0) % 360.0);
+	},
+
+	// convert equatorial (angular) coordinates to celestial
+	eqToCelsys: function (latlng) {
+		const	cmat = this.projparam.celsysmat,
+			deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a = latlng.lng * deg - cmat[0],
+			sd = Math.sin(latlng.lat * deg),
+			cdcp = Math.cos(latlng.lat * deg) * cmat[2],
+			sd2 = sd * cmat[3] + cdcp * Math.cos(a);
+		return L.latLng(Math.asin(sd2) * invdeg,
+		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
+		                 cmat[1]) * invdeg + 360.0) % 360.0);
 	},
 
 	_getCenter(projection) {
