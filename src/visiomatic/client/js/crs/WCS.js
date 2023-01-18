@@ -26,9 +26,8 @@ import {CAR, CEA} from './Cylindrical';
 import {TAN, ZEA} from './Zenithal';
 import {Pixel} from './Pixel';
 
-// Make a class out of the CRS object before extending it
-CRSclass = Class.extend(CRS);
 
+// Document the "image" object that stores image metadata
 /**
  * Image metadata sent in JSON by the VisiOmatic server.
  * @typedef image
@@ -47,6 +46,10 @@ CRSclass = Class.extend(CRS);
  * @property {object} header
    JSON representation of the merged image header.
  */
+
+
+// Make a class out of the CRS object before extending it
+CRSclass = Class.extend(CRS);
 
 
 export const WCS = CRSclass.extend( /** @lends WCS */ {
@@ -74,6 +77,11 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @param {image[]} images - Array of image extension metadata.
 	 * @param {object} [options] - Options.
 
+	 * @param {number} [options.nzoom=9]
+	   Number of zoom levels.
+
+	 * @param {number} [options.nativeCelsys=false]
+	   Return world coordinates in their native celestial system?
 
 	 * @returns {WCS} Instance of a World Coordinate System.
 	 */
@@ -86,12 +94,14 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		if (nimages > 1) {
 			this.projections = new Array(nimages);
 			for (const [i, image] of images.entries()) {
-				imOptions = {
-					naticeCelsys: options.nativeCelsys,
-					dataslice: image.dataslice,
-					detslice: image.detslice
-				};
-				projection = this.getProjection(image.header, imOptions);
+				projection = this.getProjection(
+					image.header,
+					{
+						naticeCelsys: options.nativeCelsys,
+						dataslice: image.dataslice,
+						detslice: image.detslice
+					}
+				);
 				if (projection.name === '') {
 					projection.name = '#' + str(i+1);
 				}
@@ -248,6 +258,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * Convert zoom level to relative scale.
 	 * @method
 	 * @static
+	 * @override
 	 * @param {number} zoom - Zoom level.
 	 * @returns {number} Relative scale.
 	 */
@@ -259,6 +270,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * Convert relative scale to zoom level.
 	 * @method
 	 * @static
+	 * @override
 	 * @param {number} scale - Relative scale.
 	 * @returns {number} Zoom level.
 	 */

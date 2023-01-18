@@ -471,7 +471,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				{
 					nativeCelsys: this.options.nativeCelsys,
 					nzoom: visio.maxZoom + 1,
-					tileSize: this.tileSize
 				}
 			);
 			visio.metaReady = true;

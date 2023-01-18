@@ -1,13 +1,12 @@
-/*
-# 	FITS WCS (World Coordinate System) (de-)projection
-#	(see http://www.atnf.csiro.au/people/mcalabre/WCS/).
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#                            Chiara Marmo    - Paris-Saclay
-*/
-import {
+/**
+ #	This file part of:	VisiOmatic
+ * @file Common WCS (World Coordinate System) (de-)projection assets.
+ * @requires util/VUtil.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
+ import {
 	Class,
 	bounds,
 	latLng,
@@ -17,11 +16,61 @@ import {
 import {VUtil} from '../util';
 
 
-export const Projection = Class.extend({
+export const Projection = Class.extend( /** @lends Projection */ {
 
 	bounds: bounds([-0.5, -0.5], [0.5, 0.5]),
 
-	defaultparam: {
+	/**
+	 * Projection parameters. The ordering of array elements follows
+	   the Leaflet convention: latitude comes first in [latitude,longitude]
+	   pairs, while x comes first in Cartesian coordinates. However the center
+	   of the first pixel in the array has image coordinates [1.0, 1.0],
+	   conforming to the FITS convention.
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf}
+	 * @typedef projParam
+	 * @property {string} name
+	   Extension name.
+	 * @property {{x: string, y: string}} ctype
+ 	   Projection coordinate types (`CTYPEi` FITS keyword values).
+	 * @property {number[]} naxis
+	   Image shape (`NAXISi` FITS keyword values)
+	 * @property {number[]} crpix (`CRPIXi` FITS keyword values).
+	   Image coordinates of the projection center.
+	 * @property {number[]} crval
+	   Celestial latitude and longitude of the projection center. (`CRVALi` FITS
+	   keyword values).
+	 * @property {number[][]} cd
+	   Jacobian matrix of the deprojection (`CDi_j` FITS keyword values).
+	 * @property {number[][]} cdinv
+	   Jacobian matrix of the projection (inverse of the `CD` matrix).
+	 * @property {number[]} natrval
+	   Native latitude and longitude of the projection center.
+	 * @property {number[]} natpole
+	   Latitude and longitude of the native pole.
+	 * @property {number[][]} pv
+	   Projection distortion terms on each axis (`PVi_j` FITS keyword values).
+	 * @property {number[][]} dataslice
+	   Start index, end index, and direction (+1 only) of the used section of
+	   the image data for each axis. The range notation follows the FITS
+	   convention (start at index 1 and include the end index).
+	 * @property {number[][]} detslice
+	   Start index, end index, and direction (+1 or -1) of the used section of
+	   the detector in the merged image for each axis. The range notation
+	   follows the FITS convention (start at index 1 and include the end index).
+	 * @property {boolean} pixelFlag
+	   True for a Cartesian projection.
+	 * @property {'equatorial'|'galactic'|'ecliptic'|'supergalactic'} celsyscode
+	   Type of celestial system.
+	 * @property {number[][]} celsysmat
+	   Celestial system transformation matrix
+	 */
+
+	/**
+	 * Default WCS projection parameters.
+	 * @type {projParam}
+	 * @static
+	 */
+	defaultProjParam: {
 		name: '',
 		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
@@ -37,8 +86,41 @@ export const Projection = Class.extend({
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
+	options: {
+		// If true, world coordinates are returned
+		// in the native celestial system
+		nativeCelsys: false,
+		dataslice: undefined,
+		detslice: undefined
+	},
+	/**
+	 * Base class for the WCS (World Coordinate System) projections used in
+	   astronomy.
+	 *
+	 * @extends leaflet.Projection
+	 * @memberof module:crs/Projection.js
+	 * @constructs
+	 * @param {object} header - JSON representation of the image header.
+	 * @param {object} [options] - Options.
+
+	 * @param {number} [options.nativeCelsys=false]
+	   Return world coordinates in their native celestial system?
+
+	 * @param {number[][]} [options.dataslice=undefined]
+	   Start index, end index, and direction (+1 only) of the used section of
+	   the image data for each axis. The range notation follows the FITS
+	   convention (start at index 1 and include the end index).
+
+	 * @param {number[][]} [options.detslice=undefined]
+	   Start index, end index, and direction (+1 or -1) of the used section of
+	   the detector in the merged image for each axis. The range notation
+	   follows the FITS convention (start at index 1 and include the end index).
+
+
+	 * @returns {Projection} Instance of a projection.
+	 */
 	initialize: function (header, options) {
-		const	projparam = this._paramUpdate(this.defaultparam);
+		const	projparam = this._paramUpdate(this.defaultProjParam);
 
 		this.options = options;
 
@@ -82,10 +164,23 @@ export const Projection = Class.extend({
 	},
 
 	// Initialize WCS parameters
+	/**
+	 * Initialize WCS parameters.
+	 * @method
+	 * @static
+	 * @param {projParam} paramSrc
+	   Input layer coordinates at the given zoom level.
+	 * @param {number} zoom
+	   Zoom level.
+	 * @returns {leaflet.LatLng}
+	   De-projected world coordinates.
+	 */
 	_paramUpdate: function (paramsrc) {
+		let	projparam = {};
+
 		if (!this.projparam) {
 			this.projparam = {};
-			var projparam = this.projparam;
+			projparam = this.projparam;
 		}
 		if (paramsrc.ctype) {
 			projparam.ctype = {x: paramsrc.ctype.x, y: paramsrc.ctype.y};
@@ -120,9 +215,8 @@ export const Projection = Class.extend({
 
 	// Read WCS information from a FITS header
 	_readWCS: function (header) {
-		var projparam = this.projparam,
-			key = VUtil.readFITSKey,
-		    v;
+		const	projparam = this.projparam;
+		var	v;
 
 		this.name = projparam.name;
 		if ((v = header['EXTNAME'])) { this.name = v; }
