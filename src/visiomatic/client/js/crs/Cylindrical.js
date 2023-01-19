@@ -15,17 +15,18 @@ import {Projection} from './Projection';
 Cylindrical = Projection.extend({
 
 	_projInit: function () {
-		var	deg = Math.PI / 180.0;
-		var	projparam = this.projparam;
+		const	deg = Math.PI / 180.0,
+			projparam = this.projparam;
 
-		projparam.cdinv = this._invertCD(projparam.cd);
-		projparam.lambda = projparam.pv[1][1];
-		if (projparam.lambda === 0.0) { projparam.lambda = 1.0; }
-		projparam.natrval = latLng(0.0, 0.0);
-		projparam.natpole = this._natpole();
-		projparam.cpole = this._cpole();
-		projparam.infinite = true;
-		projparam.pixelFlag = false;
+		projparam._cdinv = this._invertCD(projparam.cd);
+		projparam._lambda = projparam.pv[1][1];
+		if (projparam._lambda === 0.0) { projparam._lambda = 1.0; }
+		// Override native projection center and pole coordinates
+		projparam._natrval = latLng(0.0, 0.0);
+		projparam._natpole = this._natpole();
+		projparam._cpole = this._cpole();
+		projparam._infinite = true;
+		projparam._pixelFlag = false;
 	},
 
 	_rToTheta: function (r) {
@@ -57,17 +58,21 @@ export const CEA = Cylindrical.extend({
 
 	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
 	_redToPhiR: function (red) {
-		var	deg = Math.PI / 180.0,
-			slat = red.y * this.projparam.lambda * deg;
+		const	deg = Math.PI / 180.0,
+			slat = red.y * this.projparam._lambda * deg;
+
 		return latLng(slat > -1.0 ?
 		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
 	_phiRToRed: function (phiR) {
-		var deg = Math.PI / 180.0;
-		return point(phiR.lng,
-		               Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
+		const	deg = Math.PI / 180.0;
+
+		return point(
+			phiR.lng,
+			Math.sin(phiR.lat * deg) / (this.projparam._lambda * deg)
+		);
 	}
 });
 

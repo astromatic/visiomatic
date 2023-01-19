@@ -15,7 +15,7 @@ export const Pixel = Projection.extend({
 	code: 'PIX',
 
 	_projInit: function () {
-		var	projparam = this.projparam;
+		const	projparam = this.projparam;
 
 		// Center on image
 		if (!options.crval) {
@@ -24,16 +24,14 @@ export const Pixel = Projection.extend({
 				(projparam.naxis.x + 1.0) / 2.0
 			);
 		}
-		projparam.wrapLng = [0.5, projparam.naxis.x - 0.5];
-		projparam.wrapLat = [this.projparam.y - 0.5, 0.5];
-		projparam.cdinv = this._invertCD(projparam.cd);
-		projparam.cpole = projparam.crval;
+		projparam._cdinv = this._invertCD(projparam.cd);
+		projparam._cpole = projparam.crval;
 		this.bounds = bounds(
 			[0.5, this.projparam.naxis.y - 0.5],
 			[this.projparam.naxis.x - 0.5, 0.5]
 		);
-		projparam.pixelFlag = true;
-		projparam.infinite = false;
+		projparam._pixelFlag = true;
+		projparam._infinite = false;
 	},
 
 	project: function (latlng) {

@@ -37,7 +37,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		coordinates: [{
 			label: 'RA, Dec',
 			units: 'HMS',
-			nativeCelsys: false
+			nativeCelSys: false
 		}],
 		centerQueryKey: 'center',
 		fovQueryKey: 'fov',
@@ -259,10 +259,10 @@ export const Coords = Control.extend( /** @lends Coords */ {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
 				latlng.lat.toFixed(0);
 		} else {
-			if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
-				latlng = wcs.celsysToEq(latlng);
-			} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
-				latlng = wcs.eqToCelsys(latlng);
+			if (!coord.nativeCelSys && !wcs.equatorialFlag) {
+				latlng = wcs.celSysToEq(latlng);
+			} else if (coord.nativeCelSys && wcs.equatorialFlag) {
+				latlng = wcs.eqToCelSys(latlng);
 			}
 			switch (coord.units) {
 			case 'HMS':
@@ -295,10 +295,10 @@ export const Coords = Control.extend( /** @lends Coords */ {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
 			} else {
-				if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
-					latlng = wcs.eqToCelsys(latlng);
-				} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
-					latlng = wcs.celsysToEq(latlng);
+				if (!coord.nativeCelSys && !wcs.equatorialFlag) {
+					latlng = wcs.eqToCelSys(latlng);
+				} else if (coord.nativeCelSys && wcs.equatorialFlag) {
+					latlng = wcs.celSysToEq(latlng);
 				}
 				this._map.panTo(latlng);
 			}

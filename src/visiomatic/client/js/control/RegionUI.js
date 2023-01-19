@@ -34,7 +34,7 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	options: {
 		title: 'Region overlays',
-		nativeCelsys: true,
+		nativeCelSys: true,
 		color: '#00FFFF',
 		timeOut: 30,	// seconds
 		collapsed: true,
@@ -181,7 +181,7 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 		const	_this = this,
 			map = this._map,
 			wcs = map.options.crs,
-			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+			sysflag = !wcs.equatorialFlag && !this.options.nativeCelSys,
 		    templayer = new LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
@@ -223,11 +223,17 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 								}
 							},
 							coordsToLatLng: function (coords) {
-								if (wcs.forceNativeCelsys) {
-									const	latLng = wcs.eqToCelsys(latLng(coords[1], coords[0]));
-									return new LatLng(latLng.lat, latLng.lng, coords[2]);
-								} else {
+								if (wcs.equatorialFlag) {
 									return new LatLng(coords[1], coords[0], coords[2]);
+								} else {
+									const	latLng = wcs.eqToCelSys(
+										latLng(coords[1], coords[0])
+									);
+									return new LatLng(
+										latLng.lat,
+										latLng.lng,
+										coords[2]
+									);
 								}
 							},
 							style: function (feature) {

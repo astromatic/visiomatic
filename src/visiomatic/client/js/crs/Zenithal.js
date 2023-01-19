@@ -15,14 +15,14 @@ import {Projection} from './Projection';
 Zenithal = Projection.extend({
 
 	_projInit: function () {
-		var	projparam = this.projparam;
+		const	projparam = this.projparam;
 
-		projparam.cdinv = this._invertCD(projparam.cd);
-		projparam.natrval = latLng(90.0, 0.0);
-		projparam.natpole = this._natpole();
-		projparam.cpole = this._cpole();
-		projparam.infinite = true;
-		projparam.pixelFlag = false;
+		projparam._cdinv = this._invertCD(projparam.cd);
+		projparam._natrval = latLng(90.0, 0.0);
+		projparam._natpole = this._natpole();
+		projparam._cpole = this._cpole();
+		projparam._infinite = true;
+		projparam._pixelFlag = false;
 	},
 
 	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.
@@ -33,8 +33,9 @@ Zenithal = Projection.extend({
 
 	// \phi, r [deg] -> (x, y) ["deg"] for zenithal projections.
 	_phiRToRed: function (phiR) {
-		var	deg = Math.PI / 180.0,
+		const	deg = Math.PI / 180.0,
 			p = phiR.lng * deg;
+
 		return new Point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p));
 	}
 });
@@ -57,7 +58,8 @@ export const ZEA = Zenithal.extend({
 	code: 'ZEA',
 
 	_rToTheta: function (r) {
-		var rr = r * Math.PI / 360.0;
+		const	rr = r * Math.PI / 360.0;
+
 		if (Math.abs(rr) < 1.0) {
 			return 90.0 - 2.0 * Math.asin(rr) * 180.0 / Math.PI;
 		} else {

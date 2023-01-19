@@ -63,7 +63,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		nzoom: 9,
 		// If true, world coordinates are returned
 		// in the native celestial system
-		nativeCelsys: false
+		nativeCelSys: false
 	},
 
 	/**
@@ -80,7 +80,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @param {number} [options.nzoom=9]
 	   Number of zoom levels.
 
-	 * @param {number} [options.nativeCelsys=false]
+	 * @param {boolean} [options.nativeCelSys=false]
 	   Return world coordinates in their native celestial system?
 
 	 * @returns {WCS} Instance of a World Coordinate System.
@@ -94,19 +94,19 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		if (nimages > 1) {
 			this.projections = new Array(nimages);
 			for (const [i, image] of images.entries()) {
-				projection = this.getProjection(
+				var	proj = this.getProjection(
 					image.header,
 					{
-						naticeCelsys: options.nativeCelsys,
+						nativeCelSys: options.nativeCelSys,
 						dataslice: image.dataslice,
 						detslice: image.detslice
 					}
 				);
-				if (projection.name === '') {
-					projection.name = '#' + str(i+1);
+				if (proj.name === '') {
+					proj.name = '#' + str(i+1);
 				}
-				projection._getCenter(this.projection);
-				this.projections[i] = projection;
+				proj.centerPnt = proj._getCenter(this.projection);
+				this.projections[i] = proj;
 			}
 
 			this.latLngToPoint = this.multiLatLngToPoint
@@ -115,12 +115,22 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			this.unproject = this.multiUnproject;
 		}
 
+		// Propagate some projection properties.
 		this.naxis = this.projection.projparam.naxis;
-		this.crval = this.projection.projparam.crval;
+		this.centerLatLng = this.projection.unproject(
+			this.projection._getCenter(this.projection)
+		);
 		this.wrapLng = [0.5, this.naxis.x - 0.5];
 		this.wrapLat = [this.naxis.y - 0.5, 0.5];
-		this.transformation = new Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
-		this.code += ':' + this.projection.code;					
+		this.transformation = new Transformation(
+			1.0, -0.5,
+			-1.0, this.naxis.y + 0.5
+		);
+		this.code += ':' + this.projection.code;
+		this.equatorialFlag = this.projection.equatorialFlag;
+		this.celSysCode = this.projection.projparam._celsyscode;
+		this.pixelFlag = this.projection.projparam._pixelFlag;
+		this.infinite = this.projection.projparam._infinite;
 	},
 
 	/**
@@ -233,25 +243,25 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 		switch (ctype1.substr(5, 3)) {
 		case 'ZEA':
-			projection = new ZEA(header, options);
+			proj = new ZEA(header, options);
 			break;
 		case 'TAN':
-			projection = new TAN(header, options);
+			proj = new TAN(header, options);
 			break;
 		case 'CAR':
-			projection = new CAR(header, options);
+			proj = new CAR(header, options);
 			break;
 		case 'CEA':
-			projection = new CEA(header, options);
+			proj = new CEA(header, options);
 			break;
 		case 'COE':
-			projection = new COE(header, options);
+			proj = new COE(header, options);
 			break;
 		default:
-			projection = new Pixel(header, options);
+			proj = new Pixel(header, options);
 			break;
 		}
-		return projection;
+		return proj;
 	},
 
 	/**
@@ -390,15 +400,14 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			}
 		}
 		if (latlng) {
-			if (this.forceNativeCelsys) {
-				latlng = this.eqToCelsys(latlng);
+			if (this.projection.celSysConvFlag) {
+				latlng = this.projection.eqToCelSys(latlng);
 			}
 			return latlng;
 		} else {
 			return undefined;
 		}
 	},
-
 
 	/**
 	 * Compute the longitude of a point with respect to a reference point.

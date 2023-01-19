@@ -39,7 +39,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	options: {
 		title: 'Catalog overlays',
-		nativeCelsys: true,
+		nativeCelSys: true,
 		color: '#FFFF00',
 		timeOut: 30,	// seconds
 		authenticate: false, // Force authentication
@@ -179,13 +179,12 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @param {number} [timeout]
 	   Query time out delay, in seconds. Defaults to no time out.
 	 */
-
 	_getCatalog: function (catalog, timeout) {
 		const	_this = this,
 		    map = this._map,
 			wcs = map.options.crs,
-			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
-		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+			sysflag = !wcs.equatorialFlag && !this.options.nativeCelSys,
+		    center = sysflag ? wcs.celSysToEq(map.getCenter()) : map.getCenter(),
 		    b = map.getPixelBounds(),
 		    z = map.getZoom(),
 		    templayer = new LayerGroup(null);
@@ -202,19 +201,22 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 		// Compute the search cone
 		const	lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
-			  c = sysflag ?
-				   [wcs.celsysToEq(map.unproject(b.min, z)),
-			      wcs.celsysToEq(map.unproject(point(b.min.x, b.max.y), z)),
-			      wcs.celsysToEq(map.unproject(b.max, z)),
-			      wcs.celsysToEq(map.unproject(point(b.max.x, b.min.y), z))] :
-			                    [map.unproject(b.min, z),
-			                     map.unproject(point(b.min.x, b.max.y), z),
-			                     map.unproject(b.max, z),
-			                     map.unproject(point(b.max.x, b.min.y), z)];
+			c = sysflag ?
+				[
+					wcs.celSysToEq(map.unproject(b.min, z)),
+					wcs.celSysToEq(map.unproject(point(b.min.x, b.max.y), z)),
+					wcs.celSysToEq(map.unproject(b.max, z)),
+					wcs.celSysToEq(map.unproject(point(b.max.x, b.min.y), z))
+				] : [
+					map.unproject(b.min, z),
+					map.unproject(point(b.min.x, b.max.y), z),
+					map.unproject(b.max, z),
+					map.unproject(point(b.max.x, b.min.y), z)
+				];
 		var	  sys;
 
-		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
-			switch (wcs.celsyscode) {
+		if (!wcs.equatorialFlag && this.options.nativeCelSys) {
+			switch (wcs.celSysCode) {
 			case 'ecliptic':
 				sys = 'E2000.0';
 				break;
@@ -330,19 +332,19 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 							}
 						},
 						coordsToLatLng: function (coords) {
-							if (wcs.forceNativeCelsys) {
-								const	latLng = wcs.eqToCelsys(
+							if (wcs.equatorialFlag) {
+								return new L.LatLng(
+									coords[1],
+									coords[0],
+									coords[2]
+								);
+							} else {
+								const	latLng = wcs.eqToCelSys(
 									L.latLng(coords[1], coords[0])
 								);
 								return new L.LatLng(
 									latLng.lat,
 									latLng.lng,
-									coords[2]
-								);
-							} else {
-								return new L.LatLng(
-									coords[1],
-									coords[0],
 									coords[2]
 								);
 							}

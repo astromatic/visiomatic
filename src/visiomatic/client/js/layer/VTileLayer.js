@@ -24,7 +24,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	options: {
 		title: null,
 		crs: null,
-		nativeCelsys: false,
+		nativeCelSys: false,
 		center: null,
 		fov: null,
 		minZoom: 0,
@@ -119,7 +119,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   Coordinate Reference or World Coordinate System: extracted from the data
 	   header if available or raw pixel coordinates otherwise.
 
-	 * @param {boolean} [options.nativeCelsys=false]
+	 * @param {boolean} [options.nativeCelSys=false]
 	   True if native coordinates (e.g., galactic coordinates) are to be used
 	   instead of equatorial coordinates.
 
@@ -469,7 +469,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				meta.header,
 				meta.images,
 				{
-					nativeCelsys: this.options.nativeCelsys,
+					nativeCelSys: this.options.nativeCelSys,
 					nzoom: visio.maxZoom + 1,
 				}
 			);
@@ -696,7 +696,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				);
 			}
 		} else {
-			map.setView(newcrs.crval, zoom, {reset: true, animate: false});
+			map.setView(
+				newcrs.centerLatLng,
+				zoom,
+				{reset: true, animate: false}
+			);
 		}
 	},
 
