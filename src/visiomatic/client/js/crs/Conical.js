@@ -1,20 +1,46 @@
-/*
-# 	Conical (de-)projections
-#	(see http://www.atnf.csiro.au/people/mcalabre/WCS/).
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#                            Chiara Marmo    - Paris-Saclay
-*/
+/**
+ #	This file part of:	VisiOmatic
+ * @file Conic (de-)projections.
+ * @requires util/VUtil.js
+ * @requires crs/Projection.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
 import {latLng, point} from 'leaflet';
 
 import {Projection} from './Projection';
 
 
-Conical = Projection.extend({
+Conical = Projection.extend( /** @lends Conical */ {
 
-	// (x, y) ["deg"] -> \phi, r [deg] for conical projections.
+	/**
+	 * Base class for conic WCS (World Coordinate System) projections.
+	 *
+	 * @name Conical
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=19}
+	 * @extends Projection
+	 * @memberof module:crs/Conical.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Projection}.
+
+	 * @returns {Conical} Instance of a conic projection.
+	 */
+	// Initialize() is inherited from the parent class.
+
+	/**
+	 * Convert reduced coordinates to conic (phi,R) coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.Point} red
+	   Reduced coordinates.
+	 * @returns {leaflet.LatLng}
+	   (phi,R) conic coordinates in degrees.
+	 */
 	_redToPhiR: function (red) {
 		const	deg = Math.PI / 180.0,
 		    projparam = this.projparam,
@@ -27,7 +53,16 @@ Conical = Projection.extend({
 		);
 	},
 
-	// \phi, r [deg] -> (x, y) ["deg"] for conical projections.
+	/**
+	 * Convert conic (phi,R) coordinates to reduced coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.LatLng} phiR
+	   (phi,R) conic coordinates in degrees.
+	 * @returns {leaflet.Point}
+	   Reduced coordinates.
+	 */
 	_phiRToRed: function (phiR) {
 		const	deg = Math.PI / 180.0,
 		     p = this.projparam._c * phiR.lng * deg;
@@ -39,8 +74,31 @@ Conical = Projection.extend({
 });
 
 
-export const COE = Conical.extend({
+export const COE = Conical.extend( /** @lends COE */ {
 
+	/**
+	 * Conic Equal Area projection.
+	 *
+	 * @name COE
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=20}
+	 * @extends Conical
+	 * @memberof module:crs/Conical.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Conical}.
+
+	 * @returns {Conical} Instance of a conical projection.
+	 */
+	// Initialize() is inherited from the parent class
+
+	/**
+	 * Initialize a COE projection.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_projInit: function () {
 		const	deg = Math.PI / 180.0,
 			projparam = this.projparam;
@@ -65,6 +123,16 @@ export const COE = Conical.extend({
 		projparam._pixelFlag = false;
 	},
 
+	/**
+	 * Convert conic R coordinate to native theta angle.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} r
+	   R conic coordinate in degrees.
+	 * @returns {number}
+	   Native theta angle in degrees.
+	 */
 	_rToTheta: function (r) {
 		const	deg = Math.PI / 180.0,
 		    gamma = this.projparam._gamma;
@@ -78,6 +146,16 @@ export const COE = Conical.extend({
 		return Math.asin(sinarg) / deg;
 	},
 
+	/**
+	 * Convert native theta angle to conic R.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} theta
+	   Native theta angle in degrees.
+	 * @returns {number}
+	   R conic coordinate in degrees.
+	 */
 	_thetaToR: function (theta) {
 		var	deg = Math.PI / 180.0,
 		    gamma = this.projparam._gamma;

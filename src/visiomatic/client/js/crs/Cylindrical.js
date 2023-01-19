@@ -1,19 +1,42 @@
-/*
-# 	Cylindrical (de-)projections
-#	(see http://www.atnf.csiro.au/people/mcalabre/WCS/).
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#                            Chiara Marmo    - Paris-Saclay
-*/
+/**
+ #	This file part of:	VisiOmatic
+ * @file Cylindrical (de-)projections.
+ * @requires util/VUtil.js
+ * @requires crs/Projection.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
 import {latLng, point} from 'leaflet';
 
 import {Projection} from './Projection';
 
 
-Cylindrical = Projection.extend({
+Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 
+	/**
+	 * Base class for cylindrical WCS (World Coordinate System) projections.
+	 *
+	 * @name Cylindrical
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=15}
+	 * @extends Projection
+	 * @memberof module:crs/Cylindrical.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Projection}.
+
+	 * @returns {Cylindrical} Instance of a cylindrical projection.
+	 */
+	// Initialize() is inherited from the parent class.
+
+	/**
+	 * Initialize a cylindrical projection.
+	 * @method
+	 * @static
+	 * @private
+	 */
 	_projInit: function () {
 		const	deg = Math.PI / 180.0,
 			projparam = this.projparam;

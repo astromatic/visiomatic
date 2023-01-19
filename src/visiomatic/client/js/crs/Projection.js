@@ -609,14 +609,4 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	}
 });
 
-/**
- * Instantiate a projection.
- * @function
- * @param {object} header - JSON representation of the image header.
- * @param {object} [options] - Options: see {@link Projection}.
- * @returns {Projection} Projection instance.
-*/
-export const projection = function (header, options) {
-	return new Projection(header, options);
-};
 
