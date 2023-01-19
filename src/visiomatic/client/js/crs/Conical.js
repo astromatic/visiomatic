@@ -89,7 +89,7 @@ export const COE = Conical.extend( /** @lends COE */ {
 	 * @param {projParam} [options]
 	   Projection options: see {@link Conical}.
 
-	 * @returns {Conical} Instance of a conical projection.
+	 * @returns {COE} Instance of a COE projection.
 	 */
 	// Initialize() is inherited from the parent class
 

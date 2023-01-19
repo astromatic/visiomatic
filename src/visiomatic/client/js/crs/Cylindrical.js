@@ -52,10 +52,30 @@ Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 		projparam._pixelFlag = false;
 	},
 
+	/**
+	 * Convert cylindrical R coordinate to native theta angle.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} r
+	   R cylindrical coordinate in degrees.
+	 * @returns {number}
+	   Native theta angle in degrees.
+	 */
 	_rToTheta: function (r) {
 		return r;
 	},
 
+	/**
+	 * Convert native theta angle to cylindrical R.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {number} theta
+	   Native theta angle in degrees.
+	 * @returns {number}
+	   R cylindrical coordinate in degrees.
+	 */
 	_thetaToR: function (theta) {
 		return theta;
 	}
@@ -63,23 +83,84 @@ Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 });
 
 
-export const CAR = Cylindrical.extend({
+export const CAR = Cylindrical.extend( /** @lends CAR */ {
 
-	// (x, y) ["deg"] -> \phi, r [deg] for CAR projections.
+	/**
+	 * Cylindrical Plate carrée projection.
+	 *
+	 * @name CAR
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=16}
+	 * @extends Cylindrical
+	 * @memberof module:crs/Cylindrical.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Cylindrical}.
+
+	 * @returns {CAR} Instance of a CAR projection.
+	 */
+	// Initialize() is inherited from the parent class
+
+	/**
+	 * Convert reduced coordinates to CAR (phi,R) coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.Point} red
+	   Reduced coordinates.
+	 * @returns {leaflet.LatLng}
+	   (phi,R) CAR coordinates in degrees.
+	 */
 	_redToPhiR: function (red) {
 		return latLng(red.y, red.x);
 	},
 
-	// \phi, r [deg] -> (x, y) ["deg"] for CAR projections.
+	/**
+	 * Convert CAR (phi,R) coordinates to reduced coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.LatLng} phiR
+	   (phi,R) CAR coordinates in degrees.
+	 * @returns {leaflet.Point}
+	   Reduced coordinates.
+	 */
 	_phiRToRed: function (phiR) {
 		return point(phiR.lng, phiR.lat);
 	}
 });
 
 
-export const CEA = Cylindrical.extend({
+export const CEA = Cylindrical.extend( /** @lends CEA */ {
 
-	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
+	/**
+	 * Cylindrical Equal Area projection.
+	 *
+	 * @name CEA
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=16}
+	 * @extends Cylindrical
+	 * @memberof module:crs/Cylindrical.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Cylindrical}.
+
+	 * @returns {CEA} Instance of a CEA projection.
+	 */
+	// Initialize() is inherited from the parent class
+
+	/**
+	 * Convert reduced coordinates to CEA (phi,R) coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.Point} red
+	   Reduced coordinates.
+	 * @returns {leaflet.LatLng}
+	   (phi,R) CEA coordinates in degrees.
+	 */
 	_redToPhiR: function (red) {
 		const	deg = Math.PI / 180.0,
 			slat = red.y * this.projparam._lambda * deg;
@@ -88,7 +169,16 @@ export const CEA = Cylindrical.extend({
 		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
 	},
 
-	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
+	/**
+	 * Convert CEA (phi,R) coordinates to reduced coordinates.
+	 * @method
+	 * @static
+	 * @private
+	 * @param {leaflet.LatLng} phiR
+	   (phi,R) CEA coordinates in degrees.
+	 * @returns {leaflet.Point}
+	   Reduced coordinates.
+	 */
 	_phiRToRed: function (phiR) {
 		const	deg = Math.PI / 180.0;
 
