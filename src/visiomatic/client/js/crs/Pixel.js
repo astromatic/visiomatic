@@ -19,7 +19,7 @@ export const Pixel = Projection.extend( /** @lends PIX */ {
 	 * Pixel (identity) projection.
 	 *
 	 * @name PIX
-	 * @extends Zenithal
+	 * @extends Projection
 	 * @memberof module:crs/Pixel.js
 	 * @constructs
 	 * @param {object} header
