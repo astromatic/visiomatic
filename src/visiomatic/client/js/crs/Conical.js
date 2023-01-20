@@ -77,7 +77,7 @@ Conical = Projection.extend( /** @lends Conical */ {
 export const COE = Conical.extend( /** @lends COE */ {
 
 	/**
-	 * Conic Equal Area projection.
+	 * Conic Equal-Area projection.
 	 *
 	 * @name COE
 	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=20}
@@ -124,12 +124,12 @@ export const COE = Conical.extend( /** @lends COE */ {
 	},
 
 	/**
-	 * Convert conic R coordinate to native theta angle.
+	 * Convert conic equal-area R coordinate to native theta angle.
 	 * @method
 	 * @static
 	 * @private
 	 * @param {number} r
-	   R conic coordinate in degrees.
+	   R conic equal-area coordinate in degrees.
 	 * @returns {number}
 	   Native theta angle in degrees.
 	 */
@@ -147,17 +147,17 @@ export const COE = Conical.extend( /** @lends COE */ {
 	},
 
 	/**
-	 * Convert native theta angle to conic R.
+	 * Convert native theta angle to conic equal-area R.
 	 * @method
 	 * @static
 	 * @private
 	 * @param {number} theta
 	   Native theta angle in degrees.
 	 * @returns {number}
-	   R conic coordinate in degrees.
+	   R conic equal-area coordinate in degrees.
 	 */
 	_thetaToR: function (theta) {
-		var	deg = Math.PI / 180.0,
+		const	deg = Math.PI / 180.0,
 		    gamma = this.projparam._gamma;
 		return 2.0 / gamma * Math.sqrt(this.projparam._s1s2p1 - gamma *
 			Math.sin(theta * deg)) / deg;

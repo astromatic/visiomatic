@@ -135,7 +135,7 @@ export const CAR = Cylindrical.extend( /** @lends CAR */ {
 export const CEA = Cylindrical.extend( /** @lends CEA */ {
 
 	/**
-	 * Cylindrical Equal Area projection.
+	 * Cylindrical Equal-Area projection.
 	 *
 	 * @name CEA
 	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=16}
