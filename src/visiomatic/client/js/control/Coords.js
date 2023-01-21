@@ -47,6 +47,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	/**
 	 * Create a new coordinate display/control interface.
 
+	 * @name Coords
 	 * @extends leaflet.Control
 	 * @memberof module:control/Coords.js
 	 * @constructs
@@ -63,16 +64,12 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	 * @returns {Coords} Instance of a coordinate display/control interface.
 	 */
-	initialize: function (options) {
-		Util.setOptions(this, options);
-	},
+	// Initialize() is inherited from the parent class
 
 	/**
 	 * Add the coordinate display/control box directly to the map and wait for
 	   a new layer to be ready.
 	 * @memberof control/Coords
-	 * @method
-	 * @static
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the control.
 	 */
@@ -87,8 +84,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Check that the layer being loaded is a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */
@@ -110,8 +105,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Initialize the coordinate display/control dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -232,8 +225,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Remove map dragging event when the coordinate display/control is removed.
-	 * @method
-	 * @static
 	 * @param {leaflet.map} [map] - The parent map.
 	 */
 	onRemove: function (map) {
@@ -242,8 +233,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Update coordinates when the map is being dragged.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */
@@ -282,8 +271,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Move map to a given source or coordinate position.
-	 * @method
-	 * @static
 	 * @param {string} str - Source name or coordinates.
 	 */
 	panTo: function (str) {
@@ -311,8 +298,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	/**
 	 * Move map to the sky coordinates resolved by Sesame service. 
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} self
 	   Calling control object (``this``).
@@ -338,28 +323,6 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	}
 });
 
-/**
- * Deactivate mouse position control.
- * @method
- * @static
- * @memberof leaflet.Map
- */
-Map.mergeOptions({
-	positionControl: false
-});
-
-/**
- * Add a hook to maps for mouse position control.
- * @method
- * @static
- * @memberof leaflet.Map
- */
-Map.addInitHook(function () {
-	if (this.options.positionControl) {
-		this.positionControl = new Control.MousePosition();
-		this.addControl(this.positionControl);
-	}
-});
 
 /**
  * Instantiate a coordinate display/control .
@@ -370,3 +333,29 @@ Map.addInitHook(function () {
 export const coords = function (options) {
 	return new Coords(options);
 };
+
+
+/**
+ * Deactivate regular mouse position control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
+Map.mergeOptions({
+	positionControl: false
+});
+
+
+/**
+ * Add a hook to maps for coordinate display.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
+Map.addInitHook(function () {
+	if (this.options.positionControl) {
+		this.positionControl = new Coords(this.options.positionControl);
+		this.addControl(this.positionControl);
+	}
+});
+

@@ -135,8 +135,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Multi-WCS version of the projection to layer coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @param {number} zoom - Zoom level.
 	 * @returns {leaflet.Point}
@@ -151,8 +149,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Multi-WCS version of the de-projection from layer coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.Point} pnt
 	   Input layer coordinates at the given zoom level.
 	 * @param {number} zoom
@@ -169,8 +165,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Multi-WCS astrometric projection.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @returns {leaflet.Point} Projected image coordinates.
 	 */
@@ -191,8 +185,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	
 	/**
 	 * Multi-WCS version of the astrometric de-projection.
-	 * @method
-	 * @static
 	 * @param {leaflet.Point} pnt - Input image coordinates.
 	 * @returns {leaflet.LatLng} De-projected world coordinates.
 	 */
@@ -211,8 +203,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Return chip index at the given world coordinates in a multi-WCS setting.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @returns {number} Index of the closest chip (extension).
 	 */
@@ -232,8 +222,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	
 	/**
 	 * Extract the WCS projection code from a JSON-encoded image header.
-	 * @method
-	 * @static
 	 * @param {object} header - JSON representation of the image header.
 	 * @param {object} [options] - Projection options.
 	 * @returns {string} WCS projection code.
@@ -266,8 +254,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Convert zoom level to relative scale.
-	 * @method
-	 * @static
 	 * @override
 	 * @param {number} zoom - Zoom level.
 	 * @returns {number} Relative scale.
@@ -278,8 +264,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Convert relative scale to zoom level.
-	 * @method
-	 * @static
 	 * @override
 	 * @param {number} scale - Relative scale.
 	 * @returns {number} Zoom level.
@@ -290,8 +274,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Compute the image pixel scale at the given world coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng - World coordinates.
 	 * @returns {number} Pixel scale (in degrees per pixel).
 	 */
@@ -314,8 +296,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Compute the layer pixel scale at the given world coordinates.
-	 * @method
-	 * @static
 	 * @param {number} zoom - Zoom level.
 	 * @param {leaflet.LatLng} latlng - World coordinates.
 	 * @returns {number} Layer pixel scale (in degrees per pixel).
@@ -327,8 +307,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	/**
 	 * Compute the zoom level that corresponds to a given FoV at the provided
 	   coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.Map} map - Leaflet map.
 	 * @param {number} fov - Field of View in degrees.
 	 * @param {leaflet.LatLng} latlng - World coordinates.
@@ -346,8 +324,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	/**
 	 * Compute the FoV that corresponds to a given zoom level at the provided
 	 * coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.Map} map - Leaflet map.
 	 * @param {number} zoom - Zoom level.
 	 * @param {leaflet.LatLng} latlng - World coordinates.
@@ -363,8 +339,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Compute the distance between two points on the sphere.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng1 - World coordinates of the first point.
 	 * @param {leaflet.LatLng} latlng2 - World coordinates of the second point.
 	 * @returns {number} Spherical distance between the two points in degrees.
@@ -381,8 +355,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Parse a string of world coordinates.
-	 * @method
-	 * @static
 	 * @param {string} str
 	   Input string.
 	 * @returns {leaflet.LatLng|undefined}
@@ -411,8 +383,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	/**
 	 * Compute the longitude of a point with respect to a reference point.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latLng
 	   World coordinates of the point.
 	 * @param {leaflet.LatLng} latLng0

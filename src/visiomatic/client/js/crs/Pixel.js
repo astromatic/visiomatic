@@ -33,8 +33,6 @@ export const Pixel = Projection.extend( /** @lends PIX */ {
 
 	/**
 	 * Initialize a pixel (identity) projection.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_projInit: function () {
@@ -60,8 +58,6 @@ export const Pixel = Projection.extend( /** @lends PIX */ {
 	/**
 	 * Project "world" pixel coordinates to (image) pixel coordinates
 	   (identity).
-	 * @method
-	 * @static
 	 * @override
 	 * @param {leaflet.LatLng} latlng
 	   "World" pixel coordinates.
@@ -75,8 +71,6 @@ export const Pixel = Projection.extend( /** @lends PIX */ {
 	/**
 	 * De-project (image) pixel coordinates to "world" pixel coordinates
 	   (identity).
-	 * @method
-	 * @static
 	 * @override
 	 * @param {leaflet.Point} pnt
 	   Pixel (image) coordinates.

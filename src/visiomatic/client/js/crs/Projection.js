@@ -145,8 +145,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * Update internal projection parameters from external properties.
 	 * The internal projection parameter object is initialized if it does not
 	 * exist.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {projParam} paramSrc
 	   Input projection parameters.
@@ -198,8 +196,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Update internal projection parameters from an image header.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} header - JSON representation of the image header.
 	 */
@@ -234,8 +230,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Correct projection parameters for data slicing.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {projParam} projparam
 	   Projection parameters.
@@ -257,8 +251,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	/**
 	 * Return the transformation matrix between celestial coordinates for the
 	 * given system and equatorial coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {'galactic'|'ecliptic'|'supergalactic'} celsyscode
 	   Type of celestial system.
@@ -299,8 +291,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Project world coordinates to pixel (image) coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.LatLng} latlng
 	   World coordinates.
 	 * @returns {leaflet.Point}
@@ -316,8 +306,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * De-project pixel (image) coordinates to world coordinates.
-	 * @method
-	 * @static
 	 * @param {leaflet.Point} pnt
 	   Pixel coordinates.
 	 * @returns {leaflet.LatLng}
@@ -336,8 +324,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert celestial (angular) coordinates to equatorial.
-	 * @method
-	 * @static
 	 * @param {leaflet.LagLng} latlng
 	   Celestial coordinates (e.g., ecliptic latitude and longitude).
 	 * @returns {leaflet.LatLng}
@@ -359,8 +345,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert equatorial coordinates to another celestial system.
-	 * @method
-	 * @static
 	 * @param {leaflet.LagLng} latlng
 	   Equatorial coordinates.
 	 * @returns {leaflet.LatLng}
@@ -382,8 +366,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Compute the pixel coordinates of the geometric image center.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {Projection} proj
 	   Projection for pixel coordinates.
@@ -407,8 +389,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Set up the native pole coordinates of the projection (theta_p, phi_p).
-	 * @method
-	 * @static
 	 * @private
 	 * @returns {leaflet.LatLng}
 	   Latitude and longitude of the pole.
@@ -435,8 +415,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	/**
 	 * Set up the celestial pole coordinates of the projection
 	   (delta_p, alpha_p). projection._natpole() should be called first.
-	 * @method
-	 * @static
 	 * @private
 	 * @returns {leaflet.LatLng}
 	   Celestial coordinates of the pole.
@@ -488,8 +466,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert native coordinates to celestial coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LagLng} latlng
 	   Native coordinates.
@@ -522,8 +498,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert celestial coordinates to native coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LagLng} latlng
 	   Celestial coordinates.
@@ -559,8 +533,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert pixel coordinates to reduced coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} pix
 	   Pixel coordinates.
@@ -577,8 +549,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Convert reduced coordinates to pixel coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} red
 	   Reduced coordinates.
@@ -594,8 +564,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 
 	/**
 	 * Invert the `CD` Jacobian matrix of the linear part of the de-projection.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number[][]} cd
 	   `CD` Jacobian matrix.

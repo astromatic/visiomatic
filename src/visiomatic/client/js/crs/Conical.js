@@ -33,8 +33,6 @@ Conical = Projection.extend( /** @lends Conical */ {
 
 	/**
 	 * Convert reduced coordinates to conic (phi,R) coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} red
 	   Reduced coordinates.
@@ -55,8 +53,6 @@ Conical = Projection.extend( /** @lends Conical */ {
 
 	/**
 	 * Convert conic (phi,R) coordinates to reduced coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LatLng} phiR
 	   (phi,R) conic coordinates in degrees.
@@ -95,8 +91,6 @@ export const COE = Conical.extend( /** @lends COE */ {
 
 	/**
 	 * Initialize a COE projection.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_projInit: function () {
@@ -125,8 +119,6 @@ export const COE = Conical.extend( /** @lends COE */ {
 
 	/**
 	 * Convert conic equal-area R coordinate to native theta angle.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} r
 	   R conic equal-area coordinate in degrees.
@@ -148,8 +140,6 @@ export const COE = Conical.extend( /** @lends COE */ {
 
 	/**
 	 * Convert native theta angle to conic equal-area R.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} theta
 	   Native theta angle in degrees.

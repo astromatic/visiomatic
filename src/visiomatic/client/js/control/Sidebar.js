@@ -64,7 +64,6 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	 * @returns {Sidebar} Instance of a sidebar.
 	 */
 	initialize: function (options) {
-		var i, child;
 
 		Util.setOptions(this, options);
 
@@ -96,12 +95,14 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	 * Add this sidebar to the specified map.
 	 *
 	 * @param {L.Map} map
-	 * @returns {L.Control.Sidebar}
+	   Leaflet map the control is to be added to.
+	 * @returns {Sidebar}
+	   The sidebar (this).
 	 */
 	addTo: function (map) {
-		var	className = 'leaflet-control-zoom-sidebar',
-			parent = map._controlContainer,
-		    buttonContainer;
+		const	className = 'leaflet-control-zoom-sidebar',
+			parent = map._controlContainer;
+		var	buttonContainer;
 	
 		// Create sidebar
 		DomUtil.addClass(map._container, 'sidebar-map');
@@ -125,18 +126,38 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 		return this;
 	},
 
-	// Add sidebar tab list
+	/**
+	 * Add sidebar tab list.
+	 *
+	 * @returns {object} Tab list element.
+	 */
 	addTabList: function () {
 		this._tablist = DomUtil.create('ul', '', this._tabs);
 		this._tablist.setAttribute('role', 'tablist');
 		return this._tablist;
 	},
 
-	// Add sidebar tab
-	addTab: function (id, tabClass, title, content, sideClass) {
-		var	tablist = this._tablist ? this._tablist : this.addTabList(),
-		    item = DomUtil.create('li', '', tablist),
-		    button = DomUtil.create('a', tabClass, item);
+	/**
+	 * Add sidebar tab and its pane.
+	 *
+	 * @param {string} id
+	   Element id of the tab pane (and part of the tab id).
+	 * @param {string} className
+	   Class name of the tab.
+	 * @param {string} [title]
+	   Title of the tab.
+	 * @param {object} content
+	   Element containing the tab content.
+	 * @param {string} [sideClass] 
+	   Class name of an additional element which may be opened or close in
+	   parallel to the tab.
+	 * @returns {object} The newly created tab pane.
+	 */
+	addTab: function (id, className, title, content, sideClass) {
+		const	tablist = this._tablist ? this._tablist : this.addTabList(),
+			item = DomUtil.create('li', '', tablist),
+			button = DomUtil.create('a', className, item);
+
 		item.setAttribute('role', 'tab');
 		item._sidebar = this;
 		button.href = '#' + id;
@@ -148,12 +169,12 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 		this._tabitems.push(item);
 
 		// Sidebar pane
-		var	pane = DomUtil.create('div', 'sidebar-pane', this._container),
-		    header = DomUtil.create('h1', 'sidebar-header', pane);
+		const	pane = DomUtil.create('div', 'sidebar-pane', this._container),
+			header = DomUtil.create('h1', 'sidebar-header', pane);
 
 		header.innerHTML = title;
 
-		var closeButton = DomUtil.create('div', 'sidebar-close', header);
+		const	closeButton = DomUtil.create('div', 'sidebar-close', header);
 		this._closeButtons.push(closeButton);
 		DomEvent.on(closeButton, 'click', this._onCloseClick, this);
 		pane.id = id;
@@ -167,20 +188,21 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	 * Remove this sidebar from the map.
 	 *
 	 * @param {L.Map} map
-	 * @returns {L.Control.Sidebar}
+	   Leaflet map the control had been added to.
+	 * @returns {Sidebar}
+	   The sidebar (this).
 	 */
 	removeFrom: function (map) {
-		var i, child;
 
 		this._map = null;
 
-		for (i = this._tabitems.length - 1; i >= 0; i--) {
-			child = this._tabitems[i];
+		for (var i = this._tabitems.length - 1; i >= 0; i--) {
+			var	child = this._tabitems[i];
 			DomEvent.off(child.querySelector('a'), 'click', this._onClick);
 		}
 
-		for (i = this._closeButtons.length - 1; i >= 0; i--) {
-			child = this._closeButtons[i];
+		for (var i = this._closeButtons.length - 1; i >= 0; i--) {
+			var	child = this._closeButtons[i];
 			DomEvent.off(child, 'click', this._onCloseClick, this);
 		}
 
@@ -191,13 +213,14 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	 * Open sidebar (if necessary) and show the specified tab.
 	 *
 	 * @param {string} id - The id of the tab to show (without the # character)
+	 * @returns {Sidebar}
+	   The sidebar (this).
 	 */
 	open: function (id) {
-		var i, child;
 
 		// hide old active contents and show new content
-		for (i = this._panes.length - 1; i >= 0; i--) {
-			child = this._panes[i];
+		for (var i = this._panes.length - 1; i >= 0; i--) {
+			var	child = this._panes[i];
 			if (child.id === id) {
 				DomUtil.addClass(child, 'active');
 				if (child.sideClass) {
@@ -212,8 +235,8 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 		}
 
 		// remove old active highlights and set new highlight
-		for (i = this._tabitems.length - 1; i >= 0; i--) {
-			child = this._tabitems[i];
+		for (var i = this._tabitems.length - 1; i >= 0; i--) {
+			var	child = this._tabitems[i];
 			if (child.querySelector('a').hash === '#' + id) {
 				DomUtil.addClass(child, 'active');
 			} else if (DomUtil.hasClass(child, 'active')) {
@@ -234,6 +257,9 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 
 	/**
 	 * Close the sidebar (if necessary).
+	 *
+	 * @returns {Sidebar}
+	   The sidebar (this).
 	 */
 	close: function () {
 		// remove old active highlights
@@ -257,7 +283,7 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	},
 
 	/**
-	 * Collapse/Expanding the sidebar.
+	 * Collapse/Expand the sidebar.
 	 */
 	toggle: function () {
 		this.close();
@@ -275,6 +301,7 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	},
 
 	/**
+	 * Actions performed when clicking on the sidebar toggle button.
 	 * @private
 	 */
 	_onClick: function () {
@@ -286,6 +313,7 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	},
 
 	/**
+	 * Actions performed when clicking on the sidebar close button.
 	 * @private
 	 */
 	_onCloseClick: function () {
@@ -293,10 +321,19 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 	},
 
 	/**
+	 * Add a button
+	 *
 	 * @private
+	 * @param {string} [title]
+	   Title of the button.
+	 * @param {string} className
+	   Class name of the button.
+	 * @param {object} container
+	   Element containing the button.
+	 * @returns {object} New link (button) element.
 	 */
 	_addButton: function (title, className, container) {
-		var link = DomUtil.create('a', className, container);
+		const	link = DomUtil.create('a', className, container);
 		link.href = '#';
 		link.title = title;
 

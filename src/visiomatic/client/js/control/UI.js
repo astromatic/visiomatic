@@ -95,8 +95,13 @@ export const UI = Control.extend( /** @lends UI */ {
 			// dest is a sidebar class instance
 			this._map = dest._map;
 			this._dialog = DomUtil.create('div', this._className + '-dialog');
-			dest.addTab(this._id, this._className, this.options.title, this._dialog,
-			   this._sideClass);
+			dest.addTab(
+				this._id,
+				this._className,
+				this.options.title,
+				this._dialog,
+				this._sideClass
+			);
 			this._map.on('layeradd', this._checkVisiomatic, this);
 			return dest;
 		} else {
@@ -471,13 +476,23 @@ export const UI = Control.extend( /** @lends UI */ {
 		// Fix collapsing dialog issue when selecting a channel
 		if (this._container && !Browser.android && this.options.collapsed) {
 			DomEvent.on(select, 'mousedown', function () {
-				DomEvent.off(this._container, 'mouseout', this._collapse, this);
+				DomEvent.off(
+					this._container,
+					'mouseout',
+					this._collapse,
+					this
+				);
 				this.collapsedOff = true;
 			}, this);
 
 			DomEvent.on(this._container, 'mouseover', function () {
 				if (this.collapsedOff) {
-					DomEvent.on(this._container, 'mouseout', this._collapse, this);
+					DomEvent.on(
+						this._container,
+						'mouseout',
+						this._collapse,
+						this
+					);
 					this.collapsedOff = false;
 				}
 			}, this);

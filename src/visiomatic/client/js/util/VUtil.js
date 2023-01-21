@@ -1,11 +1,10 @@
-/*
-# 	Global utilities.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
-*/
+/**
+ #	This file part of:	VisiOmatic
+ * @file Miscellaneous utilities
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
 import {
 	DomUtil,
 	latLng

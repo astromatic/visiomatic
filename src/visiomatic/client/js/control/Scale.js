@@ -92,8 +92,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 	
 	/**
 	 * Add the scale bar(s).
-	 * @method
-	 * @static
 	 * @private
 	 * @override
 	 * @param {object} options
@@ -135,8 +133,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 
 	/**
 	 * Update the scale bar(s).
-	 * @method
-	 * @static
 	 * @private
 	 * @override
 	 */
@@ -191,8 +187,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 	/**
 	 * Return the Jacobian determinant of the deprojection at the given world
 	   coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LatLng} 
 	 * @returns {number} Jacobian determinant of the deprojection.
@@ -211,8 +205,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 
 	/**
 	 * Update the custom scale.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} maxCust
 	   Maximum scale value in custom units.
@@ -242,8 +234,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 
 	/**
 	 * Update the pixel scale.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} maxPix
 	   Maximum scale value in pixel units.
@@ -267,8 +257,6 @@ export const Scale = Control.Scale.extend( /** @lends Scale */ {
 
 	/**
 	 * Update the degree scale.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} maxdegrees
 	   Maximum scale value in pixel units.

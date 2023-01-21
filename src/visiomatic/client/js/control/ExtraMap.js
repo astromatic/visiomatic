@@ -144,9 +144,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 	/**
 	 * Add the extra map display/control directly to the map and wait for
 	   the layer to be ready.
-	 * @memberof control/ExtraMap
-	 * @method
-	 * @static
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the control.
 	 */
@@ -218,8 +215,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Remove map move event when the extra map display/control is removed.
-	 * @method
-	 * @static
 	 * @param {leaflet.map} [map] - The parent map.
 	 */
 	onRemove: function (map) {
@@ -232,8 +227,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Update content when the layer is changed.
-	 * @method
-	 * @static
 	 * @param {leaflet.Layer} [layer] - The new layer.
 	 */
 	changeLayer: function (layer) {
@@ -244,8 +237,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Add a display toggle button to the extra map window/icon.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_addToggleButton: function () {
@@ -263,8 +254,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Add a button to the extra map window/icon.
-	 * @method
-	 * @static
 	 * @private
 	 * @returns {object} Button element.
 	 */
@@ -288,8 +277,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Actions performed when the display toggle button is clicked.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_toggleDisplayButtonClicked: function () {
@@ -305,8 +292,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Toggle display of the extra map window.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {boolean} minimize
 	   Minimize the map?
@@ -323,8 +308,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Minimize the extra map window.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_minimize: function () {
@@ -341,8 +324,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Restore the extra map window.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_restore: function () {
@@ -359,8 +340,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Follow the main map after it has moved.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Main map ``moveend`` event.
@@ -381,8 +360,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Replicate the main map moves using the aiming rectangle footprint.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Main map ``move`` event.
@@ -393,8 +370,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Set up the aiming rectangle footprint as the extra map starts moving.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``movestart`` event.
@@ -413,8 +388,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Update the shadow rectangle footprint as the extra map is moving.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``move`` event.
@@ -435,8 +408,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Update the main map as the extra map has stopped moving.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``moveend`` event.
@@ -456,8 +427,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Update the main map as the extra map has stopped moving.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``moveend`` event.
@@ -469,8 +438,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Decide the extra map zoom level depending on current conditions.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {boolean} fromMaintoExtra
 	   Is zooming triggered from the main map?
@@ -524,8 +491,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Decide if the extra map must be minimized.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_decideMinimized: function () {
@@ -545,8 +510,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Testing for ``number`` type.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} value - Input.
 	 * @return {boolean} True if the input value is a number.
@@ -557,8 +520,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 	/**
 	 * Testing for ``undefined`` type.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} value - Input.
 	 * @return {boolean} True if the input value is strictly ``undefined``.
@@ -568,27 +529,6 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 	}
 });
 
-/**
- * Deactivate extra map control.
- * @method
- * @static
- * @memberof leaflet.Map
- */
-Map.mergeOptions({
-	extraMapControl: false
-});
-
-/**
- * Add a hook to maps for extra map control.
- * @method
- * @static
- * @memberof leaflet.Map
- */
-Map.addInitHook(function () {
-	if (this.options.extraMapControl) {
-		this.extraMapControl = (new Control.ExtraMap()).addTo(this);
-	}
-});
 
 /**
  * Instantiate an extra map display/control interface.
@@ -600,3 +540,29 @@ Map.addInitHook(function () {
 export const extraMap = function (layer, options) {
 	return new ExtraMap(layer, options);
 };
+
+
+/**
+ * Deactivate extra map control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
+Map.mergeOptions({
+	extraMapControl: false
+});
+
+
+/**
+ * Add a hook to maps for extra map control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
+Map.addInitHook(function () {
+	if (this.options.extraMapControl) {
+		this.extraMapControl = (new ExtraMap()).addTo(this);
+	}
+});
+
+

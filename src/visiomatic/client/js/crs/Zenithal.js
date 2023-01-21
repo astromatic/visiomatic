@@ -33,8 +33,6 @@ Zenithal = Projection.extend( /** @lends Zenithal */ {
 
 	/**
 	 * Initialize a Zenithal projection.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_projInit: function () {
@@ -50,8 +48,6 @@ Zenithal = Projection.extend( /** @lends Zenithal */ {
 
 	/**
 	 * Convert reduced coordinates to zenithal (phi,R) coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} red
 	   Reduced coordinates.
@@ -65,8 +61,6 @@ Zenithal = Projection.extend( /** @lends Zenithal */ {
 
 	/**
 	 * Convert zenithal (phi,R) coordinates to reduced coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LatLng} phiR
 	   (phi,R) zenithal coordinates in degrees.
@@ -104,8 +98,6 @@ export const TAN = Zenithal.extend( /** @lends TAN */ {
 
 	/**
 	 * Convert tangential R coordinate to native theta angle.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} r
 	   R tangential coordinate in degrees.
@@ -118,8 +110,6 @@ export const TAN = Zenithal.extend( /** @lends TAN */ {
 
 	/**
 	 * Convert native theta angle to tangential R.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} theta
 	   Native theta angle in degrees.
@@ -154,8 +144,6 @@ export const ZEA = Zenithal.extend( /** @lends ZEA */ {
 
 	/**
 	 * Convert zenithal equal-area R coordinate to native theta angle.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} r
 	   R zenithal equal-area coordinate in degrees.
@@ -174,8 +162,6 @@ export const ZEA = Zenithal.extend( /** @lends ZEA */ {
 
 	/**
 	 * Convert native theta angle to zenithal equal-area R.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} theta
 	   Native theta angle in degrees.

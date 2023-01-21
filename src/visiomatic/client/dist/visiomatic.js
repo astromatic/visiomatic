@@ -2739,16 +2739,16 @@
             }
           }
         });
-        var control2 = function(options2) {
+        var control = function(options2) {
           return new Control9(options2);
         };
         Map5.include({
-          addControl: function(control3) {
-            control3.addTo(this);
+          addControl: function(control2) {
+            control2.addTo(this);
             return this;
           },
-          removeControl: function(control3) {
-            control3.remove();
+          removeControl: function(control2) {
+            control2.remove();
             return this;
           },
           _initControlPos: function() {
@@ -3281,10 +3281,10 @@
         Control9.Zoom = Zoom;
         Control9.Scale = Scale2;
         Control9.Attribution = Attribution;
-        control2.layers = layers;
-        control2.zoom = zoom;
-        control2.scale = scale2;
-        control2.attribution = attribution;
+        control.layers = layers;
+        control.zoom = zoom;
+        control.scale = scale2;
+        control.attribution = attribution;
         var Handler = Class4.extend({
           initialize: function(map2) {
             this._map = map2;
@@ -8107,7 +8107,7 @@
         exports2.canvas = canvas;
         exports2.circle = circle;
         exports2.circleMarker = circleMarker3;
-        exports2.control = control2;
+        exports2.control = control;
         exports2.divIcon = divIcon;
         exports2.extend = extend4;
         exports2.featureGroup = featureGroup;
@@ -30111,7 +30111,7 @@
       return new RGB(this.r, this.g, this.b);
     },
     toStr: function() {
-      var r = Math.round(this.r * 255), g = Math.round(this.g * 255), b = Math.round(this.b * 255);
+      let r = Math.round(this.r * 255), g = Math.round(this.g * 255), b = Math.round(this.b * 255);
       if (r < 0) {
         r = 0;
       } else if (r > 255) {
@@ -30138,7 +30138,7 @@
       return r;
     }
     if (typeof r === "string") {
-      var bigint = parseInt("0x" + r.slice(1), 16);
+      const bigint = parseInt("0x" + r.slice(1), 16);
       return new RGB(
         (bigint >> 16 & 255) / 255,
         (bigint >> 8 & 255) / 255,
@@ -30770,12 +30770,22 @@
       }
       if (this._container && !import_leaflet10.Browser.android && this.options.collapsed) {
         import_leaflet10.DomEvent.on(select, "mousedown", function() {
-          import_leaflet10.DomEvent.off(this._container, "mouseout", this._collapse, this);
+          import_leaflet10.DomEvent.off(
+            this._container,
+            "mouseout",
+            this._collapse,
+            this
+          );
           this.collapsedOff = true;
         }, this);
         import_leaflet10.DomEvent.on(this._container, "mouseover", function() {
           if (this.collapsedOff) {
-            import_leaflet10.DomEvent.on(this._container, "mouseout", this._collapse, this);
+            import_leaflet10.DomEvent.on(
+              this._container,
+              "mouseout",
+              this._collapse,
+              this
+            );
             this.collapsedOff = false;
           }
         }, this);
@@ -31571,9 +31581,6 @@
       fovQueryKey: "fov",
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
     },
-    initialize: function(options2) {
-      import_leaflet13.Util.setOptions(this, options2);
-    },
     onAdd: function(map2) {
       const _this = this, className = "leaflet-control-coords";
       this._wcsdialog = import_leaflet13.DomUtil.create("div", className + "-dialog");
@@ -31760,18 +31767,18 @@
       }
     }
   });
+  var coords = function(options2) {
+    return new Coords(options2);
+  };
   import_leaflet13.Map.mergeOptions({
     positionControl: false
   });
   import_leaflet13.Map.addInitHook(function() {
     if (this.options.positionControl) {
-      this.positionControl = new import_leaflet13.Control.MousePosition();
+      this.positionControl = new Coords(this.options.positionControl);
       this.addControl(this.positionControl);
     }
   });
-  var coords = function(options2) {
-    return new Coords(options2);
-  };
 
   // js/control/DocUI.js
   var import_leaflet14 = __toESM(require_leaflet_src());
@@ -32149,17 +32156,17 @@
       return typeof value !== "undefined";
     }
   });
+  var extraMap = function(layer, options2) {
+    return new ExtraMap(layer, options2);
+  };
   import_leaflet15.Map.mergeOptions({
     extraMapControl: false
   });
   import_leaflet15.Map.addInitHook(function() {
     if (this.options.extraMapControl) {
-      this.extraMapControl = new import_leaflet15.Control.ExtraMap().addTo(this);
+      this.extraMapControl = new ExtraMap().addTo(this);
     }
   });
-  var extraMap = function(layer, options2) {
-    return new ExtraMap(layer, options2);
-  };
 
   // js/control/FullScreen.js
   var import_leaflet16 = __toESM(require_leaflet_src());
@@ -32211,22 +32218,29 @@
   window.fullScreenApi = fullScreenApi;
   var FullScreen = import_leaflet16.Control.extend({
     options: {
-      position: "topleft",
       title: "Toggle full screen mode",
+      position: "topleft",
       forceSeparateButton: false
     },
     onAdd: function(map2) {
-      var className = "leaflet-control-zoom-fullscreen", container;
+      const className = "leaflet-control-zoom-fullscreen";
+      var container;
       if (map2.zoomControl && !this.options.forceSeparateButton) {
         container = map2.zoomControl._container;
       } else {
         container = import_leaflet16.DomUtil.create("div", "leaflet-bar");
       }
-      this._addButton(this.options.title, className, container, this.toogleFullScreen, map2);
+      this._addButton(
+        this.options.title,
+        className,
+        container,
+        this.toogleFullScreen,
+        map2
+      );
       return container;
     },
     _addButton: function(title, className, container, fn, context) {
-      var link = import_leaflet16.DomUtil.create("a", className, container);
+      const link = import_leaflet16.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
       import_leaflet16.DomEvent.addListener(link, "click", import_leaflet16.DomEvent.stopPropagation).addListener(link, "click", import_leaflet16.DomEvent.preventDefault).addListener(link, "click", fn, context);
@@ -32235,7 +32249,7 @@
     },
     toogleFullScreen: function() {
       this._exitFired = false;
-      var container = this._container;
+      const container = this._container;
       if (this._isFullscreen) {
         if (fullScreenApi.supportsFullScreen) {
           fullScreenApi.cancelFullScreen(container);
@@ -32270,7 +32284,7 @@
   };
   import_leaflet16.Map.addInitHook(function() {
     if (this.options.fullScreenControl) {
-      this.fullScreenControl = control.fullscreen(this.options.fullScreenControlOptions);
+      this.fullScreenControl = fullscreen(this.options.fullScreenControlOptions);
       this.addControl(this.fullScreenControl);
     }
   });
@@ -33053,7 +33067,6 @@
       forceSeparateButton: false
     },
     initialize: function(options2) {
-      var i2, child;
       import_leaflet22.Util.setOptions(this, options2);
       this._sidebar = import_leaflet22.DomUtil.create("div", "leaflet-container sidebar");
       if (this.options.collapsed) {
@@ -33072,7 +33085,8 @@
       this._closeButtons = [];
     },
     addTo: function(map2) {
-      var className = "leaflet-control-zoom-sidebar", parent = map2._controlContainer, buttonContainer;
+      const className = "leaflet-control-zoom-sidebar", parent = map2._controlContainer;
+      var buttonContainer;
       import_leaflet22.DomUtil.addClass(map2._container, "sidebar-map");
       parent.insertBefore(this._sidebar, parent.firstChild);
       import_leaflet22.DomEvent.disableClickPropagation(this._sidebar).disableScrollPropagation(this._sidebar);
@@ -33094,8 +33108,8 @@
       this._tablist.setAttribute("role", "tablist");
       return this._tablist;
     },
-    addTab: function(id, tabClass, title, content, sideClass) {
-      var tablist = this._tablist ? this._tablist : this.addTabList(), item = import_leaflet22.DomUtil.create("li", "", tablist), button = import_leaflet22.DomUtil.create("a", tabClass, item);
+    addTab: function(id, className, title, content, sideClass) {
+      const tablist = this._tablist ? this._tablist : this.addTabList(), item = import_leaflet22.DomUtil.create("li", "", tablist), button = import_leaflet22.DomUtil.create("a", className, item);
       item.setAttribute("role", "tab");
       item._sidebar = this;
       button.href = "#" + id;
@@ -33105,9 +33119,9 @@
       import_leaflet22.DomEvent.on(button, "click", this._onClick, item);
       item.sideClass = sideClass;
       this._tabitems.push(item);
-      var pane = import_leaflet22.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet22.DomUtil.create("h1", "sidebar-header", pane);
+      const pane = import_leaflet22.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet22.DomUtil.create("h1", "sidebar-header", pane);
       header.innerHTML = title;
-      var closeButton = import_leaflet22.DomUtil.create("div", "sidebar-close", header);
+      const closeButton = import_leaflet22.DomUtil.create("div", "sidebar-close", header);
       this._closeButtons.push(closeButton);
       import_leaflet22.DomEvent.on(closeButton, "click", this._onCloseClick, this);
       pane.id = id;
@@ -33117,22 +33131,20 @@
       return pane;
     },
     removeFrom: function(map2) {
-      var i2, child;
       this._map = null;
-      for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
-        child = this._tabitems[i2];
+      for (var i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
+        var child = this._tabitems[i2];
         import_leaflet22.DomEvent.off(child.querySelector("a"), "click", this._onClick);
       }
-      for (i2 = this._closeButtons.length - 1; i2 >= 0; i2--) {
-        child = this._closeButtons[i2];
+      for (var i2 = this._closeButtons.length - 1; i2 >= 0; i2--) {
+        var child = this._closeButtons[i2];
         import_leaflet22.DomEvent.off(child, "click", this._onCloseClick, this);
       }
       return this;
     },
     open: function(id) {
-      var i2, child;
-      for (i2 = this._panes.length - 1; i2 >= 0; i2--) {
-        child = this._panes[i2];
+      for (var i2 = this._panes.length - 1; i2 >= 0; i2--) {
+        var child = this._panes[i2];
         if (child.id === id) {
           import_leaflet22.DomUtil.addClass(child, "active");
           if (child.sideClass) {
@@ -33145,8 +33157,8 @@
           }
         }
       }
-      for (i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
-        child = this._tabitems[i2];
+      for (var i2 = this._tabitems.length - 1; i2 >= 0; i2--) {
+        var child = this._tabitems[i2];
         if (child.querySelector("a").hash === "#" + id) {
           import_leaflet22.DomUtil.addClass(child, "active");
         } else if (import_leaflet22.DomUtil.hasClass(child, "active")) {
@@ -33201,7 +33213,7 @@
       this.close();
     },
     _addButton: function(title, className, container) {
-      var link = import_leaflet22.DomUtil.create("a", className, container);
+      const link = import_leaflet22.DomUtil.create("a", className, container);
       link.href = "#";
       link.title = title;
       import_leaflet22.DomEvent.addListener(link, "click", import_leaflet22.DomEvent.stopPropagation).addListener(link, "click", import_leaflet22.DomEvent.preventDefault).addListener(link, "click", this.toggle, this);
@@ -33276,12 +33288,12 @@
         "print",
         "Print current map",
         function(event) {
-          var control2 = document.querySelector(
+          var control = document.querySelector(
             "#map > .leaflet-control-container"
           );
-          control2.style.display = "none";
+          control.style.display = "none";
           window.print();
-          control2.style.display = "unset";
+          control.style.display = "unset";
         }
       );
     }
@@ -33708,7 +33720,7 @@
       return Math.asin(sinarg) / deg;
     },
     _thetaToR: function(theta) {
-      var deg = Math.PI / 180, gamma = this.projparam._gamma;
+      const deg = Math.PI / 180, gamma = this.projparam._gamma;
       return 2 / gamma * Math.sqrt(this.projparam._s1s2p1 - gamma * Math.sin(theta * deg)) / deg;
     }
   });

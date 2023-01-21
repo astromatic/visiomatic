@@ -33,8 +33,6 @@ Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 
 	/**
 	 * Initialize a cylindrical projection.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_projInit: function () {
@@ -54,8 +52,6 @@ Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 
 	/**
 	 * Convert cylindrical R coordinate to native theta angle.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} r
 	   R cylindrical coordinate in degrees.
@@ -68,8 +64,6 @@ Cylindrical = Projection.extend( /** @lends Cylindrical */ {
 
 	/**
 	 * Convert native theta angle to cylindrical R.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} theta
 	   Native theta angle in degrees.
@@ -104,8 +98,6 @@ export const CAR = Cylindrical.extend( /** @lends CAR */ {
 
 	/**
 	 * Convert reduced coordinates to CAR (phi,R) coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} red
 	   Reduced coordinates.
@@ -118,8 +110,6 @@ export const CAR = Cylindrical.extend( /** @lends CAR */ {
 
 	/**
 	 * Convert CAR (phi,R) coordinates to reduced coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LatLng} phiR
 	   (phi,R) CAR coordinates in degrees.
@@ -153,8 +143,6 @@ export const CEA = Cylindrical.extend( /** @lends CEA */ {
 
 	/**
 	 * Convert reduced coordinates to CEA (phi,R) coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.Point} red
 	   Reduced coordinates.
@@ -171,8 +159,6 @@ export const CEA = Cylindrical.extend( /** @lends CEA */ {
 
 	/**
 	 * Convert CEA (phi,R) coordinates to reduced coordinates.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LatLng} phiR
 	   (phi,R) CEA coordinates in degrees.
