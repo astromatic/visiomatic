@@ -213,7 +213,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 			VUtil.flashElement(this._wcsinput);
 			url = VUtil.updateURL(url, this.options.centerQueryKey,
-			  VUtil.latLngToHMSDMS(latlng));
+			  wcs.latLngToHMSDMS(latlng));
 			url = VUtil.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
@@ -255,7 +255,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 			}
 			switch (coord.units) {
 			case 'HMS':
-				this._wcsinput.value = VUtil.latLngToHMSDMS(latlng);
+				this._wcsinput.value = wcs.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +

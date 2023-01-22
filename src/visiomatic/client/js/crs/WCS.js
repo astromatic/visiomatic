@@ -1,7 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
  * @file Support for the WCS (World Coordinate System).
- * @requires util/VUtil.js
  * @requires crs/Conical.js
  * @requires crs/Cylindrical.js
  * @requires crs/Pixel.js
@@ -20,7 +19,6 @@ import {
 	point,
 } from 'leaflet';
 
-import {VUtil} from '../util';
 import {COE} from './Conical';
 import {CAR, CEA} from './Cylindrical';
 import {TAN, ZEA} from './Zenithal';
@@ -345,10 +343,12 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 */
 	distance: function (latlng1, latlng2) {
 		const	rad = Math.PI / 180.0,
-		    lat1 = latlng1.lat * rad,
-		    lat2 = latlng2.lat * rad,
-		    a = Math.sin(lat1) * Math.sin(lat2) +
-		        Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
+			lat1 = latlng1.lat * rad,
+			lat2 = latlng2.lat * rad,
+			a = Math.sin(lat1) * Math.sin(lat2) +
+				Math.cos(lat1) * Math.cos(lat2) * Math.cos(
+					(latlng2.lng - latlng1.lng) * rad
+			    );
 
 		return 180.0 / Math.PI * Math.acos(Math.min(a, 1));
 	},
@@ -362,7 +362,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 */
 	parseCoords: function (str) {
 		// Try VisiOmatic sexagesimal first
-		let	latlng = VUtil.hmsDMSToLatLng(str);
+		let	latlng = this.hmsDMSToLatLng(str);
 
 		if (typeof latlng === 'undefined') {
 			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
@@ -376,6 +376,80 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 				latlng = this.projection.eqToCelSys(latlng);
 			}
 			return latlng;
+		} else {
+			return undefined;
+		}
+	},
+
+	/**
+	 * Convert world coordinates to an HMSDMS string
+	   (DMS code from the Leaflet-Coordinates plug-in).
+	 * @param {leaflet.LatLng} latlng
+	   Input world coordinates.
+	 * @returns {string}
+	   Coordinate string in HMSDMS.
+	 */
+	latLngToHMSDMS : function (latlng) {
+		let	lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+
+		let h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		const	str = (h < 10 ? '0' : '') + h.toString() + ':' +
+			(m < 10 ? '0' : '') + m.toString() +
+			':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+			lat = Math.abs(latlng.lat),
+			sgn = latlng.lat < 0.0 ? '-' : '+',
+			d = Math.floor(lat);
+
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+	},
+
+	/**
+	 * Convert an HMSDMS string to world coordinates.
+	 * @param {string}
+	   Coordinate string in HMSDMS.
+	 * @return {leaflet.LatLng|undefined}
+	   World coordinates, or `undefined` if the input string could not be
+	   translated.
+	 */
+	hmsDMSToLatLng: function (str) {
+		var result;
+
+		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
+		if (result && result.length >= 8) {
+			const	sgn = Number(result[4] + '1');
+
+			return latLng(
+				sgn * (Number(result[5]) + Number(result[6]) / 60.0 +
+					Number(result[7]) / 3600.0),
+				Number(result[1]) * 15.0 + Number(result[2]) / 4.0 +
+					Number(result[3]) / 240.0
+			);
 		} else {
 			return undefined;
 		}

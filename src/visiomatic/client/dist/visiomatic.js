@@ -30198,7 +30198,7 @@
       httpRequest.send();
     },
     parseURL: function(url) {
-      var dict = {};
+      const dict = {};
       url.replace(
         new RegExp("([^?=&]+)(=([^&]*))?", "g"),
         function($0, $1, $2, $3) {
@@ -30208,7 +30208,7 @@
       return dict;
     },
     updateURL: function(url, keyword, value) {
-      var re = new RegExp("([?&])" + keyword + "=.*?(&|$)", "i"), separator = url.indexOf("?") !== -1 ? "&" : "?";
+      const re = new RegExp("([?&])" + keyword + "=.*?(&|$)", "i"), separator = url.indexOf("?") !== -1 ? "&" : "?";
       return url.match(re) ? url.replace(re, "$1" + keyword + "=" + value + "$2") : url + separator + keyword + "=" + value;
     },
     checkDomain: function(url) {
@@ -30220,9 +30220,22 @@
     isExternal: function(url) {
       return (url.indexOf(":") > -1 || url.indexOf("//") > -1) && this.checkDomain(location.href) !== this.checkDomain(url);
     },
+    getCookie: function(cname) {
+      const name = cname + "=", ca = document.cookie.split(";");
+      for (var i2 = 0; i2 < ca.length; i2++) {
+        var c = ca[i2];
+        while (c.charAt(0) === " ") {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    },
     copyToClipboard: function(text) {
       if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-        var textarea = document.createElement("textarea");
+        const textarea = document.createElement("textarea");
         textarea.textContent = text;
         textarea.style.position = "fixed";
         document.body.appendChild(textarea);
@@ -30244,7 +30257,7 @@
       }, 400);
     },
     readFITSKey: function(keyword, str2) {
-      var key = keyword.trim().toUpperCase().substr(0, 8), nspace = 8 - key.length, keyreg = new RegExp(key + (nspace > 0 ? "\\ {" + nspace.toString() + "}" : "") + "=\\ *(?:'((?:\\ *[^'\\ ]+)*)\\ *'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))"), match = keyreg.exec(str2);
+      const key = keyword.trim().toUpperCase().substr(0, 8), nspace = 8 - key.length, keyreg = new RegExp(key + (nspace > 0 ? "\\ {" + nspace.toString() + "}" : "") + "=\\ *(?:'((?:\\ *[^'\\ ]+)*)\\ *'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))"), match = keyreg.exec(str2);
       if (!match) {
         return null;
       } else if (match[1]) {
@@ -30252,64 +30265,6 @@
       } else {
         return match[2];
       }
-    },
-    distance: function(latlng1, latlng2) {
-      var d2r = Math.PI / 180, lat1 = latlng1.lat * d2r, lat2 = latlng2.lat * d2r, dLat = lat2 - lat1, dLon = (latlng2.lng - latlng1.lng) * d2r, sin1 = Math.sin(dLat / 2), sin2 = Math.sin(dLon / 2);
-      var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
-      return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360 / Math.PI;
-    },
-    latLngToHMSDMS: function(latlng) {
-      var lng = (latlng.lng + 360) / 360;
-      lng = (lng - Math.floor(lng)) * 24;
-      var h = Math.floor(lng), mf = (lng - h) * 60, m = Math.floor(mf), sf = (mf - m) * 60;
-      if (sf >= 60) {
-        m++;
-        sf = 0;
-      }
-      if (m === 60) {
-        h++;
-        m = 0;
-      }
-      var str2 = (h < 10 ? "0" : "") + h.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(3), lat = Math.abs(latlng.lat), sgn = latlng.lat < 0 ? "-" : "+", d2 = Math.floor(lat);
-      mf = (lat - d2) * 60;
-      m = Math.floor(mf);
-      sf = (mf - m) * 60;
-      if (sf >= 60) {
-        m++;
-        sf = 0;
-      }
-      if (m === 60) {
-        h++;
-        m = 0;
-      }
-      return str2 + " " + sgn + (d2 < 10 ? "0" : "") + d2.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(2);
-    },
-    hmsDMSToLatLng: function(str2) {
-      var result;
-      result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str2);
-      if (result && result.length >= 8) {
-        var sgn = Number(result[4] + "1");
-        return (0, import_leaflet7.latLng)(
-          sgn * (Number(result[5]) + Number(result[6]) / 60 + Number(result[7]) / 3600),
-          Number(result[1]) * 15 + Number(result[2]) / 4 + Number(result[3]) / 240
-        );
-      } else {
-        return void 0;
-      }
-    },
-    getCookie: function(cname) {
-      var name = cname + "=";
-      var ca = document.cookie.split(";");
-      for (var i2 = 0; i2 < ca.length; i2++) {
-        var c = ca[i2];
-        while (c.charAt(0) === " ") {
-          c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return "";
     }
   };
 
@@ -31685,7 +31640,7 @@
         url = VUtil.updateURL(
           url,
           this.options.centerQueryKey,
-          VUtil.latLngToHMSDMS(latlng)
+          wcs2.latLngToHMSDMS(latlng)
         );
         url = VUtil.updateURL(
           url,
@@ -31716,7 +31671,7 @@
         }
         switch (coord.units) {
           case "HMS":
-            this._wcsinput.value = VUtil.latLngToHMSDMS(latlng);
+            this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
             break;
           case "deg":
             this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
@@ -33260,7 +33215,7 @@
         "snapshot",
         "Take a snapshot of the displayed image",
         function(event) {
-          const latlng = map2.getCenter(), bounds3 = map2.getPixelBounds();
+          const latlng = map2.getCenter(), bounds3 = map2.getPixelBounds(), wcs2 = map2.options.crs;
           let z = map2.getZoom();
           var zfac;
           if (z > visio.maxZoom) {
@@ -33276,7 +33231,7 @@
             /JTL\=\d+\,\d+/g,
             "RGN=" + bounds3.min.x / sizex + "," + bounds3.min.y / sizey + "," + dx / sizex + "," + dy / sizey + "&WID=" + (this._snapType === 0 ? Math.floor(dx / zfac) : Math.floor(dx / zfac / layer.wcs.scale(z))) + "&CVT=jpeg"
           );
-          hiddenlink.download = layer._title + "_" + VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, "") + ".jpg";
+          hiddenlink.download = layer._title + "_" + wcs2.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, "") + ".jpg";
           hiddenlink.click();
         }
       );
@@ -34004,11 +33959,13 @@
       return zscale > 0 ? scale2 / zscale : scale2;
     },
     distance: function(latlng1, latlng2) {
-      const rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, a = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
+      const rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, a = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(
+        (latlng2.lng - latlng1.lng) * rad
+      );
       return 180 / Math.PI * Math.acos(Math.min(a, 1));
     },
     parseCoords: function(str2) {
-      let latlng = VUtil.hmsDMSToLatLng(str2);
+      let latlng = this.hmsDMSToLatLng(str2);
       if (typeof latlng === "undefined") {
         let result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str2);
         if (result && result.length >= 3) {
@@ -34020,6 +33977,45 @@
           latlng = this.projection.eqToCelSys(latlng);
         }
         return latlng;
+      } else {
+        return void 0;
+      }
+    },
+    latLngToHMSDMS: function(latlng) {
+      let lng = (latlng.lng + 360) / 360;
+      lng = (lng - Math.floor(lng)) * 24;
+      let h = Math.floor(lng), mf = (lng - h) * 60, m = Math.floor(mf), sf = (mf - m) * 60;
+      if (sf >= 60) {
+        m++;
+        sf = 0;
+      }
+      if (m === 60) {
+        h++;
+        m = 0;
+      }
+      const str2 = (h < 10 ? "0" : "") + h.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(3), lat = Math.abs(latlng.lat), sgn = latlng.lat < 0 ? "-" : "+", d2 = Math.floor(lat);
+      mf = (lat - d2) * 60;
+      m = Math.floor(mf);
+      sf = (mf - m) * 60;
+      if (sf >= 60) {
+        m++;
+        sf = 0;
+      }
+      if (m === 60) {
+        h++;
+        m = 0;
+      }
+      return str2 + " " + sgn + (d2 < 10 ? "0" : "") + d2.toString() + ":" + (m < 10 ? "0" : "") + m.toString() + ":" + (sf < 10 ? "0" : "") + sf.toFixed(2);
+    },
+    hmsDMSToLatLng: function(str2) {
+      var result;
+      result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str2);
+      if (result && result.length >= 8) {
+        const sgn = Number(result[4] + "1");
+        return (0, import_leaflet29.latLng)(
+          sgn * (Number(result[5]) + Number(result[6]) / 60 + Number(result[7]) / 3600),
+          Number(result[1]) * 15 + Number(result[2]) / 4 + Number(result[3]) / 240
+        );
       } else {
         return void 0;
       }

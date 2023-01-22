@@ -84,7 +84,8 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 			'Take a snapshot of the displayed image',
 			function (event) {
 				const	latlng = map.getCenter(),
-					bounds = map.getPixelBounds();
+					bounds = map.getPixelBounds(),
+					wcs = map.options.crs;
 				let	z = map.getZoom();
 				var	zfac;
 
@@ -112,7 +113,7 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 						Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg'
 				);
 				hiddenlink.download = layer._title + '_' +
-					VUtil.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+					wcs.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
 					'.jpg';
 				hiddenlink.click();
 			}
