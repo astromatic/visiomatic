@@ -99,8 +99,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	/**
 	 * Initialize the region overlay dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -159,8 +157,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	/**
 	 * Reset the region query dialog (do nothing actually).
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_resetDialog: function () {
@@ -169,8 +165,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	/**
 	 * Query a region.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {region} region
 	   Region.
@@ -196,8 +190,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	/**
 	 * Load region data and display the overlay layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {region} region
 	   Region.

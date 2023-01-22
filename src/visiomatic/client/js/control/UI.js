@@ -82,8 +82,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add the control to the map or to a sidebar.
-	 * @method
-	 * @static
 	 * @override
 	 * @param {object} dest - Destination map or sidebar.
 	 * @returns {object} Destination object.
@@ -111,9 +109,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add the control dialog directly to the map.
-	 * @memberof UI
-	 * @method
-	 * @static
 	 * @param {object} map - Leaflet map the control has been added to.
 	 * @returns {object} The newly created container of the dialog.
 	 */
@@ -173,8 +168,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Check that the layer being loaded is a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */
@@ -196,8 +189,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Initialize the UI dialog (dummy in the base class, just a placeholder).
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -214,8 +205,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Reset the UI dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_resetDialog: function () {
@@ -225,8 +214,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new dialog box to the UI.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} [id] - DOM id property of the box element.
 	 * @returns {object} The newly created dialog box.
@@ -245,8 +232,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new dialog line to the provided dialog box.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} label - Default text in the dialog line.
 	 * @param {object} dialogBox - The destination dialog box.
@@ -266,8 +251,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new dialog element to the provided dialog line.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} line - The destination dialog line.
 	 * @returns {object} The newly created dialog element.
@@ -278,8 +261,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Expand a DOM element (by adding '-expanded' to its class name).
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_expand: function () {
@@ -288,8 +269,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Collapse a DOM element (by removing '-expanded' from its class name).
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_collapse: function () {
@@ -301,8 +280,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Get the base layer currently active on the map.
-	 * @method
-	 * @static
 	 * @returns {object} Tile- or overlay layer.
 	 */
 	getActiveBaseLayer: function () {
@@ -332,8 +309,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new button to the provided parent element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} className
 	   Class name for the button.
@@ -372,8 +347,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new radio button to the provided parent element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} className
 	   Class name for the radio button.
@@ -420,8 +393,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new selection menu to the provided parent element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} className
 	   Class name for the selection menu.
@@ -511,8 +482,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new color picker to the provided parent element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} className
 	   Class name for the color picker.
@@ -576,8 +545,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add a new layer attribute flip switch to the provided box element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   Layer affected by the flip switch action.
@@ -618,8 +585,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	/**
 	 * Add a new numerical input widget to the provided box element for
 	   updating a layer attribute .
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   Layer affected by the numerical update.
@@ -675,8 +640,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Update the value stored in a widget element.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} element
 	   Widget element.
@@ -694,8 +657,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	/**
 	 * Compute a step for the spinbox widget from the provided min and max
 	   values.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} min
 	   Minimum value.
@@ -712,8 +673,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Action performed on a layer attribute when a widget value is modified.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   Layer affected by the update.
@@ -745,8 +704,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Update the control list of layers.
-	 * @method
-	 * @static
 	 * @private
 	 * @returns {object} This (control).
 	 */
@@ -774,8 +731,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add control item element for the provided layer parent object.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} obj - Layer parent object.
 	 * @returns {object} The control item element.
@@ -851,8 +806,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Add (overlay) layer from the present control.
-	 * @method
-	 * @static
 	 * @param {leaflet.Layer} layer - Layer to be added.
 	 * @param {string} name - Layer name.
 	 * @param {number} [index] - Layer depth index.
@@ -874,8 +827,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Remove (overlay) layer from the present control.
-	 * @method
-	 * @static
 	 * @param {leaflet.Layer} layer - Layer to be removed.
 	 * @returns {object} This (control).
 	 */
@@ -890,8 +841,6 @@ export const UI = Control.extend( /** @lends UI */ {
 
 	/**
 	 * Trigger layer list update when an (overlay) layer is added or removed.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {leaflet.LayerEvent} e - Leaflet layer event object.
 	 */

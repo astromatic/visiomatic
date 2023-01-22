@@ -59,8 +59,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	 * Copy channel mixing settings from a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
 	 * @param {object} settings
@@ -87,8 +85,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	 * Copy channel mixing settings to a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
 	 * @param {object} settings
@@ -121,8 +117,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	 * Initialize the channel mixing dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -210,8 +204,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	 * Initialize the ``'mono'`` flavor of the channel mixing dialog.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -274,8 +266,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
  
 	/**
 	 * Initialize the ``'color'`` flavor of the channel mixing dialog.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -384,8 +374,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	/**
 	 * Add a pair of spinboxes for setting the min and max clipping limits of
 	   pixel values.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -424,8 +412,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	   Set/update the channel controls for a given channel.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -477,8 +463,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	/**
 	   Update the color mixing matrix with the RGB contribution of a given
 	   channel and redraw the VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -495,8 +479,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	   Update the list of channels in the dialog.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	 * VisiOmatic layer.
@@ -564,8 +546,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 	/**
 	   Update the color picker value based on the current layer color.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -579,8 +559,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	/**
 	   Add listener to a trash element for blackening the current channel color
 	   of a given VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} trashElem
 	   Trash element.
@@ -601,8 +579,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	/**
 	   Add listener to a channel element for setting the current channel
 	   of a given VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} trashElem
 	   Trash element.

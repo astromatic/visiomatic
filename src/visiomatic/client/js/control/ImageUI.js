@@ -46,8 +46,6 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 
 	/**
 	 * Copy rendering settings from a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
 	 * @param {object} settings
@@ -68,8 +66,6 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 
 	/**
 	 * Copy rendering settings to a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
 	 * @param {object} settings
@@ -95,8 +91,6 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 
 	/**
 	 * Initialize the rendering preference dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -191,8 +185,6 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 
 	/**
 	   Update the color mixing matrix of a VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.

@@ -88,8 +88,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	/**
 	 * Initialize the catalog query dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -161,8 +159,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	/**
 	 * Reset the catalog query dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_resetDialog: function () {
@@ -171,8 +167,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	/**
 	 * Query catalog.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {Catalog} catalog
 	   Catalog.
@@ -307,8 +301,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	/**
 	 * Load catalog data and display the overlay layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {Catalog} catalog
 	   Catalog.

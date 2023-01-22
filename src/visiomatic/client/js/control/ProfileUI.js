@@ -74,8 +74,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * Initialize the profile/spectrum plotting dialog.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_initDialog: function () {
@@ -202,8 +200,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * Update plotted line parameters.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {event} e
 	   Triggering event (e.g., ``'drag'``).
@@ -227,8 +223,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * End interactive profile line definition and do the profile query. 
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_profileEnd: function () {
@@ -280,8 +274,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * Compute distance and set up measurement string.
-	 * @method
-	 * @static
 	 * @private
 	 * @returns {string} Measurement string.
 	 */
@@ -314,8 +306,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * Load and plot image profile data.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} self
 	   Calling control object (``this``).
@@ -423,8 +413,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	/**
 	 * Extract the image profile in a given channel from the multichannel
 	   profiles of a given VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.
@@ -448,8 +436,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	/**
 	 * Load and plot spectrum data.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {object} self
 	   Calling control object (``this``).
@@ -532,8 +518,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	/**
 	 * Extract the average pixel value in a given channel from the multichannel
 	   profiles of a given VisiOmatic layer.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {VTileLayer} layer
 	   VisiOmatic layer.

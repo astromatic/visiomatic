@@ -212,8 +212,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Return or set the current value of the spinbox.
-	 * @method
-	 * @static
 	 * @param {number} [val]
 	   If provided, set the spinbox value to that of `val`.
 
@@ -231,8 +229,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Return or set the current increment value of the spinbox.
-	 * @method
-	 * @static
 	 * @param {number} [val]
 	   If provided, set the spinbox increment value to that of `val`.
 
@@ -250,8 +246,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Disable the spinbox widget.
-	 * @method
-	 * @static
 	 */
 	disable: function () {
 		// Disable the element
@@ -267,8 +261,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Enable the spinbox widget.
-	 * @method
-	 * @static
 	 */
 	enable: function () {
 		// Enable the element
@@ -283,8 +275,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Run one step of the spinbox.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_sboxRun: function () {
@@ -319,8 +309,6 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 
 	/**
 	 * Set spinbox value precision.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} step
 	   Increment value.
@@ -333,9 +321,7 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 	},
 
 	/**
-	 * Incement or decrement spinbox value.
-	 * @method
-	 * @static
+	 * Increment or decrement spinbox value.
 	 * @private
 	 * @param {object} target
 	   Element that triggered the action.

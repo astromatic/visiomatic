@@ -123,8 +123,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	/**
 	 * Update navigation buttons.
 	 * @see {@link http://stackoverflow.com/a/7704305}.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} newPos - Position in navigation history.
 	 */
@@ -139,8 +137,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 
 	/**
 	 * Disable navigation buttons on both sides of history positions.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_disableNav: function () {
@@ -153,8 +149,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	/**
 	 * Navigate back in the IFrame.
 	 * @see {@link http://stackoverflow.com/a/7704305}.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_backNav: function () {
@@ -166,8 +160,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	/**
 	 * Navigate forward in the IFrame.
 	 * @see {@link http://stackoverflow.com/a/7704305}.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_forwardNav: function () {
@@ -179,8 +171,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	/**
 	 * Navigate home in the IFrame.
 	 * @see {@link http://stackoverflow.com/a/7704305}.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_homeNav: function () {
@@ -192,8 +182,6 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	/**
 	 * Triggered on IFrame load.
 	 * @see {@link http://stackoverflow.com/a/7704305}.
-	 * @method
-	 * @static
 	 * @private
 	 */
 	_onloadNav: function () {

@@ -313,8 +313,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Get metadata describing the tiled image at the provided URL.
-	 * @method
-	 * @static
 	 * @async
 	 * @param {string} url - The full tile URL.
 	 * @fires metaload
@@ -488,8 +486,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	/**
 	 * Update the color mixing matrix with the RGB contribution of a given
 	   channel.
-	 * @method
-	 * @static
 	 * @param {number} channel - Input channel.
 	 * @param {RGB} rgb - RGB color.
 	 */
@@ -520,8 +516,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   @desc
 	   The current channel index defines the color mixing matrix elements in
 	   ``'mono'`` mode
-	 * @method
-	 * @static
 	 */
 	updateMono: function () {
 		this.visio.mode = 'mono';
@@ -534,8 +528,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   @desc
 	   RGB colors and saturation settings define mixing matrix elements in
 	   ``'color'`` mode
-	 * @method
-	 * @static
 	 */
 	updateMix: function () {
 		const	visio = this.visio,
@@ -549,8 +541,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Apply gamma expansion to the provided input value.
-	 * @method
-	 * @static
 	 * @private
 	 * @param {number} val - Input value.
 	 * @return {number} gamma-compressed value.
@@ -561,8 +551,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Decode the input string as a 'keyword:value' pair.
-	 * @method
-	 * @static
 	 * @private
 	 * @deprecated since version 3.0
 	 * @param {string} str - Input string.
@@ -577,8 +565,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Add the layer to the map.
-	 * @method
-	 * @static
 	 * @override
 	 * @param {object} map - Leaflet map to add the layer to.
 	 * @listens metaload
@@ -605,8 +591,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Executed once the layer to be added to the map is ready.
-	 * @method
-	 * @static
 	 * @override
 	 * @private
 	 * @param {object} map - Leaflet map to add the layer to.
@@ -706,8 +690,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Tell if a tile at the given coordinates should be loaded.
-	 * @method
-	 * @static
 	 * @override
 	 * @private
 	 * @param {point} coords - Tile coordinates.
@@ -746,8 +728,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Create a tile at the given coordinates.
-	 * @method
-	 * @static
 	 * @override
 	 * @param {point} coords
 	   Tile coordinates.
@@ -765,8 +745,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Generate a tile URL from its coordinates
-	 * @method
-	 * @static
 	 * @override
 	 * @param {point} coords - Tile coordinates.
 	 * @return {string} The tile URL.
@@ -831,8 +809,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * Initialize a tile.
-	 * @method
-	 * @static
 	 * @override
 	 * @private
 	 * @param {object} tile - The tile.

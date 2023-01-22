@@ -114,9 +114,6 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	/**
 	 * Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
-
-	 * @method
-	 * @static
 	 * @private
 	 * @param {string} str - CSV data.
 	 * @return {object} GeoJSON object.
@@ -162,8 +159,6 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	/**
 	 * Read number in a cell from a
 	   [Vizier]{@link https://vizier.cds.unistra.fr/} ASCII output.
-	 * @method
-	 * @static
 	 * @param {string} item - Cell content.
 	 * @return {number} Value in the cell.
 	 */
@@ -174,13 +169,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	/**
 	 * @summary Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
-
 	 * @desc Wrapper around private method
 	   [_csvToGeoJSON]{@link Catalog._csvToGeoJSON}.
-
-	 * @method
-	 * @static
-	 * @overrides
+	 * @override
 	 * @param {string} str - CSV data.
 	 * @return {object} GeoJSON object.
 	 */
@@ -188,6 +179,12 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		return this._csvToGeoJSON(str);
 	},
 
+	/**
+	 * Generate HTML content for popups.
+	 * @override
+	 * @param {object} feature - Feature property of the source.
+	 * @return {string} HTML content.
+	 */
 	popup: function (feature) {
 		var str = '<div>';
 		if (this.objURL) {
@@ -218,10 +215,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	/**
 	 * Draw a circle at the current catalog source world coordinates.
-
-	 * @method
-	 * @static
-	 * @overrides
+	 * @override
 	 * @param {object} feature - Feature property of the source.
 	 * @param {leaflet.LatLng} latlng - World coordinates of the source.
 	 * @return {leaflet.circleMarker} Circle marker.
@@ -235,10 +229,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	/**
 	 * Filter out a source based on its feature property.
-
-	 * @method
-	 * @static
-	 * @overrides
+	 * @override
 	 * @param {object} feature - Feature property of the source.
 	 * @return {boolean} ``false`` if filtered out, ``true`` otherwise.
 	 */

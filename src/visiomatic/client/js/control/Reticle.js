@@ -26,8 +26,6 @@ export const Reticle = Control.extend( /** @lends Reticle */ {
 	/**
 	 * Add the reticle to the map.
 	 * @memberof control/Reticle
-	 * @method
-	 * @static
 	 * @param {object} map - Leaflet map the reticle has been added to.
 	 * @returns {object} A new container (dummy: does not contain the reticle).
 	 */
@@ -55,8 +53,6 @@ export const Reticle = Control.extend( /** @lends Reticle */ {
 
 	/**
 	 * Remove the reticle.
-	 * @method
-	 * @static
 	 * @param {leaflet.map} [map] - The parent map.
 	 */
 	onRemove: function (map) {
