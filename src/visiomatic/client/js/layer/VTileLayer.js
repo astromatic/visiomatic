@@ -834,7 +834,56 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (Browser.android && !Browser.android23) {
 			tile.style.WebkitBackfaceVisibility = 'hidden';
 		}
+	},
+
+	/**
+	 * Replace a tile.
+	 * @see {@link https://github.com/Leaflet/Leaflet/issues/6659}
+	 * @private
+	 * @param {object} tile - The tile.
+	 * @param {string} url - The tile URL.
+	 */
+	_refreshTileUrl: function(tile, url) {
+		// Use an image in background so that we only replace the actual tile,
+		// once image is loaded in cache!
+		const	img = new Image();
+		img.onload = function() {
+			L.Util.requestAnimFrame(function() {
+				tile.el.src = url;
+			});
+		};
+		img.src = url;
+	},
+
+	/**
+	 * Redraw a tile without flickering.
+	 * @see {@link https://github.com/Leaflet/Leaflet/issues/6659}
+	 * @override
+	 */
+	redraw: function() {
+		// Prevent _tileOnLoad/_tileReady re-triggering a opacity animation
+		const	wasAnimated = this._map._fadeAnimated;
+		this._map._fadeAnimated = false;
+
+		for (var key in this._tiles) {
+			tile = this._tiles[key];
+			if (tile.current && tile.active) {
+				const	oldsrc = tile.el.src,
+					newsrc = this.getTileUrl(tile.coords);
+
+				if (oldsrc != newsrc) {
+					// L.DomEvent.off(tile, 'load', this._tileOnLoad);
+					// ... this doesnt work!
+					this._refreshTileUrl(tile, newsrc);
+				}
+			}
+		}
+
+		if (wasAnimated) {
+			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 5000);
+		}
 	}
+
 
 });
 
