@@ -13,7 +13,6 @@ export * from './DocUI';
 export * from './ExtraMap';
 export * from './FullScreen';
 export * from './ImageUI';
-export * from './OverlayUI';
 export * from './ProfileUI';
 export * from './RegionUI';
 export * from './Reticle';

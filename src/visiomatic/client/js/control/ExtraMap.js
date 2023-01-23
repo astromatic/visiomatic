@@ -1,13 +1,11 @@
-/*
-#	Add extra synchronized map.
-#	(Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
-#	(original copyright notice reproduced below).
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Provide an extra synchronized map (PiP-style).
 
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU.
+   Adapted from L.Control.MiniMap by Norkart
+   (original copyright notice follows).
 Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
 
@@ -42,19 +40,33 @@ import {
 } from 'leaflet';
 
 
-export const ExtraMap = Control.extend({
+export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 	options: {
-		position: 'topright',
 		title: 'Navigation mini-map. Grab to navigate',
-		toggleDisplay: true,
-		zoomLevelFixed: false,
-		zoomLevelOffset: -5,
-		zoomAnimation: false,
-		autoToggleDisplay: false,
+		position: 'topright',
 		width: 150,
 		height: 150,
 		collapsedWidth: 24,
 		collapsedHeight: 24,
+		toggleDisplay: true,
+		autoToggleDisplay: false,
+		zoomLevelFixed: false,
+		zoomLevelOffset: -5,
+		zoomAnimation: false,
+		/**
+		 * "Rectangle" footprint options.
+		 * @typedef rectangleOptions
+		 * @property {string} color
+		   Rectangle color.
+		 * @property {number} weight
+		   Rectangle line weight.
+		 * @property {number} [opacity=1]
+		   Rectangle line opacity.
+		 * @property {number} [fillOpacity=1]
+		   Rectangle fill opacity.
+		 * @property {boolean} [clickable=false]
+		   Is the rectangle footprint clickable?
+		 */
 		aimingRectOptions: {
 			color:  '#FFFFFF',
 			weight: 1,
@@ -63,28 +75,84 @@ export const ExtraMap = Control.extend({
 		shadowRectOptions: {
 			color: '#FDC82F',
 			weight: 1,
-			clickable: false,
 			opacity: 0,
-			fillOpacity: 0
+			fillOpacity: 0,
+			clickable: false
 		},
 		strings: {hideText: 'Hide map', showText: 'Show map'}
 	},
 
-	// Layer is the map layer to be shown in the minimap
+	/**
+	 * Create an extra map display/control interface.
+
+	 * @extends leaflet.Control
+	 * @memberof module:control/ExtraMap.js
+	 * @constructs
+	 * @param {leaflet.Layer} layer - Layer displayed in the extra map.
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Navigation mini-map. Grab to navigate']
+	   Title of the map.
+
+	 * @param {'bottomleft'|'bottomright'|'topleft'|'topright'} [options.position='topright']
+	   Position of the map.
+
+	 * @param {number} [options.width=150]
+	   Map width in screen pixels.
+
+	 * @param {number} [options.height=150]
+	   Map height in screen pixels.
+
+	 * @param {number} [options.width=24]
+	   Map width in collapsed state, in screen pixels.
+
+	 * @param {number} [options.height=24]
+	   Map height in collapsed state, in screen pixels.
+
+	 * @param {boolean} [options.toggleDisplay=true]
+	   Add a map toggle display button?
+
+	 * @param {boolean} [options.autoToggleDisplay=false]
+	   Automatically toggle the map display when hovering the map icon?
+
+	 * @param {number|false} [options.zoomLevelFixed=false]
+	   Fixed extra map zoom level. Defaults to dynamic zooming.
+
+	 * @param {number} [options.zoomLevelOffset=-5]
+	   Zoom level offset with respect to that of the main map.
+
+	 * @param {boolean} [options.zoomAnimation=false]
+	   Animate when zooming in/out (warning: adds some lag)?
+
+	 * @param {rectangleOptions} [options.aimingRectOptions]
+	   Display options for the aiming rectangle.
+
+	 * @param {rectangleOptions} [options.shadowRectOptions]
+	   Display options for the shadow rectangle.
+
+	 * @returns {ExtraMap} Instance of an extra map display/control interface.
+	 */
 	initialize: function (layer, options) {
 		Util.setOptions(this, options);
-		// Make sure the aiming rects are non-clickable even if the user tries to set
-		// them clickable (most likely by forgetting to specify them false)
+		// Make sure the aiming rects are non-clickable even if the user tries
+		// to set them clickable (most likely by forgetting to specify them false)
 		this.options.aimingRectOptions.clickable = false;
 		this.options.shadowRectOptions.clickable = false;
 		this._layer = layer;
 	},
 
+	/**
+	 * Add the extra map display/control directly to the map and wait for
+	   the layer to be ready.
+	 * @param {object} map - Leaflet map the control has been added to.
+	 * @returns {object} The newly created container of the control.
+	 */
 	onAdd: function (map) {
 
 		this._mainMap = map;
 
-		// Creating the container and stopping events from spilling through to the main map.
+		// Creating the container and stopping events from spilling through
+		// to the main map.
 		this._container = DomUtil.create('div', 'leaflet-control-extramap');
 		this._container.style.width = this.options.width + 'px';
 		this._container.style.height = this.options.height + 'px';
@@ -104,12 +172,13 @@ export const ExtraMap = Control.extend({
 		});
 		this._layer.addTo(this._extraMap);
 
-		// These bools are used to prevent infinite loops of the two maps notifying
-		// each other that they've moved.
+		// These bools are used to prevent infinite loops of the two maps
+		// notifying each other that they've moved.
 		// this._mainMapMoving = false;
 		// this._extraMapMoving = false;
 
-		// Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
+		// Keep a record of this to prevent auto toggling when the user
+		// explicitly doesn't want it.
 		this._userToggledDisplay = false;
 		this._minimized = false;
 
@@ -125,10 +194,17 @@ export const ExtraMap = Control.extend({
 					this.options.shadowRectOptions).addTo(this._extraMap);
 				this._mainMap.on('moveend', this._onMainMapMoved, this);
 				this._mainMap.on('move', this._onMainMapMoving, this);
-				this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
+				this._extraMap.on(
+					'movestart',
+					this._onExtraMapMoveStarted,
+					this
+				);
 				this._extraMap.on('move', this._onExtraMapMoving, this);
 				this._extraMap.on('moveend', this._onExtraMapMoved, this);
-				this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+				this._extraMap.setView(
+					this._mainMap.getCenter(),
+					this._decideZoom(true)
+				);
 				this._setDisplay(this._decideMinimized());
 			}, this));
 		}, this));
@@ -137,11 +213,10 @@ export const ExtraMap = Control.extend({
 		return this._container;
 	},
 
-	addTo: function (map) {
-		Control.prototype.addTo.call(this, map);
-		return this;
-	},
-
+	/**
+	 * Remove map move event when the extra map display/control is removed.
+	 * @param {leaflet.map} [map] - The parent map.
+	 */
 	onRemove: function (map) {
 		this._mainMap.off('moveend', this._onMainMapMoved, this);
 		this._mainMap.off('move', this._onMainMapMoving, this);
@@ -150,14 +225,22 @@ export const ExtraMap = Control.extend({
 		this._extraMap.removeLayer(this._layer);
 	},
 
+	/**
+	 * Update content when the layer is changed.
+	 * @param {leaflet.Layer} [layer] - The new layer.
+	 */
 	changeLayer: function (layer) {
 		this._extraMap.removeLayer(this._layer);
 		this._layer = layer;
 		this._extraMap.addLayer(this._layer);
 	},
 
+	/**
+	 * Add a display toggle button to the extra map window/icon.
+	 * @private
+	 */
 	_addToggleButton: function () {
-		this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
+		this._toggleDisplayButton = this.options.toggleDisplay ? this._addButton(
 			'', this.options.strings.hideText, (
 				'leaflet-control-extramap-toggle-display ' +
 			  'leaflet-control-extramap-toggle-display-' + this.options.position
@@ -169,13 +252,18 @@ export const ExtraMap = Control.extend({
 		this._toggleDisplayButton.style.height = this.options.collapsedHeight + 'px';
 	},
 
-	_createButton: function (html, title, className, container, fn, context) {
-		var link = DomUtil.create('a', className, container);
+	/**
+	 * Add a button to the extra map window/icon.
+	 * @private
+	 * @returns {object} Button element.
+	 */
+	_addButton: function (html, title, className, container, fn, context) {
+		const	link = DomUtil.create('a', className, container);
 		link.innerHTML = html;
 		link.href = '#';
 		link.title = title;
 
-		var stop = DomEvent.stopPropagation;
+		const	stop = DomEvent.stopPropagation;
 
 		DomEvent
 			.on(link, 'click', stop)
@@ -187,6 +275,10 @@ export const ExtraMap = Control.extend({
 		return link;
 	},
 
+	/**
+	 * Actions performed when the display toggle button is clicked.
+	 * @private
+	 */
 	_toggleDisplayButtonClicked: function () {
 		this._userToggledDisplay = true;
 		if (!this._minimized) {
@@ -198,6 +290,12 @@ export const ExtraMap = Control.extend({
 		}
 	},
 
+	/**
+	 * Toggle display of the extra map window.
+	 * @private
+	 * @param {boolean} minimize
+	   Minimize the map?
+	 */
 	_setDisplay: function (minimize) {
 		if (minimize !== this._minimized) {
 			if (!this._minimized) {
@@ -208,6 +306,10 @@ export const ExtraMap = Control.extend({
 		}
 	},
 
+	/**
+	 * Minimize the extra map window.
+	 * @private
+	 */
 	_minimize: function () {
 		// hide the minimap
 		if (this.options.toggleDisplay) {
@@ -220,6 +322,10 @@ export const ExtraMap = Control.extend({
 		this._minimized = true;
 	},
 
+	/**
+	 * Restore the extra map window.
+	 * @private
+	 */
 	_restore: function () {
 		if (this.options.toggleDisplay) {
 			this._container.style.width = this.options.width + 'px';
@@ -232,10 +338,19 @@ export const ExtraMap = Control.extend({
 		this._minimized = false;
 	},
 
+	/**
+	 * Follow the main map after it has moved.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Main map ``moveend`` event.
+	 */
 	_onMainMapMoved: function (e) {
 		if (!this._extraMapMoving) {
 			this._mainMapMoving = true;
-			this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+			this._extraMap.setView(
+				this._mainMap.getCenter(),
+				this._decideZoom(true)
+			);
 			this._setDisplay(this._decideMinimized());
 		} else {
 			this._extraMapMoving = false;
@@ -243,68 +358,123 @@ export const ExtraMap = Control.extend({
 		this._aimingRect.setBounds(this._mainMap.getBounds());
 	},
 
+	/**
+	 * Replicate the main map moves using the aiming rectangle footprint.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Main map ``move`` event.
+	 */
 	_onMainMapMoving: function (e) {
 		this._aimingRect.setBounds(this._mainMap.getBounds());
 	},
 
+	/**
+	 * Set up the aiming rectangle footprint as the extra map starts moving.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Extra map ``movestart`` event.
+	 */
 	_onExtraMapMoveStarted: function (e) {
-		var lastAimingRect = this._aimingRect.getBounds();
-		var sw = this._extraMap.latLngToContainerPoint(lastAimingRect.getSouthWest());
-		var ne = this._extraMap.latLngToContainerPoint(lastAimingRect.getNorthEast());
+		const	lastAimingRect = this._aimingRect.getBounds(),
+			sw = this._extraMap.latLngToContainerPoint(
+				lastAimingRect.getSouthWest()
+			),
+			ne = this._extraMap.latLngToContainerPoint(
+				lastAimingRect.getNorthEast()
+			);
+
 		this._lastAimingRectPosition = {sw: sw, ne: ne};
 	},
 
+	/**
+	 * Update the shadow rectangle footprint as the extra map is moving.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Extra map ``move`` event.
+	 */
 	_onExtraMapMoving: function (e) {
 		if (!this._mainMapMoving && this._lastAimingRectPosition) {
 			this._shadowRect.setBounds(new LatLngBounds(
-				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
-				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
+				this._extraMap.containerPointToLatLng(
+					this._lastAimingRectPosition.sw
+				),
+				this._extraMap.containerPointToLatLng(
+					this._lastAimingRectPosition.ne
+				)
 			));
 			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
 		}
 	},
 
+	/**
+	 * Update the main map as the extra map has stopped moving.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Extra map ``moveend`` event.
+	 */
 	_onExtraMapMoved: function (e) {
 		if (!this._mainMapMoving) {
 			this._extraMapMoving = true;
-			this._mainMap.setView(this._extraMap.getCenter(), this._decideZoom(false));
+			this._mainMap.setView(
+				this._extraMap.getCenter(),
+				this._decideZoom(false)
+			);
 			this._shadowRect.setStyle({opacity: 0, fillOpacity: 0});
 		} else {
 			this._mainMapMoving = false;
 		}
 	},
 
+	/**
+	 * Update the main map as the extra map has stopped moving.
+	 * @private
+	 * @param {leaflet.Event} e
+	   Extra map ``moveend`` event.
+	 */
 	_isZoomLevelFixed: function () {
-		var zoomLevelFixed = this.options.zoomLevelFixed;
+		const	zoomLevelFixed = this.options.zoomLevelFixed;
 		return this._isDefined(zoomLevelFixed) && this._isInteger(zoomLevelFixed);
 	},
 
+	/**
+	 * Decide the extra map zoom level depending on current conditions.
+	 * @private
+	 * @param {boolean} fromMaintoExtra
+	   Is zooming triggered from the main map?
+	 */
 	_decideZoom: function (fromMaintoExtra) {
 		if (!this._isZoomLevelFixed()) {
 			if (fromMaintoExtra) {
 				return this._mainMap.getZoom() + this.options.zoomLevelOffset;
 			} else {
-				var currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom();
-				var proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
-				var toRet;
+				const	currentDiff = this._extraMap.getZoom() -
+						this._mainMap.getZoom(),
+					proposedZoom = this._extraMap.getZoom() -
+						this.options.zoomLevelOffset;
+				var	toRet;
 
 				if (currentDiff > this.options.zoomLevelOffset &&
-				  this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
-					// This means the extraMap is zoomed out to the minimum zoom level and
-					// can't zoom any more.
+				  this._mainMap.getZoom() < this._extraMap.getMinZoom() -
+					this.options.zoomLevelOffset) {
+					// This means the extraMap is zoomed out to the minimum
+					//  zoom level and can't zoom any more.
 					if (this._extraMap.getZoom() > this._lastExtraMapZoom) {
-						// This means the user is trying to zoom in by using the minimap, zoom the main map.
+						// This means the user is trying to zoom in
+						// by using the minimap, zoom the main map.
 						toRet = this._mainMap.getZoom() + 1;
-						// Also we cheat and zoom the minimap out again to keep it visually consistent.
+						// Also we cheat and zoom the minimap out again
+						// to keep it visually consistent.
 						this._extraMap.setZoom(this._extraMap.getZoom() - 1);
 					} else {
-						// Either the user is trying to zoom out past the minimap's min zoom or
-						// has just panned using it, we can't tell the difference. Therefore, we ignore it!
+						// Either the user is trying to zoom out past the
+						// minimap's min zoom or has just panned using it, we
+						// can't tell the difference. Therefore, we ignore it!
 						toRet = this._mainMap.getZoom();
 					}
 				} else {
-					// This is what happens in the majority of cases, and always if you
-					// configure the min levels + offset in a sane fashion.
+					// This is what happens in the majority of cases,
+					// and always if you configure the min levels + offset
+					// in a sane fashion.
 					toRet = proposedZoom;
 				}
 				this._lastExtraMapZoom = this._extraMap.getZoom();
@@ -319,6 +489,10 @@ export const ExtraMap = Control.extend({
 		}
 	},
 
+	/**
+	 * Decide if the extra map must be minimized.
+	 * @private
+	 */
 	_decideMinimized: function () {
 		if (this._userToggledDisplay) {
 			return this._minimized;
@@ -334,25 +508,61 @@ export const ExtraMap = Control.extend({
 		return this._minimized;
 	},
 
+	/**
+	 * Testing for ``number`` type.
+	 * @private
+	 * @param {number} value - Input.
+	 * @return {boolean} True if the input value is a number.
+	 */
 	_isInteger: function (value) {
 		return typeof value === 'number';
 	},
 
+	/**
+	 * Testing for ``undefined`` type.
+	 * @private
+	 * @param {number} value - Input.
+	 * @return {boolean} True if the input value is strictly ``undefined``.
+	 */
 	_isDefined: function (value) {
 		return typeof value !== 'undefined';
 	}
 });
 
+
+/**
+ * Instantiate an extra map display/control interface.
+ * @memberof module:control/ExtraMap.js
+ * @function
+ * @param {object} [options] - Options: see {@link ExtraMap}
+ * @returns {ExtraMap} Instance of an extra map display/control interface.
+*/
+export const extraMap = function (layer, options) {
+	return new ExtraMap(layer, options);
+};
+
+
+/**
+ * Deactivate extra map control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
 Map.mergeOptions({
 	extraMapControl: false
 });
 
+
+/**
+ * Add a hook to maps for extra map control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
 Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
-		this.extraMapControl = (new Control.ExtraMap()).addTo(this);
+		this.extraMapControl = (new ExtraMap()).addTo(this);
 	}
 });
 
-export const extraMap = function (layer, options) {
-	return new ExtraMap(layer, options);
-};
+

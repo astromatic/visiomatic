@@ -1,20 +1,23 @@
-/*
-#	Add a VisiOmatic logo to the map.
-#
-#	This file part of: VisiOmatic
-#
-#	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Add a VisiOmatic logo to the map.
+
+ * @copyright (c) 2013-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {Control, Map} from 'leaflet';
 
 
-// Remove this ugly Pipe sign
+/**
+ * Remove this ugly Pipe sign.
+ * @memberof leaflet.Control.Attribution
+ * @mixin
+*/
 Control.Attribution.include({
 	_update: function () {
 		if (!this._map) { return; }
 
-		var attribs = [];
+		const	attribs = [];
 
 		for (var i in this._attributions) {
 			if (this._attributions[i]) {
@@ -22,7 +25,7 @@ Control.Attribution.include({
 			}
 		}
 
-		var prefixAndAttribs = [];
+		const	prefixAndAttribs = [];
 
 		if (this.options.prefix) {
 			prefixAndAttribs.push(this.options.prefix);
@@ -35,7 +38,12 @@ Control.Attribution.include({
 	}
 });
 
-// Set Attribution prefix to a series of clickable logos
+/**
+ * Add a hook to set the attribution prefix to a series of clickable logos.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
 Map.addInitHook(function () {
 	if (this.options.visiomaticLogo !== false &&
 	 this.options.attributionControl) {

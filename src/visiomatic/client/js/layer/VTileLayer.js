@@ -1,13 +1,13 @@
-/*
-#	Support for VisiOmatic layers to Leaflet
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
-#	                         Ruven Pillay    - C2RMF/CNRS
+/**
+ #	This file part of:	VisiOmatic
+ * @file Support for VisiOmatic layers in Leaflet
+ * @requires util/VUtil.js
+ * @requires util/RGB.js
+ * @requires crs/WCS.js
 
-*/
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ */
 import {
 	Browser,
 	DomUtil,
@@ -20,14 +20,13 @@ import {VUtil} from '../util';
 import {rgb as rgbin} from '../util';
 import {WCS} from '../crs';
 
-
-export const VTileLayer = TileLayer.extend({
+export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	options: {
-		title: '',
+		title: null,
 		crs: null,
-		nativeCelsys: false,
-		center: false,
-		fov: false,
+		nativeCelSys: false,
+		center: null,
+		fov: null,
 		minZoom: 0,
 		maxZoom: null,
 		maxNativeZoom: 18,
@@ -45,14 +44,13 @@ export const VTileLayer = TileLayer.extend({
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
-		credentials: false,
-		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame',
+		credentials: null
 
 		/*
 		pane: 'tilePane',
 		opacity: 1,
 		attribution: <String>,
-		maxNativeZoom: <Number>,
 		zIndex: <Number>,
 		bounds: <LatLngBounds>
 		unloadInvisibleTiles: L.Browser.mobile,
@@ -64,10 +62,29 @@ export const VTileLayer = TileLayer.extend({
 		*/
 	},
 
-	// Default rendering parameters
+	/**
+	   Default _server_ rendering parameters (to shorten tile query strings).
+	 * @type {object}
+	 * @property {number} contrast
+	   Default contrast factor.
+	 * @property {number} gamma
+	   Default display gamma.
+	 * @property {string} cMap
+	   Default colormap.
+	 * @property {boolean} invertCMap
+	   Default colormap inversion switch.
+	 * @property {number[]} minValue
+	   Default lower clipping limits for channels.
+	 * @property {number[]} maxValue
+	   Default upper clipping limits for channels.
+	 * @property {RGB[]} channelColors
+	   Default color mixing matrix.
+	 * @property {number} quality
+	   Default JPEG encoding quality.
+	 */
 	visioDefault: {
-		contrast: 1,
-		gamma: 1,
+		contrast: 1.,
+		gamma: 2.2,
 		cMap: 'grey',
 		invertCMap: false,
 		minValue: [],
@@ -84,6 +101,114 @@ export const VTileLayer = TileLayer.extend({
 		quality: 90
 	},
 
+
+	/**
+	 * Create a layer with tiled image data queried from a VisiOmatic server.
+
+	 * @extends leaflet.TileLayer
+	 * @memberof module:layer/VTileLayer.js
+	 
+	 * @constructs
+	 * @param {string} url - URL of the tile server
+	 * @param {object} [options] - Options.
+
+	 * @param {?string} [options.title=null]
+	   Layer title. Defaults to the basename of the tile URL with extension removed.
+
+	 * @param {?(leaflet.CRS|WCS)} [options.crs=null]
+	   Coordinate Reference or World Coordinate System: extracted from the data
+	   header if available or raw pixel coordinates otherwise.
+
+	 * @param {boolean} [options.nativeCelSys=false]
+	   True if native coordinates (e.g., galactic coordinates) are to be used
+	   instead of equatorial coordinates.
+
+	 * @param {?string} [options.center=null]
+	   World coordinates (either in RA,Dec decimal form or in
+	   ``hh:mm:ss.s±dd:mm:ss.s`` sexagesimal  format), or any
+	   [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame}-compliant identifier
+	   defining the initial centering of the map upon layer initialization.
+	   Sexagesimal coordinates and identifier strings are sent to the
+	   Sesame resolver service for conversion to decimal coordinates. Assume x,y
+	   pixel coordinates if WCS information is missing. Defaults to image center.
+
+	 * @param {?number} [options.fov=null]
+	   Field of View (FoV) covered by the map upon later initialization, in world
+	   coordinates (degrees, or pixel coordinates if WCS information is missing).
+	   Defaults to the full FoV.
+ 
+	 * @param {number} [options.minZoom=0]
+	   Minimum zoom factor.
+
+	 * @param {?number} [options.maxZoom=null]
+	   Maximum zoom factor.
+
+	 * @param {number} [options.maxNativeZoom=18]
+	   Maximum native zoom factor (including resampling).
+
+	 * @param {boolean} [options.noWrap=true]
+	   Deactivate layer wrapping.
+
+	 * @param {number} [options.contrast=1.0]
+	   Contrast factor.
+
+	 * @param {number} [options.colorSat=1.0]
+	   Color saturation for multi-channel data (0.0: B&W, >1.0: enhance).
+
+	 * @param {number} [options.gamma=2.2]
+	   Display gamma.
+
+	 * @param {string} [options.cMap='grey']
+	   Colormap for single channels or channel combinations. Valid colormaps are
+	   ``'grey'``, ``'jet'``, ``'cold'`` and ``'hot'``.
+
+	 * @param {boolean} [options.invertCMap=false]
+	   Invert Colormap or color mix (like a negative).
+
+	 * @param {number} [options.quality=90]
+	   JPEG encoding quality in percent.
+
+	 * @param {string} [options.mixingMode='color']
+	   Channel mixing mode. Valid modes are ``'mono'`` (single-channel) and
+	   ``'color'``.
+
+	 * @param {RGB[]} [options.channelColors=[]]
+	   RGB contribution of each channel to the mixing matrix. Defaults to
+	   ``rgb(0.,0.,1.), rgb(0.,1.,0.), rgb(1.,0.,0.), rgb(0.,0.,0.), ...]``
+
+	 * @param {string[]} [options.channelLabels=[]]
+	   Channel labels. Defaults to ``['Channel #1', 'Channel #2', ...]``.
+
+	 * @param {string} [options.channelLabelMatch='.*']
+	   Regular expression matching the labels of channels that are given a color by
+	   default.
+
+	 * @param {string[]} [options.channelUnits=[]]
+	   Channel units. Defaults to ``['ADUs','ADUs',...]``.
+
+	 * @param {number[][]} [options.minMaxValues=[]]
+	   Pairs of lower, higher clipping limits for every channel. Defaults to values
+	   extracted from the data header if available or
+	   ``[[0.,255.], [0.,255.], ...]`` otherwise.
+
+	 * @param {number} [options.quality=0]
+	   Default active channel index in mono-channel mode.
+
+	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
+	   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
+	   service.
+
+	 * @param {?string} [options.credentials=null]
+	   For future use.
+
+	 * @returns {VTileLayer} VisiOmatic TileLayer instance.
+ 
+	 * @example
+	  * const map = L.map('map'),
+	 *       url = '/tiles?FIF=example.fits',
+	 *       layer = new VTileLayer(url, {cmap: 'jet'}); 
+	 * layer.addTo(map);
+	 */
 	initialize: function (url, options) {
 		this.type = 'tilelayer';
 		this._url = url.replace(/\&.*$/g, '');
@@ -105,6 +230,53 @@ export const VTileLayer = TileLayer.extend({
 		}
 
 		this.tileSize = {x: 256, y: 256};
+		/**
+		 * VisiOmatic-specific TileLayer properties.
+		 * @type {object}
+		 * @instance
+    	 * @property {number[][]} imageSize
+    	   Image sizes at every resolution.
+    	 * @property {object[]} gridSize
+    	   Grid sizes at every resolution.
+    	 * @property {number} bpp
+    	   Image depth in bits per pixel.
+    	 * @property {string} mixingMode
+    	   Current color mixing mode (``'mono'`` or ``'color'``).
+    	 * @property {number} channel
+    	   Current image channel index.
+    	 * @property {number} nChannel
+    	   Number of image channels.
+    	 * @property {number} minZoom
+    	   Minimum zoom factor (tile resolution).
+    	 * @property {number} maxZoom
+    	   Maximum zoom factor (tile resolution).
+    	 * @property {number} contrast
+    	   Current image contrast factor.
+    	 * @property {number} colorSat
+    	   Current image color saturation.
+    	 * @property {number} gamma
+    	   Current image display gamma.
+    	 * @property {string} cMap
+		   Current color map.
+    	 * @property {boolean} invertCMap
+		   Current colormap inversion switch status.
+    	 * @property {number[]} minValue
+    	   Current lower clipping limit for every channel.
+    	 * @property {number[]} maxValue
+    	   Current upper clipping limit for every channel.
+    	 * @property {number[][]} mix
+    	   Current color mixing matrix.
+    	 * @property {RGB[]} rgb
+    	   Current color mixing matrix as RGB mixes.
+    	 * @property {string[]} channelLabels
+    	   Label for every image channel.
+    	 * @property {boolean[]} channelFlags
+    	   Display activation flag for every channel.
+    	 * @property {string[]} channelUnits
+    	   Pixel value unit for every image channel.
+    	 * @property {number} quality
+    	   Current JPEG encoding quality.
+    	 */
 		this.visio = {
 			imageSize: [[this.tileSize]],
 			gridSize: [{x: 1, y: 1}],
@@ -119,8 +291,8 @@ export const VTileLayer = TileLayer.extend({
 			gamma: options.gamma,
 			cMap: options.cMap,
 			invertCMap: options.invertCMap,
-			minValue: [[0.0]],
-			maxValue: [[255.0]],
+			minValue: [0.],
+			maxValue: [255.],
 			mix: [[]],
 			rgb: [],
 			channelLabels: [],
@@ -128,7 +300,7 @@ export const VTileLayer = TileLayer.extend({
 			channelUnits: [],
 			quality: options.quality
 		}
-		this._title = options.title.length > 0 ? options.title :
+		this._title = options.title ? options.title :
 		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getMetaData(this._url);
 
@@ -139,6 +311,12 @@ export const VTileLayer = TileLayer.extend({
 		return this;
 	},
 
+	/**
+	 * Get metadata describing the tiled image at the provided URL.
+	 * @async
+	 * @param {string} url - The full tile URL.
+	 * @fires metaload
+	 */
 	getMetaData: async function (url) {
 		const res = await fetch(url + '&INFO', {method: 'GET'});
 		const meta = await res.json();
@@ -289,25 +467,34 @@ export const VTileLayer = TileLayer.extend({
 				meta.header,
 				meta.images,
 				{
-					nativeCelsys: this.options.nativeCelsys,
+					nativeCelSys: this.options.nativeCelSys,
 					nzoom: visio.maxZoom + 1,
-					tileSize: this.tileSize
 				}
 			);
 			visio.metaReady = true;
+			/**
+			 * Fired when the image metadata have been loaded.
+			 * @event metaload
+			 * @memberof VTileLayer
+			 */
 			this.fire('metaload');
 		} else {
 			alert('There was a problem with the VisiOmatic metadata request.');
 		}
 	},
 
-	// Convert an RGB colour and saturation settings to mixing matrix elements
-	rgbToMix: function (chan, rgb) {
+	/**
+	 * Update the color mixing matrix with the RGB contribution of a given
+	   channel.
+	 * @param {number} channel - Input channel.
+	 * @param {RGB} rgb - RGB color.
+	 */
+	rgbToMix: function (channel, rgb) {
 		const	visio = this.visio;
 		if (rgb) {
-			visio.rgb[chan] = rgb.clone();
+			visio.rgb[channel] = rgb.clone();
 		} else {
-			rgb = visio.rgb[chan];
+			rgb = visio.rgb[channel];
 		}
 
 		const	cr = this._gammaCorr(rgb.r),
@@ -316,19 +503,32 @@ export const VTileLayer = TileLayer.extend({
 			lum = (cr + cg + cb) / 3.0,
 			alpha = visio.colorSat / 3.0;
 
-		visio.mix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
-		visio.mix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
-		visio.mix[chan][2] = lum + alpha * (2.0 * cb - cr - cg);
+		visio.mix[channel][0] = lum + alpha * (2.0 * cr - cg - cb);
+		visio.mix[channel][1] = lum + alpha * (2.0 * cg - cr - cb);
+		visio.mix[channel][2] = lum + alpha * (2.0 * cb - cr - cg);
 
 		return;
 	},
 
-	// Current channel index defines mixing matrix elements in "mono" mode
+	/**
+	 * @summary
+	   Switch the layer to ``'mono'`` mode for the current channel.
+	   @desc
+	   The current channel index defines the color mixing matrix elements in
+	   ``'mono'`` mode
+	 */
 	updateMono: function () {
 		this.visio.mode = 'mono';
 	},
 
-	// RGB colours and saturation settings define mixing matrix elements in "color" mode
+	/**
+	 * @summary
+	   Update the color mixing matrix using the current color and
+	   saturation settings.
+	   @desc
+	   RGB colors and saturation settings define mixing matrix elements in
+	   ``'color'`` mode
+	 */
 	updateMix: function () {
 		const	visio = this.visio,
 			nchannel = visio.nChannel;
@@ -339,16 +539,36 @@ export const VTileLayer = TileLayer.extend({
 		}
 	},
 
-	// Apply gamma correction
+	/**
+	 * Apply gamma expansion to the provided input value.
+	 * @private
+	 * @param {number} val - Input value.
+	 * @return {number} gamma-compressed value.
+	 */
 	_gammaCorr: function (val) {
 		return val > 0.0 ? Math.pow(val, this.visio.gamma) : 0.0;
 	},
 
+	/**
+	 * Decode the input string as a 'keyword:value' pair.
+	 * @private
+	 * @deprecated since version 3.0
+	 * @param {string} str - Input string.
+	 * @param {string} keyword - Input keyword.
+	 * @param {string} regexp - Regular expression for decoding the value.
+	 * @return {*} Decoded output.
+	 */
 	_readVisioKey: function (str, keyword, regexp) {
 		const reg = new RegExp(keyword + ':' + regexp);
 		return reg.exec(str);
 	},
 
+	/**
+	 * Add the layer to the map.
+	 * @override
+	 * @param {object} map - Leaflet map to add the layer to.
+	 * @listens metaload
+	 */
 	addTo: function (map) {
 		if (this.visio.metaReady) {
 			// VisioMatic data are ready so we can go
@@ -358,7 +578,7 @@ export const VTileLayer = TileLayer.extend({
 			// Wait for metadata request to complete
 			this._loadActivity = DomUtil.create(
 				'div',
-				'leaflet-layer-iip-activity',
+				'visiomatic-layer-activity-',
 				map._controlContainer
 			);
 			this.once('metaload', function () {
@@ -369,6 +589,12 @@ export const VTileLayer = TileLayer.extend({
 		return this;
 	},
 
+	/**
+	 * Executed once the layer to be added to the map is ready.
+	 * @override
+	 * @private
+	 * @param {object} map - Leaflet map to add the layer to.
+	 */
 	_addToMap: function (map) {
 		const	newcrs = this.wcs,
 			curcrs = map.options.crs,
@@ -454,10 +680,21 @@ export const VTileLayer = TileLayer.extend({
 				);
 			}
 		} else {
-			map.setView(newcrs.crval, zoom, {reset: true, animate: false});
+			map.setView(
+				newcrs.centerLatLng,
+				zoom,
+				{reset: true, animate: false}
+			);
 		}
 	},
 
+	/**
+	 * Tell if a tile at the given coordinates should be loaded.
+	 * @override
+	 * @private
+	 * @param {point} coords - Tile coordinates.
+	 * @return {boolean} ``true`` if tile should be loaded, ``false`` otherwise.
+	 */
 	_isValidTile: function (coords) {
 		const	crs = this._map.options.crs;
 
@@ -489,6 +726,15 @@ export const VTileLayer = TileLayer.extend({
 		);
 	},
 
+	/**
+	 * Create a tile at the given coordinates.
+	 * @override
+	 * @param {point} coords
+	   Tile coordinates.
+	 * @param {boolean} done
+	   Callback function called when the tile has been loaded.
+	 * @return {object} The new tile.
+	 */
 	createTile: function (coords, done) {
 		const	tile = TileLayer.prototype.createTile.call(this, coords, done);
 
@@ -497,6 +743,12 @@ export const VTileLayer = TileLayer.extend({
 		return tile;
 	},
 
+	/**
+	 * Generate a tile URL from its coordinates
+	 * @override
+	 * @param {point} coords - Tile coordinates.
+	 * @return {string} The tile URL.
+	 */
 	getTileUrl: function (coords) {
 		const	visio = this.visio,
 			visioDefault = this.visioDefault,
@@ -555,6 +807,12 @@ export const VTileLayer = TileLayer.extend({
 		 (coords.x + visio.gridSize[z].x * coords.y).toString();
 	},
 
+	/**
+	 * Initialize a tile.
+	 * @override
+	 * @private
+	 * @param {object} tile - The tile.
+	 */
 	_initTile: function (tile) {
 		DomUtil.addClass(tile, 'leaflet-tile');
 
@@ -580,6 +838,13 @@ export const VTileLayer = TileLayer.extend({
 
 });
 
+/**
+ * Instantiate a VisiOmatic tile layer.
+ * @function
+ * @param {string} url - URL of the tile server.
+ * @param {object} [options] - Options: see {@link VTileLayer}.
+ * @returns {VTileLayer} VisiOmatic TileLayer instance.
+*/
 export const vTileLayer = function (url, options) {
 	return new VTileLayer(url, options);
 };

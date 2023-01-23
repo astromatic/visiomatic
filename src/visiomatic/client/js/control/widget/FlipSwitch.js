@@ -1,12 +1,9 @@
-/*
-# 	Add a number spinbox with adaptive step increment
-# 	Adapted from Proto.io On/Off FlipSwitch designed by Anna Mitsinga:
-# 	https://proto.io/freebies/onoff/
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2015-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
-#
+/**
+ #	This file part of:	VisiOmatic
+ * @file Provide a Flipswitch widget.
+
+ * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
 	Evented,
@@ -16,18 +13,37 @@ import {
 } from 'leaflet';
 
 
-export const FlipSwitch = Evented.extend({
+export const FlipSwitch = Evented.extend( /** @lends FlipsSwitch */ {
 	options: {
-		// All widget options
-		checked: false,
 		title: 'Click to switch',
+		checked: false,
 		className: 'leaflet-flipswitch',
-		id: 'leaflet-flipswitch'
 	},
 
+	/**
+	 * Create a new flip switch widget.
+
+	 * @extends leaflet.Evented
+	 * @memberof module:control/widget/FlipSwitch.js
+	 * @constructs
+	 * @override
+	 * @param {object} parent - Parent element.
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Click to switch']
+	   Title of the control.
+
+	 * @param {boolean} [options.checked=false]
+	   Switch activated at creation?
+
+	 * @param {string} [options.className]
+	   Element class name for the widget.
+
+	 * @returns {FlipSwitch} Flip switch widget element.
+	 */
 	initialize: function (parent, options) {
 		options = Util.setOptions(this, options);
-		var	_this = this,
+		const	_this = this,
 			className = options.className,
 			button = DomUtil.create('div', className, parent),
 			input = this._input = L.DomUtil.create('input', className, button),
@@ -54,6 +70,13 @@ export const FlipSwitch = Evented.extend({
 		return button;
 	},
 
+	/**
+	 * Return or set the flip switch status.
+	 * @param {boolean} [val]
+	   If provided, set the flip switch (boolean) value to that of `val`.
+
+	 * @returns {boolean} Flip switch status.
+	 */
 	value: function (val) {
 		if (val === undefined) {
 			return this._input.checked;
@@ -66,6 +89,19 @@ export const FlipSwitch = Evented.extend({
 
 });
 
+/**
+ * Instantiate a flip switch widget.
+ *
+ * @function
+ * @param {object} [parent] - Parent element.
+ * @param {object} [options] - Options: see {@link FlipSwitch}
+ * @returns {FlipSwitch} Flip switch widget element.
+
+ * @example
+   ...
+   const elem = DomUtil.create('div', 'myelement', divParent);
+   const flipElem = flipSwitch(elem, {checked: true});
+ */
 export const flipSwitch = function (parent, options) {
 	return new FlipSwitch(parent, options);
 };

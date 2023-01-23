@@ -1,0 +1,6 @@
+JS client
+=========
+
+.. toctree::
+    classes
+

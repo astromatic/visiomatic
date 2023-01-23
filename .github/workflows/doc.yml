@@ -29,6 +29,8 @@ jobs:
         run: |
           pip3 install -r doc/requirements.txt
           npm install -g jsdoc
+          cd src/visiomatic/client
+          npm install tidy-jsdoc
 
       - name: Build server doc
         run: |
@@ -39,7 +41,7 @@ jobs:
         run: |
           cd src/visiomatic/client
           npm run docs
-          cp -rf doc ../../../doc/build/html/client
+          cp -rfT doc ../../../doc/build/html/api/client
 
       - name: Set destination dir
         if: github.ref_name != 'main'
