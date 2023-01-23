@@ -27,7 +27,7 @@ export const FlipSwitch = Evented.extend( /** @lends FlipsSwitch */ {
 	 * @memberof module:control/widget/FlipSwitch.js
 	 * @constructs
 	 * @override
-	 * @param {object} [parent] - Parent element.
+	 * @param {object} parent - Parent element.
 	 * @param {object} [options] - Options.
 
 	 * @param {string} [options.title='Click to switch']

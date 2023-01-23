@@ -29651,10 +29651,10 @@
     CANVAS: true,
     SVG: false,
     options: {
-      fill: true,
       majAxis: 10,
       minAxis: 10,
-      posAngle: 0
+      posAngle: 0,
+      fill: true
     },
     initialize: function(latlng, options2) {
       import_leaflet2.Util.setOptions(this, options2);
@@ -29662,7 +29662,8 @@
       this._minAxis = this.options.majAxis;
       this._posAngle = this.options.posAngle;
       this._latlng = (0, import_leaflet2.latLng)(latlng);
-      var deg = Math.PI / 180, cpa = Math.cos(this._posAngle * deg), spa = Math.sin(this._posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this._majAxis * this._majAxis, b2 = this._minAxis * this._minAxis, mx2 = a2 * cpa2 + b2 * spa2, my2 = a2 * spa2 + b2 * cpa2, mxy = (a2 - b2) * cpa * spa, c = mx2 * my2 - mxy * mxy;
+      const deg = Math.PI / 180, cpa = Math.cos(this._posAngle * deg), spa = Math.sin(this._posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this._majAxis * this._majAxis, b2 = this._minAxis * this._minAxis;
+      let mx2 = a2 * cpa2 + b2 * spa2, my2 = a2 * spa2 + b2 * cpa2, mxy = (a2 - b2) * cpa * spa, c = mx2 * my2 - mxy * mxy;
       this._limX = Math.sqrt(mx2);
       this._limY = Math.sqrt(my2);
       if (c <= 0) {
@@ -29689,19 +29690,19 @@
       return this.redraw();
     },
     getParams: function() {
-      var ellipseParams;
-      ellipseParams.majAxis = this._majAxis;
-      ellipseParams.minAxis = this._minAxis;
-      ellipseParams.posAngle = this._posAngle;
+      const ellipseParams = {
+        majAxis: this._majAxis,
+        minAxis: this._minAxis,
+        posAngle: this._posAngle
+      };
       return ellipseParams;
     },
-    setStyle: import_leaflet2.Path.prototype.setStyle,
     _project: function() {
       this._point = this._map.latLngToLayerPoint(this._latlng);
       this._updateBounds();
     },
     _updateBounds: function() {
-      var w = this._clickTolerance(), p = [this._limX + w, this._limY + w];
+      const w = this._clickTolerance(), p = [this._limX + w, this._limY + w];
       this._pxBounds = new import_leaflet2.Bounds(this._point.subtract(p), this._point.add(p));
     },
     _update: function() {
@@ -29716,7 +29717,7 @@
       return this._majAxis && !this._renderer._bounds.intersects(this._pxBounds);
     },
     _containsPoint: function(p) {
-      var dp = p.subtract(this._point), ct = this._clickTolerance(), dx = Math.abs(dp.x) - ct, dy = Math.abs(dp.y) - ct;
+      const dp = p.subtract(this._point), ct = this._clickTolerance(), dx = Math.abs(dp.x) - ct, dy = Math.abs(dp.y) - ct;
       return this._cXX * (dx > 0 ? dx * dx : 0) + this._cYY * (dy > 0 ? dy * dy : 0) + this._cXY * (dp.x * dp.y) <= 1;
     }
   });
@@ -29741,8 +29742,8 @@
   });
   import_leaflet2.SVG.include({
     _updateEllipse: function(layer) {
-      var deg = Math.PI / 180, p = layer._point, r = layer._minAxis, r2 = layer._majAxis, dx = r * Math.cos(layer._posAngle * deg), dy = r * Math.sin(layer._posAngle * deg), arc = "a" + r + "," + r2 + " " + layer._posAngle + " 1,0 ";
-      var d2 = layer._empty() ? "M0 0" : "M" + (p.x - dx) + "," + (p.y - dy) + arc + dx * 2 + "," + dy * 2 + " " + arc + -dx * 2 + "," + -dy * 2 + " ";
+      const deg = Math.PI / 180, p = layer._point, r = layer._minAxis, r2 = layer._majAxis, dx = r * Math.cos(layer._posAngle * deg), dy = r * Math.sin(layer._posAngle * deg), arc = "a" + r + "," + r2 + " " + layer._posAngle + " 1,0 ";
+      const d2 = layer._empty() ? "M0 0" : "M" + (p.x - dx) + "," + (p.y - dy) + arc + dx * 2 + "," + dy * 2 + " " + arc + -dx * 2 + "," + -dy * 2 + " ";
       this._setPath(layer, d2);
     }
   });
@@ -29754,29 +29755,30 @@
     },
     initialize: function(latlng, options2) {
       import_leaflet3.Util.setOptions(this, options2);
-      var deg = Math.PI / 180, cpa = Math.cos(this.options.posAngle * deg), spa = Math.sin(this.options.posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this.options.majAxis * this.options.majAxis, b2 = this.options.minAxis * this.options.minAxis;
+      const deg = Math.PI / 180, cpa = Math.cos(this.options.posAngle * deg), spa = Math.sin(this.options.posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this.options.majAxis * this.options.majAxis, b2 = this.options.minAxis * this.options.minAxis;
       this._latlng = (0, import_leaflet3.latLng)(latlng);
       this._mLat2 = a2 * cpa2 + b2 * spa2;
       this._mLng2 = a2 * spa2 + b2 * cpa2;
       this._mLatLng = (a2 - b2) * cpa * spa;
     },
     getBounds: function() {
-      var half = [this._limX, this._limY];
+      const half = [this._limX, this._limY];
       return new import_leaflet3.LatLngBounds(
         this._map.layerPointToLatLng(this._point.subtract(half)),
         this._map.layerPointToLatLng(this._point.add(half))
       );
     },
     _project: function() {
-      var map2 = this._map, crs = map2.options.crs;
+      const map2 = this._map, crs = map2.options.crs;
       this._point = map2.latLngToLayerPoint(this._latlng);
       if (!this._majAxis1) {
-        var lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet3.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
+        const lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet3.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
           (0, import_leaflet3.latLng)(
             lat,
             lng + dl * 1 / (clat > dl ? clat : dl)
           )
-        ).subtract(point7), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl, mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 + 2 * c11 * c12 * this._mLatLng, my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 + 2 * c21 * c22 * this._mLatLng, mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 + (c11 * c22 + c12 * c21) * this._mLatLng, a1 = 0.5 * (mx2 + my2), a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy), a3 = mx2 * my2 - mxy * mxy;
+        ).subtract(point7), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl;
+        let mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 + 2 * c11 * c12 * this._mLatLng, my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 + 2 * c21 * c22 * this._mLatLng, mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 + (c11 * c22 + c12 * c21) * this._mLatLng, a1 = 0.5 * (mx2 + my2), a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy), a3 = mx2 * my2 - mxy * mxy;
         this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
         this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0;
         this._posAngle = 0.5 * Math.atan2(2 * mxy, mx2 - my2) / deg;
@@ -29791,7 +29793,7 @@
         this._cYY1 = mx2 / a3;
         this._cXY1 = -2 * mxy / a3;
       }
-      var scale2 = crs.scale(map2._zoom), invscale2 = 1 / (scale2 * scale2);
+      const scale2 = crs.scale(map2._zoom), invscale2 = 1 / (scale2 * scale2);
       this._majAxis = this._majAxis1 * scale2;
       this._minAxis = this._minAxis1 * scale2;
       this._limX = this._limX1 * scale2;

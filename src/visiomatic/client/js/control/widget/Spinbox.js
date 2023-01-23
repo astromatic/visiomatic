@@ -38,7 +38,7 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 	 * @memberof module:control/widget/Spinbox.js
 	 * @constructs
 	 * @override
-	 * @param {object} [parent] - Parent element.
+	 * @param {object} parent - Parent element.
 	 * @param {object} [options] - Options.
 
 	 * @param {string} [options.title='Enter value']
