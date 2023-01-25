@@ -71,7 +71,6 @@ def create_app() -> FastAPI:
 
     # Provide an endpoint for the user's manual (if it exists)
     doc_dir = app_settings.DOC_DIR
-    print(doc_dir)
     if os.path.exists(doc_dir):
         app.mount(
             doc_path,
