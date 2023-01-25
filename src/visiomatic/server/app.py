@@ -18,7 +18,6 @@ from .. import package
 from .settings import app_settings 
 from .image import colordict, Tiled
 
-
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
@@ -55,7 +54,8 @@ def create_app() -> FastAPI:
     )
     """
     banner = app_settings.BANNER
-    tiles_url = app_settings.TILES_URL
+    doc_path = app_settings.DOC_PATH
+    tiles_path = app_settings.TILES_PATH
 
     # Prepare the dictionary of tiled image pyramids
     app.tiled = {}
@@ -68,6 +68,17 @@ def create_app() -> FastAPI:
         StaticFiles(directory=os.path.join(package.root_dir, "client")),
         name="client"
     )
+
+    # Provide an endpoint for the user's manual (if it exists)
+    doc_dir = app_settings.DOC_DIR
+    print(doc_dir)
+    if os.path.exists(doc_dir):
+        app.mount(
+            doc_path,
+            StaticFiles(directory=doc_dir),
+            name="manual"
+        )
+
 
     # Instantiate templates
     templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
@@ -103,7 +114,7 @@ def create_app() -> FastAPI:
         return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
-    @app.get(tiles_url, tags=["services"])
+    @app.get(tiles_path, tags=["services"])
     async def read_visio(
             request: Request,
             FIF: str = Query(None, title="Image filename"),
@@ -185,7 +196,8 @@ def create_app() -> FastAPI:
             {
                 "request": request,
                 "root_path": request.scope.get("root_path"),
-                "tiles_url": tiles_url,
+                "tiles_path": tiles_path,
+                "doc_url": doc_path + "/index.html",
                 "image": image,
                 "package": package.title
             }
