@@ -55,6 +55,7 @@ def create_app() -> FastAPI:
     """
     banner = app_settings.BANNER
     doc_path = app_settings.DOC_PATH
+    doc_url = app_settings.DOC_URL
     tiles_path = app_settings.TILES_PATH
 
     # Prepare the dictionary of tiled image pyramids
@@ -196,7 +197,7 @@ def create_app() -> FastAPI:
                 "request": request,
                 "root_path": request.scope.get("root_path"),
                 "tiles_path": tiles_path,
-                "doc_url": doc_path + "/index.html",
+                "doc_url": doc_url,
                 "image": image,
                 "package": package.title
             }

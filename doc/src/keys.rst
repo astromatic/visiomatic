@@ -1,16 +1,13 @@
 .. |API| replace:: :abbr:`API (Application Programming Interface)`
-.. _API: http://en.wikipedia.org/wiki/Application_programming_interface
+.. _API: https://en.wikipedia.org/wiki/Application_programming_interface
 
-.. |IIPImage| replace:: :program:`IIPImage`
-.. _IIPImage: http://iipimage.sourceforge.net
+.. |Python| replace:: `Python`
+.. _Python: https://python.org
+
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
 .. |VisiOmatic| replace:: :program:`VisiOmatic`
 .. _VisiOmatic: http://visiomatic.org
-.. |iipsrv| replace:: :program:`iipsrv`
-.. _iipsrv: http://iipimage.sourceforge.net
-.. |STIFF| replace:: :program:`STIFF`
-.. _STIFF: http://astromatic.net/software/stiff
 .. |Leaflet| replace:: :program:`Leaflet`
 .. _Leaflet: http://leafletjs.com
 
@@ -39,7 +36,6 @@
 .. _GALEX_AIS: http://cdsarc.u-strasbg.fr/viz-bin/Cat?II/312
 .. |GAIA_DR1| replace:: ``'GAIA_DR1'``
 .. _GAIA_DR1: http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/337
-
 
 .. |contrast| image:: figures/icon-contrast.*
   :width: 14pt
