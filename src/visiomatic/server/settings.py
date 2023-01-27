@@ -23,7 +23,7 @@ class AppSettings(BaseSettings):
     DATA_DIR : Path = "fits"
     DOC_DIR: str = "doc/build/html"
     DOC_PATH : str = "/manual"
-    DOC_URL: str = DOC_PATH + "https://ebertin.github.io/visiomatic-server/manual/interface.html"
+    DOC_URL: str = DOC_PATH + "/interface.html"
     TILES_PATH : str = "/tiles"
 
 app_settings = AppSettings()

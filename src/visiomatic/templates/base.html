@@ -8,7 +8,7 @@
     <title>VisiOmatic III</title>
     <link rel="stylesheet" href="{{ root_path }}/client/css/jqplot.css" />
     <link rel="stylesheet" href="{{ root_path }}/client/css/spectrum.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="*"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
     <link rel="stylesheet" href="{{ root_path }}/client/css/visiomatic.css" />
     <style type='text/css'>
 		body {padding: 0; margin: 0; }
@@ -67,9 +67,10 @@
 		V.control.regionUI().addTo(sidebar);
 		V.control.profileUI().addTo(sidebar);
 		V.control.snapshotUI().addTo(sidebar);
-		sidebar.addTabList();
-		V.control.docUI('{{ doc_url }}').addTo(sidebar);
-		sidebar.addTabList();
+		{% if doc_url %}
+			sidebar.addTabList();
+			V.control.docUI('{{ doc_url }}').addTo(sidebar);
+		{% endif %}
 	</script>
   </body>
 </html>
