@@ -10,5 +10,9 @@ Welcome to the VisiOmatic Server documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   intro
+   overview
+   interface
    api
+   references
 

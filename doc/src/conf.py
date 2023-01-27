@@ -20,11 +20,11 @@ import adsarxiv
 # -- Project information -----------------------------------------------------
 
 project = 'VisiOmatic server'
-copyright = '2022, Emmanuel Bertin'
-author = 'Emmanuel Bertin'
+copyright = '2023, Emmanuel Bertin, Hervé Bouy'
+author = 'Emmanuel Bertin, Hervé Bouy'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.2'
 
 
 # -- General configuration ---------------------------------------------------

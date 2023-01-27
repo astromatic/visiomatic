@@ -5,6 +5,7 @@ Application module
 # Licensed under the MIT licence
 
 import io, os, re
+import logging
 import numpy as np
 from typing import List, Literal, Optional
 from fastapi import FastAPI, Query, Request
@@ -18,11 +19,18 @@ from .. import package
 from .settings import app_settings 
 from .image import colordict, Tiled
 
-
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
+
+    banner = app_settings.BANNER
+    doc_dir = app_settings.DOC_DIR
+    doc_path = app_settings.DOC_PATH
+    doc_url = app_settings.DOC_URL
+    tiles_path = app_settings.TILES_PATH
+
+    logger = logging.getLogger("uvicorn.error")
 
     app = FastAPI(
         title=package.title,
@@ -54,8 +62,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     """
-    banner = app_settings.BANNER
-    tiles_url = app_settings.TILES_URL
 
     # Prepare the dictionary of tiled image pyramids
     app.tiled = {}
@@ -69,13 +75,23 @@ def create_app() -> FastAPI:
         name="client"
     )
 
+    # Provide an endpoint for the user's manual (if it exists)
+    if os.path.exists(doc_dir):
+        logger.info(f"Default documentation found at {doc_dir}.")
+        app.mount(
+            doc_path,
+            StaticFiles(directory=doc_dir),
+            name="manual"
+        )
+    else:
+        logger.warning(f"Default documentation not found in {doc_dir}!")
+        logger.warning("Has the HTML documentation been compiled ?")
+        logger.warning("De-activating documentation URL in built-in web client.")
+        doc_url = ""
+
+
     # Instantiate templates
     templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
-    async def toto():
-        """
-        test function
-        """
-        return
 
 
     # Test endpoint
@@ -103,7 +119,7 @@ def create_app() -> FastAPI:
         return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
-    @app.get(tiles_url, tags=["services"])
+    @app.get(tiles_path, tags=["services"])
     async def read_visio(
             request: Request,
             FIF: str = Query(None, title="Image filename"),
@@ -185,7 +201,8 @@ def create_app() -> FastAPI:
             {
                 "request": request,
                 "root_path": request.scope.get("root_path"),
-                "tiles_url": tiles_url,
+                "tiles_path": tiles_path,
+                "doc_url": doc_url,
                 "image": image,
                 "package": package.title
             }
