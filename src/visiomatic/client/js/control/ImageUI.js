@@ -122,7 +122,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'contrast',
 			this._dialog,
 			'Contrast:',
-			'Adjust Contrast. 1.0: normal.',
+			'Adjust Contrast. 1.0: normal',
 			visio.contrast,
 			0.05,
 			0.0, 10.0
@@ -134,7 +134,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'colorSat',
 			this._dialog,
 			'Color Sat.:',
-			'Adjust Color Saturation. 0: B&W, 1.0: normal.',
+			'Adjust Color Saturation. 0: B&W, 1.0: normal',
 			visio.colorSat,
 			0.05,
 			0.0, 5.0,
@@ -147,7 +147,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'gamma',
 			this._dialog,
 			'Gamma:',
-			'Adjust Gamma correction. The standard value is 2.2.',
+			'Adjust Gamma correction. The standard value is 2.2',
 			visio.gamma,
 			0.05,
 			0.5, 5.0

@@ -31406,7 +31406,7 @@
         "minValue[" + channel + "]",
         box,
         "Min:",
-        "Lower clipping limit in " + visio.channelUnits[channel] + ".",
+        "Lower clipping limit in " + visio.channelUnits[channel],
         visio.minValue[channel],
         step
       );
@@ -31414,8 +31414,8 @@
         layer,
         "maxValue[" + channel + "]",
         box,
-        "Upper clipping limit in " + visio.channelUnits[channel] + ".",
         "Max:",
+        "Upper clipping limit in " + visio.channelUnits[channel],
         visio.maxValue[channel],
         step
       );
@@ -32305,7 +32305,7 @@
         "contrast",
         this._dialog,
         "Contrast:",
-        "Adjust Contrast. 1.0: normal.",
+        "Adjust Contrast. 1.0: normal",
         visio.contrast,
         0.05,
         0,
@@ -32316,7 +32316,7 @@
         "colorSat",
         this._dialog,
         "Color Sat.:",
-        "Adjust Color Saturation. 0: B&W, 1.0: normal.",
+        "Adjust Color Saturation. 0: B&W, 1.0: normal",
         visio.colorSat,
         0.05,
         0,
@@ -32328,7 +32328,7 @@
         "gamma",
         this._dialog,
         "Gamma:",
-        "Adjust Gamma correction. The standard value is 2.2.",
+        "Adjust Gamma correction. The standard value is 2.2",
         visio.gamma,
         0.05,
         0.5,
