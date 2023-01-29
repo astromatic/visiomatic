@@ -34405,31 +34405,34 @@
       if (visio.gamma !== visioDefault.gamma) {
         str2 += "&GAM=" + (1 / visio.gamma).toFixed(4);
       }
-      for (let c = 0; c < visio.nChannel; c++) {
-        if (visio.minValue[c] !== visioDefault.minValue[c] || visio.maxValue[c] !== visioDefault.maxValue[c]) {
-          str2 += "&MINMAX=" + (c + 1).toString() + ":" + visio.minValue[c].toString() + "," + visio.maxValue[c].toString();
-        }
-      }
       const nchannel2 = visio.nChannel, mix = visio.mix;
       if (visio.mode === "color") {
-        str2 += "&CTW=";
-        for (let n = 0; n < 3; n++) {
-          if (n) {
-            str2 += ";";
+        for (let c = 0; c < visio.nChannel; c++) {
+          if (visio.minValue[c] !== visioDefault.minValue[c] || visio.maxValue[c] !== visioDefault.maxValue[c]) {
+            str2 += "&MINMAX=" + (c + 1).toString() + ":" + visio.minValue[c].toString() + "," + visio.maxValue[c].toString();
           }
-          str2 += mix[0][n].toString();
-          for (let m = 1; m < nchannel2; m++) {
-            if (mix[m][n] !== void 0) {
-              str2 += "," + mix[m][n].toString();
+        }
+        for (let m = 1; m < nchannel2; m++) {
+          if (mix[m][0] !== void 0) {
+            str2 += "&MIX=" + m + ":";
+            for (let n = 0; n < 3; n++) {
+              if (n) {
+                str2 += ",";
+              }
+              str2 += mix[m][n].toFixed(3);
             }
           }
         }
       } else {
-        let cc = visio.channel + 1;
-        if (cc > nchannel2) {
-          cc = 1;
+        const chan = visio.channel;
+        let chanp1 = chan + 1;
+        if (chanp1 > nchannel2) {
+          chanp1 = 1;
         }
-        str2 += "&CHAN=" + cc.toString();
+        str2 += "&CHAN=" + chanp1.toString();
+        if (visio.minValue[chan] !== visioDefault.minValue[chan] || visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
+          str2 += "&MINMAX=" + chanp1.toString() + ":" + visio.minValue[chan].toString() + "," + visio.maxValue[chan].toString();
+        }
       }
       if (visio.quality !== visioDefault.quality) {
         str2 += "&QLT=" + visio.quality.toString();

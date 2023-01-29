@@ -444,8 +444,9 @@ class Tiled(object):
     def convert_tile(
             self,
             tile: np.ndarray,
-            channel: int=1,
-            minmax: Union[Tuple[float, float], None] = None,
+            channel: Union[int, None] = None,
+            minmax: Union[list[float, float], None] = None,
+            mix: Union[list[int, float, float, float]| None] = None,
             contrast: float = 1.0,
             gamma: float = 0.45,
             colormap: str = 'grey',
@@ -459,8 +460,10 @@ class Tiled(object):
             Input tile.
         channel: int, optional
             Image channel
-        minmax: tuple[float, float], optional
+        minmax: list[float, float], optional
             Tile intensity cuts.
+        mix: list[int, float, float, float], optional
+            Tile slice RGB colors.
         contrast:  float, optional
             Relative tile contrast.
         gamma:  float, optional
@@ -475,19 +478,20 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        chan = channel - 1
-        if not minmax:
-            minmax = self.minmax[chan]
-        fac = minmax[1] - minmax[0]
-        fac = contrast / fac if fac > 0.0 else self.maxfac
-        tile = (tile[chan] - minmax[0]) * fac
-        tile[tile < 0.0] = 0.0
-        tile[tile > 1.0] = 1.0
-        tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
-        if invert:
-            tile = 255 - tile
-        if (colormap != 'grey'):
-            tile = cv2.applyColorMap(tile, colordict[colormap])
+        if chan:
+            chan = channel - 1
+            if not minmax:
+                minmax = self.minmax[chan]
+            fac = minmax[1] - minmax[0]
+            fac = contrast / fac if fac > 0.0 else self.maxfac
+            tile = (tile[chan] - minmax[0]) * fac
+            tile[tile < 0.0] = 0.0
+            tile[tile > 1.0] = 1.0
+            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+       	    if invert:
+                tile = 255 - tile
+            if (colormap != 'grey'):
+                tile = cv2.applyColorMap(tile, colordict[colormap])
         return tile
 
 
@@ -530,8 +534,9 @@ class Tiled(object):
             self,
             tileres: int,
             tileindex: int,
-            channel: 1,
-            minmax: Union[Tuple[float, float], None] = None,
+            channel: Union[int, None] = None,
+            minmax: Union[list[float, float], None] = None,
+            mix: Union[list[int, float, float, float]| None] = None,
             contrast: float = 1.0,
             gamma: float = 0.4545,
             colormap: str = 'grey',
@@ -548,7 +553,7 @@ class Tiled(object):
             Tile index.
         channel: int
             Data channel (first channel is 1)
-        minmax: tuple[float, float], optional
+        minmax: list[float, float], optional
             Tile intensity cuts.
         contrast:  float, optional
             Relative tile contrast.
@@ -566,13 +571,14 @@ class Tiled(object):
         tile: bytes
             JPEG bytestream of the tile.
         """
-        if channel > self.tiles[0][0].shape[0]:
+        if channel and channel > self.nchannel:
             channel = 1
         return encode_jpeg(
             self.convert_tile(
                 self.tiles[tileres][tileindex],
 				channel=channel,
                 minmax=minmax,
+                mix=mix,
                 contrast=contrast,
                 gamma=gamma,
                 invert=invert
@@ -584,6 +590,7 @@ class Tiled(object):
                 self.tiles[tileres][tileindex],
 				channel=channel,
                 minmax=minmax,
+                mix=mix,
                 contrast=contrast,
                 gamma=gamma,
                 invert=invert,

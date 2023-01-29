@@ -768,36 +768,43 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.gamma !== visioDefault.gamma) {
 			str += '&GAM=' + (1.0 / visio.gamma).toFixed(4);
 		}
-		for (let c = 0; c < visio.nChannel; c++) {
-			if (visio.minValue[c] !== visioDefault.minValue[c] ||
-			   visio.maxValue[c] !== visioDefault.maxValue[c]) {
-				str += '&MINMAX=' + (c + 1).toString() + ':' +
-				   visio.minValue[c].toString() + ',' +
-				   visio.maxValue[c].toString();
-			}
-		}
 
 		const nchannel = visio.nChannel,
 		    mix = visio.mix;
 
 		if (visio.mode === 'color') {
-			str += '&CTW=';
-			for (let n = 0; n < 3; n++) {
-				if (n) { str += ';'; }
-				str += mix[0][n].toString();
-				for (let m = 1; m < nchannel; m++) {
-					if (mix[m][n] !== undefined) {
-						str += ',' + mix[m][n].toString();
+			for (let c = 0; c < visio.nChannel; c++) {
+				if (visio.minValue[c] !== visioDefault.minValue[c] ||
+				   visio.maxValue[c] !== visioDefault.maxValue[c]) {
+					str += '&MINMAX=' + (c + 1).toString() + ':' +
+					   visio.minValue[c].toString() + ',' +
+					   visio.maxValue[c].toString();
+				}
+		}
+			for (let m = 1; m < nchannel; m++) {
+				if (mix[m][0] !== undefined) {
+					str += '&MIX=' + m + ':';
+					for (let n = 0; n < 3; n++) {
+						if (n) { str += ','; }
+						str += mix[m][n].toFixed(3);
 					}
 				}
 			}
 		} else {
-			let	cc = visio.channel + 1;
+			const	chan = visio.channel;
 
-			if (cc > nchannel) {
-				cc = 1;
+			let	chanp1 = chan + 1;
+
+			if (chanp1 > nchannel) {
+				chanp1 = 1;
 			}
-			str += '&CHAN=' + cc.toString();
+			str += '&CHAN=' + chanp1.toString();
+			if (visio.minValue[chan] !== visioDefault.minValue[chan] ||
+				   visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
+					str += '&MINMAX=' + chanp1.toString() + ':' +
+					   visio.minValue[chan].toString() + ',' +
+					   visio.maxValue[chan].toString();
+			}
 		}
 
 		if (visio.quality !== visioDefault.quality) {
