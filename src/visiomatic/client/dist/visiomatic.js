@@ -34412,9 +34412,9 @@
             str2 += "&MINMAX=" + (c + 1).toString() + ":" + visio.minValue[c].toString() + "," + visio.maxValue[c].toString();
           }
         }
-        for (let m = 1; m < nchannel2; m++) {
+        for (let m = 0; m < nchannel2; m++) {
           if (mix[m][0] !== void 0) {
-            str2 += "&MIX=" + m + ":";
+            str2 += "&MIX=" + (m + 1) + ":";
             for (let n = 0; n < 3; n++) {
               if (n) {
                 str2 += ",";

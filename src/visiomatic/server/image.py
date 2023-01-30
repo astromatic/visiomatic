@@ -321,7 +321,7 @@ class Tiled(object):
             return
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
-        self.cmix= np.ones((3, self.nchannels))
+        self.cmix= np.ones((3, self.nchannels), dtype=np.float32)
         self.tilesize = tilesize;
         self.tilesize[0] = self.nchannels
         self.make_mosaic(self.images)
@@ -507,7 +507,7 @@ class Tiled(object):
             if mix:
                 imix = np.array(mix, dtype=int)[:, 0] - 1
                 mix = np.array(mix, dtype=np.float32)[:, 1:]
-                indices = np.arange(self.nchannels)
+                indices = np.arange(self.nchannels, dtype=np.float32)
                 cmix[0] = np.interp(indices, imix, mix[:, 0])
                 cmix[1] = np.interp(indices, imix, mix[:, 1])
                 cmix[2] = np.interp(indices, imix, mix[:, 2])
@@ -628,6 +628,6 @@ class Tiled(object):
                 colormap=colormap
             ),
             quality=quality,
-            colorspace='BGR'
+            colorspace='RGB'
         )
 

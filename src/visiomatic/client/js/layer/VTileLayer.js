@@ -781,9 +781,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 					   visio.maxValue[c].toString();
 				}
 			}
-			for (let m = 1; m < nchannel; m++) {
+			for (let m = 0; m < nchannel; m++) {
 				if (mix[m][0] !== undefined) {
-					str += '&MIX=' + m + ':';
+					str += '&MIX=' + (m+1) + ':';
 					for (let n = 0; n < 3; n++) {
 						if (n) { str += ','; }
 						str += mix[m][n].toFixed(3);
