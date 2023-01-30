@@ -13,6 +13,7 @@ window.$ = window.jQuery = jQuery;
 
 import {DomEvent, DomUtil, Util}  from 'leaflet';
 
+import {rgb} from '../util';
 import {UI} from './UI';
 
 
@@ -339,13 +340,13 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'Re-color active channels',
 			function () {
 				const	nchan = visio.nChannel,
-					rgb = visio.rgb,
+					vrgb = visio.rgb,
 					defcol = layer.visioDefault.channelColors;
 				let	cc = 0,
 					nchanon = 0;
 
 				for (let c = 0; c < nchan; c++) {
-					if (rgb[c].isOn()) {
+					if (vrgb[c].isOn()) {
 						nchanon++;
 					}
 				}
@@ -354,8 +355,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				}
 
 				for (let c = 0; c < nchan; c++) {
-					if (rgb[c].isOn() && cc < nchanon) {
-						rgb[c] = rgb(defcol[nchanon][cc++]);
+					if (vrgb[c].isOn() && cc < nchanon) {
+						vrgb[c] = rgb(defcol[nchanon][cc++]);
 					}
 				}
 				layer.updateMix();
@@ -468,11 +469,11 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	   VisiOmatic layer.
 	 * @param {number} channel
 	   Image channel.
-	 * @param {RGB} rgb
+	 * @param {RGB} channel_rgb
 	   RGB color.
 	 */
-	_updateMix: function (layer, channel, rgb) {
-		layer.rgbToMix(channel, rgb);
+	_updateMix: function (layer, channel, channel_rgb) {
+		layer.rgbToMix(channel, channel_rgb);
 		this._updateChannelList(layer);
 		layer.redraw();
 	},
@@ -510,8 +511,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 
 		for (let c in chanLabels) {
 			var	chan = parseInt(c, 10),
-				rgb = visio.rgb[chan];
-			if (rgb.isOn()) {
+				vrgb = visio.rgb[chan];
+			if (vrgb.isOn()) {
 				var	chanElem = DomUtil.create(
 						'div',
 						this._className + '-channel',
@@ -522,7 +523,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 						this._className + '-chancolor',
 						chanElem
 					);
-				color.style.backgroundColor = rgb.toStr();
+				color.style.backgroundColor = vrgb.toStr();
 				this._activateChanElem(color, layer, chan);
 				var	label = DomUtil.create(
 					'div',

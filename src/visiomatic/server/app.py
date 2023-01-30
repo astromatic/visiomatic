@@ -236,7 +236,6 @@ def create_app() -> FastAPI:
         mix = None
         if MIX != None:
             resp = [app.parse_mix.findall(m)[0] for m in MIX]
-            print(resp)
             mix = [
                 [
                     int(r[0]),

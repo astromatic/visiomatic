@@ -321,6 +321,7 @@ class Tiled(object):
             return
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
+        self.cmix= np.ones((3, self.nchannels))
         self.tilesize = tilesize;
         self.tilesize[0] = self.nchannels
         self.make_mosaic(self.images)
@@ -478,7 +479,7 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        if chan:
+        if channel:
             chan = channel - 1
             if not minmax:
                 minmax = self.minmax[chan]
@@ -492,6 +493,35 @@ class Tiled(object):
                 tile = 255 - tile
             if (colormap != 'grey'):
                 tile = cv2.applyColorMap(tile, colordict[colormap])
+        else:
+            cminmax = self.minmax
+            if minmax:
+                iminmax = np.array(minmax, dtype=int)[:, 0] - 1
+                minmax = np.array(minmax, dtype=np.float32)[:, 1:]
+                cminmax[iminmax]= minmax
+            fac = cminmax[:,1] - cminmax[:,0]
+       	    fac[fac <= 0] = self.maxfac
+            fac = (contrast / fac).reshape(self.nchannels, 1, 1)
+            tile = (tile - cminmax[:,0].reshape(self.nchannels, 1, 1)) * fac
+            cmix = self.cmix
+            if mix:
+                imix = np.array(mix, dtype=int)[:, 0] - 1
+                mix = np.array(mix, dtype=np.float32)[:, 1:]
+                indices = np.arange(self.nchannels)
+                cmix[0] = np.interp(indices, imix, mix[:, 0])
+                cmix[1] = np.interp(indices, imix, mix[:, 1])
+                cmix[2] = np.interp(indices, imix, mix[:, 2])
+            tile = (
+                cmix @ tile.reshape(
+                    tile.shape[0],
+                    tile.shape[1]*tile.shape[2]
+                )
+            ).T.reshape(tile.shape[1], tile.shape[2], 3).copy()
+            tile[tile < 0.0] = 0.0
+            tile[tile > 1.0] = 1.0
+            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+       	    if invert:
+                tile = 255 - tile
         return tile
 
 
@@ -507,7 +537,8 @@ class Tiled(object):
             tiler = Tiler(
                 data_shape = ima.shape,
                 tile_shape = self.tilesize,
-                mode='irregular'
+                mode='irregular',
+                channel_dimension=0
             )
             for tile_id, tile in tiler.iterate(ima):
                 tiles.append(tile)
@@ -571,7 +602,7 @@ class Tiled(object):
         tile: bytes
             JPEG bytestream of the tile.
         """
-        if channel and channel > self.nchannel:
+        if channel and channel > self.nchannels:
             channel = 1
         return encode_jpeg(
             self.convert_tile(
@@ -585,7 +616,7 @@ class Tiled(object):
             )[:,:, None],
             quality=quality,
             colorspace='Gray'
-        ) if colormap=='grey' else encode_jpeg(
+        ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
                 self.tiles[tileres][tileindex],
 				channel=channel,

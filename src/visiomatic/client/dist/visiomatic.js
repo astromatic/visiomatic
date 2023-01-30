@@ -13764,8 +13764,8 @@
               paletteLookup = {};
               for (var i2 = 0; i2 < paletteArray.length; i2++) {
                 for (var j = 0; j < paletteArray[i2].length; j++) {
-                  var rgb3 = tinycolor(paletteArray[i2][j]).toRgbString();
-                  paletteLookup[rgb3] = true;
+                  var rgb2 = tinycolor(paletteArray[i2][j]).toRgbString();
+                  paletteLookup[rgb2] = true;
                 }
               }
             }
@@ -13953,9 +13953,9 @@
           }
           function addColorToSelectionPalette(color) {
             if (showSelectionPalette) {
-              var rgb3 = tinycolor(color).toRgbString();
-              if (!paletteLookup[rgb3] && $2.inArray(rgb3, selectionPalette) === -1) {
-                selectionPalette.push(rgb3);
+              var rgb2 = tinycolor(color).toRgbString();
+              if (!paletteLookup[rgb2] && $2.inArray(rgb2, selectionPalette) === -1) {
+                selectionPalette.push(rgb2);
                 while (selectionPalette.length > maxSelectionSize) {
                   selectionPalette.shift();
                 }
@@ -13972,8 +13972,8 @@
             var unique = [];
             if (opts.showPalette) {
               for (var i2 = 0; i2 < selectionPalette.length; i2++) {
-                var rgb3 = tinycolor(selectionPalette[i2]).toRgbString();
-                if (!paletteLookup[rgb3]) {
+                var rgb2 = tinycolor(selectionPalette[i2]).toRgbString();
+                if (!paletteLookup[rgb2]) {
                   unique.push(selectionPalette[i2]);
                 }
               }
@@ -14163,9 +14163,9 @@
                 previewElement.css("filter", realColor.toFilter());
               }
               if (opts.showAlpha) {
-                var rgb3 = realColor.toRgb();
-                rgb3.a = 0;
-                var realAlpha = tinycolor(rgb3).toRgbString();
+                var rgb2 = realColor.toRgb();
+                rgb2.a = 0;
+                var realAlpha = tinycolor(rgb2).toRgbString();
                 var gradient = "linear-gradient(left, " + realAlpha + ", " + realHex + ")";
                 if (IE) {
                   alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
@@ -14510,14 +14510,14 @@
             if (!(this instanceof tinycolor2)) {
               return new tinycolor2(color, opts);
             }
-            var rgb3 = inputToRGB(color);
+            var rgb2 = inputToRGB(color);
             this._originalInput = color;
-            this._r = rgb3.r;
-            this._g = rgb3.g;
-            this._b = rgb3.b;
-            this._a = rgb3.a;
+            this._r = rgb2.r;
+            this._g = rgb2.g;
+            this._b = rgb2.b;
+            this._a = rgb2.a;
             this._roundA = mathRound(1e3 * this._a) / 1e3;
-            this._format = opts.format || rgb3.format;
+            this._format = opts.format || rgb2.format;
             this._gradientType = opts.gradientType;
             if (this._r < 1) {
               this._r = mathRound(this._r);
@@ -14528,7 +14528,7 @@
             if (this._b < 1) {
               this._b = mathRound(this._b);
             }
-            this._ok = rgb3.ok;
+            this._ok = rgb2.ok;
             this._tc_id = tinyCounter++;
           };
           tinycolor2.prototype = {
@@ -14551,8 +14551,8 @@
               return this._a;
             },
             getBrightness: function() {
-              var rgb3 = this.toRgb();
-              return (rgb3.r * 299 + rgb3.g * 587 + rgb3.b * 114) / 1e3;
+              var rgb2 = this.toRgb();
+              return (rgb2.r * 299 + rgb2.g * 587 + rgb2.b * 114) / 1e3;
             },
             setAlpha: function(value) {
               this._a = boundAlpha(value);
@@ -14726,7 +14726,7 @@
             return tinycolor2(color, opts);
           };
           function inputToRGB(color) {
-            var rgb3 = { r: 0, g: 0, b: 0 };
+            var rgb2 = { r: 0, g: 0, b: 0 };
             var a = 1;
             var ok = false;
             var format = false;
@@ -14735,19 +14735,19 @@
             }
             if (typeof color == "object") {
               if (color.hasOwnProperty("r") && color.hasOwnProperty("g") && color.hasOwnProperty("b")) {
-                rgb3 = rgbToRgb(color.r, color.g, color.b);
+                rgb2 = rgbToRgb(color.r, color.g, color.b);
                 ok = true;
                 format = String(color.r).substr(-1) === "%" ? "prgb" : "rgb";
               } else if (color.hasOwnProperty("h") && color.hasOwnProperty("s") && color.hasOwnProperty("v")) {
                 color.s = convertToPercentage(color.s);
                 color.v = convertToPercentage(color.v);
-                rgb3 = hsvToRgb(color.h, color.s, color.v);
+                rgb2 = hsvToRgb(color.h, color.s, color.v);
                 ok = true;
                 format = "hsv";
               } else if (color.hasOwnProperty("h") && color.hasOwnProperty("s") && color.hasOwnProperty("l")) {
                 color.s = convertToPercentage(color.s);
                 color.l = convertToPercentage(color.l);
-                rgb3 = hslToRgb(color.h, color.s, color.l);
+                rgb2 = hslToRgb(color.h, color.s, color.l);
                 ok = true;
                 format = "hsl";
               }
@@ -14759,9 +14759,9 @@
             return {
               ok,
               format: color.format || format,
-              r: mathMin(255, mathMax(rgb3.r, 0)),
-              g: mathMin(255, mathMax(rgb3.g, 0)),
-              b: mathMin(255, mathMax(rgb3.b, 0)),
+              r: mathMin(255, mathMax(rgb2.r, 0)),
+              g: mathMin(255, mathMax(rgb2.g, 0)),
+              b: mathMin(255, mathMax(rgb2.b, 0)),
               a
             };
           }
@@ -14919,11 +14919,11 @@
           }
           function brighten(color, amount) {
             amount = amount === 0 ? 0 : amount || 10;
-            var rgb3 = tinycolor2(color).toRgb();
-            rgb3.r = mathMax(0, mathMin(255, rgb3.r - mathRound(255 * -(amount / 100))));
-            rgb3.g = mathMax(0, mathMin(255, rgb3.g - mathRound(255 * -(amount / 100))));
-            rgb3.b = mathMax(0, mathMin(255, rgb3.b - mathRound(255 * -(amount / 100))));
-            return tinycolor2(rgb3);
+            var rgb2 = tinycolor2(color).toRgb();
+            rgb2.r = mathMax(0, mathMin(255, rgb2.r - mathRound(255 * -(amount / 100))));
+            rgb2.g = mathMax(0, mathMin(255, rgb2.g - mathRound(255 * -(amount / 100))));
+            rgb2.b = mathMax(0, mathMin(255, rgb2.b - mathRound(255 * -(amount / 100))));
+            return tinycolor2(rgb2);
           }
           function darken(color, amount) {
             amount = amount === 0 ? 0 : amount || 10;
@@ -14998,10 +14998,10 @@
           tinycolor2.mix = function(color1, color2, amount) {
             amount = amount === 0 ? 0 : amount || 50;
             var rgb1 = tinycolor2(color1).toRgb();
-            var rgb22 = tinycolor2(color2).toRgb();
+            var rgb2 = tinycolor2(color2).toRgb();
             var p = amount / 100;
             var w = p * 2 - 1;
-            var a = rgb22.a - rgb1.a;
+            var a = rgb2.a - rgb1.a;
             var w1;
             if (w * a == -1) {
               w1 = w;
@@ -15011,10 +15011,10 @@
             w1 = (w1 + 1) / 2;
             var w2 = 1 - w1;
             var rgba = {
-              r: rgb22.r * w1 + rgb1.r * w2,
-              g: rgb22.g * w1 + rgb1.g * w2,
-              b: rgb22.b * w1 + rgb1.b * w2,
-              a: rgb22.a * p + rgb1.a * (1 - p)
+              r: rgb2.r * w1 + rgb1.r * w2,
+              g: rgb2.g * w1 + rgb1.g * w2,
+              b: rgb2.b * w1 + rgb1.b * w2,
+              a: rgb2.a * p + rgb1.a * (1 - p)
             };
             return tinycolor2(rgba);
           };
@@ -15022,10 +15022,10 @@
             var c1 = tinycolor2(color1);
             var c2 = tinycolor2(color2);
             var rgb1 = c1.toRgb();
-            var rgb22 = c2.toRgb();
+            var rgb2 = c2.toRgb();
             var brightnessA = c1.getBrightness();
             var brightnessB = c2.getBrightness();
-            var colorDiff = Math.max(rgb1.r, rgb22.r) - Math.min(rgb1.r, rgb22.r) + Math.max(rgb1.g, rgb22.g) - Math.min(rgb1.g, rgb22.g) + Math.max(rgb1.b, rgb22.b) - Math.min(rgb1.b, rgb22.b);
+            var colorDiff = Math.max(rgb1.r, rgb2.r) - Math.min(rgb1.r, rgb2.r) + Math.max(rgb1.g, rgb2.g) - Math.min(rgb1.g, rgb2.g) + Math.max(rgb1.b, rgb2.b) - Math.min(rgb1.b, rgb2.b);
             return {
               brightness: Math.abs(brightnessA - brightnessB),
               color: colorDiff
@@ -24014,13 +24014,13 @@
         if (h.length == 3) {
           h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
         }
-        var rgb3;
-        rgb3 = "rgba(" + parseInt(h.slice(0, 2), 16) + ", " + parseInt(h.slice(2, 4), 16) + ", " + parseInt(h.slice(4, 6), 16);
+        var rgb2;
+        rgb2 = "rgba(" + parseInt(h.slice(0, 2), 16) + ", " + parseInt(h.slice(2, 4), 16) + ", " + parseInt(h.slice(4, 6), 16);
         if (a) {
-          rgb3 += ", " + a;
+          rgb2 += ", " + a;
         }
-        rgb3 += ")";
-        return rgb3;
+        rgb2 += ")";
+        return rgb2;
       };
       jqplot.rgb2hex = function(s) {
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *(?:, *[0-9.]*)?\)/;
@@ -24054,9 +24054,9 @@
       };
       jqplot.getColorComponents = function(s) {
         s = jqplot.colorKeywordMap[s] || s;
-        var rgb3 = jqplot.normalize2rgb(s);
+        var rgb2 = jqplot.normalize2rgb(s);
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *,? *([0-9.]* *)?\)/;
-        var m = rgb3.match(pat);
+        var m = rgb2.match(pat);
         var ret = [];
         for (var i2 = 1; i2 < 4; i2++) {
           if (m[i2].search(/%/) != -1) {
@@ -30098,7 +30098,7 @@
   __export(util_exports, {
     RGB: () => RGB,
     VUtil: () => VUtil,
-    rgb: () => rgb2
+    rgb: () => rgb
   });
 
   // js/util/RGB.js
@@ -30135,7 +30135,7 @@
       return this.r > 0 || this.g > 0 || this.b > 0 ? true : false;
     }
   };
-  var rgb2 = function(r, g, b) {
+  var rgb = function(r, g, b) {
     if (r instanceof RGB) {
       return r;
     }
@@ -31372,10 +31372,10 @@
         "colormix-auto",
         "Re-color active channels",
         function() {
-          const nchan = visio.nChannel, rgb3 = visio.rgb, defcol = layer.visioDefault.channelColors;
+          const nchan = visio.nChannel, vrgb = visio.rgb, defcol = layer.visioDefault.channelColors;
           let cc = 0, nchanon = 0;
           for (let c = 0; c < nchan; c++) {
-            if (rgb3[c].isOn()) {
+            if (vrgb[c].isOn()) {
               nchanon++;
             }
           }
@@ -31383,8 +31383,8 @@
             nchanon = defcol.length - 1;
           }
           for (let c = 0; c < nchan; c++) {
-            if (rgb3[c].isOn() && cc < nchanon) {
-              rgb3[c] = rgb3(defcol[nchanon][cc++]);
+            if (vrgb[c].isOn() && cc < nchanon) {
+              vrgb[c] = rgb(defcol[nchanon][cc++]);
             }
           }
           layer.updateMix();
@@ -31447,8 +31447,8 @@
         );
       }, this);
     },
-    _updateMix: function(layer, channel, rgb3) {
-      layer.rgbToMix(channel, rgb3);
+    _updateMix: function(layer, channel, channel_rgb) {
+      layer.rgbToMix(channel, channel_rgb);
       this._updateChannelList(layer);
       layer.redraw();
     },
@@ -31467,8 +31467,8 @@
       chanElems = this._channelElems = [];
       trashElems = this._trashElems = [];
       for (let c in chanLabels) {
-        var chan = parseInt(c, 10), rgb3 = visio.rgb[chan];
-        if (rgb3.isOn()) {
+        var chan = parseInt(c, 10), vrgb = visio.rgb[chan];
+        if (vrgb.isOn()) {
           var chanElem = import_leaflet12.DomUtil.create(
             "div",
             this._className + "-channel",
@@ -31478,7 +31478,7 @@
             this._className + "-chancolor",
             chanElem
           );
-          color.style.backgroundColor = rgb3.toStr();
+          color.style.backgroundColor = vrgb.toStr();
           this._activateChanElem(color, layer, chan);
           var label = import_leaflet12.DomUtil.create(
             "div",
@@ -32563,12 +32563,12 @@
             title = "Image profile for " + visio.channelLabels[visio.channel];
             ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
           } else {
-            const rgb3 = visio.rgb;
+            const rgb2 = visio.rgb;
             for (let c = 0; c < visio.nChannel; c++) {
-              if (rgb3[c].isOn()) {
+              if (rgb2[c].isOn()) {
                 prof.push(self2._extractProfile(layer, rawprof, c));
                 series.push({
-                  color: rgb3[c].toStr(),
+                  color: rgb2[c].toStr(),
                   label: visio.channelLabels[c]
                 });
               }
@@ -34202,7 +34202,7 @@
         for (let c = ninunits; c < nchannel; c++) {
           units[c] = "ADUs";
         }
-        const mix = visio.mix, omix = options2.channelColors, rgb3 = visio.rgb, re = new RegExp(options2.channelLabelMatch), channelflags = visio.channelFlags;
+        const mix = visio.mix, omix = options2.channelColors, rgb2 = visio.rgb, re = new RegExp(options2.channelLabelMatch), channelflags = visio.channelFlags;
         let cc = 0, nchanon = 0;
         for (let c = 0; c < nchannel; c++) {
           channelflags[c] = re.test(labels[c]);
@@ -34216,12 +34216,12 @@
         for (let c = 0; c < nchannel; c++) {
           mix[c] = [];
           if (omix.length && omix[c] && omix[c].length === 3) {
-            rgb3[c] = rgb2(omix[c][0], omix[c][1], omix[c][2]);
+            rgb2[c] = rgb(omix[c][0], omix[c][1], omix[c][2]);
           } else {
-            rgb3[c] = rgb2(0, 0, 0);
+            rgb2[c] = rgb(0, 0, 0);
           }
           if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-            rgb3[c] = rgb2(visioDefault.channelColors[nchanon][cc++]);
+            rgb2[c] = rgb(visioDefault.channelColors[nchanon][cc++]);
           }
           this.rgbToMix(c);
         }
@@ -34242,14 +34242,14 @@
         alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
-    rgbToMix: function(channel, rgb3) {
+    rgbToMix: function(channel, rgb2) {
       const visio = this.visio;
-      if (rgb3) {
-        visio.rgb[channel] = rgb3.clone();
+      if (rgb2) {
+        visio.rgb[channel] = rgb2.clone();
       } else {
-        rgb3 = visio.rgb[channel];
+        rgb2 = visio.rgb[channel];
       }
-      const cr = this._gammaCorr(rgb3.r), cg = this._gammaCorr(rgb3.g), cb = this._gammaCorr(rgb3.b), lum = (cr + cg + cb) / 3, alpha = visio.colorSat / 3;
+      const cr = this._gammaCorr(rgb2.r), cg = this._gammaCorr(rgb2.g), cb = this._gammaCorr(rgb2.b), lum = (cr + cg + cb) / 3, alpha = visio.colorSat / 3;
       visio.mix[channel][0] = lum + alpha * (2 * cr - cg - cb);
       visio.mix[channel][1] = lum + alpha * (2 * cg - cr - cb);
       visio.mix[channel][2] = lum + alpha * (2 * cb - cr - cg);

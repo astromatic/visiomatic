@@ -780,7 +780,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 					   visio.minValue[c].toString() + ',' +
 					   visio.maxValue[c].toString();
 				}
-		}
+			}
 			for (let m = 1; m < nchannel; m++) {
 				if (mix[m][0] !== undefined) {
 					str += '&MIX=' + m + ':';
@@ -800,10 +800,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			}
 			str += '&CHAN=' + chanp1.toString();
 			if (visio.minValue[chan] !== visioDefault.minValue[chan] ||
-				   visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
-					str += '&MINMAX=' + chanp1.toString() + ':' +
-					   visio.minValue[chan].toString() + ',' +
-					   visio.maxValue[chan].toString();
+				visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
+				str += '&MINMAX=' + chanp1.toString() + ':' +
+					visio.minValue[chan].toString() + ',' +
+					visio.maxValue[chan].toString();
 			}
 		}
 
