@@ -508,9 +508,9 @@ class Tiled(object):
                 imix = np.array(mix, dtype=int)[:, 0] - 1
                 mix = np.array(mix, dtype=np.float32)[:, 1:]
                 indices = np.arange(self.nchannels, dtype=np.float32)
-                cmix[0] = np.interp(indices, imix, mix[:, 0])
-                cmix[1] = np.interp(indices, imix, mix[:, 1])
-                cmix[2] = np.interp(indices, imix, mix[:, 2])
+                cmix[0] = np.interp(indices, imix, mix[:, 0]) * 3 / self.nchannels
+                cmix[1] = np.interp(indices, imix, mix[:, 1]) * 3 / self.nchannels
+                cmix[2] = np.interp(indices, imix, mix[:, 2]) * 3 / self.nchannels
             tile = (
                 cmix @ tile.reshape(
                     tile.shape[0],

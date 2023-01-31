@@ -73,13 +73,12 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 		}
 
 		const	visio = layer.visio,
-			nchan = visio.nChannel,
 			setting = settings[mode];
 
 		setting.channel = visio.channel;
 		setting.cMap = visio.cMap;
 		setting.rgb = [];
-		for (let c = 0; c < nchan; c++) {
+		for (let c in visio.rgb) {
 			setting.rgb[c] = visio.rgb[c].clone();
 		}
 	},
@@ -103,7 +102,6 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 		}
 
 		const	visio = layer.visio,
-			nchan = visio.nChannel,
 			vrgb = visio.rgb,
 			srgb = setting.rgb;
 
@@ -111,7 +109,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			visio.channel = setting.channel;
 		}
 		visio.cMap = setting.cMap;
-		for (let c = 0; c < nchan; c++) {
+		for (let c in srgb) {
 			vrgb[c] = srgb[c].clone();
 		}
 	},
@@ -342,20 +340,18 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				const	nchan = visio.nChannel,
 					vrgb = visio.rgb,
 					defcol = layer.visioDefault.channelColors;
-				let	cc = 0,
-					nchanon = 0;
+				let	nchanon = 0;
 
-				for (let c = 0; c < nchan; c++) {
-					if (vrgb[c].isOn()) {
-						nchanon++;
-					}
+				for (const c in vrgb) {
+					nchanon++;
 				}
 				if (nchanon >= defcol.length) {
 					nchanon = defcol.length - 1;
 				}
 
-				for (let c = 0; c < nchan; c++) {
-					if (vrgb[c].isOn() && cc < nchanon) {
+				let	cc = 0;
+				for (const c in vrgb) {
+					if (cc < nchanon) {
 						vrgb[c] = rgb(defcol[nchanon][cc++]);
 					}
 				}
@@ -509,39 +505,37 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 		chanElems = this._channelElems = [];
 		trashElems = this._trashElems = [];
 
-		for (let c in chanLabels) {
+		for (c in visio.rgb) {
 			var	chan = parseInt(c, 10),
-				vrgb = visio.rgb[chan];
-			if (vrgb.isOn()) {
-				var	chanElem = DomUtil.create(
-						'div',
-						this._className + '-channel',
-						chanList
-					),
-					color = DomUtil.create(
-						'div',
-						this._className + '-chancolor',
-						chanElem
-					);
-				color.style.backgroundColor = vrgb.toStr();
-				this._activateChanElem(color, layer, chan);
-				var	label = DomUtil.create(
+				vrgb = visio.rgb[chan],
+				chanElem = DomUtil.create(
 					'div',
-					this._className + '-chanlabel',
+					this._className + '-channel',
+					chanList
+				),
+				color = DomUtil.create(
+					'div',
+					this._className + '-chancolor',
 					chanElem
 				);
-				label.innerHTML = chanLabels[c];
-				this._activateChanElem(label, layer, chan);
-				var	trashElem = this._addButton(
-					'visiomatic-control-trash',
-					chanElem,
-					undefined,
-					'Delete channel'
-				);
-				this._activateTrashElem(trashElem, layer, chan);
-				chanElems.push(chanElem);
-				trashElems.push(trashElem);
-			}
+			color.style.backgroundColor = vrgb.toStr();
+			this._activateChanElem(color, layer, chan);
+			var	label = DomUtil.create(
+				'div',
+				this._className + '-chanlabel',
+				chanElem
+			);
+			label.innerHTML = chanLabels[c];
+			this._activateChanElem(label, layer, chan);
+			var	trashElem = this._addButton(
+				'visiomatic-control-trash',
+				chanElem,
+				undefined,
+				'Delete channel'
+			);
+			this._activateTrashElem(trashElem, layer, chan);
+			chanElems.push(chanElem);
+			trashElems.push(trashElem);
 		}
 	},
 
@@ -570,7 +564,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 */
 	_activateTrashElem: function (trashElem, layer, channel) {
 		DomEvent.on(trashElem, 'click touch', function () {
-			this._updateMix(layer, channel, rgb(0.0, 0.0, 0.0));
+			this._updateMix(layer, channel, false);
 			if (layer === this._layer && channel === layer.visio.channel) {
 				this._updateColPick(layer);
 			}
