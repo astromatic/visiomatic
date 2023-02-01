@@ -481,7 +481,9 @@ class Tiled(object):
         """
         if channel:
             chan = channel - 1
-            if not minmax:
+            if minmax and int(minmax[0][0]) == channel:
+                minmax = minmax[0][1:]
+            else:
                 minmax = self.minmax[chan]
             fac = minmax[1] - minmax[0]
             fac = contrast / fac if fac > 0.0 else self.maxfac
