@@ -395,7 +395,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'minValue[' + channel + ']',
 			box,
 			'Min:',
-			'Lower clipping limit in ' + visio.channelUnits[channel] + '.',
+			'Lower clipping limit in ' + visio.channelUnits[channel],
 			visio.minValue[channel], step
 		);
 
@@ -404,8 +404,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			layer,
 			'maxValue[' + channel + ']',
 			box,
-			'Upper clipping limit in ' + visio.channelUnits[channel] + '.',
 			'Max:',
+			'Upper clipping limit in ' + visio.channelUnits[channel],
 			visio.maxValue[channel], step
 		);
 	},

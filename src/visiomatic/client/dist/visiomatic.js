@@ -6169,21 +6169,21 @@
             setOpacity(this._container, this.options.opacity);
             var now = +new Date(), nextFrame = false, willPrune = false;
             for (var key in this._tiles) {
-              var tile = this._tiles[key];
-              if (!tile.current || !tile.loaded) {
+              var tile2 = this._tiles[key];
+              if (!tile2.current || !tile2.loaded) {
                 continue;
               }
-              var fade = Math.min(1, (now - tile.loaded) / 200);
-              setOpacity(tile.el, fade);
+              var fade = Math.min(1, (now - tile2.loaded) / 200);
+              setOpacity(tile2.el, fade);
               if (fade < 1) {
                 nextFrame = true;
               } else {
-                if (tile.active) {
+                if (tile2.active) {
                   willPrune = true;
                 } else {
-                  this._onOpaqueTile(tile);
+                  this._onOpaqueTile(tile2);
                 }
-                tile.active = true;
+                tile2.active = true;
               }
             }
             if (willPrune && !this._noPrune) {
@@ -6244,20 +6244,20 @@
             if (!this._map) {
               return;
             }
-            var key, tile;
+            var key, tile2;
             var zoom2 = this._map.getZoom();
             if (zoom2 > this.options.maxZoom || zoom2 < this.options.minZoom) {
               this._removeAllTiles();
               return;
             }
             for (key in this._tiles) {
-              tile = this._tiles[key];
-              tile.retain = tile.current;
+              tile2 = this._tiles[key];
+              tile2.retain = tile2.current;
             }
             for (key in this._tiles) {
-              tile = this._tiles[key];
-              if (tile.current && !tile.active) {
-                var coords2 = tile.coords;
+              tile2 = this._tiles[key];
+              if (tile2.current && !tile2.active) {
+                var coords2 = tile2.coords;
                 if (!this._retainParent(coords2.x, coords2.y, coords2.z, coords2.z - 5)) {
                   this._retainChildren(coords2.x, coords2.y, coords2.z, coords2.z + 2);
                 }
@@ -6294,12 +6294,12 @@
           _retainParent: function(x, y, z, minZoom) {
             var x2 = Math.floor(x / 2), y2 = Math.floor(y / 2), z2 = z - 1, coords2 = new Point2(+x2, +y2);
             coords2.z = +z2;
-            var key = this._tileCoordsToKey(coords2), tile = this._tiles[key];
-            if (tile && tile.active) {
-              tile.retain = true;
+            var key = this._tileCoordsToKey(coords2), tile2 = this._tiles[key];
+            if (tile2 && tile2.active) {
+              tile2.retain = true;
               return true;
-            } else if (tile && tile.loaded) {
-              tile.retain = true;
+            } else if (tile2 && tile2.loaded) {
+              tile2.retain = true;
             }
             if (z2 > minZoom) {
               return this._retainParent(x2, y2, z2, minZoom);
@@ -6311,12 +6311,12 @@
               for (var j = 2 * y; j < 2 * y + 2; j++) {
                 var coords2 = new Point2(i2, j);
                 coords2.z = z + 1;
-                var key = this._tileCoordsToKey(coords2), tile = this._tiles[key];
-                if (tile && tile.active) {
-                  tile.retain = true;
+                var key = this._tileCoordsToKey(coords2), tile2 = this._tiles[key];
+                if (tile2 && tile2.active) {
+                  tile2.retain = true;
                   continue;
-                } else if (tile && tile.loaded) {
-                  tile.retain = true;
+                } else if (tile2 && tile2.loaded) {
+                  tile2.retain = true;
                 }
                 if (z + 1 < maxZoom) {
                   this._retainChildren(i2, j, z + 1, maxZoom);
@@ -6440,9 +6440,9 @@
                 if (!this._isValidTile(coords2)) {
                   continue;
                 }
-                var tile = this._tiles[this._tileCoordsToKey(coords2)];
-                if (tile) {
-                  tile.current = true;
+                var tile2 = this._tiles[this._tileCoordsToKey(coords2)];
+                if (tile2) {
+                  tile2.current = true;
                 } else {
                   queue.push(coords2);
                 }
@@ -6500,73 +6500,73 @@
             return coords2;
           },
           _removeTile: function(key) {
-            var tile = this._tiles[key];
-            if (!tile) {
+            var tile2 = this._tiles[key];
+            if (!tile2) {
               return;
             }
-            remove(tile.el);
+            remove(tile2.el);
             delete this._tiles[key];
             this.fire("tileunload", {
-              tile: tile.el,
+              tile: tile2.el,
               coords: this._keyToTileCoords(key)
             });
           },
-          _initTile: function(tile) {
-            addClass(tile, "leaflet-tile");
+          _initTile: function(tile2) {
+            addClass(tile2, "leaflet-tile");
             var tileSize = this.getTileSize();
-            tile.style.width = tileSize.x + "px";
-            tile.style.height = tileSize.y + "px";
-            tile.onselectstart = falseFn;
-            tile.onmousemove = falseFn;
+            tile2.style.width = tileSize.x + "px";
+            tile2.style.height = tileSize.y + "px";
+            tile2.onselectstart = falseFn;
+            tile2.onmousemove = falseFn;
             if (Browser4.ielt9 && this.options.opacity < 1) {
-              setOpacity(tile, this.options.opacity);
+              setOpacity(tile2, this.options.opacity);
             }
           },
           _addTile: function(coords2, container) {
             var tilePos = this._getTilePos(coords2), key = this._tileCoordsToKey(coords2);
-            var tile = this.createTile(this._wrapCoords(coords2), bind(this._tileReady, this, coords2));
-            this._initTile(tile);
+            var tile2 = this.createTile(this._wrapCoords(coords2), bind(this._tileReady, this, coords2));
+            this._initTile(tile2);
             if (this.createTile.length < 2) {
-              requestAnimFrame(bind(this._tileReady, this, coords2, null, tile));
+              requestAnimFrame(bind(this._tileReady, this, coords2, null, tile2));
             }
-            setPosition(tile, tilePos);
+            setPosition(tile2, tilePos);
             this._tiles[key] = {
-              el: tile,
+              el: tile2,
               coords: coords2,
               current: true
             };
-            container.appendChild(tile);
+            container.appendChild(tile2);
             this.fire("tileloadstart", {
-              tile,
+              tile: tile2,
               coords: coords2
             });
           },
-          _tileReady: function(coords2, err, tile) {
+          _tileReady: function(coords2, err, tile2) {
             if (err) {
               this.fire("tileerror", {
                 error: err,
-                tile,
+                tile: tile2,
                 coords: coords2
               });
             }
             var key = this._tileCoordsToKey(coords2);
-            tile = this._tiles[key];
-            if (!tile) {
+            tile2 = this._tiles[key];
+            if (!tile2) {
               return;
             }
-            tile.loaded = +new Date();
+            tile2.loaded = +new Date();
             if (this._map._fadeAnimated) {
-              setOpacity(tile.el, 0);
+              setOpacity(tile2.el, 0);
               cancelAnimFrame(this._fadeFrame);
               this._fadeFrame = requestAnimFrame(this._updateOpacity, this);
             } else {
-              tile.active = true;
+              tile2.active = true;
               this._pruneTiles();
             }
             if (!err) {
-              addClass(tile.el, "leaflet-tile-loaded");
+              addClass(tile2.el, "leaflet-tile-loaded");
               this.fire("tileload", {
-                tile: tile.el,
+                tile: tile2.el,
                 coords: coords2
               });
             }
@@ -6657,18 +6657,18 @@
             return this;
           },
           createTile: function(coords2, done) {
-            var tile = document.createElement("img");
-            on(tile, "load", bind(this._tileOnLoad, this, done, tile));
-            on(tile, "error", bind(this._tileOnError, this, done, tile));
+            var tile2 = document.createElement("img");
+            on(tile2, "load", bind(this._tileOnLoad, this, done, tile2));
+            on(tile2, "error", bind(this._tileOnError, this, done, tile2));
             if (this.options.crossOrigin || this.options.crossOrigin === "") {
-              tile.crossOrigin = this.options.crossOrigin === true ? "" : this.options.crossOrigin;
+              tile2.crossOrigin = this.options.crossOrigin === true ? "" : this.options.crossOrigin;
             }
             if (typeof this.options.referrerPolicy === "string") {
-              tile.referrerPolicy = this.options.referrerPolicy;
+              tile2.referrerPolicy = this.options.referrerPolicy;
             }
-            tile.alt = "";
-            tile.src = this.getTileUrl(coords2);
-            return tile;
+            tile2.alt = "";
+            tile2.src = this.getTileUrl(coords2);
+            return tile2;
           },
           getTileUrl: function(coords2) {
             var data = {
@@ -6687,19 +6687,19 @@
             }
             return template(this._url, extend4(data, this.options));
           },
-          _tileOnLoad: function(done, tile) {
+          _tileOnLoad: function(done, tile2) {
             if (Browser4.ielt9) {
-              setTimeout(bind(done, this, null, tile), 0);
+              setTimeout(bind(done, this, null, tile2), 0);
             } else {
-              done(null, tile);
+              done(null, tile2);
             }
           },
-          _tileOnError: function(done, tile, e) {
+          _tileOnError: function(done, tile2, e) {
             var errorUrl = this.options.errorTileUrl;
-            if (errorUrl && tile.getAttribute("src") !== errorUrl) {
-              tile.src = errorUrl;
+            if (errorUrl && tile2.getAttribute("src") !== errorUrl) {
+              tile2.src = errorUrl;
             }
-            done(e, tile);
+            done(e, tile2);
           },
           _onTileRemove: function(e) {
             e.tile.onload = null;
@@ -6716,19 +6716,19 @@
             return this.options.subdomains[index2];
           },
           _abortLoading: function() {
-            var i2, tile;
+            var i2, tile2;
             for (i2 in this._tiles) {
               if (this._tiles[i2].coords.z !== this._tileZoom) {
-                tile = this._tiles[i2].el;
-                tile.onload = falseFn;
-                tile.onerror = falseFn;
-                if (!tile.complete) {
-                  tile.src = emptyImageUrl;
+                tile2 = this._tiles[i2].el;
+                tile2.onload = falseFn;
+                tile2.onerror = falseFn;
+                if (!tile2.complete) {
+                  tile2.src = emptyImageUrl;
                   var coords2 = this._tiles[i2].coords;
-                  remove(tile);
+                  remove(tile2);
                   delete this._tiles[i2];
                   this.fire("tileabort", {
-                    tile,
+                    tile: tile2,
                     coords: coords2
                   });
                 }
@@ -6736,18 +6736,18 @@
             }
           },
           _removeTile: function(key) {
-            var tile = this._tiles[key];
-            if (!tile) {
+            var tile2 = this._tiles[key];
+            if (!tile2) {
               return;
             }
-            tile.el.setAttribute("src", emptyImageUrl);
+            tile2.el.setAttribute("src", emptyImageUrl);
             return GridLayer.prototype._removeTile.call(this, key);
           },
-          _tileReady: function(coords2, err, tile) {
-            if (!this._map || tile && tile.getAttribute("src") === emptyImageUrl) {
+          _tileReady: function(coords2, err, tile2) {
+            if (!this._map || tile2 && tile2.getAttribute("src") === emptyImageUrl) {
               return;
             }
-            return GridLayer.prototype._tileReady.call(this, coords2, err, tile);
+            return GridLayer.prototype._tileReady.call(this, coords2, err, tile2);
           }
         });
         function tileLayer(url, options2) {
@@ -31406,7 +31406,7 @@
         "minValue[" + channel + "]",
         box,
         "Min:",
-        "Lower clipping limit in " + visio.channelUnits[channel] + ".",
+        "Lower clipping limit in " + visio.channelUnits[channel],
         visio.minValue[channel],
         step
       );
@@ -31414,8 +31414,8 @@
         layer,
         "maxValue[" + channel + "]",
         box,
-        "Upper clipping limit in " + visio.channelUnits[channel] + ".",
         "Max:",
+        "Upper clipping limit in " + visio.channelUnits[channel],
         visio.maxValue[channel],
         step
       );
@@ -32305,7 +32305,7 @@
         "contrast",
         this._dialog,
         "Contrast:",
-        "Adjust Contrast. 1.0: normal.",
+        "Adjust Contrast. 1.0: normal",
         visio.contrast,
         0.05,
         0,
@@ -32316,7 +32316,7 @@
         "colorSat",
         this._dialog,
         "Color Sat.:",
-        "Adjust Color Saturation. 0: B&W, 1.0: normal.",
+        "Adjust Color Saturation. 0: B&W, 1.0: normal",
         visio.colorSat,
         0.05,
         0,
@@ -32328,7 +32328,7 @@
         "gamma",
         this._dialog,
         "Gamma:",
-        "Adjust Gamma correction. The standard value is 2.2.",
+        "Adjust Gamma correction. The standard value is 2.2",
         visio.gamma,
         0.05,
         0.5,
@@ -34386,9 +34386,9 @@
       );
     },
     createTile: function(coords2, done) {
-      const tile = import_leaflet30.TileLayer.prototype.createTile.call(this, coords2, done);
-      tile.coords = coords2;
-      return tile;
+      const tile2 = import_leaflet30.TileLayer.prototype.createTile.call(this, coords2, done);
+      tile2.coords = coords2;
+      return tile2;
     },
     getTileUrl: function(coords2) {
       const visio = this.visio, visioDefault = this.visioDefault, z = this._getZoomForUrl();
@@ -34436,18 +34436,45 @@
       }
       return str2 + "&JTL=" + z.toString() + "," + (coords2.x + visio.gridSize[z].x * coords2.y).toString();
     },
-    _initTile: function(tile) {
-      import_leaflet30.DomUtil.addClass(tile, "leaflet-tile");
+    _initTile: function(tile2) {
+      import_leaflet30.DomUtil.addClass(tile2, "leaflet-tile");
       if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
-        tile.style.imageRendering = "pixelated";
+        tile2.style.imageRendering = "pixelated";
       }
-      tile.onselectstart = import_leaflet30.Util.falseFn;
-      tile.onmousemove = import_leaflet30.Util.falseFn;
+      tile2.onselectstart = import_leaflet30.Util.falseFn;
+      tile2.onmousemove = import_leaflet30.Util.falseFn;
       if (import_leaflet30.Browser.ielt9 && this.options.opacity < 1) {
-        import_leaflet30.DomUtil.setOpacity(tile, this.options.opacity);
+        import_leaflet30.DomUtil.setOpacity(tile2, this.options.opacity);
       }
       if (import_leaflet30.Browser.android && !import_leaflet30.Browser.android23) {
-        tile.style.WebkitBackfaceVisibility = "hidden";
+        tile2.style.WebkitBackfaceVisibility = "hidden";
+      }
+    },
+    _refreshTileUrl: function(tile2, url) {
+      const img = new Image();
+      img.onload = function() {
+        L.Util.requestAnimFrame(function() {
+          tile2.el.src = url;
+        });
+      };
+      img.src = url;
+    },
+    redraw: function() {
+      const wasAnimated = this._map._fadeAnimated;
+      this._map._fadeAnimated = false;
+      for (var key in this._tiles) {
+        tile = this._tiles[key];
+        if (tile.current && tile.active) {
+          const oldsrc = tile.el.src, newsrc = this.getTileUrl(tile.coords);
+          if (oldsrc != newsrc) {
+            this._refreshTileUrl(tile, newsrc);
+          }
+        }
+      }
+      if (wasAnimated) {
+        setTimeout(function() {
+          map._fadeAnimated = wasAnimated;
+        }, 5e3);
       }
     }
   });

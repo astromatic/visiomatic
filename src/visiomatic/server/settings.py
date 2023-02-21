@@ -21,7 +21,10 @@ class AppSettings(BaseSettings):
     """
     BANNER: str = "banner.html"
     DATA_DIR : Path = "fits"
-    TILES_URL : str = "/tiles"
+    DOC_DIR: str = "doc/build/html"
+    DOC_PATH : str = "/manual"
+    DOC_URL: str = DOC_PATH + "/interface.html"
+    TILES_PATH : str = "/tiles"
 
 app_settings = AppSettings()
 
