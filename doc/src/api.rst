@@ -4,9 +4,9 @@ API reference
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
-   api/server
+   api/server/index
    api/client/index
 
