@@ -22,7 +22,7 @@ The Figure below shows the main window of the VisiOmatic web interface in its de
 The main window contains a `"slippy map" <http://en.wikipedia.org/wiki/Tiled_web_map>`_ carrying the current image layer and optional vector overlays, plus a series of widgets. One navigates through the image and its overlays by "dragging" the map to the desired position. On computers this is done by clicking and holding the left button while moving the mouse, or by using the keyboard arrow keys. On touch devices one must press and move a finger throughout the screen.
 
 At the top left, two magnifier buttons can be used to zoom in (|magnifyplus|) or out (|magnifyminus|). One can also zoom using the mouse wheel or the -/+ keys on computers, or with a `pinch gesture <http://en.wikipedia.org/wiki/Pointing_device_gesture#Touchpad_and_touchscreen_gestures>`_ on touch devices.
-The user can switch to/from full screen mode by clicking the |fullscreen| button (third from the top). The |menu| button (last from the top) opens the :ref:`Advanced Settings Menu <The Advanced Settings Menu>`.
+The user can switch to/from full screen mode by clicking the |fullscreen| button (third from the top). The |menu| button (last from the top) opens the :ref:`Advanced Settings Menu <chap_advanced>`.
 
 The coordinates of the *center* of the current field-of-view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the *Coordinate Pane*. In some configurations, a drop-down list allows one to switch between equatorial (RA,Dec) and other types of coordinates.
 
@@ -70,6 +70,8 @@ The Navigation Pane can be minimized by clicking on the pair of arrows that appe
 
    Snapshot of the Navigation Pane.
 
+.. _chap_advanced:
+
 Advanced Settings
 =================
 
@@ -77,7 +79,7 @@ The Advanced Settings button gives access to a taskbar with five tabs, from top 
 
 * |equalizer2| Channel Mixing, which allows the user to choose which image channels to use for display or color compositing
 * |contrast| Image Preferences, which gives the user control over the contrast, color saturation, gamma correction and JPEG compression level. There is also a switch for inverting the color map.
-* |make-group| Catalog Overlays for superimposing multiple catalogs in vector form, e.g., the 2MASS Point Source Catalog :cite:`Cutri2003` or the SDSS Photometric Catalog :cite:`2009ApJS..182..543A`.
+* |make-group| Catalog Overlays for superimposing multiple catalogs in vector form, e.g., the 2MASS Point Source Catalog :cite:`2003yCat.2246....0C` or the SDSS Photometric Catalog :cite:`2009ApJS..182..543A`.
 * |location| Region Overlays, for overlaying Points Of Interest (such as local catalogs) or any local vector data sets in `GeoJSON <http://geojson.org/>`_ format.
 * |plot| Profile Overlays, for plotting image profiles and (pseudo-)spectral energy distributions from the full precision pixel values stored on the server.
 * |info| Documentation, which opens a panel where any web page can be embedded, e.g., an online-manual.
