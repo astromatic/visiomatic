@@ -2,7 +2,7 @@ JS client
 =========
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    catalogs
    geometry
