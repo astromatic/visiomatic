@@ -17,7 +17,7 @@ The |VisiOmatic| client interface is fully asynchronous, and is particularly imm
 Web server
 ==========
 
-The new |VisiOmatic| web server is written in the Python language. It replaces the |IIPImage-Astro|_ `FCGI (Fast Common Gateway Interface) <http://www.fastcgi.com>`_ C++ code of earlier |VisiOmatic| versions :cite:`Pitzalis2006,Bertin2015`.
+The new |VisiOmatic| web server is written in the Python language. It replaces the |IIPImage-Astro|_ `FCGI (Fast Common Gateway Interface) <http://www.fastcgi.com>`_ C++ code of earlier |VisiOmatic| versions :cite:`Pitzalis2006,2015A&C....10...43B`.
 It operates as a `web-service <http://en.wikipedia.org/wiki/Web_service>`_ that encodes and streams in real-time large high resolution images which are delivered in the form of compressed "tiles".
 It is designed to be fast and bandwidth-efficient.
 
