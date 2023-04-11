@@ -63,11 +63,6 @@ def create_app() -> FastAPI:
     )
     """
 
-    # Prepare the dictionary of tiled image pyramids
-    app.tiled = {}
-    app.parse_jtl = re.compile(r"^(\d+),(\d+)$")
-    app.parse_minmax = re.compile(r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")
-
     # Provide an endpoint for static files (such as js and css)
     app.mount(
         "/client",
@@ -93,6 +88,18 @@ def create_app() -> FastAPI:
     # Instantiate templates
     templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
 
+    # Prepare the dictionary of tiled image pyramids
+    app.tiled = {}
+
+    # Prepare the RegExps
+    reg_jtl = r"^(\d+),(\d+)$"
+    app.parse_jtl = re.compile(reg_jtl)
+    reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
+        r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
+        r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
+    app.parse_minmax = re.compile(reg_minmax)
+    reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
+    app.parse_mix = re.compile(reg_mix) 
 
     # Test endpoint
     @app.get("/random", tags=["services"])
@@ -122,19 +129,71 @@ def create_app() -> FastAPI:
     @app.get(tiles_path, tags=["services"])
     async def read_visio(
             request: Request,
-            FIF: str = Query(None, title="Image filename"),
-            obj: str = Query(None, title="Get image information instead of a tile"),
-            CHAN: int =  Query(1, title="Channel index (mono-channel mode)", ge=0),
-            CMP: Literal[tuple(colordict.keys())] = Query('grey', title="Name of the colormap"),
-            CNT: float = Query(1.0, title="Relative contrast", ge=0.0, le=10.0),
-            GAM: float = Query(0.4545, title="Inverse display gamma", ge=0.2, le=2.0),
-            INFO: str = Query(None, title="Get advanced image information instead of a tile"),
-            INV: str = Query(None, title="Invert the colormap"),
-            QLT: int = Query(90, title="JPEG quality", ge=0, le=100),
-            JTL: str = Query(None, title="Tile coordinates",
-                min_length=3, max_length=11, regex="^\d+,\d+$"),
-            MINMAX: str = Query(None, title="Modified minimum and Maximum intensity ranges",
-            min_length=5, max_length=48, regex="^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$")):
+            FIF: str = Query(
+                None,
+                title="Image filename"
+                ),
+            obj: str = Query(
+                None,
+                title="Get image information instead of a tile"
+                ),
+            CHAN: int =  Query(
+                None,
+                title="Channel index (mono-channel mode)",
+                ge=0
+                ),
+            CMP: Literal[tuple(colordict.keys())] = Query(
+                'grey',
+                title="Name of the colormap"
+                ),
+            CNT: float = Query(
+                1.0,
+                title="Relative contrast",
+                ge=0.0,
+                le=10.0
+                ),
+            GAM: float = Query(
+                0.4545,
+                title="Inverse display gamma",
+                ge=0.2,
+                le=2.0
+                ),
+            INFO: str = Query(
+                None,
+                title="Get advanced image information instead of a tile"
+                ),
+            INV: str = Query(
+                None,
+                title="Invert the colormap"
+                ),
+            QLT: int = Query(
+                90,
+                title="JPEG quality",
+                ge=0,
+                le=100
+                ),
+            JTL: str = Query(
+                None,
+                title="Tile coordinates",
+                min_length=3,
+                max_length=11,
+                regex=reg_jtl
+                ),
+            MINMAX: list[str] = Query(
+                None,
+                title="Modified minimum and Maximum intensity ranges",
+                min_length=5,
+                max_length=48,
+                regex=reg_minmax
+                ),
+			MIX: list[str] = Query(
+			    None,
+			    title="Slice of the mixing matrix", 
+                min_length=7,
+                max_length=2000,
+                regex=reg_mix
+                )
+            ):
         """
         Tile endpoint of the web API: returns a JPEG tile at the requested position.
 
@@ -166,9 +225,25 @@ def create_app() -> FastAPI:
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
         if MINMAX != None:
-            resp = app.parse_minmax.findall(MINMAX)[0]
-            if int(resp[0]) == CHAN:
-                minmax = float(resp[1]), float(resp[2])
+            resp = [app.parse_minmax.findall(m)[0] for m in MINMAX]
+            minmax = [
+                [
+                    int(r[0]),
+                    float(r[1]),
+                    float(r[2])
+                ] for r in resp
+            ]
+        mix = None
+        if MIX != None:
+            resp = [app.parse_mix.findall(m)[0] for m in MIX]
+            mix = [
+                [
+                    int(r[0]),
+                    float(r[1]),
+                    float(r[2]),
+                    float(r[3])
+                ] for r in resp
+            ]
         resp = app.parse_jtl.findall(JTL)[0]
         r = tiled.nlevels - 1 - int(resp[0])
         if r < 0:
@@ -179,6 +254,7 @@ def create_app() -> FastAPI:
             t,
             channel=CHAN,
             minmax=minmax,
+            mix=mix,
             contrast=CNT,
             gamma=GAM,
             colormap=CMP,

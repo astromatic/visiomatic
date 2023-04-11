@@ -855,7 +855,7 @@
             return new LatLng2(this.lat, this.lng, this.alt);
           }
         };
-        function toLatLng(a, b, c) {
+        function toLatLng(a, b, c2) {
           if (a instanceof LatLng2) {
             return a;
           }
@@ -877,7 +877,7 @@
           if (b === void 0) {
             return null;
           }
-          return new LatLng2(a, b, c);
+          return new LatLng2(a, b, c2);
         }
         var CRS2 = {
           latLngToPoint: function(latlng, zoom2) {
@@ -925,8 +925,8 @@
           wrapLng: [-180, 180],
           R: 6371e3,
           distance: function(latlng1, latlng2) {
-            var rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, sinDLat = Math.sin((latlng2.lat - latlng1.lat) * rad / 2), sinDLon = Math.sin((latlng2.lng - latlng1.lng) * rad / 2), a = sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLon * sinDLon, c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return this.R * c;
+            var rad = Math.PI / 180, lat1 = latlng1.lat * rad, lat2 = latlng2.lat * rad, sinDLat = Math.sin((latlng2.lat - latlng1.lat) * rad / 2), sinDLon = Math.sin((latlng2.lng - latlng1.lng) * rad / 2), a = sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLon * sinDLon, c2 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return this.R * c2;
           }
         });
         var earthRadius = 6378137;
@@ -952,7 +952,7 @@
             return new Bounds2([-d2, -d2], [d2, d2]);
           }()
         };
-        function Transformation2(a, b, c, d2) {
+        function Transformation2(a, b, c2, d2) {
           if (isArray(a)) {
             this._a = a[0];
             this._b = a[1];
@@ -962,7 +962,7 @@
           }
           this._a = a;
           this._b = b;
-          this._c = c;
+          this._c = c2;
           this._d = d2;
         }
         Transformation2.prototype = {
@@ -983,8 +983,8 @@
             );
           }
         };
-        function toTransformation(a, b, c, d2) {
-          return new Transformation2(a, b, c, d2);
+        function toTransformation(a, b, c2, d2) {
+          return new Transformation2(a, b, c2, d2);
         }
         var EPSG3857 = extend4({}, Earth, {
           code: "EPSG:3857",
@@ -2060,12 +2060,12 @@
             if (!this._container._leaflet_id) {
               return;
             }
-            var c = error.code, message = error.message || (c === 1 ? "permission denied" : c === 2 ? "position unavailable" : "timeout");
+            var c2 = error.code, message = error.message || (c2 === 1 ? "permission denied" : c2 === 2 ? "position unavailable" : "timeout");
             if (this._locateOptions.setView && !this._loaded) {
               this.fitWorld();
             }
             this.fire("locationerror", {
-              code: c,
+              code: c2,
               message: "Geolocation error: " + message + "."
             });
           },
@@ -2615,8 +2615,8 @@
             delete this._proxy;
           },
           _animMoveEnd: function() {
-            var c = this.getCenter(), z = this.getZoom();
-            setTransform(this._proxy, this.project(c, z), this.getZoomScale(z, 1));
+            var c2 = this.getCenter(), z = this.getZoom();
+            setTransform(this._proxy, this.project(c2, z), this.getZoomScale(z, 1));
           },
           _catchTransitionEnd: function(e) {
             if (this._animatingZoom && e.propertyName.indexOf("transform") >= 0) {
@@ -6424,8 +6424,8 @@
               throw new Error("Attempted to load an infinite number of tiles");
             }
             for (var key in this._tiles) {
-              var c = this._tiles[key].coords;
-              if (c.z !== this._tileZoom || !noPruneRange.contains(new Point2(c.x, c.y))) {
+              var c2 = this._tiles[key].coords;
+              if (c2.z !== this._tileZoom || !noPruneRange.contains(new Point2(c2.x, c2.y))) {
                 this._tiles[key].current = false;
               }
             }
@@ -13716,11 +13716,11 @@
             var current = p[i2];
             if (current) {
               var tiny = tinycolor(current);
-              var c = tiny.toHsl().l < 0.5 ? "sp-thumb-el sp-thumb-dark" : "sp-thumb-el sp-thumb-light";
-              c += tinycolor.equals(color, current) ? " sp-thumb-active" : "";
+              var c2 = tiny.toHsl().l < 0.5 ? "sp-thumb-el sp-thumb-dark" : "sp-thumb-el sp-thumb-light";
+              c2 += tinycolor.equals(color, current) ? " sp-thumb-active" : "";
               var formattedString = tiny.toString(opts.preferredFormat || "rgb");
               var swatchStyle = rgbaSupport ? "background-color:" + tiny.toRgbString() : "filter:" + tiny.toFilter();
-              html.push('<span title="' + formattedString + '" data-color="' + tiny.toRgbString() + '" class="' + c + '"><span class="sp-thumb-inner" style="' + swatchStyle + ';"></span></span>');
+              html.push('<span title="' + formattedString + '" data-color="' + tiny.toRgbString() + '" class="' + c2 + '"><span class="sp-thumb-inner" style="' + swatchStyle + ';"></span></span>');
             } else {
               var cls = "sp-clear-display";
               html.push(
@@ -13764,8 +13764,8 @@
               paletteLookup = {};
               for (var i2 = 0; i2 < paletteArray.length; i2++) {
                 for (var j = 0; j < paletteArray[i2].length; j++) {
-                  var rgb3 = tinycolor(paletteArray[i2][j]).toRgbString();
-                  paletteLookup[rgb3] = true;
+                  var rgb2 = tinycolor(paletteArray[i2][j]).toRgbString();
+                  paletteLookup[rgb2] = true;
                 }
               }
             }
@@ -13939,8 +13939,8 @@
                 var oldPalette = window.localStorage[localStorageKey].split(",#");
                 if (oldPalette.length > 1) {
                   delete window.localStorage[localStorageKey];
-                  $2.each(oldPalette, function(i2, c) {
-                    addColorToSelectionPalette(c);
+                  $2.each(oldPalette, function(i2, c2) {
+                    addColorToSelectionPalette(c2);
                   });
                 }
               } catch (e) {
@@ -13953,9 +13953,9 @@
           }
           function addColorToSelectionPalette(color) {
             if (showSelectionPalette) {
-              var rgb3 = tinycolor(color).toRgbString();
-              if (!paletteLookup[rgb3] && $2.inArray(rgb3, selectionPalette) === -1) {
-                selectionPalette.push(rgb3);
+              var rgb2 = tinycolor(color).toRgbString();
+              if (!paletteLookup[rgb2] && $2.inArray(rgb2, selectionPalette) === -1) {
+                selectionPalette.push(rgb2);
                 while (selectionPalette.length > maxSelectionSize) {
                   selectionPalette.shift();
                 }
@@ -13972,8 +13972,8 @@
             var unique = [];
             if (opts.showPalette) {
               for (var i2 = 0; i2 < selectionPalette.length; i2++) {
-                var rgb3 = tinycolor(selectionPalette[i2]).toRgbString();
-                if (!paletteLookup[rgb3]) {
+                var rgb2 = tinycolor(selectionPalette[i2]).toRgbString();
+                if (!paletteLookup[rgb2]) {
                   unique.push(selectionPalette[i2]);
                 }
               }
@@ -14163,9 +14163,9 @@
                 previewElement.css("filter", realColor.toFilter());
               }
               if (opts.showAlpha) {
-                var rgb3 = realColor.toRgb();
-                rgb3.a = 0;
-                var realAlpha = tinycolor(rgb3).toRgbString();
+                var rgb2 = realColor.toRgb();
+                rgb2.a = 0;
+                var realAlpha = tinycolor(rgb2).toRgbString();
                 var gradient = "linear-gradient(left, " + realAlpha + ", " + realHex + ")";
                 if (IE) {
                   alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
@@ -14309,8 +14309,8 @@
             enable,
             disable,
             offset: setOffset,
-            set: function(c) {
-              set(c);
+            set: function(c2) {
+              set(c2);
               updateOriginalInput();
             },
             get,
@@ -14510,14 +14510,14 @@
             if (!(this instanceof tinycolor2)) {
               return new tinycolor2(color, opts);
             }
-            var rgb3 = inputToRGB(color);
+            var rgb2 = inputToRGB(color);
             this._originalInput = color;
-            this._r = rgb3.r;
-            this._g = rgb3.g;
-            this._b = rgb3.b;
-            this._a = rgb3.a;
+            this._r = rgb2.r;
+            this._g = rgb2.g;
+            this._b = rgb2.b;
+            this._a = rgb2.a;
             this._roundA = mathRound(1e3 * this._a) / 1e3;
-            this._format = opts.format || rgb3.format;
+            this._format = opts.format || rgb2.format;
             this._gradientType = opts.gradientType;
             if (this._r < 1) {
               this._r = mathRound(this._r);
@@ -14528,7 +14528,7 @@
             if (this._b < 1) {
               this._b = mathRound(this._b);
             }
-            this._ok = rgb3.ok;
+            this._ok = rgb2.ok;
             this._tc_id = tinyCounter++;
           };
           tinycolor2.prototype = {
@@ -14551,8 +14551,8 @@
               return this._a;
             },
             getBrightness: function() {
-              var rgb3 = this.toRgb();
-              return (rgb3.r * 299 + rgb3.g * 587 + rgb3.b * 114) / 1e3;
+              var rgb2 = this.toRgb();
+              return (rgb2.r * 299 + rgb2.g * 587 + rgb2.b * 114) / 1e3;
             },
             setAlpha: function(value) {
               this._a = boundAlpha(value);
@@ -14726,7 +14726,7 @@
             return tinycolor2(color, opts);
           };
           function inputToRGB(color) {
-            var rgb3 = { r: 0, g: 0, b: 0 };
+            var rgb2 = { r: 0, g: 0, b: 0 };
             var a = 1;
             var ok = false;
             var format = false;
@@ -14735,19 +14735,19 @@
             }
             if (typeof color == "object") {
               if (color.hasOwnProperty("r") && color.hasOwnProperty("g") && color.hasOwnProperty("b")) {
-                rgb3 = rgbToRgb(color.r, color.g, color.b);
+                rgb2 = rgbToRgb(color.r, color.g, color.b);
                 ok = true;
                 format = String(color.r).substr(-1) === "%" ? "prgb" : "rgb";
               } else if (color.hasOwnProperty("h") && color.hasOwnProperty("s") && color.hasOwnProperty("v")) {
                 color.s = convertToPercentage(color.s);
                 color.v = convertToPercentage(color.v);
-                rgb3 = hsvToRgb(color.h, color.s, color.v);
+                rgb2 = hsvToRgb(color.h, color.s, color.v);
                 ok = true;
                 format = "hsv";
               } else if (color.hasOwnProperty("h") && color.hasOwnProperty("s") && color.hasOwnProperty("l")) {
                 color.s = convertToPercentage(color.s);
                 color.l = convertToPercentage(color.l);
-                rgb3 = hslToRgb(color.h, color.s, color.l);
+                rgb2 = hslToRgb(color.h, color.s, color.l);
                 ok = true;
                 format = "hsl";
               }
@@ -14759,9 +14759,9 @@
             return {
               ok,
               format: color.format || format,
-              r: mathMin(255, mathMax(rgb3.r, 0)),
-              g: mathMin(255, mathMax(rgb3.g, 0)),
-              b: mathMin(255, mathMax(rgb3.b, 0)),
+              r: mathMin(255, mathMax(rgb2.r, 0)),
+              g: mathMin(255, mathMax(rgb2.g, 0)),
+              b: mathMin(255, mathMax(rgb2.b, 0)),
               a
             };
           }
@@ -14919,11 +14919,11 @@
           }
           function brighten(color, amount) {
             amount = amount === 0 ? 0 : amount || 10;
-            var rgb3 = tinycolor2(color).toRgb();
-            rgb3.r = mathMax(0, mathMin(255, rgb3.r - mathRound(255 * -(amount / 100))));
-            rgb3.g = mathMax(0, mathMin(255, rgb3.g - mathRound(255 * -(amount / 100))));
-            rgb3.b = mathMax(0, mathMin(255, rgb3.b - mathRound(255 * -(amount / 100))));
-            return tinycolor2(rgb3);
+            var rgb2 = tinycolor2(color).toRgb();
+            rgb2.r = mathMax(0, mathMin(255, rgb2.r - mathRound(255 * -(amount / 100))));
+            rgb2.g = mathMax(0, mathMin(255, rgb2.g - mathRound(255 * -(amount / 100))));
+            rgb2.b = mathMax(0, mathMin(255, rgb2.b - mathRound(255 * -(amount / 100))));
+            return tinycolor2(rgb2);
           }
           function darken(color, amount) {
             amount = amount === 0 ? 0 : amount || 10;
@@ -14998,10 +14998,10 @@
           tinycolor2.mix = function(color1, color2, amount) {
             amount = amount === 0 ? 0 : amount || 50;
             var rgb1 = tinycolor2(color1).toRgb();
-            var rgb22 = tinycolor2(color2).toRgb();
+            var rgb2 = tinycolor2(color2).toRgb();
             var p = amount / 100;
             var w = p * 2 - 1;
-            var a = rgb22.a - rgb1.a;
+            var a = rgb2.a - rgb1.a;
             var w1;
             if (w * a == -1) {
               w1 = w;
@@ -15011,10 +15011,10 @@
             w1 = (w1 + 1) / 2;
             var w2 = 1 - w1;
             var rgba = {
-              r: rgb22.r * w1 + rgb1.r * w2,
-              g: rgb22.g * w1 + rgb1.g * w2,
-              b: rgb22.b * w1 + rgb1.b * w2,
-              a: rgb22.a * p + rgb1.a * (1 - p)
+              r: rgb2.r * w1 + rgb1.r * w2,
+              g: rgb2.g * w1 + rgb1.g * w2,
+              b: rgb2.b * w1 + rgb1.b * w2,
+              a: rgb2.a * p + rgb1.a * (1 - p)
             };
             return tinycolor2(rgba);
           };
@@ -15022,10 +15022,10 @@
             var c1 = tinycolor2(color1);
             var c2 = tinycolor2(color2);
             var rgb1 = c1.toRgb();
-            var rgb22 = c2.toRgb();
+            var rgb2 = c2.toRgb();
             var brightnessA = c1.getBrightness();
             var brightnessB = c2.getBrightness();
-            var colorDiff = Math.max(rgb1.r, rgb22.r) - Math.min(rgb1.r, rgb22.r) + Math.max(rgb1.g, rgb22.g) - Math.min(rgb1.g, rgb22.g) + Math.max(rgb1.b, rgb22.b) - Math.min(rgb1.b, rgb22.b);
+            var colorDiff = Math.max(rgb1.r, rgb2.r) - Math.min(rgb1.r, rgb2.r) + Math.max(rgb1.g, rgb2.g) - Math.min(rgb1.g, rgb2.g) + Math.max(rgb1.b, rgb2.b) - Math.min(rgb1.b, rgb2.b);
             return {
               brightness: Math.abs(brightnessA - brightnessB),
               color: colorDiff
@@ -15245,8 +15245,8 @@
           function isPercentage(n) {
             return typeof n === "string" && n.indexOf("%") != -1;
           }
-          function pad2(c) {
-            return c.length == 1 ? "0" + c : "" + c;
+          function pad2(c2) {
+            return c2.length == 1 ? "0" + c2 : "" + c2;
           }
           function convertToPercentage(n) {
             if (n <= 1) {
@@ -23996,8 +23996,8 @@
           var idx2 = i2 - colors.length * Math.floor(i2 / colors.length);
           return colors[idx2];
         };
-        this.setColors = function(c) {
-          colors = c;
+        this.setColors = function(c2) {
+          colors = c2;
         };
         this.reset = function() {
           idx = 0;
@@ -24014,13 +24014,13 @@
         if (h.length == 3) {
           h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
         }
-        var rgb3;
-        rgb3 = "rgba(" + parseInt(h.slice(0, 2), 16) + ", " + parseInt(h.slice(2, 4), 16) + ", " + parseInt(h.slice(4, 6), 16);
+        var rgb2;
+        rgb2 = "rgba(" + parseInt(h.slice(0, 2), 16) + ", " + parseInt(h.slice(2, 4), 16) + ", " + parseInt(h.slice(4, 6), 16);
         if (a) {
-          rgb3 += ", " + a;
+          rgb2 += ", " + a;
         }
-        rgb3 += ")";
-        return rgb3;
+        rgb2 += ")";
+        return rgb2;
       };
       jqplot.rgb2hex = function(s) {
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *(?:, *[0-9.]*)?\)/;
@@ -24054,9 +24054,9 @@
       };
       jqplot.getColorComponents = function(s) {
         s = jqplot.colorKeywordMap[s] || s;
-        var rgb3 = jqplot.normalize2rgb(s);
+        var rgb2 = jqplot.normalize2rgb(s);
         var pat = /rgba?\( *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *, *([0-9]{1,3}\.?[0-9]*%?) *,? *([0-9.]* *)?\)/;
-        var m = rgb3.match(pat);
+        var m = rgb2.match(pat);
         var ret = [];
         for (var i2 = 1; i2 < 4; i2++) {
           if (m[i2].search(/%/) != -1) {
@@ -25151,9 +25151,9 @@
           }
         }
         if (bands.fillColor === null) {
-          var c = _jqplot2.default.getColorComponents(bands.color);
-          c[3] = c[3] * 0.5;
-          bands.fillColor = "rgba(" + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3] + ")";
+          var c2 = _jqplot2.default.getColorComponents(bands.color);
+          c2[3] = c2[3] * 0.5;
+          bands.fillColor = "rgba(" + c2[0] + ", " + c2[1] + ", " + c2[2] + ", " + c2[3] + ")";
         }
       };
       function getSteps(d2, f) {
@@ -29663,17 +29663,17 @@
       this._posAngle = this.options.posAngle;
       this._latlng = (0, import_leaflet2.latLng)(latlng);
       const deg = Math.PI / 180, cpa = Math.cos(this._posAngle * deg), spa = Math.sin(this._posAngle * deg), cpa2 = cpa * cpa, spa2 = spa * spa, a2 = this._majAxis * this._majAxis, b2 = this._minAxis * this._minAxis;
-      let mx2 = a2 * cpa2 + b2 * spa2, my2 = a2 * spa2 + b2 * cpa2, mxy = (a2 - b2) * cpa * spa, c = mx2 * my2 - mxy * mxy;
+      let mx2 = a2 * cpa2 + b2 * spa2, my2 = a2 * spa2 + b2 * cpa2, mxy = (a2 - b2) * cpa * spa, c2 = mx2 * my2 - mxy * mxy;
       this._limX = Math.sqrt(mx2);
       this._limY = Math.sqrt(my2);
-      if (c <= 0) {
+      if (c2 <= 0) {
         mx2 += 1;
         my2 += 1;
-        c = mx2 * my2 - mxy * mxy;
+        c2 = mx2 * my2 - mxy * mxy;
       }
-      this._cXX = my2 / c;
-      this._cYY = mx2 / c;
-      this._cXY = -2 * mxy / c;
+      this._cXX = my2 / c2;
+      this._cYY = mx2 / c2;
+      this._cXY = -2 * mxy / c2;
     },
     setLatLng: function(latlng) {
       this._latlng = (0, import_leaflet2.latLng)(latlng);
@@ -30098,7 +30098,7 @@
   __export(util_exports, {
     RGB: () => RGB,
     VUtil: () => VUtil,
-    rgb: () => rgb2
+    rgb: () => rgb
   });
 
   // js/util/RGB.js
@@ -30135,7 +30135,7 @@
       return this.r > 0 || this.g > 0 || this.b > 0 ? true : false;
     }
   };
-  var rgb2 = function(r, g, b) {
+  var rgb = function(r, g, b) {
     if (r instanceof RGB) {
       return r;
     }
@@ -30225,12 +30225,12 @@
     getCookie: function(cname) {
       const name = cname + "=", ca = document.cookie.split(";");
       for (var i2 = 0; i2 < ca.length; i2++) {
-        var c = ca[i2];
-        while (c.charAt(0) === " ") {
-          c = c.substring(1);
+        var c2 = ca[i2];
+        while (c2.charAt(0) === " ") {
+          c2 = c2.substring(1);
         }
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length);
+        if (c2.indexOf(name) === 0) {
+          return c2.substring(name.length, c2.length);
         }
       }
       return "";
@@ -31022,7 +31022,7 @@
       } else {
         this.options.authenticate = false;
       }
-      const lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c = sysflag ? [
+      const lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180)), c2 = sysflag ? [
         wcs2.celSysToEq(map2.unproject(b.min, z)),
         wcs2.celSysToEq(map2.unproject((0, import_leaflet11.point)(b.min.x, b.max.y), z)),
         wcs2.celSysToEq(map2.unproject(b.max, z)),
@@ -31054,16 +31054,16 @@
       }
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
-          wcs2._deltaLng(c[0], center),
-          wcs2._deltaLng(c[1], center),
-          wcs2._deltaLng(c[2], center),
-          wcs2._deltaLng(c[3], center)
+          wcs2._deltaLng(c2[0], center),
+          wcs2._deltaLng(c2[1], center),
+          wcs2._deltaLng(c2[2], center),
+          wcs2._deltaLng(c2[3], center)
         ) - Math.min(
-          wcs2._deltaLng(c[0], center),
-          wcs2._deltaLng(c[1], center),
-          wcs2._deltaLng(c[2], center),
-          wcs2._deltaLng(c[3], center)
-        )) * lngfac, dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) - Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+          wcs2._deltaLng(c2[0], center),
+          wcs2._deltaLng(c2[1], center),
+          wcs2._deltaLng(c2[2], center),
+          wcs2._deltaLng(c2[3], center)
+        )) * lngfac, dlat = Math.max(c2[0].lat, c2[1].lat, c2[2].lat, c2[3].lat) - Math.min(c2[0].lat, c2[1].lat, c2[2].lat, c2[3].lat);
         if (dlat < 1e-4) {
           dlat = 1e-4;
         }
@@ -31094,10 +31094,10 @@
         );
       } else {
         const dr = Math.max(
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center),
-          wcs2.distance(c[0], center)
+          wcs2.distance(c2[0], center),
+          wcs2.distance(c2[0], center),
+          wcs2.distance(c2[0], center),
+          wcs2.distance(c2[0], center)
         );
         VUtil.requestURL(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
@@ -31210,12 +31210,12 @@
       if (!settings[mode]) {
         settings[mode] = {};
       }
-      const visio = layer.visio, nchan = visio.nChannel, setting = settings[mode];
+      const visio = layer.visio, setting = settings[mode];
       setting.channel = visio.channel;
       setting.cMap = visio.cMap;
       setting.rgb = [];
-      for (let c = 0; c < nchan; c++) {
-        setting.rgb[c] = visio.rgb[c].clone();
+      for (let c2 in visio.rgb) {
+        setting.rgb[c2] = visio.rgb[c2].clone();
       }
     },
     loadSettings: function(layer, settings, mode, keepChannel) {
@@ -31223,13 +31223,13 @@
       if (!setting) {
         return;
       }
-      const visio = layer.visio, nchan = visio.nChannel, vrgb = visio.rgb, srgb = setting.rgb;
+      const visio = layer.visio, vrgb = visio.rgb, srgb = setting.rgb;
       if (!keepChannel) {
         visio.channel = setting.channel;
       }
       visio.cMap = setting.cMap;
-      for (let c = 0; c < nchan; c++) {
-        vrgb[c] = srgb[c].clone();
+      for (let c2 in srgb) {
+        vrgb[c2] = srgb[c2].clone();
       }
     },
     _initDialog: function() {
@@ -31310,13 +31310,13 @@
       const cmapinput = import_leaflet12.DomUtil.create("div", className + "-cmaps", elem2), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
         _this._onInputChange(layer, "cMap", value);
       };
-      for (let c in cmaps) {
-        cbutton[c] = this._addRadioButton(
+      for (let c2 in cmaps) {
+        cbutton[c2] = this._addRadioButton(
           "leaflet-cmap",
           cmapinput,
-          cmaps[c],
-          cmaps[c] === this.options.cMap,
-          '"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) + '" color-map',
+          cmaps[c2],
+          cmaps[c2] === this.options.cMap,
+          '"' + cmaps[c2].charAt(0).toUpperCase() + cmaps[c2].substr(1) + '" color-map',
           _changeMap
         );
       }
@@ -31372,19 +31372,18 @@
         "colormix-auto",
         "Re-color active channels",
         function() {
-          const nchan = visio.nChannel, rgb3 = visio.rgb, defcol = layer.visioDefault.channelColors;
-          let cc = 0, nchanon = 0;
-          for (let c = 0; c < nchan; c++) {
-            if (rgb3[c].isOn()) {
-              nchanon++;
-            }
+          const nchan = visio.nChannel, vrgb = visio.rgb, defcol = layer.visioDefault.channelColors;
+          let nchanon = 0;
+          for (const c2 in vrgb) {
+            nchanon++;
           }
           if (nchanon >= defcol.length) {
             nchanon = defcol.length - 1;
           }
-          for (let c = 0; c < nchan; c++) {
-            if (rgb3[c].isOn() && cc < nchanon) {
-              rgb3[c] = rgb3(defcol[nchanon][cc++]);
+          let cc = 0;
+          for (const c2 in vrgb) {
+            if (cc < nchanon) {
+              vrgb[c2] = rgb(defcol[nchanon][cc++]);
             }
           }
           layer.updateMix();
@@ -31447,8 +31446,8 @@
         );
       }, this);
     },
-    _updateMix: function(layer, channel, rgb3) {
-      layer.rgbToMix(channel, rgb3);
+    _updateMix: function(layer, channel, channel_rgb) {
+      layer.rgbToMix(channel, channel_rgb);
       this._updateChannelList(layer);
       layer.redraw();
     },
@@ -31466,37 +31465,34 @@
       }
       chanElems = this._channelElems = [];
       trashElems = this._trashElems = [];
-      for (let c in chanLabels) {
-        var chan = parseInt(c, 10), rgb3 = visio.rgb[chan];
-        if (rgb3.isOn()) {
-          var chanElem = import_leaflet12.DomUtil.create(
-            "div",
-            this._className + "-channel",
-            chanList
-          ), color = import_leaflet12.DomUtil.create(
-            "div",
-            this._className + "-chancolor",
-            chanElem
-          );
-          color.style.backgroundColor = rgb3.toStr();
-          this._activateChanElem(color, layer, chan);
-          var label = import_leaflet12.DomUtil.create(
-            "div",
-            this._className + "-chanlabel",
-            chanElem
-          );
-          label.innerHTML = chanLabels[c];
-          this._activateChanElem(label, layer, chan);
-          var trashElem = this._addButton(
-            "visiomatic-control-trash",
-            chanElem,
-            void 0,
-            "Delete channel"
-          );
-          this._activateTrashElem(trashElem, layer, chan);
-          chanElems.push(chanElem);
-          trashElems.push(trashElem);
-        }
+      for (c in visio.rgb) {
+        var chan = parseInt(c, 10), vrgb = visio.rgb[chan], chanElem = import_leaflet12.DomUtil.create(
+          "div",
+          this._className + "-channel",
+          chanList
+        ), color = import_leaflet12.DomUtil.create(
+          "div",
+          this._className + "-chancolor",
+          chanElem
+        );
+        color.style.backgroundColor = vrgb.toStr();
+        this._activateChanElem(color, layer, chan);
+        var label = import_leaflet12.DomUtil.create(
+          "div",
+          this._className + "-chanlabel",
+          chanElem
+        );
+        label.innerHTML = chanLabels[c];
+        this._activateChanElem(label, layer, chan);
+        var trashElem = this._addButton(
+          "visiomatic-control-trash",
+          chanElem,
+          void 0,
+          "Delete channel"
+        );
+        this._activateTrashElem(trashElem, layer, chan);
+        chanElems.push(chanElem);
+        trashElems.push(trashElem);
       }
     },
     _updateColPick: function(layer) {
@@ -31506,7 +31502,7 @@
     },
     _activateTrashElem: function(trashElem, layer, channel) {
       import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
-        this._updateMix(layer, channel, rgb(0, 0, 0));
+        this._updateMix(layer, channel, false);
         if (layer === this._layer && channel === layer.visio.channel) {
           this._updateColPick(layer);
         }
@@ -31594,15 +31590,15 @@
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
       coordSelect.title = "Switch coordinate system";
-      for (var c in coords2) {
-        coordOpt[c] = document.createElement("option");
-        coordOpt[c].text = coords2[c].label;
-        var coordIndex = parseInt(c, 10);
-        coordOpt[c].value = coordIndex;
+      for (var c2 in coords2) {
+        coordOpt[c2] = document.createElement("option");
+        coordOpt[c2].text = coords2[c2].label;
+        var coordIndex = parseInt(c2, 10);
+        coordOpt[c2].value = coordIndex;
         if (coordIndex === 0) {
-          coordOpt[c].selected = true;
+          coordOpt[c2].selected = true;
         }
-        coordSelect.add(coordOpt[c], null);
+        coordSelect.add(coordOpt[c2], null);
       }
       import_leaflet13.DomEvent.on(coordSelect, "change", function(e) {
         _this._currentCoord = coordSelect.value;
@@ -32359,9 +32355,9 @@
       );
     },
     _updateMix: function(layer) {
-      const nchannel2 = layer.visio.nChannel;
-      for (let c = 0; c < nchannel2; c++) {
-        layer.rgbToMix(c);
+      const colors = layer.visio.rgb;
+      for (const c2 in colors) {
+        layer.rgbToMix(c2);
       }
       return;
     }
@@ -32563,13 +32559,13 @@
             title = "Image profile for " + visio.channelLabels[visio.channel];
             ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
           } else {
-            const rgb3 = visio.rgb;
-            for (let c = 0; c < visio.nChannel; c++) {
-              if (rgb3[c].isOn()) {
-                prof.push(self2._extractProfile(layer, rawprof, c));
+            const rgb2 = visio.rgb;
+            for (let c2 = 0; c2 < visio.nChannel; c2++) {
+              if (rgb2[c2].isOn()) {
+                prof.push(self2._extractProfile(layer, rawprof, c2));
                 series.push({
-                  color: rgb3[c].toStr(),
-                  label: visio.channelLabels[c]
+                  color: rgb2[c2].toStr(),
+                  label: visio.channelLabels[c2]
                 });
               }
             }
@@ -32639,10 +32635,10 @@
         if (httpRequest.status === 200) {
           const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker2 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title = "Image Spectrum", ylabel = "Average pixel value";
           self2.addLayer(marker2, "Image spectrum");
-          for (let c = 0; c < visio.nChannel; c++) {
+          for (let c2 = 0; c2 < visio.nChannel; c2++) {
             spec.push([
-              visio.channelLabels[c],
-              self2._extractAverage(layer, rawprof, c)
+              visio.channelLabels[c2],
+              self2._extractAverage(layer, rawprof, c2)
             ]);
           }
           $(document).ready(function() {
@@ -34078,7 +34074,7 @@
         [""],
         ["#FFFFFF"],
         ["#00BAFF", "#FFBA00"],
-        ["#0000FF", "#00FF00", "#FF0000"],
+        ["#0000FF", "#00BA00", "#FF0000"],
         ["#0000E0", "#00BA88", "#88BA00", "#E00000"],
         ["#0000CA", "#007BA8", "#00CA00", "#A87B00", "#CA0000"],
         ["#0000BA", "#00719B", "#009B71", "#719B00", "#9B7100", "#BA0000"]
@@ -34163,67 +34159,67 @@
         }
         nchannel = visio.nChannel = meta.channels;
         images = meta.images;
-        for (let c = 0; c < nchannel; c++) {
-          visioDefault.minValue[c] = images[0].min_max[c][0];
-          visioDefault.maxValue[c] = images[0].min_max[c][1];
+        for (let c3 = 0; c3 < nchannel; c3++) {
+          visioDefault.minValue[c3] = images[0].min_max[c3][0];
+          visioDefault.maxValue[c3] = images[0].min_max[c3][1];
         }
         const minmax = options2.minMaxValues;
         if (minmax.length) {
-          for (let c = 0; c < nchannel; c++) {
-            if (minmax[c] !== void 0 && minmax[c].length) {
-              visio.minValue[c] = minmax[c][0];
-              visio.maxValue[c] = minmax[c][1];
+          for (let c3 = 0; c3 < nchannel; c3++) {
+            if (minmax[c3] !== void 0 && minmax[c3].length) {
+              visio.minValue[c3] = minmax[c3][0];
+              visio.maxValue[c3] = minmax[c3][1];
             } else {
-              visio.minValue[c] = visioDefault.minValue[c];
-              visio.maxValue[c] = visioDefault.maxValue[c];
+              visio.minValue[c3] = visioDefault.minValue[c3];
+              visio.maxValue[c3] = visioDefault.maxValue[c3];
             }
           }
         } else {
-          for (let c = 0; c < nchannel; c++) {
-            visio.minValue[c] = visioDefault.minValue[c];
-            visio.maxValue[c] = visioDefault.maxValue[c];
+          for (let c3 = 0; c3 < nchannel; c3++) {
+            visio.minValue[c3] = visioDefault.minValue[c3];
+            visio.maxValue[c3] = visioDefault.maxValue[c3];
           }
         }
         visio.channel = options2.defaultChannel;
         const inlabels = options2.channelLabels, ninlabel = inlabels.length, labels = visio.channelLabels, inunits = options2.channelUnits, ninunits = inunits.length, units = visio.channelUnits, key = VUtil.readFITSKey;
-        if (!(filter = images[0].header["FILTER"])) {
-          filter = "Channel";
+        let label = "Channel";
+        if (nchannel === 1 && (filter = images[0].header["FILTER"])) {
+          label = filter;
         }
-        for (let c = 0; c < nchannel; c++) {
-          if (c < ninlabel) {
-            labels[c] = inlabels[c];
+        for (let c3 = 0; c3 < nchannel; c3++) {
+          if (c3 < ninlabel) {
+            labels[c3] = inlabels[c3];
           } else {
-            labels[c] = nchannel > 1 ? filter + " #" + (c + 1).toString() : filter;
+            labels[c3] = nchannel > 1 ? "Channel #" + (c3 + 1).toString() : filter;
           }
         }
-        for (let c = 0; c < ninunits; c++) {
-          units[c] = inunits[c];
+        for (const c3 in inunits) {
+          units[c3] = inunits[c3];
         }
-        for (let c = ninunits; c < nchannel; c++) {
-          units[c] = "ADUs";
+        for (let c3 = ninunits; c3 < nchannel; c3++) {
+          units[c3] = "ADUs";
         }
-        const mix = visio.mix, omix = options2.channelColors, rgb3 = visio.rgb, re = new RegExp(options2.channelLabelMatch), channelflags = visio.channelFlags;
+        const mix = visio.mix, colors = options2.channelColors, rgb2 = visio.rgb, re = new RegExp(options2.channelLabelMatch), channelflags = visio.channelFlags;
         let cc = 0, nchanon = 0;
-        for (let c = 0; c < nchannel; c++) {
-          channelflags[c] = re.test(labels[c]);
-          if (channelflags[c]) {
+        for (var c2 = 0; c2 < nchannel; c2++) {
+          channelflags[c2] = re.test(labels[c2]);
+          if (channelflags[c2]) {
             nchanon++;
           }
         }
         if (nchanon >= visioDefault.channelColors.length) {
           nchanon = visioDefault.channelColors.length - 1;
         }
-        for (let c = 0; c < nchannel; c++) {
-          mix[c] = [];
-          if (omix.length && omix[c] && omix[c].length === 3) {
-            rgb3[c] = rgb2(omix[c][0], omix[c][1], omix[c][2]);
-          } else {
-            rgb3[c] = rgb2(0, 0, 0);
+        if (colors.length) {
+          for (const c3 in colors) {
+            rgb2[c3] = rgb(colors[c3][0], colors[c3][1], colors[c3][2]);
+            mix[c3] = [];
+            this.rgbToMix(c3);
           }
-          if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-            rgb3[c] = rgb2(visioDefault.channelColors[nchanon][cc++]);
-          }
-          this.rgbToMix(c);
+        } else {
+          rgb2[0] = rgb(visioDefault.channelColors[3][0]);
+          rgb2[Math.floor(nchannel / 2)] = rgb(visioDefault.channelColors[3][1]);
+          rgb2[nchannel - 1] = rgb(visioDefault.channelColors[3][2]);
         }
         if (options2.bounds) {
           options2.bounds = (0, import_leaflet30.latLngBounds)(options2.bounds);
@@ -34242,14 +34238,19 @@
         alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
-    rgbToMix: function(channel, rgb3) {
+    rgbToMix: function(channel, rgb2) {
       const visio = this.visio;
-      if (rgb3) {
-        visio.rgb[channel] = rgb3.clone();
+      if (rgb2) {
+        visio.rgb[channel] = rgb2.clone();
+      } else if (rgb2 === false) {
+        delete visio.rgb[channel];
+        delete visio.mix[channel];
+        return;
       } else {
-        rgb3 = visio.rgb[channel];
+        rgb2 = visio.rgb[channel];
       }
-      const cr = this._gammaCorr(rgb3.r), cg = this._gammaCorr(rgb3.g), cb = this._gammaCorr(rgb3.b), lum = (cr + cg + cb) / 3, alpha = visio.colorSat / 3;
+      const cr = this._gammaCorr(rgb2.r), cg = this._gammaCorr(rgb2.g), cb = this._gammaCorr(rgb2.b), lum = (cr + cg + cb) / 3, alpha = visio.colorSat / 3;
+      visio.mix[channel] = [];
       visio.mix[channel][0] = lum + alpha * (2 * cr - cg - cb);
       visio.mix[channel][1] = lum + alpha * (2 * cg - cr - cb);
       visio.mix[channel][2] = lum + alpha * (2 * cb - cr - cg);
@@ -34261,8 +34262,8 @@
     updateMix: function() {
       const visio = this.visio, nchannel2 = visio.nChannel;
       visio.mode = "color";
-      for (let c = 0; c < nchannel2; c++) {
-        this.rgbToMix(c, visio.rgb[c]);
+      for (const c2 in visio.rgb) {
+        this.rgbToMix(c2, visio.rgb[c2]);
       }
     },
     _gammaCorr: function(val) {
@@ -34405,31 +34406,32 @@
       if (visio.gamma !== visioDefault.gamma) {
         str2 += "&GAM=" + (1 / visio.gamma).toFixed(4);
       }
-      for (let c = 0; c < visio.nChannel; c++) {
-        if (visio.minValue[c] !== visioDefault.minValue[c] || visio.maxValue[c] !== visioDefault.maxValue[c]) {
-          str2 += "&MINMAX=" + (c + 1).toString() + ":" + visio.minValue[c].toString() + "," + visio.maxValue[c].toString();
-        }
-      }
       const nchannel2 = visio.nChannel, mix = visio.mix;
       if (visio.mode === "color") {
-        str2 += "&CTW=";
-        for (let n = 0; n < 3; n++) {
-          if (n) {
-            str2 += ";";
+        for (let c2 = 0; c2 < visio.nChannel; c2++) {
+          if (visio.minValue[c2] !== visioDefault.minValue[c2] || visio.maxValue[c2] !== visioDefault.maxValue[c2]) {
+            str2 += "&MINMAX=" + (c2 + 1).toString() + ":" + visio.minValue[c2].toString() + "," + visio.maxValue[c2].toString();
           }
-          str2 += mix[0][n].toString();
-          for (let m = 1; m < nchannel2; m++) {
-            if (mix[m][n] !== void 0) {
-              str2 += "," + mix[m][n].toString();
+        }
+        for (const m in mix) {
+          str2 += "&MIX=" + (parseInt(m, 10) + 1).toString() + ":";
+          for (let n = 0; n < 3; n++) {
+            if (n) {
+              str2 += ",";
             }
+            str2 += mix[m][n].toFixed(3);
           }
         }
       } else {
-        let cc = visio.channel + 1;
-        if (cc > nchannel2) {
-          cc = 1;
+        const chan = visio.channel;
+        let chanp1 = chan + 1;
+        if (chanp1 > nchannel2) {
+          chanp1 = 1;
         }
-        str2 += "&CHAN=" + cc.toString();
+        str2 += "&CHAN=" + chanp1.toString();
+        if (visio.minValue[chan] !== visioDefault.minValue[chan] || visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
+          str2 += "&MINMAX=" + chanp1.toString() + ":" + visio.minValue[chan].toString() + "," + visio.maxValue[chan].toString();
+        }
       }
       if (visio.quality !== visioDefault.quality) {
         str2 += "&QLT=" + visio.quality.toString();

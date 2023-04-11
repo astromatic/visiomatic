@@ -93,7 +93,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			[''],
 			['#FFFFFF'],
 			['#00BAFF', '#FFBA00'],
-			['#0000FF', '#00FF00', '#FF0000'],
+			['#0000FF', '#00BA00', '#FF0000'],
 			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
 			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
 			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
@@ -405,20 +405,21 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			    units = visio.channelUnits,
 				key = VUtil.readFITSKey;
 
-			if (!(filter = images[0].header['FILTER'])) {
-				filter = 'Channel'
+			let label = 'Channel';
+			if (nchannel === 1 && (filter = images[0].header['FILTER'])) {
+				label = filter;
 			}
 			for (let c = 0; c < nchannel; c++) {
 				if (c < ninlabel) {
 					labels[c] = inlabels[c];
 				} else {
-					labels[c] = nchannel > 1 ? filter + ' #' + (c + 1).toString()
+					labels[c] = nchannel > 1 ? 'Channel #' + (c + 1).toString()
 						: filter;
 				}
 			}
 
 			// Copy those units that have been provided
-			for (let c = 0; c < ninunits; c++) {
+			for (const c in inunits) {
 				units[c] = inunits[c];
 			}
 			// Fill out units that are not provided with a default string
@@ -428,7 +429,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Initialize mixing matrix depending on arguments and the number of channels
 			const	mix = visio.mix,
-				omix = options.channelColors,
+				colors = options.channelColors,
 				rgb = visio.rgb,
 				re = new RegExp(options.channelLabelMatch),
 				channelflags = visio.channelFlags;
@@ -436,7 +437,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			let	cc = 0,
 				nchanon = 0;
 
-			for (let c = 0; c < nchannel; c++) {
+			for (var c = 0; c < nchannel; c++) {
 				channelflags[c] = re.test(labels[c]);
 				if (channelflags[c]) {
 					nchanon++;
@@ -446,20 +447,30 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				nchanon = visioDefault.channelColors.length - 1;
 			}
 
-			for (let c = 0; c < nchannel; c++) {
-				mix[c] = [];
-				if (omix.length && omix[c] && omix[c].length === 3) {
+			if (colors.length) {
+				// Dispatch input colors
+				for (const c in colors) {
 					// Copy RGB triplet
-					rgb[c] = rgbin(omix[c][0], omix[c][1], omix[c][2]);
-				} else {
-					rgb[c] = rgbin(0.0, 0.0, 0.0);
+					rgb[c] = rgbin(colors[c][0], colors[c][1], colors[c][2]);
+					mix[c] = [];
+					this.rgbToMix(c);
 				}
-				if (omix.length === 0 && channelflags[c] && cc < nchanon) {
-					rgb[c] = rgbin(visioDefault.channelColors[nchanon][cc++]);
-				}
-				// Compute the current row of the mixing matrix
-				this.rgbToMix(c);
+			} else {
+				// Dispatch default colors
+				rgb[0] = rgbin(visioDefault.channelColors[3][0]);
+				rgb[Math.floor(nchannel / 2)] = rgbin(visioDefault.channelColors[3][1]);
+				rgb[nchannel -1] = rgbin(visioDefault.channelColors[3][2]);
+				/*
+				for (const c = 0; c < nchannel; c++) {
+					if (channelflags[c] && cc < nchanon) {
+						rgb[c] = rgbin(visioDefault.channelColors[nchanon][cc++]);
+						// Compute the current row of the mixing matrix
+						mix[c] = [];
+						this.rgbToMix(c);
+					}
+				*/
 			}
+
 			if (options.bounds) {
 				options.bounds = latLngBounds(options.bounds);
 			}
@@ -487,12 +498,16 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * Update the color mixing matrix with the RGB contribution of a given
 	   channel.
 	 * @param {number} channel - Input channel.
-	 * @param {RGB} rgb - RGB color.
+	 * @param {RGB | false} rgb - RGB color. False deletes the channel.
 	 */
 	rgbToMix: function (channel, rgb) {
 		const	visio = this.visio;
 		if (rgb) {
 			visio.rgb[channel] = rgb.clone();
+		} else if (rgb === false) {
+			delete visio.rgb[channel];
+			delete visio.mix[channel];
+			return;
 		} else {
 			rgb = visio.rgb[channel];
 		}
@@ -503,6 +518,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			lum = (cr + cg + cb) / 3.0,
 			alpha = visio.colorSat / 3.0;
 
+		visio.mix[channel] = [];
 		visio.mix[channel][0] = lum + alpha * (2.0 * cr - cg - cb);
 		visio.mix[channel][1] = lum + alpha * (2.0 * cg - cr - cb);
 		visio.mix[channel][2] = lum + alpha * (2.0 * cb - cr - cg);
@@ -534,7 +550,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			nchannel = visio.nChannel;
 
 		visio.mode = 'color';
-		for (let c = 0; c < nchannel; c++) {
+		for (const c in visio.rgb) {
 			this.rgbToMix(c, visio.rgb[c]);
 		}
 	},
@@ -768,36 +784,41 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.gamma !== visioDefault.gamma) {
 			str += '&GAM=' + (1.0 / visio.gamma).toFixed(4);
 		}
-		for (let c = 0; c < visio.nChannel; c++) {
-			if (visio.minValue[c] !== visioDefault.minValue[c] ||
-			   visio.maxValue[c] !== visioDefault.maxValue[c]) {
-				str += '&MINMAX=' + (c + 1).toString() + ':' +
-				   visio.minValue[c].toString() + ',' +
-				   visio.maxValue[c].toString();
-			}
-		}
 
 		const nchannel = visio.nChannel,
 		    mix = visio.mix;
 
 		if (visio.mode === 'color') {
-			str += '&CTW=';
-			for (let n = 0; n < 3; n++) {
-				if (n) { str += ';'; }
-				str += mix[0][n].toString();
-				for (let m = 1; m < nchannel; m++) {
-					if (mix[m][n] !== undefined) {
-						str += ',' + mix[m][n].toString();
-					}
+			for (let c = 0; c < visio.nChannel; c++) {
+				if (visio.minValue[c] !== visioDefault.minValue[c] ||
+				   visio.maxValue[c] !== visioDefault.maxValue[c]) {
+					str += '&MINMAX=' + (c + 1).toString() + ':' +
+					   visio.minValue[c].toString() + ',' +
+					   visio.maxValue[c].toString();
+				}
+			}
+			for (const m in mix) {
+				str += '&MIX=' + (parseInt(m, 10) + 1).toString() + ':';
+				for (let n = 0; n < 3; n++) {
+					if (n) { str += ','; }
+					str += mix[m][n].toFixed(3);
 				}
 			}
 		} else {
-			let	cc = visio.channel + 1;
+			const	chan = visio.channel;
 
-			if (cc > nchannel) {
-				cc = 1;
+			let	chanp1 = chan + 1;
+
+			if (chanp1 > nchannel) {
+				chanp1 = 1;
 			}
-			str += '&CHAN=' + cc.toString();
+			str += '&CHAN=' + chanp1.toString();
+			if (visio.minValue[chan] !== visioDefault.minValue[chan] ||
+				visio.maxValue[chan] !== visioDefault.maxValue[chan]) {
+				str += '&MINMAX=' + chanp1.toString() + ':' +
+					visio.minValue[chan].toString() + ',' +
+					visio.maxValue[chan].toString();
+			}
 		}
 
 		if (visio.quality !== visioDefault.quality) {

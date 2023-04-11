@@ -190,8 +190,8 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 	   VisiOmatic layer.
 	 */
 	_updateMix: function (layer) {
-		const	nchannel = layer.visio.nChannel;
-		for (let c = 0; c < nchannel; c++) {
+		const	colors = layer.visio.rgb;
+		for (const c in colors) { 
 			layer.rgbToMix(c);
 		}
 		return;
