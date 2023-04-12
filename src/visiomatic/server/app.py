@@ -6,6 +6,9 @@ Application module
 
 import io, os, re
 import logging
+import pickle
+from multiprocessing import RLock
+
 import numpy as np
 from typing import List, Literal, Optional
 from fastapi import FastAPI, Query, Request
@@ -24,6 +27,7 @@ def create_app() -> FastAPI:
     Create FASTAPI application
     """
 
+    worker_id = os.getpid()
     banner = app_settings.BANNER
     doc_dir = app_settings.DOC_DIR
     doc_path = app_settings.DOC_PATH
@@ -46,6 +50,7 @@ def create_app() -> FastAPI:
             "url":  package.license_url
         }
     )
+
     """
     origins = [
         "http://halau.cfht.hawaii.edu",
@@ -213,9 +218,19 @@ def create_app() -> FastAPI:
             )
 
         if FIF in app.tiled:
-            tiled = app.tiled[FIF]
+            tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
+            tiled.tiles = app.tiles
         else:
             app.tiled[FIF] = (tiled := Tiled(FIF))
+            app.tiles = tiled.tiles
+            tiled.tiles = None
+            tiled.data = None
+            for image in tiled.images:
+                image.data = None
+            pickle.dump(tiled, open(f"{FIF}_{worker_id}.p", "wb"), protocol=5)
+            tiled.tiles = app.tiles
+
+
         if obj != None:
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
         elif INFO != None:

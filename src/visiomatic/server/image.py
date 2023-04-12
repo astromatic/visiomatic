@@ -74,6 +74,7 @@ class Image(object):
         self.header = hdu.header
         shape = hdu.data.shape
         self.data = hdu.data.astype(np.float32).reshape(-1,shape[-2], shape[-1])
+        self.shape = self.data.shape
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
         self.nchannels = self.data.shape[0]
@@ -100,7 +101,7 @@ class Image(object):
             Pydantic model instance of the image
         """
         return ImageModel(
-            size=self.data.shape[::-1],
+            size=self.shape[::-1],
             dataslice=self.datasliceinfo,
             detslice=self.detsliceinfo,
             min_max=[list(minmax) for minmax in self.minmax],
