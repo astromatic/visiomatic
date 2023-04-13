@@ -327,12 +327,41 @@ class Tiled(object):
         self.tilesize = tilesize;
         self.tilesize[0] = self.nchannels
         self.make_mosaic(self.images)
-        self.nlevels = max((self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1, \
-                        (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1)
         self.gamma = gamma
         self.maxfac = 1.0e30
+        self.nlevels = self.compute_nlevels()
+        self.ntiles = np.array(
+            [self.compute_ntiles(l) for l in range(self.nlevels)],
+            dtype=np.int
+        )
         self.make_tiles()
 
+
+    def compute_nlevels(self) -> int:
+        """
+        Return the number of image resolution levels.
+        
+        Returns
+        -------
+        nlevels: int
+            Number of image resolution levels in the pyramid.
+        """
+        return max(
+            (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1,
+            (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1
+        )
+
+    def compute_ntiles(self, level=0) -> int:
+        """
+        Return the number of tiles at a given image resolution level.
+        
+        Returns
+        -------
+        ntiles: int
+            Number of tiles.
+        """
+        return ((self.shape[1] >> level) // (self.tilesize[1] + 1) + 1) * \
+            ((self.shape[2] >> level) // (self.tilesize[2] + 1) + 1)
 
     def get_model(self) -> TiledModel:
         """
@@ -541,11 +570,10 @@ class Tiled(object):
             tiler = Tiler(
                 data_shape = ima.shape,
                 tile_shape = self.tilesize,
-                mode='irregular',
+                mode='constant',
                 channel_dimension=0
             )
-            for tile_id, tile in tiler.iterate(ima):
-                tiles.append(tile)
+            tiles = tiler.get_all_tiles(ima, copy_data=False)
             self.tiles.append(tiles)
             # Pure NumPy approach if in multichannel mode
             # else use OpenCV (faster but does not work with multiplanar data)
@@ -563,7 +591,7 @@ class Tiled(object):
                 dsize=(ima.shape[1]//2, ima.shape[0]//2),
                 interpolation=cv2.INTER_AREA
             )[None,:,:]
-        del ima
+        del ima, tiler
 
     @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
     def get_tile(
