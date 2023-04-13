@@ -20,7 +20,7 @@ from fastapi.encoders import jsonable_encoder
 
 from .. import package
 from .settings import app_settings 
-from .image import colordict, Tiled
+from .tiled import colordict, Tiled
 from .lru import LRUCache
 
 def create_app() -> FastAPI:
