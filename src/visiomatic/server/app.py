@@ -21,6 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from .. import package
 from .settings import app_settings 
 from .image import colordict, Tiled
+from .lru import LRUCache
 
 def create_app() -> FastAPI:
     """
@@ -28,10 +29,11 @@ def create_app() -> FastAPI:
     """
 
     worker_id = os.getpid()
+    cachedTiled = LRUCache(Tiled, maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT)
     banner = app_settings.BANNER
     doc_dir = app_settings.DOC_DIR
     doc_path = app_settings.DOC_PATH
-    doc_url = app_settings.DOC_URL
+    userdoc_url = app_settings.USERDOC_URL
     tiles_path = app_settings.TILES_PATH
 
     logger = logging.getLogger("uvicorn.error")
@@ -87,14 +89,11 @@ def create_app() -> FastAPI:
         logger.warning(f"Default documentation not found in {doc_dir}!")
         logger.warning("Has the HTML documentation been compiled ?")
         logger.warning("De-activating documentation URL in built-in web client.")
-        doc_url = ""
+        userdoc_url = ""
 
 
     # Instantiate templates
     templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
-
-    # Prepare the dictionary of tiled image pyramids
-    app.tiled = {}
 
     # Prepare the RegExps
     reg_jtl = r"^(\d+),(\d+)$"
@@ -216,7 +215,8 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
-
+        tiled = cachedTiled(FIF)
+        '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
             tiled.tiles = app.tiles
@@ -229,7 +229,7 @@ def create_app() -> FastAPI:
                 image.data = None
             pickle.dump(tiled, open(f"{FIF}_{worker_id}.p", "wb"), protocol=5)
             tiled.tiles = app.tiles
-
+        '''
 
         if obj != None:
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
@@ -293,7 +293,7 @@ def create_app() -> FastAPI:
                 "request": request,
                 "root_path": request.scope.get("root_path"),
                 "tiles_path": tiles_path,
-                "doc_url": doc_url,
+                "doc_url": userdoc_url,
                 "image": image,
                 "package": package.title
             }

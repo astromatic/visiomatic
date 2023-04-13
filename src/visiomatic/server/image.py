@@ -5,6 +5,7 @@ Image module
 # Licensed under the MIT licence
 
 import io, os, re
+from methodtools import lru_cache
 from typing import List, Optional, Tuple, Union
 from joblib import Parallel, delayed
 from pydantic import BaseModel
@@ -564,6 +565,7 @@ class Tiled(object):
             )[None,:,:]
         del ima
 
+    @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
     def get_tile(
             self,
             tileres: int,
