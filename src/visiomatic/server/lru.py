@@ -40,6 +40,8 @@ class LRUCache:
         -------
         result: any
             Cached item.
+
+        :meta public:
         """
         if args in self.cache:
            self.cache.move_to_end(args)
