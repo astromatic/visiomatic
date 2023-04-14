@@ -23,6 +23,7 @@ from .settings import app_settings
 from .tiled import colordict, Tiled
 from .lru import LRUCache
 
+
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
@@ -260,13 +261,13 @@ def create_app() -> FastAPI:
                 ] for r in resp
             ]
         resp = app.parse_jtl.findall(JTL)[0]
-        r = tiled.nlevels - 1 - int(resp[0])
-        if r < 0:
-            r = 0
-        t = int(resp[1])
-        pix = tiled.get_tile(
-            r,
-            t,
+        tl = tiled.nlevels - 1 - int(resp[0])
+        if tl < 0:
+            tl = 0
+        ti = int(resp[1])
+        pix = tiled.get_tile_cached(
+            tl,
+            ti,
             channel=CHAN,
             minmax=minmax,
             mix=mix,

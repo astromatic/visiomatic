@@ -5,6 +5,7 @@ Image tiling module
 # Licensed under the MIT licence
 
 import os
+from functools import wraps
 from methodtools import lru_cache
 from typing import List, Tuple, Union
 from joblib import Parallel, delayed
@@ -379,10 +380,9 @@ class Tiled(object):
             )[None,:,:]
         del ima, tiler
 
-    @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
     def get_tile(
             self,
-            tileres: int,
+            tilelevel: int,
             tileindex: int,
             channel: Union[int, None] = None,
             minmax: Union[list[float, float], None] = None,
@@ -397,7 +397,7 @@ class Tiled(object):
         
         Parameters
         ----------
-        tileres:  int
+        tilelevel:  int
             Tile resolution level.
         tileindex:  int
             Tile index.
@@ -425,7 +425,7 @@ class Tiled(object):
             channel = 1
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[tileres][tileindex],
+                self.tiles[tilelevel][tileindex],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
@@ -449,4 +449,12 @@ class Tiled(object):
             quality=quality,
             colorspace='RGB'
         )
+
+    @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
+    def get_tile_cached(self, *args, **kwargs):
+        """
+        Cached version of get_tile().
+        """
+        return self.get_tile(*args, **kwargs)
+
 
