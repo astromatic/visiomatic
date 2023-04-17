@@ -86,13 +86,14 @@ class Tiled(object):
             self,
             filename,
             extnum : Union[int, None] = None,
-            tilesize : Tuple[int, int] = [1, 256,256],
+            tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
             nthreads : int = os.cpu_count() // 2):
 
         self.nthreads = nthreads
         self.filename = filename
+        self.prefix = os.path.splitext(os.path.basename(filename))[0]
         hdus = fits.open(os.path.join(app_settings.DATA_DIR, filename))
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
@@ -111,8 +112,7 @@ class Tiled(object):
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
         self.cmix= np.ones((3, self.nchannels), dtype=np.float32)
-        self.tilesize = tilesize;
-        self.tilesize[0] = self.nchannels
+        self.tilesize = [self.nchannels, tilesize[0], tilesize[1]];
         self.make_mosaic(self.images)
         self.gamma = gamma
         self.maxfac = 1.0e30
@@ -147,8 +147,8 @@ class Tiled(object):
         ntiles: int
             Number of tiles.
         """
-        return ((self.shape[1] >> level) // (self.tilesize[1] + 1) + 1) * \
-            ((self.shape[2] >> level) // (self.tilesize[2] + 1) + 1)
+        return (((self.shape[1] >> level) - 1) // self.tilesize[1] + 1) * \
+            (((self.shape[2] >> level) - 1) // self.tilesize[2] + 1)
 
     def get_model(self) -> TiledModel:
         """
@@ -191,8 +191,17 @@ class Tiled(object):
             # Compute the chip corner position in the mosaic, Python style
             start = [min(y) - 1, min(x) -1]
             # Compute the mosaic shape
-            shape = [self.nchannels, max(y) - start[0],  max(x) - start[1]]
-            self.data = np.zeros(shape, dtype=images[0].data.dtype)
+            shape = (self.nchannels, max(y) - start[0],  max(x) - start[1])
+            self.data_filename = os.path.join(
+                 app_settings.MEMMAP_DIR,
+                 self.prefix + ".data.np"
+            )
+            self.data = np.memmap(
+                self.data_filename,
+                dtype=images[0].data.dtype,
+                mode='w+',
+                shape=shape
+            )
             for image in images:
                 image.compute_geometry(start, shape)
                 self.data[image.detslice] = image.data[image.dataslice]
@@ -203,7 +212,7 @@ class Tiled(object):
             )
             self.bitdepth = images[0].bitdepth
             self.header = self.make_header()
-
+            self.data.flush()
 
     def make_header(self) -> fits.header:
         """
@@ -349,19 +358,30 @@ class Tiled(object):
         """
         Generate all tiles from the image.
         """
-        self.levels = []
-        self.tiles = []
+        ntiles = np.sum(self.ntiles)
+        self.tiles_start = np.zeros(self.nlevels, dtype=np.int32)
+        self.tiles_end = np.cumsum(self.ntiles, dtype=np.int32)
+        self.tiles_start[1:] = self.tiles_end[:-1]
+        self.tiles_filename = os.path.join(
+            app_settings.MEMMAP_DIR,
+            self.prefix + ".tiles.np"
+        )
+        self.tiles = np.memmap(
+            self.tiles_filename,
+            dtype=np.float32,
+            mode='w+',
+            shape=(ntiles, self.nchannels, self.tilesize[1], self.tilesize[2])
+        )
         ima = np.flip(self.data, axis=1)
         for r in range(self.nlevels):
-            tiles = []
             tiler = Tiler(
                 data_shape = ima.shape,
                 tile_shape = self.tilesize,
                 mode='constant',
                 channel_dimension=0
             )
-            tiles = tiler.get_all_tiles(ima, copy_data=False)
-            self.tiles.append(tiles)
+            self.tiles[self.tiles_start[r]:self.tiles_end[r]] = \
+                tiler.get_all_tiles(ima, copy_data=False)
             # Pure NumPy approach if in multichannel mode
             # else use OpenCV (faster but does not work with multiplanar data)
             ima = ima[
@@ -379,6 +399,7 @@ class Tiled(object):
                 interpolation=cv2.INTER_AREA
             )[None,:,:]
         del ima, tiler
+        self.tiles.flush()
 
     def get_tile(
             self,
@@ -425,7 +446,7 @@ class Tiled(object):
             channel = 1
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[tilelevel][tileindex],
+                self.tiles[self.tiles_start[tilelevel] + tileindex],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
@@ -437,7 +458,7 @@ class Tiled(object):
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
-                self.tiles[tileres][tileindex],
+                self.tiles[self.tiles_start[tilelevel] + tileindex],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,

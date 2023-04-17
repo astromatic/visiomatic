@@ -32,6 +32,7 @@ class AppSettings(BaseSettings):
     USERDOC_URL: str = DOC_PATH + "/interface.html"
     MAX_MEM_CACHE_IMAGE_COUNT: int = 4
     MAX_MEM_CACHE_TILE_COUNT: int = 1024
+    MEMMAP_DIR : str = "tmp"
     TILES_PATH : str = "/tiles"
 
 app_settings = AppSettings()
