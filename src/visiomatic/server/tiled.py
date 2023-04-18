@@ -118,16 +118,21 @@ class Tiled(object):
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
         self.cmix= np.ones((3, self.nchannels), dtype=np.float32)
-        self.tilesize = [self.nchannels, tilesize[0], tilesize[1]];
+        self.tile_shape = [self.nchannels, tilesize[0], tilesize[1]];
         self.make_mosaic(self.images)
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
-        self.tiles_count = np.array(
-            [self.compute_tilecount(l) for l in range(self.nlevels)],
+        self.shapes = np.array(
+            [self.compute_grid_shape(l) for l in range(self.nlevels)],
             dtype=np.int32
         )
-        self.ntiles = np.sum(self.tiles_count)
+        self.counts = np.prod(self.shapes, axis=1)
+        self.ntiles = np.sum(self.counts)
+        self.border_shapes = np.array(
+            [self.compute_tile_bordershape(l) for l in range(self.nlevels)],
+            dtype=np.int32
+        )
         self.make_tiles()
         del self.data
         for image in self.images:
@@ -145,22 +150,41 @@ class Tiled(object):
             Number of image resolution levels in the pyramid.
         """
         return max(
-            (self.shape[1] // (self.tilesize[1] + 1) + 1).bit_length() + 1,
-            (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1
+            (self.shape[1] // (self.tile_shape[1] + 1) + 1).bit_length() + 1,
+            (self.shape[2] // (self.tile_shape[2] + 1) + 1).bit_length() + 1
         )
 
 
-    def compute_tilecount(self, level=0) -> int:
+    def compute_grid_shape(self, level=0) -> int:
         """
-        Return the number of tiles at a given image resolution level.
+        Return the number of tiles per axis at a given image resolution level.
         
         Returns
         -------
-        tilecount: int
+        shape: tuple[int, int]
             Number of tiles.
         """
-        return (((self.shape[1] >> level) - 1) // self.tilesize[1] + 1) * \
-            (((self.shape[2] >> level) - 1) // self.tilesize[2] + 1)
+        return [
+            self.shape[0],
+            ((self.shape[1] >> level) - 1) // self.tile_shape[1] + 1,
+            ((self.shape[2] >> level) - 1) // self.tile_shape[2] + 1
+        ]
+
+
+    def compute_tile_bordershape(self, level=0) -> int:
+        """
+        Return the border shape of tiles at a given image resolution level.
+        
+        Returns
+        -------
+        shape: tuple[int, int, int]
+            Border shape.
+        """
+        return [
+            self.tile_shape[0],
+            (self.shape[1] >> level) % self.tile_shape[1],
+            (self.shape[2] >> level) % self.tile_shape[2]
+        ]
 
 
     def get_model(self) -> TiledModel:
@@ -176,7 +200,7 @@ class Tiled(object):
             type=package.name,
             version="3.0",
             full_size=self.shape[2:0:-1],
-            tile_size=self.tilesize[2:0:-1],
+            tile_size=self.tile_shape[2:0:-1],
             tile_levels=self.nlevels,
             channels=self.shape[0],
             bits_per_channel=32,
@@ -316,7 +340,7 @@ class Tiled(object):
         """
         string = "IIP:1.0\n"
         string += f"Max-size:{self.shape[2]} {self.shape[1]}\n"
-        string += f"Tile-size:{self.tilesize[0]} {self.tilesize[1]}\n"
+        string += f"Tile-size:{self.tile_shape[1]} {self.tile_shape[2]}\n"
         string += f"Resolution-number:{self.nlevels}\n"
         string += f"Bits-per-channel:{self.bitdepth}\n"
         string += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
@@ -415,7 +439,7 @@ class Tiled(object):
         Generate all tiles from the image.
         """
         self.tiles_start = np.zeros(self.nlevels, dtype=np.int32)
-        self.tiles_end = np.cumsum(self.tiles_count, dtype=np.int32)
+        self.tiles_end = np.cumsum(self.counts, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
         self.tiles_filename = self.get_tiles_filename()
         self.tiles = np.memmap(
@@ -424,16 +448,16 @@ class Tiled(object):
             mode='w+',
             shape=(
                 self.ntiles,
-                self.nchannels,
-                self.tilesize[1],
-                self.tilesize[2]
+                self.tile_shape[0],
+                self.tile_shape[1],
+                self.tile_shape[2]
             )
         )
         ima = np.flip(self.data, axis=1)
         for r in range(self.nlevels):
             tiler = Tiler(
                 data_shape = ima.shape,
-                tile_shape = self.tilesize,
+                tile_shape = self.tile_shape,
                 mode='constant',
                 channel_dimension=0
             )
@@ -509,26 +533,34 @@ class Tiled(object):
                 mode='r',
                 shape=(
                     self.ntiles,
-                    self.nchannels,
-                    self.tilesize[1],
-                    self.tilesize[2]
+                    self.tile_shape[0],
+                    self.tile_shape[1],
+                    self.tile_shape[2]
                 )
             )
+        shape = [
+            self.tile_shape[0],
+            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1 \
+                    < self.shapes[tilelevel][1] \
+                else self.border_shapes[tilelevel][1],
+            self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
+                else self.border_shapes[tilelevel][2],
+        ]
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[self.tiles_start[tilelevel] + tileindex],
+                self.tiles[self.tiles_start[tilelevel] + tileindex][:,0:shape[1], 0:shape[2]],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
                 contrast=contrast,
                 gamma=gamma,
                 invert=invert
-            )[:,:, None],
+            )[:, :, None],
             quality=quality,
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
-                self.tiles[self.tiles_start[tilelevel] + tileindex],
+                self.tiles[self.tiles_start[tilelevel] + tileindex][:,0:shape[1], 0:shape[2]],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
