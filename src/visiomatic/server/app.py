@@ -6,7 +6,6 @@ Application module
 
 import io, os, re
 import logging
-import pickle
 from multiprocessing import RLock
 
 import numpy as np
@@ -30,7 +29,14 @@ def create_app() -> FastAPI:
     """
 
     worker_id = os.getpid()
-    cachedTiled = LRUCache(Tiled, maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT)
+    memcachedTiled = LRUCache(
+        Tiled,
+        maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
+    )
+    diskcachedTiled = LRUCache(
+        Tiled,
+        maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+    )
     banner = app_settings.BANNER
     doc_dir = app_settings.DOC_DIR
     doc_path = app_settings.DOC_PATH
@@ -216,7 +222,7 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
-        tiled = cachedTiled(FIF)
+        tiled = diskcachedTiled(FIF)
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))

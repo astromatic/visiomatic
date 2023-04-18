@@ -5,6 +5,7 @@ Image tiling module
 # Licensed under the MIT licence
 
 import os
+import pickle
 from functools import wraps
 from methodtools import lru_cache
 from typing import List, Tuple, Union
@@ -81,6 +82,8 @@ class Tiled(object):
         Display gamma of the served tiles.
     nthreads: int, optional
         Number of compute threads for parallelized operations.
+    cache: bool, optional
+        If True, used data previously cached on disk.
     """
     def __init__(
             self,
@@ -89,11 +92,14 @@ class Tiled(object):
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = os.cpu_count() // 2):
+            nthreads : int = os.cpu_count() // 2,
+            cache : bool = False):
 
-        self.nthreads = nthreads
-        self.filename = filename
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
+        if cache:
+            return pickle.load(self.get_object_filename(), "rb")
+        self.filename = filename
+        self.nthreads = nthreads
         hdus = fits.open(os.path.join(app_settings.DATA_DIR, filename))
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
@@ -117,11 +123,16 @@ class Tiled(object):
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
-        self.ntiles = np.array(
-            [self.compute_ntiles(l) for l in range(self.nlevels)],
+        self.tiles_count = np.array(
+            [self.compute_tilecount(l) for l in range(self.nlevels)],
             dtype=np.int32
         )
+        self.ntiles = np.sum(self.tiles_count)
         self.make_tiles()
+        del self.data
+        for image in self.images:
+            del image.data
+        pickle.dump(self, open(self.get_object_filename(), "wb"), protocol=5)
 
 
     def compute_nlevels(self) -> int:
@@ -138,21 +149,23 @@ class Tiled(object):
             (self.shape[2] // (self.tilesize[2] + 1) + 1).bit_length() + 1
         )
 
-    def compute_ntiles(self, level=0) -> int:
+
+    def compute_tilecount(self, level=0) -> int:
         """
         Return the number of tiles at a given image resolution level.
         
         Returns
         -------
-        ntiles: int
+        tilecount: int
             Number of tiles.
         """
         return (((self.shape[1] >> level) - 1) // self.tilesize[1] + 1) * \
             (((self.shape[2] >> level) - 1) // self.tilesize[2] + 1)
 
+
     def get_model(self) -> TiledModel:
         """
-        Return a Pydantic model of the tiled object
+        Return a Pydantic model of the tiled object.
         
         Returns
         -------
@@ -169,6 +182,51 @@ class Tiled(object):
             bits_per_channel=32,
             header=dict(self.header.items()),
             images=[image.get_model() for image in self.images]
+        )
+
+
+    def get_object_filename(self):
+        """
+        Return the name of the file containing the pickled Tiled object.
+        
+        Returns
+        -------
+        filename: str
+            Pickled object filename.
+        """
+        return os.path.join(
+            app_settings.CACHE_DIR,
+            self.prefix + ".pkl"
+        )
+
+
+    def get_data_filename(self):
+        """
+        Return the name of the file containing the memory-mapped image data.
+        
+        Returns
+        -------
+        filename: str
+            Filename of the memory-mapped image data.
+        """
+        return os.path.join(
+            app_settings.CACHE_DIR,
+            self.prefix + ".data.np"
+        )
+
+
+    def get_tiles_filename(self):
+        """
+        Return the name of the file containing the memory-mapped tile datacube.
+        
+        Returns
+        -------
+        filename: str
+            Filename of the memory mapped tile datacube.
+        """
+        return os.path.join(
+            app_settings.CACHE_DIR,
+            self.prefix + ".tiles.np"
         )
 
 
@@ -192,10 +250,7 @@ class Tiled(object):
             start = [min(y) - 1, min(x) -1]
             # Compute the mosaic shape
             shape = (self.nchannels, max(y) - start[0],  max(x) - start[1])
-            self.data_filename = os.path.join(
-                 app_settings.MEMMAP_DIR,
-                 self.prefix + ".data.np"
-            )
+            self.data_filename = self.get_data_filename()
             self.data = np.memmap(
                 self.data_filename,
                 dtype=images[0].data.dtype,
@@ -213,6 +268,7 @@ class Tiled(object):
             self.bitdepth = images[0].bitdepth
             self.header = self.make_header()
             self.data.flush()
+
 
     def make_header(self) -> fits.header:
         """
@@ -358,19 +414,20 @@ class Tiled(object):
         """
         Generate all tiles from the image.
         """
-        ntiles = np.sum(self.ntiles)
         self.tiles_start = np.zeros(self.nlevels, dtype=np.int32)
-        self.tiles_end = np.cumsum(self.ntiles, dtype=np.int32)
+        self.tiles_end = np.cumsum(self.tiles_count, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
-        self.tiles_filename = os.path.join(
-            app_settings.MEMMAP_DIR,
-            self.prefix + ".tiles.np"
-        )
+        self.tiles_filename = self.get_tiles_filename()
         self.tiles = np.memmap(
             self.tiles_filename,
             dtype=np.float32,
             mode='w+',
-            shape=(ntiles, self.nchannels, self.tilesize[1], self.tilesize[2])
+            shape=(
+                self.ntiles,
+                self.nchannels,
+                self.tilesize[1],
+                self.tilesize[2]
+            )
         )
         ima = np.flip(self.data, axis=1)
         for r in range(self.nlevels):
@@ -400,6 +457,7 @@ class Tiled(object):
             )[None,:,:]
         del ima, tiler
         self.tiles.flush()
+        del self.tiles
 
     def get_tile(
             self,
@@ -444,6 +502,18 @@ class Tiled(object):
         """
         if channel and channel > self.nchannels:
             channel = 1
+        if not hasattr(self, 'tiles'):
+            self.tiles = np.memmap(
+                self.tiles_filename,
+                dtype=np.float32,
+                mode='r',
+                shape=(
+                    self.ntiles,
+                    self.nchannels,
+                    self.tilesize[1],
+                    self.tilesize[2]
+                )
+            )
         return encode_jpeg(
             self.convert_tile(
                 self.tiles[self.tiles_start[tilelevel] + tileindex],

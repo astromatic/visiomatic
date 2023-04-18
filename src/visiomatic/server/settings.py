@@ -26,13 +26,14 @@ class AppSettings(BaseSettings):
         Endpoint URL for tile queries.
     """
     BANNER: str = "banner.html"
+    CACHE_DIR : str = "tmp"
     DATA_DIR : Path = "fits"
     DOC_DIR: Path = "doc/build/html"
     DOC_PATH : str = "/manual"
     USERDOC_URL: str = DOC_PATH + "/interface.html"
+    MAX_DISK_CACHE_IMAGE_COUNT: int = 64
     MAX_MEM_CACHE_IMAGE_COUNT: int = 4
     MAX_MEM_CACHE_TILE_COUNT: int = 1024
-    MEMMAP_DIR : str = "tmp"
     TILES_PATH : str = "/tiles"
 
 app_settings = AppSettings()

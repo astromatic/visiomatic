@@ -19,11 +19,15 @@ class LRUCache:
         Function result or class instantiation to be cached.
     maxsize: int, optional
         Maximum size of the cache.
+    call: bool, optional
+        If True, caching is done by calling the function or class constructor
+        with the cache=True option.
     """
-    def __init__(self, func, maxsize=8):
+    def __init__(self, func, maxsize=8, call=False):
         self.cache = OrderedDict()
         self.func = func
         self.maxsize = maxsize
+        self.call = call
 
     def __call__(self, *args):
         """
@@ -45,7 +49,7 @@ class LRUCache:
         """
         if args in self.cache:
            self.cache.move_to_end(args)
-           return self.cache[args]
+           return self.func(*args, cache=True) if self.call else self.cache[args]
         result = self.func(*args)
         self.cache[args] = result
         if len(self.cache) > self.maxsize:
