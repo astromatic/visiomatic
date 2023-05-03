@@ -95,8 +95,9 @@ class Tiled(object):
             cache : bool = False):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        if cache:
-            return pickle.load(self.get_object_filename(), "rb")
+        if cache and os.path.getmtime(oname:=self.get_object_filename()) < \
+            os.path.getctime(filename):
+            return pickle.load(oname, "rb")
         self.filename = filename
         self.nthreads = nthreads
         hdus = fits.open(os.path.join(app_settings.DATA_DIR, filename))
@@ -513,8 +514,8 @@ class Tiled(object):
             tilelevel: int,
             tileindex: int,
             channel: Union[int, None] = None,
-            minmax: Union[list[float, float], None] = None,
-            mix: Union[list[int, float, float, float]| None] = None,
+            minmax: Union[tuple[float, float], None] = None,
+            mix: Union[tuple[int, float, float, float]| None] = None,
             contrast: float = 1.0,
             gamma: float = 0.4545,
             colormap: str = 'grey',

@@ -6,7 +6,6 @@ Application module
 
 import io, os, re
 import logging
-from multiprocessing import RLock
 
 import numpy as np
 from typing import List, Literal, Optional
@@ -22,21 +21,21 @@ from .settings import app_settings
 from .tiled import colordict, Tiled
 from .lru import LRUCache
 
+diskCachedTiled = LRUCache(
+    Tiled,
+    maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+)
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
-
     worker_id = os.getpid()
-    memcachedTiled = LRUCache(
+    memCachedTiled = LRUCache(
         Tiled,
         maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
     )
-    diskcachedTiled = LRUCache(
-        Tiled,
-        maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
-    )
+
     banner = app_settings.BANNER
     doc_dir = app_settings.DOC_DIR
     doc_path = app_settings.DOC_PATH
@@ -222,7 +221,7 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
-        tiled = diskcachedTiled(FIF)
+        tiled = diskCachedTiled(FIF)
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
@@ -248,24 +247,24 @@ def create_app() -> FastAPI:
         minmax = None
         if MINMAX != None:
             resp = [app.parse_minmax.findall(m)[0] for m in MINMAX]
-            minmax = [
-                [
+            minmax = tuple(
+                (
                     int(r[0]),
                     float(r[1]),
                     float(r[2])
-                ] for r in resp
-            ]
+                ) for r in resp
+            )
         mix = None
         if MIX != None:
             resp = [app.parse_mix.findall(m)[0] for m in MIX]
-            mix = [
-                [
+            mix = tuple(
+                (
                     int(r[0]),
                     float(r[1]),
                     float(r[2]),
                     float(r[3])
-                ] for r in resp
-            ]
+                ) for r in resp
+            )
         resp = app.parse_jtl.findall(JTL)[0]
         tl = tiled.nlevels - 1 - int(resp[0])
         if tl < 0:
