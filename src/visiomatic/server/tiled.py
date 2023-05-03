@@ -4,8 +4,7 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import os
-import pickle
+import os, math, pickle
 from functools import wraps
 from methodtools import lru_cache
 from typing import List, Tuple, Union
@@ -318,14 +317,40 @@ class Tiled(object):
             + detinfo[0][2] * (header["CRPIX1"] - datainfo[0][0]);
         header["CRPIX2"] = detinfo[1][0] \
             + detinfo[1][2] * (header["CRPIX2"] - datainfo[1][0]);
-        cd1_1 = header.get("CD1_1", 1.0)
-        cd1_2 = header.get("CD1_2", 0.0)
-        cd2_1 = header.get("CD2_1", 0.0)
-        cd2_2 = header.get("CD2_2", 1.0)
+        # Recover CD matrix, possibly from obsolete WCS parameters
+        if "CD1_1" in header:
+            cd1_1 = header.get("CD1_1", 1.0)
+            cd1_2 = header.get("CD1_2", 0.0)
+            cd2_1 = header.get("CD2_1", 0.0)
+            cd2_2 = header.get("CD2_2", 1.0)
+        else:
+            cdelt1 = header.get("CDELT1", 1.0)
+            cdelt2 = header.get("CDELT2", 1.0)
+            if "PC1_1" in header:
+                cd1_1 = header.get("PC1_1", 1.0) * cdelt1
+                cd1_2 = header.get("PC1_2", 0.0) * cdelt1
+                cd2_1 = header.get("PC2_1", 0.0) * cdelt2
+                cd2_2 = header.get("PC2_2", 1.0) * cdelt2
+            elif "PC001001" in header:
+                cd1_1 = header.get("PC001001", 1.0) * cdelt1
+                cd1_2 = header.get("PC001002", 0.0) * cdelt1
+                cd2_1 = header.get("PC002001", 0.0) * cdelt2
+                cd2_2 = header.get("PC002002", 1.0) * cdelt2
+            elif "CROTA2" in header:
+                crota2 = math.radians(header.get("CROTA2", 0.0))
+                ccrota2 = math.cos(crota2)
+                scrota2 = math.sin(crota2)
+                cd1_1 = cdelt1 * ccrota2
+                cd1_2 = -cdelt1 * scrota2
+                cd2_1 = cdelt2 * scrota2
+                cd2_2 = cdelt2 * ccrota2
         header["CD1_1"] = detinfo[0][2] * cd1_1;
         header["CD1_2"] = detinfo[1][2] * cd1_2;
         header["CD2_1"] = detinfo[0][2] * cd2_1;
         header["CD2_2"] = detinfo[1][2] * cd2_2;
+        # Remove obsolete headers to avoid confusion
+        del header["CDELT?"], header["CROTA?"], \
+            header["PC?_?"], header["PC0??0??"]
         return header
 
 
