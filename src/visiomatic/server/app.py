@@ -18,11 +18,11 @@ from fastapi.encoders import jsonable_encoder
 
 from .. import package
 from .settings import app_settings 
-from .tiled import colordict, Tiled
+from .tiled import colordict, pickledTiled, Tiled
 from .lru import LRUCache
 
 diskCachedTiled = LRUCache(
-    Tiled,
+    pickledTiled,
     maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
 )
 

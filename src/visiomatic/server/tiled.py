@@ -4,7 +4,7 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import os, math, pickle
+import glob, os, math, pickle
 from functools import wraps
 from methodtools import lru_cache
 from typing import List, Tuple, Union
@@ -20,6 +20,7 @@ from tiler import Tiler
 from .. import package
 from .image import Image , ImageModel
 from .settings import app_settings 
+from .lru import LRUCache
 
 
 colordict = {
@@ -62,6 +63,16 @@ class TiledModel(BaseModel):
     header: dict
     images: List[ImageModel]
 
+def pickledTiled(filename, **kwargs):
+    prefix = os.path.splitext(os.path.basename(filename))[0]
+    fname = os.path.join(app_settings.DATA_DIR, filename)
+    # Check if a recent cached object is available
+    if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
+            os.path.getmtime(oname) > os.path.getmtime(fname):
+        with open(oname, "rb") as f:
+            return pickle.load(f)
+    else:
+        return Tiled(filename, **kwargs)
 
 class Tiled(object):
     """
@@ -81,8 +92,6 @@ class Tiled(object):
         Display gamma of the served tiles.
     nthreads: int, optional
         Number of compute threads for parallelized operations.
-    cache: bool, optional
-        If True, used data previously cached on disk.
     """
     def __init__(
             self,
@@ -91,16 +100,13 @@ class Tiled(object):
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = os.cpu_count() // 2,
-            cache : bool = False):
+            nthreads : int = os.cpu_count() // 2):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        if cache and os.path.getmtime(oname:=self.get_object_filename()) < \
-            os.path.getctime(filename):
-            return pickle.load(oname, "rb")
-        self.filename = filename
+        self.filename = os.path.join(app_settings.DATA_DIR, filename)
+        # Otherwise, create it
         self.nthreads = nthreads
-        hdus = fits.open(os.path.join(app_settings.DATA_DIR, filename))
+        hdus = fits.open(self.filename)
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
             hdus = [hdus[extnum]]
@@ -120,6 +126,7 @@ class Tiled(object):
         self.cmix= np.ones((3, self.nchannels), dtype=np.float32)
         self.tile_shape = [self.nchannels, tilesize[0], tilesize[1]];
         self.make_mosaic(self.images)
+        hdus.close()
         self.gamma = gamma
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
@@ -137,7 +144,11 @@ class Tiled(object):
         del self.data
         for image in self.images:
             del image.data
-        pickle.dump(self, open(self.get_object_filename(), "wb"), protocol=5)
+        pickle.dump(
+            self,
+            open(self.get_object_filename(self.prefix), "wb"),
+            protocol=5
+        )
 
 
     def compute_nlevels(self) -> int:
@@ -209,7 +220,7 @@ class Tiled(object):
         )
 
 
-    def get_object_filename(self):
+    def get_object_filename(self, prefix: str):
         """
         Return the name of the file containing the pickled Tiled object.
         
@@ -218,10 +229,7 @@ class Tiled(object):
         filename: str
             Pickled object filename.
         """
-        return os.path.join(
-            app_settings.CACHE_DIR,
-            self.prefix + ".pkl"
-        )
+        return os.path.join(app_settings.CACHE_DIR, prefix + ".pkl")
 
 
     def get_data_filename(self):
