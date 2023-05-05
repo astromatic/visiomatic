@@ -141,14 +141,13 @@ class Tiled(object):
             dtype=np.int32
         )
         self.make_tiles()
+        # Delete individual image data (no longer needed)
         del self.data
         for image in self.images:
             del image.data
-        pickle.dump(
-            self,
-            open(self.get_object_filename(self.prefix), "wb"),
-            protocol=5
-        )
+        # Pickle-save current object
+        with open(self.get_object_filename(self.prefix), "wb") as f:
+            pickle.dump(self, f, protocol=5)
 
 
     def compute_nlevels(self) -> int:
