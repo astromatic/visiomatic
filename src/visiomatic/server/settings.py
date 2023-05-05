@@ -32,7 +32,7 @@ class AppSettings(BaseSettings):
     DOC_PATH : str = "/manual"
     USERDOC_URL: str = DOC_PATH + "/interface.html"
     MAX_DISK_CACHE_IMAGE_COUNT: int = 64
-    MAX_MEM_CACHE_IMAGE_COUNT: int = 4
+    MAX_MEM_CACHE_IMAGE_COUNT: int = 16
     MAX_MEM_CACHE_TILE_COUNT: int = 1024
     TILES_PATH : str = "/tiles"
 

@@ -21,10 +21,6 @@ from .settings import app_settings
 from .tiled import colordict, pickledTiled, Tiled
 from .lru import LRUCache
 
-diskCachedTiled = LRUCache(
-    pickledTiled,
-    maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
-)
 
 def create_app() -> FastAPI:
     """
@@ -32,7 +28,7 @@ def create_app() -> FastAPI:
     """
     worker_id = os.getpid()
     memCachedTiled = LRUCache(
-        Tiled,
+        pickledTiled,
         maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
     )
 
@@ -221,7 +217,7 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
-        tiled = diskCachedTiled(FIF)
+        tiled = memCachedTiled(FIF)
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
