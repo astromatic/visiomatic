@@ -141,8 +141,9 @@ class Tiled(object):
             dtype=np.int32
         )
         self.make_tiles()
-        # Delete individual image data (no longer needed)
+        # Delete mosaic data (will be remapped on-demand)
         del self.data
+        # Delete individual image data (no longer needed)
         for image in self.images:
             del image.data
         # Pickle-save current object
@@ -514,6 +515,7 @@ class Tiled(object):
             )[None,:,:]
         del ima, tiler
         self.tiles.flush()
+        # No longer needed (tiles buffer will be remapped on demand)
         del self.tiles
 
     def get_tile(
