@@ -63,16 +63,6 @@ class TiledModel(BaseModel):
     header: dict
     images: List[ImageModel]
 
-def pickledTiled(filename, **kwargs):
-    prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(app_settings.DATA_DIR, filename)
-    # Check if a recent cached object is available
-    if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
-            os.path.getmtime(oname) > os.path.getmtime(fname):
-        with open(oname, "rb") as f:
-            return pickle.load(f)
-    else:
-        return Tiled(filename, **kwargs)
 
 class Tiled(object):
     """
@@ -608,11 +598,41 @@ class Tiled(object):
             colorspace='RGB'
         )
 
+
     @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
     def get_tile_cached(self, *args, **kwargs):
         """
         Cached version of get_tile().
         """
         return self.get_tile(*args, **kwargs)
+
+
+
+def pickledTiled(filename, **kwargs):
+    """
+    Return pickled version of object if available.
+    
+    Parameters
+    ----------
+    filename: str or `pathlib.Path`,
+        Path to the image.
+    **kwargs: dict
+        Keyword arguments.
+
+    Returns
+    -------
+    tiled: object
+        Tiled object pickled from file if available, or initialized otherwise).
+    """
+    prefix = os.path.splitext(os.path.basename(filename))[0]
+    fname = os.path.join(app_settings.DATA_DIR, filename)
+    # Check if a recent cached object is available
+    if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
+            os.path.getmtime(oname) > os.path.getmtime(fname):
+        with open(oname, "rb") as f:
+            return pickle.load(f)
+    else:
+        return Tiled(filename, **kwargs)
+
 
 
