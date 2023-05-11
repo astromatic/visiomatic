@@ -4,30 +4,34 @@ Application module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import io, os, re
-import logging
+import io, logging, os, pickle, re
+from typing import List, Literal, Optional, Union
 
-import numpy as np
-from typing import List, Literal, Optional
 from fastapi import FastAPI, Query, Request
 from fastapi import responses
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
+import numpy as np
 
 from .. import package
 from .settings import app_settings 
 from .tiled import colordict, pickledTiled, Tiled
-from .lru import LRUCache
+from .cache import MemCache, SharedDictRWLock
 
+share = True
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
     worker_id = os.getpid()
-    memCachedTiled = LRUCache(
+    # Get shared lock dictionary if processing in parallel
+    if share:
+        sharedLock = SharedDictRWLock(name=f"{package.title}.{os.getppid()}")
+
+    memCachedTiled = MemCache(
         pickledTiled,
         maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
     )
@@ -217,6 +221,10 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
+
+        if share:
+            lock = sharedLock(FIF)
+
         tiled = memCachedTiled(FIF)
         '''
         if FIF in app.tiled:
@@ -234,10 +242,16 @@ def create_app() -> FastAPI:
         '''
 
         if obj != None:
+            if share:
+                lock.release()
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
         elif INFO != None:
+            if share:
+                lock.release()
             return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
         if JTL == None:
+            if share:
+                lock.release()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
@@ -278,6 +292,8 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
+        if share:
+            lock.release()
         return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
 
 

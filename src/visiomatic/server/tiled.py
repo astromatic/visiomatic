@@ -5,7 +5,6 @@ Image tiling module
 # Licensed under the MIT licence
 
 import glob, os, math, pickle
-from functools import wraps
 from methodtools import lru_cache
 from typing import List, Tuple, Union
 from joblib import Parallel, delayed
@@ -20,7 +19,6 @@ from tiler import Tiler
 from .. import package
 from .image import Image , ImageModel
 from .settings import app_settings 
-from .lru import LRUCache
 
 
 colordict = {

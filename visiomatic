@@ -1,5 +1,9 @@
 #! /usr/bin/python
+import os, pickle
+
 import uvicorn
+
+from visiomatic.server.settings import app_settings
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -29,6 +33,7 @@ if __name__ == "__main__":
 
     print(f"{package.title} v{package.version}")
 
+    # Parse command-line
     parser = argparse.ArgumentParser(description=package.description)
 
     parser.add_argument(
@@ -63,6 +68,7 @@ if __name__ == "__main__":
     )
 
     args = vars(parser.parse_args())
+    
     start_server(
         host=args["host"],
         port=args["port"],

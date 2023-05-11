@@ -4,7 +4,6 @@ Server settings.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-
 from pathlib import Path
 from pydantic import BaseSettings
 
@@ -30,11 +29,12 @@ class AppSettings(BaseSettings):
     DATA_DIR : Path = "fits"
     DOC_DIR: Path = "doc/build/html"
     DOC_PATH : str = "/manual"
-    USERDOC_URL: str = DOC_PATH + "/interface.html"
     MAX_DISK_CACHE_IMAGE_COUNT: int = 64
     MAX_MEM_CACHE_IMAGE_COUNT: int = 16
     MAX_MEM_CACHE_TILE_COUNT: int = 1024
     TILES_PATH : str = "/tiles"
+    ULTRADICT_FILE: str = "/dev/shm/visiomatic_dict.pkl"
+    USERDOC_URL: str = DOC_PATH + "/interface.html"
 
 app_settings = AppSettings()
 
