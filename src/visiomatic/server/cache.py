@@ -60,7 +60,7 @@ class MemCache:
 class SharedDictRWLock:
     """
     Custom, dictionary-based reader-writer locks shareable across processes
-    
+    Raynal, Michel (2012). Concurrent Programming: Algorithms, Principles, and Foundations. Springer.    
     Parameters
     ----------
     name: str, optional
@@ -76,7 +76,7 @@ class SharedDictRWLock:
 
     def __call__(self, *args):
         """
-        Create or recover a shared reader-writer lock.
+        Create or recover a shared reader-writer lock (e.g., Raynal 2012).
 
         Parameters
         ----------
@@ -115,6 +115,7 @@ class SharedRWLock:
         self.name = name
         self._rlock_name = f"{package.title}_{name}.r.lock"
         self._glock_name = f"{package.title}_{name}.g.lock"
+        print(self._glock_name)
         rlock = Semaphore(self._rlock_name, O_CREAT, initial_value=1)
         glock = Semaphore(self._glock_name, O_CREAT, initial_value=1)
         self.b = 0
