@@ -29,7 +29,7 @@ class AppSettings(BaseSettings):
     DATA_DIR : Path = "fits"
     DOC_DIR: Path = "doc/build/html"
     DOC_PATH : str = "/manual"
-    MAX_DISK_CACHE_IMAGE_COUNT: int = 64
+    MAX_DISK_CACHE_IMAGE_COUNT: int = 3
     MAX_MEM_CACHE_IMAGE_COUNT: int = 16
     MAX_MEM_CACHE_TILE_COUNT: int = 1024
     TILES_PATH : str = "/tiles"

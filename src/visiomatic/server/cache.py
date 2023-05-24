@@ -6,6 +6,7 @@ Custom caches and utilities
 
 import os
 from collections import OrderedDict
+from time import time_ns
 from typing import Union
 
 from posix_ipc import Semaphore, O_CREAT
@@ -13,10 +14,10 @@ from UltraDict import UltraDict
 
 from .. import package
 
-class MemCache:
+class LRUMemCache:
     """
-    Simple, custom Least Recently Used (LRU) cache Class
-    
+    Custom Least Recently Used (LRU) memory cache.
+
     Parameters
     ----------
     func: class or func
@@ -57,20 +58,21 @@ class MemCache:
         return result
 
 
-class SharedDictRWLock:
+class LRUSharedRWLockCache:
     """
-    Custom, dictionary-based reader-writer locks shareable across processes
-    Raynal, Michel (2012). Concurrent Programming: Algorithms, Principles, and Foundations. Springer.    
+    Custom, dictionary-based, Least Recently Used (LRU) reader-writer lock cache
+    shareable across processes.
+
     Parameters
     ----------
     name: str, optional
-        Name of the lock dictionary.
+        Name of the lock cache.
     maxsize: int, optional
-        Maximum size of the dictionary.
+        Maximum size of the cache.
     """
     def __init__(self, name: Union[str, None]=None, maxsize: int=8):
         self.name = name if name else f"lrucache_{os.getppid()}"
-        self.dict = UltraDict(name=self.name)
+        self.cache = UltraDict(name=self.name)
         self.maxsize = maxsize
 
 
@@ -81,7 +83,7 @@ class SharedDictRWLock:
         Parameters
         ----------
         args: any
-            Hashable arguments to the dictionary
+            Hashable arguments to the cache dictionary.
 
         Returns
         -------
@@ -90,21 +92,26 @@ class SharedDictRWLock:
 
         :meta public:
         """
-        with self.dict.lock:
-            if args in self.dict:
-                lock = self.dict[args]
+        with self.cache.lock:
+            if args in self.cache:
+                lock, time = self.cache[args]
                 lock.acquire_read()
             else:
+                if len(self.cache) >= self.maxsize:
+                    mintime = min(self.cache, key=lambda k: self.cache[k][1])
                 lock = SharedRWLock(args)
                 lock.acquire_write()
             # Finally update the shared version
-            self.dict[args] = lock
+            self.cache[args] = lock, time_ns()
             return lock
 
 
 class SharedRWLock:
     """
     Custom reader-writer lock shareable across processes
+
+    See Raynal, Michel (2012), Concurrent Programming: Algorithms, Principles,
+    and Foundations, Springer.    
     
     Parameters
     ----------

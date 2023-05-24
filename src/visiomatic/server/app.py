@@ -18,7 +18,7 @@ import numpy as np
 from .. import package
 from .settings import app_settings 
 from .tiled import colordict, pickledTiled, Tiled
-from .cache import MemCache, SharedDictRWLock
+from .cache import LRUMemCache, LRUSharedRWLockCache
 
 share = True
 
@@ -29,9 +29,12 @@ def create_app() -> FastAPI:
     worker_id = os.getpid()
     # Get shared lock dictionary if processing in parallel
     if share:
-        sharedLock = SharedDictRWLock(name=f"{package.title}.{os.getppid()}")
+        sharedLock = LRUSharedRWLockCache(
+            name=f"{package.title}.{os.getppid()}",
+            maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+        )
 
-    memCachedTiled = MemCache(
+    memCachedTiled = LRUMemCache(
         pickledTiled,
         maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
     )
