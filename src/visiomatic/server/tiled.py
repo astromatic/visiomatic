@@ -122,7 +122,7 @@ class Tiled(object):
             [self.compute_grid_shape(l) for l in range(self.nlevels)],
             dtype=np.int32
         )
-        self.counts = np.prod(self.shapes, axis=1)
+        self.counts = np.prod(self.shapes, axis=1) // self.nchannels
         self.ntiles = np.sum(self.counts)
         self.border_shapes = np.array(
             [self.compute_tile_bordershape(l) for l in range(self.nlevels)],
