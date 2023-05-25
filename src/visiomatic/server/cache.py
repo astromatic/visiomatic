@@ -92,17 +92,19 @@ class LRUSharedRWLockCache:
 
         :meta public:
         """
+        hargs = hex(0xffffffffffffffff & hash(args))
         with self.cache.lock:
-            if args in self.cache:
-                lock, time = self.cache[args]
+            if hargs in self.cache:
+                lock, time = self.cache[hargs]
                 lock.acquire_read()
             else:
                 if len(self.cache) >= self.maxsize:
                     mintime = min(self.cache, key=lambda k: self.cache[k][1])
-                lock = SharedRWLock(args)
+                    print(mintime)
+                lock = SharedRWLock(hargs)
                 lock.acquire_write()
             # Finally update the shared version
-            self.cache[args] = lock, time_ns()
+            self.cache[hargs] = lock, time_ns()
             return lock
 
 
