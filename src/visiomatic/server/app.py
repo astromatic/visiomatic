@@ -20,7 +20,7 @@ from .settings import app_settings
 from .tiled import colordict, pickledTiled, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
-share = False
+share = True
 
 def create_app() -> FastAPI:
     """
