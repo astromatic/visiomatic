@@ -72,7 +72,7 @@ class LRUSharedRWLockCache:
     """
     def __init__(self, name: Union[str, None]=None, maxsize: int=8):
         self.name = name if name else f"lrucache_{os.getppid()}"
-        self.cache = UltraDict(name=self.name)
+        self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
         self.maxsize = maxsize
 
 
@@ -98,9 +98,10 @@ class LRUSharedRWLockCache:
                 lock, time = self.cache[hargs]
                 lock.acquire_read()
             else:
+                # Test if we're reaching the cache limit
                 if len(self.cache) >= self.maxsize:
-                    mintime = min(self.cache, key=lambda k: self.cache[k][1])
-                    print(mintime)
+                    # Find least recently used
+                    oldest = min(self.cache, key=lambda k: self.cache[k][1])
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
             # Finally update the shared version

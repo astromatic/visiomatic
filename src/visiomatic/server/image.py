@@ -58,6 +58,7 @@ class Image(object):
             hdu : fits.ImageHDU,
             minmax : Union[Tuple[float], None] = None):
 
+        # Small hack to translate compressed FITS headers
         self.header = fits.Header.fromstring(hdu.header.tostring())
         shape = hdu.data.shape
         self.data = hdu.data.astype(np.float32).reshape(-1,shape[-2], shape[-1])
