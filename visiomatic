@@ -27,6 +27,7 @@ def start_server(
     return
 
 if __name__ == "__main__":
+    import configparser
     import argparse
 
     from visiomatic import package
@@ -35,6 +36,12 @@ if __name__ == "__main__":
 
     # Parse command-line
     parser = argparse.ArgumentParser(description=package.description)
+    parser.add_argument(
+        "-c", "--config",
+        type=str, default=package.config_file,
+        help="Specify a configuration file", 
+        metavar="FILE"
+    )
 
     parser.add_argument(
         "-H", "--host",

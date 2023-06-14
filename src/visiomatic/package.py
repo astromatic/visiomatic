@@ -25,3 +25,6 @@ license_url = "https://spdx.org/licenses/MIT.html"
 # This is where the Python code is
 root_dir = "src/visiomatic"
 
+# Default configuration file
+config_file = "config/visiomatic.conf"
+
