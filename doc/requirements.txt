@@ -1,7 +1,7 @@
 sphinx >= 6.0
 sphinx-rtd-theme >= 1.2
 sphinxcontrib-bibtex >= 2.4.0
-sphinx-js >= 3.2.1
+sphinx-js >= 3.2.1 --no-deps
 astropy >= 5.0
 fastapi >= 0.74
 joblib >= 1.0
