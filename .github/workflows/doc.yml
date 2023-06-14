@@ -32,8 +32,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install --upgrade pip
-          pip3 install -r doc/requirements.txt
+          pip install --upgrade pip
+          pip install -r doc/requirements.txt
           npm install -g jsdoc
           cd src/visiomatic/client
           npm install tidy-jsdoc
