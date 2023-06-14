@@ -4,30 +4,45 @@ Application module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import io, os, re
-import logging
-import numpy as np
-from typing import List, Literal, Optional
+import io, logging, os, pickle, re
+from typing import List, Literal, Optional, Union
+
 from fastapi import FastAPI, Query, Request
 from fastapi import responses
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
+import numpy as np
 
 from .. import package
 from .settings import app_settings 
-from .image import colordict, Tiled
+from .tiled import colordict, pickledTiled, Tiled
+from .cache import LRUMemCache, LRUSharedRWLockCache
+
+share = False
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
+    worker_id = os.getpid()
+    # Get shared lock dictionary if processing in parallel
+    if share:
+        sharedLock = LRUSharedRWLockCache(
+            name=f"{package.title}.{os.getppid()}",
+            maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+        )
+
+    memCachedTiled = LRUMemCache(
+        pickledTiled,
+        maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
+    )
 
     banner = app_settings.BANNER
     doc_dir = app_settings.DOC_DIR
     doc_path = app_settings.DOC_PATH
-    doc_url = app_settings.DOC_URL
+    userdoc_url = app_settings.USERDOC_URL
     tiles_path = app_settings.TILES_PATH
 
     logger = logging.getLogger("uvicorn.error")
@@ -46,6 +61,7 @@ def create_app() -> FastAPI:
             "url":  package.license_url
         }
     )
+
     """
     origins = [
         "http://halau.cfht.hawaii.edu",
@@ -82,14 +98,11 @@ def create_app() -> FastAPI:
         logger.warning(f"Default documentation not found in {doc_dir}!")
         logger.warning("Has the HTML documentation been compiled ?")
         logger.warning("De-activating documentation URL in built-in web client.")
-        doc_url = ""
+        userdoc_url = ""
 
 
     # Instantiate templates
     templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
-
-    # Prepare the dictionary of tiled image pyramids
-    app.tiled = {}
 
     # Prepare the RegExps
     reg_jtl = r"^(\d+),(\d+)$"
@@ -212,46 +225,67 @@ def create_app() -> FastAPI:
                 }
             )
 
+        if share:
+            lock = sharedLock(FIF)
+
+        tiled = memCachedTiled(FIF)
+        '''
         if FIF in app.tiled:
-            tiled = app.tiled[FIF]
+            tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
+            tiled.tiles = app.tiles
         else:
             app.tiled[FIF] = (tiled := Tiled(FIF))
+            app.tiles = tiled.tiles
+            tiled.tiles = None
+            tiled.data = None
+            for image in tiled.images:
+                image.data = None
+            pickle.dump(tiled, open(f"{FIF}_{worker_id}.p", "wb"), protocol=5)
+            tiled.tiles = app.tiles
+        '''
+
         if obj != None:
+            if share:
+                lock.release()
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
         elif INFO != None:
+            if share:
+                lock.release()
             return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
         if JTL == None:
+            if share:
+                lock.release()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
         if MINMAX != None:
             resp = [app.parse_minmax.findall(m)[0] for m in MINMAX]
-            minmax = [
-                [
+            minmax = tuple(
+                (
                     int(r[0]),
                     float(r[1]),
                     float(r[2])
-                ] for r in resp
-            ]
+                ) for r in resp
+            )
         mix = None
         if MIX != None:
             resp = [app.parse_mix.findall(m)[0] for m in MIX]
-            mix = [
-                [
+            mix = tuple(
+                (
                     int(r[0]),
                     float(r[1]),
                     float(r[2]),
                     float(r[3])
-                ] for r in resp
-            ]
+                ) for r in resp
+            )
         resp = app.parse_jtl.findall(JTL)[0]
-        r = tiled.nlevels - 1 - int(resp[0])
-        if r < 0:
-            r = 0
-        t = int(resp[1])
-        pix = tiled.get_tile(
-            r,
-            t,
+        tl = tiled.nlevels - 1 - int(resp[0])
+        if tl < 0:
+            tl = 0
+        ti = int(resp[1])
+        pix = tiled.get_tile_cached(
+            tl,
+            ti,
             channel=CHAN,
             minmax=minmax,
             mix=mix,
@@ -261,6 +295,8 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
+        if share:
+            lock.release()
         return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
 
 
@@ -278,7 +314,7 @@ def create_app() -> FastAPI:
                 "request": request,
                 "root_path": request.scope.get("root_path"),
                 "tiles_path": tiles_path,
-                "doc_url": doc_url,
+                "doc_url": userdoc_url,
                 "image": image,
                 "package": package.title
             }

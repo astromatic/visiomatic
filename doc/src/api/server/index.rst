@@ -5,6 +5,8 @@ Python server
    :maxdepth: 3
 
    app
+   tiled
    image
+   lru
    settings
 
