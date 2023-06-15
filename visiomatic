@@ -3,7 +3,11 @@ import os, pickle
 
 import uvicorn
 
-from visiomatic.server.settings import app_settings
+from visiomatic.server.settings import (
+    config_settings,
+    default_settings,
+    settings2parser
+    )
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -28,54 +32,25 @@ def start_server(
 
 if __name__ == "__main__":
     import configparser
-    import argparse
+    from argparse import ArgumentParser
 
     from visiomatic import package
 
     print(f"{package.title} v{package.version}")
 
     # Parse command-line
-    parser = argparse.ArgumentParser(description=package.description)
+    parser = ArgumentParser(description=package.description)
     parser.add_argument(
         "-c", "--config",
-        type=str, default=package.config_file,
-        help="Specify a configuration file", 
+        type=str, default=config_settings.config,
+        help=config_settings.config.title, 
         metavar="FILE"
     )
 
-    parser.add_argument(
-        "-H", "--host",
-        type=str, default="localhost",
-        help="Host name or IP address (default=localhost)"
-    )
-    parser.add_argument(
-        "-p", "--port",
-        type=int, default=8009,
-        help="Port (default=8009)"
-    )
-    parser.add_argument(
-        "-R", "--root_path",
-        type=str, default="",
-        help="ASGI root_path"
-    )
-    parser.add_argument(
-        "-a", "--access_log",
-        action='store_true', default=False,
-        help="Display access log"
-    )
-    parser.add_argument(
-        "-r", "--reload",
-        action='store_true', default=False,
-        help="Enable auto-reload (turns off multiple workers)"
-    )
-    parser.add_argument(
-        "-w", "--workers",
-        type=int, default=4,
-        help="Number of workers"
-    )
+    settings2parser(default_settings, parser)
 
     args = vars(parser.parse_args())
-    
+    '''
     start_server(
         host=args["host"],
         port=args["port"],
@@ -84,4 +59,4 @@ if __name__ == "__main__":
         reload=args["reload"],
         workers=args["workers"]
     )
-
+    '''

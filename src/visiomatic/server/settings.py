@@ -5,36 +5,113 @@ Server settings.
 # Licensed under the MIT licence
 
 from pathlib import Path
-from pydantic import BaseSettings
+from argparse import ArgumentParser
+from pydantic import BaseSettings, Field
+
+class ConfigSettings(BaseSettings):
+    config: str = Field(
+        alias="c",
+        default="config/visiomatic.conf",
+        title="Name of the VisiOmatic configuration file"
+        )
+
+class HostSettings(BaseSettings):
+    host: str = Field(
+        alias="H",
+        default="localhost",
+        title="Host name or IP address"
+        )
+    port: int = Field(
+        alias="p",
+        default=8009,
+        title="Port"
+        )
+    root_path: str = Field(
+        alias="R",
+        default="",
+        title="ASGI root_path"
+        )
+    access_log: bool = Field(
+        alias="a",
+        default=False,
+        title="Display access log"
+        )
+    reload: bool = Field(
+        alias="r",
+        default=False,
+        title="Enable auto-reload (turns off multiple workers)"
+        )
+    workers: int = Field(
+        alias="r",
+        default=4,
+        ge=1,
+        title="Number of workers"
+        )
+
+
+class ServerSettings(BaseSettings):
+    banner: str = Field(
+        default="banner.html",
+        title="Name of the HTML file with the service banner"
+        )
+    data_dir: str = Field(
+        default="fits",
+        title="Data root directory"
+        )
+    doc_dir: str = Field(
+        default="doc/build/html",
+        title="HTML documentation root directory (after build)"
+        )
+    doc_path: str = Field(
+        default="/manual",
+        title="Endpoint URL for the root of the HTML documentation"
+        )
+    tiles_path : str = Field(
+        default="/tiles",
+        title="Endpoint URL for tile queries"
+        )
+    userdoc_url: str = Field(
+        default=doc_path.default + "/interface.html",
+        title="Endpoint URL for the user's HTML documentation"
+        )
+
+
+class CacheSettings(BaseSettings):
+    cache_dir: str = Field(
+        default="tmp",
+        title="Data cache directory"
+        )
+    max_disk_cache_image_count: int = Field(
+        default=3,
+        ge=1,
+        title="Maximum number of images in disk cache"
+        )
+    max_mem_cache_image_count: int = Field(
+        default=16,
+        ge=1,
+        title="Maximum number of images in memory cache"
+        )
+    max_mem_cache_tile_count: int = Field(
+        default=1024,
+        ge=1,
+        title="Maximum number of image tiles in memory cache"
+        )
+    ultradict_cache_file : str = Field(
+        default="/dev/shm/visiomatic_cache_dict.pkl",
+        title="Name of the pickled cache dictionary shared across processes"
+        )
+
 
 class AppSettings(BaseSettings):
-    """
-    Default application settings, can be overriden by ENV:
-    
-    BANNER: str
-        Name of the HTML with the service banner.
-    DATA_DIR: Path
-        Data root directory.
-    DOC_DIR: Path
-        HTML documentation root directory (after build).
-    DOC_PATH: str
-        Endpoint URL for the root of the HTML documentation.
-    USERDOC_URL: str
-        Endpoint URL for the user's HTML documentation.
-    TILES_PATH: str
-        Endpoint URL for tile queries.
-    """
-    BANNER: str = "banner.html"
-    CACHE_DIR : str = "tmp"
-    DATA_DIR : Path = "fits"
-    DOC_DIR: Path = "doc/build/html"
-    DOC_PATH : str = "/manual"
-    MAX_DISK_CACHE_IMAGE_COUNT: int = 3
-    MAX_MEM_CACHE_IMAGE_COUNT: int = 16
-    MAX_MEM_CACHE_TILE_COUNT: int = 1024
-    TILES_PATH : str = "/tiles"
-    ULTRADICT_FILE: str = "/dev/shm/visiomatic_dict.pkl"
-    USERDOC_URL: str = DOC_PATH + "/interface.html"
+    host = HostSettings()
+    server = ServerSettings()
+    cache = CacheSettings()
 
-app_settings = AppSettings()
+def settings2parser(settings: AppSettings, parser: ArgumentParser):
+        print(settings.dict())
+
+
+# Instantiate models
+config_settings = ConfigSettings()
+default_settings = AppSettings()
 
