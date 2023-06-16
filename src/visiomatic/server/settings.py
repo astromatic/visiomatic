@@ -6,47 +6,56 @@ Server settings.
 
 from pathlib import Path
 from argparse import ArgumentParser
-from pydantic import BaseSettings, Field
+import configparser
 
-class ConfigSettings(BaseSettings):
-    config: str = Field(
-        alias="c",
-        default="config/visiomatic.conf",
-        title="Name of the VisiOmatic configuration file"
-        )
+from pydantic import (
+    BaseSettings,
+    Field,
+    IPvAnyAddress
+)
+
+from .. import package
+
+
 
 class HostSettings(BaseSettings):
-    host: str = Field(
-        alias="H",
+    host: IPvAnyAddress = Field(
+        short="H",
         default="localhost",
         title="Host name or IP address"
         )
     port: int = Field(
-        alias="p",
+        short="p",
         default=8009,
+        ge=1,
+        le=65535,
         title="Port"
         )
     root_path: str = Field(
-        alias="R",
+        short="R",
         default="",
         title="ASGI root_path"
         )
     access_log: bool = Field(
-        alias="a",
+        short="a",
         default=False,
         title="Display access log"
         )
     reload: bool = Field(
-        alias="r",
+        short="r",
         default=False,
         title="Enable auto-reload (turns off multiple workers)"
         )
     workers: int = Field(
-        alias="r",
+        short="w",
         default=4,
         ge=1,
         title="Number of workers"
         )
+
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
 
 
 class ServerSettings(BaseSettings):
@@ -75,6 +84,10 @@ class ServerSettings(BaseSettings):
         title="Endpoint URL for the user's HTML documentation"
         )
 
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
+
 
 class CacheSettings(BaseSettings):
     cache_dir: str = Field(
@@ -101,17 +114,72 @@ class CacheSettings(BaseSettings):
         title="Name of the pickled cache dictionary shared across processes"
         )
 
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
+
 
 class AppSettings(BaseSettings):
     host = HostSettings()
     server = ServerSettings()
     cache = CacheSettings()
 
-def settings2parser(settings: AppSettings, parser: ArgumentParser):
-        print(settings.dict())
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
 
 
-# Instantiate models
-config_settings = ConfigSettings()
-default_settings = AppSettings()
+class Settings(object):
+    def __init__(self):
+
+        self.settings = AppSettings()
+        self.groups = tuple(self.settings.dict().keys())
+
+        # Parse command line
+        parser = ArgumentParser(description=package.description)
+        parser.add_argument(
+            "-c", "--config",
+            type=str, default="config/visiomatic.conf",
+            help="Name of the VisiOmatic configuration file", 
+            metavar="FILE"
+        )
+        args_settings_dict = self.parse_args(parser)
+        self.update_from_dict(args_settings_dict) 
+        # Parse config file
+        config_settings = self.parse_config(args_settings_dict['config'])
+
+
+    def parse_args(self, parser) -> dict:
+        for group in self.groups:
+            arg_group = parser.add_argument_group(group.title())
+            settings = getattr(self.settings, group).schema()['properties']
+            for setting in settings:
+                props = settings.get(setting)
+                arg = ["-" + props['short'], "--" + setting] \
+                    if props.get('short') else ["--" + setting]
+                if props['type']=='boolean':
+                    arg_group.add_argument(
+                        *arg,
+                        default=props['default'],
+                        help=props['title'], 
+                        action='store_true'
+                    )
+                else:
+                    arg_group.add_argument(
+                        *arg,
+                        type=str,
+                        default=props['default'],
+                        help=f"{props['title']} (default={props['default']})"
+                    )  
+        return vars(parser.parse_args())
+
+
+    def parse_config(self, filename) -> dict:
+        pass
+
+
+    def update_from_dict(self, settings_dict) -> None:
+        for group in self.groups:
+            settings = getattr(self.settings, group)
+            settings = settings.parse_obj(settings_dict)
 

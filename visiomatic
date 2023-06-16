@@ -3,11 +3,8 @@ import os, pickle
 
 import uvicorn
 
-from visiomatic.server.settings import (
-    config_settings,
-    default_settings,
-    settings2parser
-    )
+from visiomatic import package
+from visiomatic.server.settings import Settings
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -31,25 +28,12 @@ def start_server(
     return
 
 if __name__ == "__main__":
-    import configparser
-    from argparse import ArgumentParser
-
-    from visiomatic import package
 
     print(f"{package.title} v{package.version}")
 
-    # Parse command-line
-    parser = ArgumentParser(description=package.description)
-    parser.add_argument(
-        "-c", "--config",
-        type=str, default=config_settings.config,
-        help=config_settings.config.title, 
-        metavar="FILE"
-    )
+    # Set up settings
+    settings = Settings()
 
-    settings2parser(default_settings, parser)
-
-    args = vars(parser.parse_args())
     '''
     start_server(
         host=args["host"],
