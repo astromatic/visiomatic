@@ -12,8 +12,6 @@ import numpy as np
 from astropy.io import fits
 
 from .. import package
-from .settings import app_settings 
-
 
 class ImageModel(BaseModel):
     """

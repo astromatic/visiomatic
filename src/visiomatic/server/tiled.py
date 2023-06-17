@@ -18,7 +18,7 @@ from tiler import Tiler
 
 from .. import package
 from .image import Image , ImageModel
-from .settings import app_settings 
+from .settings import settings 
 
 
 colordict = {
@@ -93,7 +93,7 @@ class Tiled(object):
             nthreads : int = os.cpu_count() // 2):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        self.filename = os.path.join(app_settings.DATA_DIR, filename)
+        self.filename = os.path.join(settings["data_dir"], filename)
         # Otherwise, create it
         self.nthreads = nthreads
         hdus = fits.open(self.filename)
@@ -219,7 +219,7 @@ class Tiled(object):
         filename: str
             Pickled object filename.
         """
-        return os.path.join(app_settings.CACHE_DIR, prefix + ".pkl")
+        return os.path.join(settings["cache_dir"], prefix + ".pkl")
 
 
     def get_data_filename(self):
@@ -232,7 +232,7 @@ class Tiled(object):
             Filename of the memory-mapped image data.
         """
         return os.path.join(
-            app_settings.CACHE_DIR,
+            settings["cache_dir"],
             self.prefix + ".data.np"
         )
 
@@ -247,7 +247,7 @@ class Tiled(object):
             Filename of the memory mapped tile datacube.
         """
         return os.path.join(
-            app_settings.CACHE_DIR,
+            settings["cache_dir"],
             self.prefix + ".tiles.np"
         )
 
@@ -599,7 +599,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
+    @lru_cache(maxsize=settings["max_mem_cache_tile_count"])
     def get_tile_cached(self, *args, **kwargs):
         """
         Cached version of get_tile().
@@ -625,7 +625,7 @@ def pickledTiled(filename, **kwargs):
         Tiled object pickled from file if available, or initialized otherwise).
     """
     prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(app_settings.DATA_DIR, filename)
+    fname = os.path.join(settings["data_dir"], filename)
     # Check if a recent cached object is available
     if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
             os.path.getmtime(oname) > os.path.getmtime(fname):

@@ -7,6 +7,7 @@ Manage application settings.
 from pathlib import Path
 from argparse import ArgumentParser
 from configparser import ConfigParser
+from pydantic import validate_model
 
 from .. import package
 from .config import AppSettings
@@ -129,8 +130,8 @@ class Settings(object):
                 else:
                     args_group.add_argument(
                         *arg,
-                        type=str,
                         default=props['default'],
+                        type=type(props['default']),
                         help=f"{props['description']} (default={props['default']})"
                     )  
         # Generate dictionary of args grouped by section
@@ -208,6 +209,19 @@ class Settings(object):
             Input dictionary.
         """
         for group in self.groups:
-            settings = getattr(self.settings, group)
-            settings = settings.parse_obj(settings_dict[group])
+            groupsettings = getattr(self.settings, group)
+            groupsettings_dict = groupsettings.dict()
+            settings = settings_dict[group]
+            for setting in settings:
+                vars(groupsettings).update({setting: settings_dict[group][setting]})
+            *_, valid_error = validate_model(
+                groupsettings.__class__,
+                groupsettings.dict()
+            )
+            if valid_error:
+                print(valid_error)
+                exit()
+
+# Set up settings
+settings = Settings().flat_dict()
 

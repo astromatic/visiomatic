@@ -16,11 +16,11 @@ from fastapi.encoders import jsonable_encoder
 import numpy as np
 
 from .. import package
-from .settings import app_settings 
+from .settings import settings
 from .tiled import colordict, pickledTiled, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
-share = False
+share = settings["workers"] > 1 and not settings["reload"]
 
 def create_app() -> FastAPI:
     """
@@ -31,19 +31,19 @@ def create_app() -> FastAPI:
     if share:
         sharedLock = LRUSharedRWLockCache(
             name=f"{package.title}.{os.getppid()}",
-            maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+            maxsize=settings["max_disk_cache_image_count"]
         )
 
     memCachedTiled = LRUMemCache(
         pickledTiled,
-        maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
+        maxsize=settings["max_mem_cache_image_count"]
     )
 
-    banner = app_settings.BANNER
-    doc_dir = app_settings.DOC_DIR
-    doc_path = app_settings.DOC_PATH
-    userdoc_url = app_settings.USERDOC_URL
-    tiles_path = app_settings.TILES_PATH
+    banner = settings["banner"]
+    doc_dir = settings["doc_dir"]
+    doc_path = settings["doc_path"]
+    userdoc_url = settings["userdoc_url"]
+    tiles_path = settings["tiles_path"]
 
     logger = logging.getLogger("uvicorn.error")
 
