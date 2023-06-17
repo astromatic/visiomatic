@@ -2,6 +2,7 @@
 import os, pickle
 
 import uvicorn
+from UltraDict import UltraDict
 
 from visiomatic import package
 from visiomatic.server.settings import Settings
@@ -32,15 +33,15 @@ if __name__ == "__main__":
     print(f"{package.title} v{package.version}")
 
     # Set up settings
-    settings = Settings()
+    settings = Settings().flat_dict()
 
     '''
     start_server(
-        host=args["host"],
-        port=args["port"],
-        root_path=args["root_path"],
-        access_log=args["access_log"],
-        reload=args["reload"],
-        workers=args["workers"]
+        host=settings["host"],
+        port=settings["port"],
+        root_path=settings["root_path"],
+        access_log=settings["access_log"],
+        reload=settings["reload"],
+        workers=settings["workers"]
     )
     '''

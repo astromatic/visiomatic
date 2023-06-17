@@ -1,185 +1,213 @@
 """
-Server settings.
+Manage application settings.
 """
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
 from pathlib import Path
 from argparse import ArgumentParser
-import configparser
-
-from pydantic import (
-    BaseSettings,
-    Field,
-    IPvAnyAddress
-)
+from configparser import ConfigParser
 
 from .. import package
-
-
-
-class HostSettings(BaseSettings):
-    host: IPvAnyAddress = Field(
-        short="H",
-        default="localhost",
-        title="Host name or IP address"
-        )
-    port: int = Field(
-        short="p",
-        default=8009,
-        ge=1,
-        le=65535,
-        title="Port"
-        )
-    root_path: str = Field(
-        short="R",
-        default="",
-        title="ASGI root_path"
-        )
-    access_log: bool = Field(
-        short="a",
-        default=False,
-        title="Display access log"
-        )
-    reload: bool = Field(
-        short="r",
-        default=False,
-        title="Enable auto-reload (turns off multiple workers)"
-        )
-    workers: int = Field(
-        short="w",
-        default=4,
-        ge=1,
-        title="Number of workers"
-        )
-
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
-
-
-class ServerSettings(BaseSettings):
-    banner: str = Field(
-        default="banner.html",
-        title="Name of the HTML file with the service banner"
-        )
-    data_dir: str = Field(
-        default="fits",
-        title="Data root directory"
-        )
-    doc_dir: str = Field(
-        default="doc/build/html",
-        title="HTML documentation root directory (after build)"
-        )
-    doc_path: str = Field(
-        default="/manual",
-        title="Endpoint URL for the root of the HTML documentation"
-        )
-    tiles_path : str = Field(
-        default="/tiles",
-        title="Endpoint URL for tile queries"
-        )
-    userdoc_url: str = Field(
-        default=doc_path.default + "/interface.html",
-        title="Endpoint URL for the user's HTML documentation"
-        )
-
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
-
-
-class CacheSettings(BaseSettings):
-    cache_dir: str = Field(
-        default="tmp",
-        title="Data cache directory"
-        )
-    max_disk_cache_image_count: int = Field(
-        default=3,
-        ge=1,
-        title="Maximum number of images in disk cache"
-        )
-    max_mem_cache_image_count: int = Field(
-        default=16,
-        ge=1,
-        title="Maximum number of images in memory cache"
-        )
-    max_mem_cache_tile_count: int = Field(
-        default=1024,
-        ge=1,
-        title="Maximum number of image tiles in memory cache"
-        )
-    ultradict_cache_file : str = Field(
-        default="/dev/shm/visiomatic_cache_dict.pkl",
-        title="Name of the pickled cache dictionary shared across processes"
-        )
-
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
-
-
-class AppSettings(BaseSettings):
-    host = HostSettings()
-    server = ServerSettings()
-    cache = CacheSettings()
-
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+from .config import AppSettings
 
 
 class Settings(object):
+    """
+    Manage application settings in groups.
+
+    Settings are stored as Pydantic fields.
+    """
     def __init__(self):
 
         self.settings = AppSettings()
         self.groups = tuple(self.settings.dict().keys())
-
         # Parse command line
-        parser = ArgumentParser(description=package.description)
-        parser.add_argument(
+        args_dict = self.parse_args()
+        # Parse config file
+        config_filename = args_dict['config']
+        if Path(config_filename).exists():
+            config_dict = self.parse_config(config_filename)
+        # Update settings
+        # First, from the config file
+        self.update_from_dict(config_dict) 
+        # Second, from the command line
+        self.update_from_dict(args_dict) 
+
+
+    def dict(self) -> dict:
+        """
+        Return a dictionary of all settings, organized in groups.
+
+        Returns
+        -------
+        gdict: dict
+            Dictionary of settings.
+        """
+        return self.settings.dict()
+
+
+    def flat_dict(self) -> dict:
+        """
+        Return a flattened dictionary of all settings.
+
+        Returns
+        -------
+        fdict: dict
+            Dictionary of settings.
+        """
+        fdict = {}
+        for group in self.groups:
+            settings = getattr(self.settings, group).dict()
+            for setting in settings:
+                fdict[setting] = settings[setting]
+        return fdict
+
+
+    def schema(self) -> dict:
+        """
+        Return a schema of the settings as a dictionary.
+
+        Returns
+        -------
+        schema: dict
+            Schema of the settings, as a dictionary.
+        """
+        return self.settings.schema()
+
+
+    def schema_json(self, indent=2) -> str:
+        """
+        Return a schema of the settings as a JSON string.
+
+        Parameters
+        ----------
+        indent: int
+            Number of indentation spaces.
+
+        Returns
+        -------
+        schema: str
+            JSON schema of the settings.
+        """
+        return self.settings.schema_json(indent=indent)
+
+
+    def parse_args(self) -> dict:
+        """
+        Return a dictionary of all settings, with values updated from the
+        command line.
+
+        Extra settings are ignored.
+
+        Returns
+        -------
+        gdict: dict
+            Dictionary of all settings, organized in groups.
+        """
+        config = ArgumentParser(description=package.description)
+        config.add_argument(
             "-c", "--config",
             type=str, default="config/visiomatic.conf",
             help="Name of the VisiOmatic configuration file", 
             metavar="FILE"
         )
-        args_settings_dict = self.parse_args(parser)
-        self.update_from_dict(args_settings_dict) 
-        # Parse config file
-        config_settings = self.parse_config(args_settings_dict['config'])
-
-
-    def parse_args(self, parser) -> dict:
         for group in self.groups:
-            arg_group = parser.add_argument_group(group.title())
+            args_group = config.add_argument_group(group.title())
             settings = getattr(self.settings, group).schema()['properties']
             for setting in settings:
-                props = settings.get(setting)
+                props = settings[setting]
                 arg = ["-" + props['short'], "--" + setting] \
                     if props.get('short') else ["--" + setting]
                 if props['type']=='boolean':
-                    arg_group.add_argument(
+                    args_group.add_argument(
                         *arg,
                         default=props['default'],
-                        help=props['title'], 
+                        help=props['description'], 
                         action='store_true'
                     )
                 else:
-                    arg_group.add_argument(
+                    args_group.add_argument(
                         *arg,
                         type=str,
                         default=props['default'],
-                        help=f"{props['title']} (default={props['default']})"
+                        help=f"{props['description']} (default={props['default']})"
                     )  
-        return vars(parser.parse_args())
+        # Generate dictionary of args grouped by section
+        fdict = vars(config.parse_args())
+        gdict = {}
+        gdict['config'] = fdict['config']
+        for group in self.groups:
+            gdict[group] = {}
+            gdictg = gdict[group]
+            settings = getattr(self.settings, group).dict()
+            for setting in settings:
+                gdictg[setting] = fdict[setting]
+        return gdict
 
 
     def parse_config(self, filename) -> dict:
-        pass
+        """
+        Return a dictionary of all settings, with values updated from a
+        configuration file in INI format.
+
+        Extra settings are ignored.
+
+        Parameters
+        ----------
+        filename: str or Path
+            Configuration filename.
+
+        Returns
+        -------
+        gdict: dict
+            Dictionary of all settings, organized in groups.
+        """
+        config = ConfigParser()
+        config.read(filename)
+        gdict = {}
+        for group in self.groups:
+            gdict[group] = {}
+            gdictg = gdict[group]
+            settings = getattr(self.settings, group).dict()
+            for setting in settings:
+                if (value := config.get(group, setting, fallback=None)) != None:
+                    gdictg[setting] = value
+        return gdict
+
+
+    def save_config(self, filename) -> None:
+        """
+        Save all settings as a configuration file in INI format.
+
+        Extra settings are ignored.
+
+        Parameters
+        ----------
+        filename: str or Path
+            Configuration filename.
+        """
+        config = ConfigParser()
+        for group in self.groups:
+            config[group] = {}
+            settings = getattr(self.settings, group).dict()
+            for setting in settings:
+                props = f"{settings[setting]}"
+                config[group][setting] = props
+        with open(filename, 'w') as config_file:
+            config.write(config_file)
 
 
     def update_from_dict(self, settings_dict) -> None:
+        """
+        Update internal settings based on a dictionary (in groups)
+
+        Parameters
+        ----------
+        settings_dict: dict
+            Input dictionary.
+        """
         for group in self.groups:
             settings = getattr(self.settings, group)
-            settings = settings.parse_obj(settings_dict)
+            settings = settings.parse_obj(settings_dict[group])
 
