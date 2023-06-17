@@ -32,8 +32,10 @@ colordict = {
 
 class TiledModel(BaseModel):
     """
-    Pydantic tiled model class
+    Pydantic tiled model class.
 
+    Parameters
+    ----------
     type: str
         Name of the web service
     version: str
