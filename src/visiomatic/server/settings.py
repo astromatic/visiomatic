@@ -222,6 +222,6 @@ class Settings(object):
                 print(valid_error)
                 exit()
 
-# Set up settings
-settings = Settings().flat_dict()
+# Initialize global dictionary
+dict = None
 

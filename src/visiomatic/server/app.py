@@ -16,34 +16,39 @@ from fastapi.encoders import jsonable_encoder
 import numpy as np
 
 from .. import package
-from .settings import settings
+from . import settings
+# Set up settings
+settings.dict = settings.Settings().flat_dict()
+
 from .tiled import colordict, pickledTiled, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
-share = settings["workers"] > 1 and not settings["reload"]
+
+share = settings.dict["workers"] > 1 and not settings.dict["reload"]
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
+
     worker_id = os.getpid()
     # Get shared lock dictionary if processing in parallel
     if share:
         sharedLock = LRUSharedRWLockCache(
             name=f"{package.title}.{os.getppid()}",
-            maxsize=settings["max_disk_cache_image_count"]
+            maxsize=settings.dict["max_disk_cache_image_count"]
         )
 
     memCachedTiled = LRUMemCache(
         pickledTiled,
-        maxsize=settings["max_mem_cache_image_count"]
+        maxsize=settings.dict["max_mem_cache_image_count"]
     )
 
-    banner = settings["banner"]
-    doc_dir = settings["doc_dir"]
-    doc_path = settings["doc_path"]
-    userdoc_url = settings["userdoc_url"]
-    tiles_path = settings["tiles_path"]
+    banner = settings.dict["banner"]
+    doc_dir = settings.dict["doc_dir"]
+    doc_path = settings.dict["doc_path"]
+    userdoc_url = settings.dict["userdoc_url"]
+    tiles_path = settings.dict["tiles_path"]
 
     logger = logging.getLogger("uvicorn.error")
 

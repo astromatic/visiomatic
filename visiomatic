@@ -2,10 +2,9 @@
 import os, pickle
 
 import uvicorn
-from UltraDict import UltraDict
 
 from visiomatic import package
-from visiomatic.server.settings import settings
+from visiomatic.server import settings
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -32,12 +31,15 @@ if __name__ == "__main__":
 
     print(f"{package.title} v{package.version}")
 
+    # Set up settings
+    settings.dict = settings.Settings().flat_dict()
+
     start_server(
-        host=settings["host"],
-        port=settings["port"],
-        root_path=settings["root_path"],
-        access_log=settings["access_log"],
-        reload=settings["reload"],
-        workers=settings["workers"]
+        host=settings.dict["host"],
+        port=settings.dict["port"],
+        root_path=settings.dict["root_path"],
+        access_log=settings.dict["access_log"],
+        reload=settings.dict["reload"],
+        workers=settings.dict["workers"]
     )
 
