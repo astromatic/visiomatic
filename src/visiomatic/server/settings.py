@@ -4,6 +4,7 @@ Manage application settings.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
+import sys
 from pathlib import Path
 from argparse import ArgumentParser
 from configparser import ConfigParser
@@ -23,17 +24,19 @@ class Settings(object):
 
         self.settings = AppSettings()
         self.groups = tuple(self.settings.dict().keys())
-        # Parse command line
-        args_dict = self.parse_args()
-        # Parse config file
-        config_filename = args_dict['config']
-        if Path(config_filename).exists():
-            config_dict = self.parse_config(config_filename)
-        # Update settings
-        # First, from the config file
-        self.update_from_dict(config_dict) 
-        # Second, from the command line
-        self.update_from_dict(args_dict) 
+        # Skip argument parsing and stuff if Sphinx is involved
+        if not 'sphinx' in sys.modules:
+            # Parse command line
+            args_dict = self.parse_args()
+            # Parse config file
+            config_filename = args_dict['config']
+            if Path(config_filename).exists():
+                config_dict = self.parse_config(config_filename)
+            # Update settings
+            # First, from the config file
+            self.update_from_dict(config_dict) 
+            # Second, from the command line
+            self.update_from_dict(args_dict) 
 
 
     def dict(self) -> dict:

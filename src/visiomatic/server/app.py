@@ -16,7 +16,9 @@ from fastapi.encoders import jsonable_encoder
 import numpy as np
 
 from .. import package
+
 from . import settings
+
 # Set up settings
 settings.dict = settings.Settings().flat_dict()
 

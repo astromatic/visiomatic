@@ -597,7 +597,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=settings.dict["max_mem_cache_tile_count"])
+    @lru_cache(maxsize=settings.dict["max_mem_cache_tile_count"] if settings.dict else 0)
     def get_tile_cached(self, *args, **kwargs):
         """
         Cached version of get_tile().
