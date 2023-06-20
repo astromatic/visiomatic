@@ -39,7 +39,7 @@ class LRUMemCache:
         self.func = func
         self.maxsize = maxsize
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         """
         Cache or recover earlier cached result/object.
         If the number of cached items exceeds maxsize then the least recently
@@ -62,7 +62,7 @@ class LRUMemCache:
             return self.cache[args]
         if len(self.cache) > self.maxsize:
             self.cache.popitem(0)
-        result = self.func(*args)
+        result = self.func(*args, **kwargs)
         self.cache[args] = result
         return result
 
@@ -193,6 +193,9 @@ class SharedRWLock:
         """
         Remove files used by the RW lock semaphores.
         """
-        Semaphore(self._glock_name).unlink()
-        Semaphore(self._rlock_name).unlink()
+        try:
+            Semaphore(self._glock_name).unlink()
+            Semaphore(self._rlock_name).unlink()
+        except:
+            pass
 
