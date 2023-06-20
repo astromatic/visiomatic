@@ -57,7 +57,9 @@ class TiledModel(BaseModel):
     tile_size: List[int]
     tile_levels: int
     channels: int
-    bits_per_channel: int 
+    bits_per_channel: int
+    gamma: float
+    quality: int
     header: dict
     images: List[ImageModel]
 
@@ -88,7 +90,8 @@ class Tiled(object):
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = os.cpu_count() // 2):
+            quality: int = 90,
+            nthreads : int = settings.dict["thread_count"]):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
         self.filename = os.path.join(settings.dict["data_dir"], filename)
@@ -116,6 +119,7 @@ class Tiled(object):
         self.make_mosaic(self.images)
         hdus.close()
         self.gamma = gamma
+        self.quality = quality
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -203,6 +207,8 @@ class Tiled(object):
             tile_levels=self.nlevels,
             channels=self.shape[0],
             bits_per_channel=32,
+            gamma=self.gamma,
+            quality=self.quality,
             header=dict(self.header.items()),
             images=[image.get_model() for image in self.images]
         )
@@ -245,7 +251,7 @@ class Tiled(object):
             Filename of the memory mapped tile datacube.
         """
         return os.path.join(
-            setting.dict["cache_dir"],
+            settings.dict["cache_dir"],
             self.prefix + ".tiles.np"
         )
 

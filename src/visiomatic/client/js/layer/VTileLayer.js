@@ -33,10 +33,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		noWrap: true,
 		contrast: 1.0,
 		colorSat: 1.0,
-		gamma: 1.0,
+		gamma: null,
 		cMap: 'grey',
 		invertCMap: false,
-		quality: 90,
+		quality: null,
 		mixingMode: 'color',
 		channelColors: [],
 		channelLabels: [],
@@ -275,7 +275,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
     	 * @property {string[]} channelUnits
     	   Pixel value unit for every image channel.
     	 * @property {number} quality
-    	   Current JPEG encoding quality.
+    	   Current JPEG encoding quality in %.
     	 */
 		this.visio = {
 			imageSize: [[this.tileSize]],
@@ -357,13 +357,25 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Set pixel bpp
 			visio.bpp = meta.bits_per_channel;
-			// Only 32bit data are likely to be linearly quantized
-			if (visio.gamma === visioDefault.gamma) {
-				visio.gamma = visio.bpp >= 32 ? 2.2 : 1.0;
-			}
 
 			// Number of channels
 			nchannel = visio.nChannel = meta.channels;
+
+            // Default display gamma
+            if (meta.gamma) {
+                visioDefault.gamma = meta.gamma;
+            }
+            if (!visio.gamma) {
+                visio.gamma = visioDefault.gamma;
+            }
+
+            // Default compression quality
+            if (meta.quality) {
+                visioDefault.quality = meta.quality;
+            }
+            if (!visio.quality) {
+                visio.quality = visioDefault.quality;
+            }
 
 			// Images
 			images = meta.images;

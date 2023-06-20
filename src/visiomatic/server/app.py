@@ -51,6 +51,8 @@ def create_app() -> FastAPI:
     doc_path = settings.dict["doc_path"]
     userdoc_url = settings.dict["userdoc_url"]
     tiles_path = settings.dict["tiles_path"]
+    gamma = settings.dict["gamma"]
+    quality = settings.dict["quality"]
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -235,7 +237,11 @@ def create_app() -> FastAPI:
         if share:
             lock = sharedLock(FIF)
 
-        tiled = memCachedTiled(FIF)
+        tiled = memCachedTiled(
+            FIF,
+            gamma=gamma,
+            quality=quality
+        )
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))

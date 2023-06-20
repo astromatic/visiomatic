@@ -4,6 +4,8 @@ Configuration settings for the application.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
+from os import cpu_count
+
 from pydantic import (
     BaseSettings,
     Field
@@ -51,6 +53,25 @@ class HostSettings(BaseSettings):
         extra = 'ignore'
 
 
+class ImageSettings(BaseSettings):
+    gamma: float = Field(
+        default=2.2,
+        ge=0.1,
+        le=5.0,
+        description="Default image gamma"
+        )
+    quality: int = Field(
+        default=97,
+        ge=1,
+        le=100,
+        description="Default image compression quality in %%"
+        )
+
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
+
+
 class ServerSettings(BaseSettings):
     banner: str = Field(
         default="banner.html",
@@ -75,6 +96,19 @@ class ServerSettings(BaseSettings):
     userdoc_url: str = Field(
         default=doc_path.default + "/interface.html",
         description="Endpoint URL for the user's HTML documentation"
+        )
+
+    class Config:
+        env_prefix = f"{package.name}_"
+        extra = 'ignore'
+
+
+class EngineSettings(BaseSettings):
+    thread_count: int = Field(
+        default=cpu_count() // 2,
+        ge=1,
+        le=1024,
+        description="Number of engine threads"
         )
 
     class Config:
@@ -114,8 +148,9 @@ class CacheSettings(BaseSettings):
 
 class AppSettings(BaseSettings):
     host = HostSettings()
+    image = ImageSettings()
     server = ServerSettings()
+    engine = EngineSettings()
     cache = CacheSettings()
-
 
 

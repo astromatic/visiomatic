@@ -34049,10 +34049,10 @@
       noWrap: true,
       contrast: 1,
       colorSat: 1,
-      gamma: 1,
+      gamma: null,
       cMap: "grey",
       invertCMap: false,
-      quality: 90,
+      quality: null,
       mixingMode: "color",
       channelColors: [],
       channelLabels: [],
@@ -34154,10 +34154,19 @@
           visio.gridSize[z] = visio.gridSize[visio.maxZoom];
         }
         visio.bpp = meta.bits_per_channel;
-        if (visio.gamma === visioDefault.gamma) {
-          visio.gamma = visio.bpp >= 32 ? 2.2 : 1;
+        if (meta.gamma) {
+          visioDefault.gamma = meta.gamma;
+        }
+        if (!visio.gamma) {
+          visio.gamma = visioDefault.gamma;
         }
         nchannel = visio.nChannel = meta.channels;
+        if (meta.quality) {
+          visioDefault.quality = meta.quality;
+        }
+        if (!visio.quality) {
+          visio.quality = visioDefault.quality;
+        }
         images = meta.images;
         for (let c3 = 0; c3 < nchannel; c3++) {
           visioDefault.minValue[c3] = images[0].min_max[c3][0];
