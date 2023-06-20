@@ -6,6 +6,15 @@ Custom caches and utilities
 
 import os
 from collections import OrderedDict
+from signal import (
+    signal,
+    SIGABRT,
+    SIGILL,
+    SIGINT,
+    SIGKILL,
+    SIGSEGV,
+    SIGTERM
+)
 from time import time_ns
 from typing import Union
 
@@ -129,6 +138,13 @@ class SharedRWLock:
         glock = Semaphore(self._glock_name, O_CREAT, initial_value=1)
         self.b = 0
         self.write = False
+        for sig in (
+            SIGABRT,
+            SIGILL,
+            SIGINT,
+            SIGSEGV,
+            SIGTERM):
+            signal(sig, self.remove)
 
 
     def acquire_read(self):
@@ -166,11 +182,17 @@ class SharedRWLock:
 
     def __delete__(self, instance):
         """
-        Destroy semaphores used by the RW lock.
+        Clean up leftovers from the RW lock.
 
         :meta public:
         """
+        self.remove()
+
+
+    def remove(self, *args):
+        """
+        Remove files used by the RW lock semaphores.
+        """
         Semaphore(self._glock_name).unlink()
         Semaphore(self._rlock_name).unlink()
-
 
