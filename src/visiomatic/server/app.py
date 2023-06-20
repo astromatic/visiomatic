@@ -53,6 +53,7 @@ def create_app() -> FastAPI:
     tiles_path = settings.dict["tiles_path"]
     gamma = settings.dict["gamma"]
     quality = settings.dict["quality"]
+    tile_size = settings.dict["tile_size"]
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -240,7 +241,8 @@ def create_app() -> FastAPI:
         tiled = memCachedTiled(
             FIF,
             gamma=gamma,
-            quality=quality
+            quality=quality,
+            tile_size=tile_size
         )
         '''
         if FIF in app.tiled:

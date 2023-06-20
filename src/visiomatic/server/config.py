@@ -66,6 +66,12 @@ class ImageSettings(BaseSettings):
         le=100,
         description="Default image compression quality in %%"
         )
+    tile_size: tuple[int, int] = Field(
+        default=(256, 256),
+        ge=1,
+        le=4096,
+        description="Tile size"
+        )
 
     class Config:
         env_prefix = f"{package.name}_"
