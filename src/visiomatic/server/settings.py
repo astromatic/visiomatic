@@ -36,7 +36,7 @@ class Settings(object):
             # First, from the config file
             self.update_from_dict(config_dict) 
             # Second, from the command line
-            self.update_from_dict(args_dict) 
+            self.update_from_dict(args_dict)
 
 
     def dict(self) -> dict:
@@ -123,18 +123,27 @@ class Settings(object):
                 props = settings[setting]
                 arg = ["-" + props['short'], "--" + setting] \
                     if props.get('short') else ["--" + setting]
+                default = props['default']
                 if props['type']=='boolean':
                     args_group.add_argument(
                         *arg,
-                        default=props['default'],
+                        default=default,
                         help=props['description'], 
                         action='store_true'
+                    )
+                elif props['type']=='array':
+                    deftype = type(default[0])
+                    args_group.add_argument(
+                        *arg,
+                        default=default,
+                        type=lambda s: [deftype(val) for val in s.split(',')],
+                        help=f"{props['description']} (default={props['default']})"
                     )
                 else:
                     args_group.add_argument(
                         *arg,
-                        default=props['default'],
-                        type=type(props['default']),
+                        default=default,
+                        type=type(default),
                         help=f"{props['description']} (default={props['default']})"
                     )  
         # Generate dictionary of args grouped by section

@@ -242,7 +242,7 @@ def create_app() -> FastAPI:
             FIF,
             gamma=gamma,
             quality=quality,
-            tile_size=tile_size
+            tilesize=tile_size
         )
         '''
         if FIF in app.tiled:
