@@ -4,7 +4,7 @@ Manage application settings.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import sys
+import sys, time
 from pathlib import Path
 from argparse import ArgumentParser
 from configparser import ConfigParser
@@ -28,6 +28,9 @@ class Settings(object):
         if not 'sphinx' in sys.modules:
             # Parse command line
             args_dict = self.parse_args()
+            if args_dict['save_config']:
+                self.save_config('visiomatic-default.conf')
+                exit(0)
             # Parse config file
             config_filename = args_dict['config']
             if Path(config_filename).exists():
@@ -37,6 +40,7 @@ class Settings(object):
             self.update_from_dict(config_dict) 
             # Second, from the command line
             self.update_from_dict(args_dict)
+            # Save configuration file if requested
 
 
     def dict(self) -> dict:
@@ -110,11 +114,18 @@ class Settings(object):
             Dictionary of all settings, organized in groups.
         """
         config = ArgumentParser(description=package.description)
+        # Add options not relevant to configuration itself
         config.add_argument(
             "-c", "--config",
             type=str, default="config/visiomatic.conf",
             help="Name of the VisiOmatic configuration file", 
             metavar="FILE"
+        )
+        config.add_argument(
+            "-s", "--save_config",
+            default=False,
+            help="Save a default VisiOmatic configuration file and exit",
+            action='store_true'
         )
         for group in self.groups:
             args_group = config.add_argument_group(group.title())
@@ -150,6 +161,7 @@ class Settings(object):
         fdict = vars(config.parse_args())
         gdict = {}
         gdict['config'] = fdict['config']
+        gdict['save_config'] = fdict['save_config']
         for group in self.groups:
             gdict[group] = {}
             gdictg = gdict[group]
@@ -208,6 +220,9 @@ class Settings(object):
                 props = f"{settings[setting]}"
                 config[group][setting] = props
         with open(filename, 'w') as config_file:
+            config_file.write(f"; Defaut {package.title} configuration file\n")
+            nowstr = time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime())
+            config_file.write(f"; {nowstr}\n")
             config.write(config_file)
 
 
