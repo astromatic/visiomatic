@@ -16,34 +16,47 @@ from fastapi.encoders import jsonable_encoder
 import numpy as np
 
 from .. import package
-from .settings import app_settings 
+
+from . import config
+
+# Set up settings by instantiating a configuration object
+conf = config.Config()
+config.settings = conf.flat_dict()
+config.image_filename = conf.image_filename
+
 from .tiled import colordict, pickledTiled, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
-share = False
+
+share = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
+
     worker_id = os.getpid()
     # Get shared lock dictionary if processing in parallel
     if share:
         sharedLock = LRUSharedRWLockCache(
             name=f"{package.title}.{os.getppid()}",
-            maxsize=app_settings.MAX_DISK_CACHE_IMAGE_COUNT
+            maxsize=config.settings["max_disk_cache_image_count"]
         )
 
     memCachedTiled = LRUMemCache(
         pickledTiled,
-        maxsize=app_settings.MAX_MEM_CACHE_IMAGE_COUNT
+        maxsize=config.settings["max_mem_cache_image_count"]
     )
 
-    banner = app_settings.BANNER
-    doc_dir = app_settings.DOC_DIR
-    doc_path = app_settings.DOC_PATH
-    userdoc_url = app_settings.USERDOC_URL
-    tiles_path = app_settings.TILES_PATH
+    banner = config.settings["banner"]
+    doc_dir = config.settings["doc_dir"]
+    doc_path = config.settings["doc_path"]
+    userdoc_url = config.settings["userdoc_url"]
+    tiles_path = config.settings["tiles_path"]
+    gamma = config.settings["gamma"]
+    quality = config.settings["quality"]
+    tile_size = config.settings["tile_size"]
+    image = config.image_filename
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -228,7 +241,12 @@ def create_app() -> FastAPI:
         if share:
             lock = sharedLock(FIF)
 
-        tiled = memCachedTiled(FIF)
+        tiled = memCachedTiled(
+            FIF,
+            gamma=gamma,
+            quality=quality,
+            tilesize=tile_size
+        )
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))

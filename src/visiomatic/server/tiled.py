@@ -18,8 +18,7 @@ from tiler import Tiler
 
 from .. import package
 from .image import Image , ImageModel
-from .settings import app_settings 
-
+from . import config
 
 colordict = {
     'grey': None,
@@ -29,11 +28,12 @@ colordict = {
     'hot': cv2.COLORMAP_HOT
 }
 
-
 class TiledModel(BaseModel):
     """
-    Pydantic tiled model class
+    Pydantic tiled model class.
 
+    Parameters
+    ----------
     type: str
         Name of the web service
     version: str
@@ -57,7 +57,9 @@ class TiledModel(BaseModel):
     tile_size: List[int]
     tile_levels: int
     channels: int
-    bits_per_channel: int 
+    bits_per_channel: int
+    gamma: float
+    quality: int
     header: dict
     images: List[ImageModel]
 
@@ -88,10 +90,11 @@ class Tiled(object):
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
             gamma : float = 0.45,
-            nthreads : int = os.cpu_count() // 2):
+            quality: int = 90,
+            nthreads : int = config.settings["thread_count"]):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        self.filename = os.path.join(app_settings.DATA_DIR, filename)
+        self.filename = os.path.join(config.settings["data_dir"], filename)
         # Otherwise, create it
         self.nthreads = nthreads
         hdus = fits.open(self.filename)
@@ -116,6 +119,7 @@ class Tiled(object):
         self.make_mosaic(self.images)
         hdus.close()
         self.gamma = gamma
+        self.quality = quality
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -203,6 +207,8 @@ class Tiled(object):
             tile_levels=self.nlevels,
             channels=self.shape[0],
             bits_per_channel=32,
+            gamma=self.gamma,
+            quality=self.quality,
             header=dict(self.header.items()),
             images=[image.get_model() for image in self.images]
         )
@@ -217,7 +223,7 @@ class Tiled(object):
         filename: str
             Pickled object filename.
         """
-        return os.path.join(app_settings.CACHE_DIR, prefix + ".pkl")
+        return os.path.join(config.settings["cache_dir"], prefix + ".pkl")
 
 
     def get_data_filename(self):
@@ -230,7 +236,7 @@ class Tiled(object):
             Filename of the memory-mapped image data.
         """
         return os.path.join(
-            app_settings.CACHE_DIR,
+            config.settings["cache_dir"],
             self.prefix + ".data.np"
         )
 
@@ -245,7 +251,7 @@ class Tiled(object):
             Filename of the memory mapped tile datacube.
         """
         return os.path.join(
-            app_settings.CACHE_DIR,
+            config.settings["cache_dir"],
             self.prefix + ".tiles.np"
         )
 
@@ -597,7 +603,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=app_settings.MAX_MEM_CACHE_TILE_COUNT)
+    @lru_cache(maxsize=config.settings["max_mem_cache_tile_count"] if config.settings else 0)
     def get_tile_cached(self, *args, **kwargs):
         """
         Cached version of get_tile().
@@ -623,7 +629,7 @@ def pickledTiled(filename, **kwargs):
         Tiled object pickled from file if available, or initialized otherwise).
     """
     prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(app_settings.DATA_DIR, filename)
+    fname = os.path.join(config.settings["data_dir"], filename)
     # Check if a recent cached object is available
     if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
             os.path.getmtime(oname) > os.path.getmtime(fname):

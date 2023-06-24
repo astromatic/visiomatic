@@ -12,13 +12,13 @@ import numpy as np
 from astropy.io import fits
 
 from .. import package
-from .settings import app_settings 
-
 
 class ImageModel(BaseModel):
     """
-    Pydantic image model class
+    Pydantic image model class.
 
+    Parameters
+    ----------
     size: List[int]
         Image shape, FITS style (x comes first)
     dataslice: List[List[int]]

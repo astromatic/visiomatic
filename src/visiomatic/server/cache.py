@@ -6,6 +6,15 @@ Custom caches and utilities
 
 import os
 from collections import OrderedDict
+from signal import (
+    signal,
+    SIGABRT,
+    SIGILL,
+    SIGINT,
+    SIGKILL,
+    SIGSEGV,
+    SIGTERM
+)
 from time import time_ns
 from typing import Union
 
@@ -30,7 +39,7 @@ class LRUMemCache:
         self.func = func
         self.maxsize = maxsize
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         """
         Cache or recover earlier cached result/object.
         If the number of cached items exceeds maxsize then the least recently
@@ -53,7 +62,7 @@ class LRUMemCache:
             return self.cache[args]
         if len(self.cache) > self.maxsize:
             self.cache.popitem(0)
-        result = self.func(*args)
+        result = self.func(*args, **kwargs)
         self.cache[args] = result
         return result
 
@@ -129,6 +138,13 @@ class SharedRWLock:
         glock = Semaphore(self._glock_name, O_CREAT, initial_value=1)
         self.b = 0
         self.write = False
+        for sig in (
+            SIGABRT,
+            SIGILL,
+            SIGINT,
+            SIGSEGV,
+            SIGTERM):
+            signal(sig, self.remove)
 
 
     def acquire_read(self):
@@ -166,11 +182,20 @@ class SharedRWLock:
 
     def __delete__(self, instance):
         """
-        Destroy semaphores used by the RW lock.
+        Clean up leftovers from the RW lock.
 
         :meta public:
         """
-        Semaphore(self._glock_name).unlink()
-        Semaphore(self._rlock_name).unlink()
+        self.remove()
 
+
+    def remove(self, *args):
+        """
+        Remove files used by the RW lock semaphores.
+        """
+        try:
+            Semaphore(self._glock_name).unlink()
+            Semaphore(self._rlock_name).unlink()
+        except:
+            pass
 

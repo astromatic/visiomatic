@@ -5,8 +5,9 @@ Python server
    :maxdepth: 3
 
    app
+   cache
    tiled
    image
-   lru
+   config
    settings
 
