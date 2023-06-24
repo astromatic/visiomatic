@@ -4,7 +4,7 @@ import os, pickle
 import uvicorn
 
 from visiomatic import package
-from visiomatic.server import settings
+from visiomatic.server import config
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -32,14 +32,14 @@ if __name__ == "__main__":
     print(f"{package.title} v{package.version}")
 
     # Set up settings
-    settings.dict = settings.Settings().flat_dict()
+    config.settings = config.Config().flat_dict()
 
     start_server(
-        host=settings.dict["host"],
-        port=settings.dict["port"],
-        root_path=settings.dict["root_path"],
-        access_log=settings.dict["access_log"],
-        reload=settings.dict["reload"],
-        workers=settings.dict["workers"]
+        host=config.settings["host"],
+        port=config.settings["port"],
+        root_path=config.settings["root_path"],
+        access_log=config.settings["access_log"],
+        reload=config.settings["reload"],
+        workers=config.settings["workers"]
     )
 

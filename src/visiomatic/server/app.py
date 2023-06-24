@@ -17,16 +17,18 @@ import numpy as np
 
 from .. import package
 
-from . import settings
+from . import config
 
-# Set up settings
-settings.dict = settings.Settings().flat_dict()
+# Set up settings by instantiating a configuration object
+conf = config.Config()
+config.settings = conf.flat_dict()
+config.image_filename = conf.image_filename
 
 from .tiled import colordict, pickledTiled, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
 
-share = settings.dict["workers"] > 1 and not settings.dict["reload"]
+share = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
@@ -38,22 +40,23 @@ def create_app() -> FastAPI:
     if share:
         sharedLock = LRUSharedRWLockCache(
             name=f"{package.title}.{os.getppid()}",
-            maxsize=settings.dict["max_disk_cache_image_count"]
+            maxsize=config.settings["max_disk_cache_image_count"]
         )
 
     memCachedTiled = LRUMemCache(
         pickledTiled,
-        maxsize=settings.dict["max_mem_cache_image_count"]
+        maxsize=config.settings["max_mem_cache_image_count"]
     )
 
-    banner = settings.dict["banner"]
-    doc_dir = settings.dict["doc_dir"]
-    doc_path = settings.dict["doc_path"]
-    userdoc_url = settings.dict["userdoc_url"]
-    tiles_path = settings.dict["tiles_path"]
-    gamma = settings.dict["gamma"]
-    quality = settings.dict["quality"]
-    tile_size = settings.dict["tile_size"]
+    banner = config.settings["banner"]
+    doc_dir = config.settings["doc_dir"]
+    doc_path = config.settings["doc_path"]
+    userdoc_url = config.settings["userdoc_url"]
+    tiles_path = config.settings["tiles_path"]
+    gamma = config.settings["gamma"]
+    quality = config.settings["quality"]
+    tile_size = config.settings["tile_size"]
+    image = config.image_filename
 
     logger = logging.getLogger("uvicorn.error")
 
