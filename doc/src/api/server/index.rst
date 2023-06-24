@@ -8,5 +8,6 @@ Python server
    cache
    tiled
    image
+   config
    settings
 

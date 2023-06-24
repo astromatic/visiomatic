@@ -24,7 +24,8 @@ class Config(object):
 
         self.settings = AppSettings()
         self.groups = tuple(self.settings.dict().keys())
-        # Skip argument parsing and stuff if Sphinx is involved
+        self.image_filename = None
+       # Skip argument parsing and stuff if Sphinx is involved
         if not 'sphinx' in sys.modules:
             # Parse command line
             args_dict = self.parse_args()
