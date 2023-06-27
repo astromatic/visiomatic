@@ -5,12 +5,13 @@ Package-wide definitions
 # Licensed under the MIT license
 
 from visiomatic import __version__
+from importlib.metadata import (
+    name,
+    description,
+    version
 
 # Package information
-name = "visiomatic"
-version = __version__
 title = "VisiOmatic"
-description = "An IIIF-compliant web astronomical image client/server"
 url = "https://github.com/ebertin/visiomatic-server"
 
 # Contact
