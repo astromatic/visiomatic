@@ -4,15 +4,17 @@ Package-wide definitions
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT license
 
-from visiomatic import __version__
-from importlib.metadata import (
-    name,
-    description,
-    version
+from importlib.metadata import metadata
 
 # Package information
+# Get the current package name, quick and (very) dirty
+name = __name__.split(".")[-2]
 title = "VisiOmatic"
-url = "https://github.com/ebertin/visiomatic-server"
+meta = metadata(name)
+version = meta["Version"]
+summary = meta["Summary"]
+description = meta["Description"]
+url = meta["Project-URL"].rsplit(", ")[-1]
 
 # Contact
 contact_name = "Emmanuel Bertin"
