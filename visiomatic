@@ -1,10 +1,11 @@
 #! /usr/bin/python
-import os, pickle
+import os, pickle, time, webbrowser
 
 import uvicorn
 
 from visiomatic import package
 from visiomatic.server import config
+
 
 def start_server(
         app="src.visiomatic.server.app:create_app",
@@ -31,8 +32,23 @@ if __name__ == "__main__":
 
     print(f"{package.title} v{package.version}")
 
-    # Set up settings
-    config.settings = config.Config().flat_dict()
+    # Set up settings by instantiating a configuration object
+    conf = config.Config()
+    config.settings = conf.flat_dict()
+    config.image_filename = conf.image_filename
+    
+    if (config.image_filename):
+        # Monkey-patch Uvicorn calls to call the browser AFTER the server
+        def uvicorn_run_with_browser(self) -> None:
+             self.startup()
+             self.should_exit.wait(1)
+             webbrowser.open(
+                f"{config.settings['host']}:{config.settings['port']}"
+             )
+             self.should_exit.wait()
+             self.shutdown()
+
+        uvicorn.supervisors.Multiprocess.run = uvicorn_run_with_browser
 
     start_server(
         host=config.settings["host"],
