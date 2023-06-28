@@ -72,6 +72,8 @@ class Tiled(object):
     ----------
     filename: str or `pathlib.Path`,
         Path to the image.
+    data_dir: str or `pathlib.Path`, optional
+        Data root directory.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
     tilesize: tuple[int, int], optional
@@ -85,7 +87,8 @@ class Tiled(object):
     """
     def __init__(
             self,
-            filename,
+            filename: str,
+            data_dir: str = config.settings["data_dir"],
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
@@ -94,7 +97,7 @@ class Tiled(object):
             nthreads : int = config.settings["thread_count"]):
 
         self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        self.filename = os.path.join(config.settings["data_dir"], filename)
+        self.filename = os.path.join(data_dir, filename)
         # Otherwise, create it
         self.nthreads = nthreads
         hdus = fits.open(self.filename)
@@ -612,16 +615,21 @@ class Tiled(object):
 
 
 
-def pickledTiled(filename, **kwargs):
+def pickledTiled(
+        filename: str,
+        data_dir: str = config.settings["data_dir"],
+        **kwargs) -> Tiled:
     """
     Return pickled version of object if available.
     
     Parameters
     ----------
-    filename: str or `pathlib.Path`,
+    filename: str or `pathlib.Path`
         Path to the image.
+    data_dir: str or `pathlib.Path`, optional
+        Data root directory.
     **kwargs: dict
-        Keyword arguments.
+        Additional keyword arguments.
 
     Returns
     -------
@@ -629,7 +637,7 @@ def pickledTiled(filename, **kwargs):
         Tiled object pickled from file if available, or initialized otherwise).
     """
     prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(config.settings["data_dir"], filename)
+    fname = os.path.join(data_dir, filename)
     # Check if a recent cached object is available
     if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
             os.path.getmtime(oname) > os.path.getmtime(fname):

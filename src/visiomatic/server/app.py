@@ -241,12 +241,21 @@ def create_app() -> FastAPI:
         if share:
             lock = sharedLock(FIF)
 
-        tiled = memCachedTiled(
-            FIF,
-            gamma=gamma,
-            quality=quality,
-            tilesize=tile_size
-        )
+        if (image):
+            tiled = memCachedTiled(
+                os.path.basename(image),
+                data_dir=os.path.dirname(image),
+                gamma=gamma,
+                quality=quality,
+                tilesize=tile_size
+            )
+        else:
+            tiled = memCachedTiled(
+                FIF,
+                gamma=gamma,
+                quality=quality,
+                tilesize=tile_size
+            )
         '''
         if FIF in app.tiled:
             tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
