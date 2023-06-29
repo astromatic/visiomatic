@@ -38,17 +38,20 @@ if __name__ == "__main__":
     config.image_filename = conf.image_filename
     
     if (config.image_filename):
-        # Monkey-patch Uvicorn calls to call the browser AFTER the server
-        def uvicorn_run_with_browser(self) -> None:
-             self.startup()
+        # Monkey-patch Uvicorn calls to start the browser AFTER the server
+        def startup_with_browser(self) -> None:
+             self.original_startup()
              self.should_exit.wait(1)
              webbrowser.open(
                 f"{config.settings['host']}:{config.settings['port']}"
              )
-             self.should_exit.wait()
-             self.shutdown()
 
-        uvicorn.supervisors.Multiprocess.run = uvicorn_run_with_browser
+        for Supervisor in [
+            uvicorn.supervisors.Multiprocess,
+            uvicorn.supervisors.BaseReload
+        ]:
+            Supervisor.original_startup = Supervisor.startup
+            Supervisor.startup = startup_with_browser
 
     start_server(
         host=config.settings["host"],

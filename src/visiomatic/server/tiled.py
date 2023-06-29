@@ -644,7 +644,11 @@ def pickledTiled(
         with open(oname, "rb") as f:
             return pickle.load(f)
     else:
-        return Tiled(filename, **kwargs)
+        return Tiled(
+            filename,
+            data_dir=data_dir,
+            **kwargs
+        )
 
 
 
