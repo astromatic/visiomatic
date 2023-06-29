@@ -33,6 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
+          pip install .
           pip install -r doc/requirements.txt
           npm install -g jsdoc
           cd src/visiomatic/client
