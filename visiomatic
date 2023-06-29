@@ -30,14 +30,11 @@ def start_server(
 
 if __name__ == "__main__":
 
-    print(f"{package.title} v{package.version}")
-
     # Set up settings by instantiating a configuration object
     conf = config.Config()
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
-    
-    if (config.image_filename):
+    if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
         def startup_with_browser(self) -> None:
              self.original_startup()

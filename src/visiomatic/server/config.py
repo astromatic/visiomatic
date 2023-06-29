@@ -29,6 +29,9 @@ class Config(object):
         if not 'sphinx' in sys.modules:
             # Parse command line
             args_dict = self.parse_args()
+            if args_dict['version']:
+                print(f"{package.title} {package.version}")
+                exit(0)
             if args_dict['save_config']:
                 self.save_config('visiomatic-default.conf')
                 exit(0)
@@ -42,7 +45,7 @@ class Config(object):
             # Second, from the command line
             self.update_from_dict(args_dict)
             # Save configuration file if requested
-            image_filename = args_dict["file"]
+            image_filename = args_dict['file']
             if Path(image_filename).exists():
                 self.image_filename = image_filename
             else:
@@ -118,8 +121,16 @@ class Config(object):
         gdict: dict
             Dictionary of all settings, organized in groups.
         """
-        config = ArgumentParser(description=package.description)
+        config = ArgumentParser(
+            description=f"{package.title} v{package.version} : {package.summary}"
+        )
         # Add options not relevant to configuration itself
+        config.add_argument(
+            "-v", "--version",
+            default=False,
+            help="Return the version of the package and exit", 
+            action='store_true'
+        )
         config.add_argument(
             "-c", "--config",
             type=str, default="config/visiomatic.conf",
@@ -173,6 +184,7 @@ class Config(object):
         fdict = vars(config.parse_args())
         gdict = {}
         # Command-line specific arguments
+        gdict['version'] = fdict['version']
         gdict['config'] = fdict['config']
         gdict['save_config'] = fdict['save_config']
         gdict['file'] = fdict['file']

@@ -95,6 +95,11 @@ class ServerSettings(BaseSettings):
         default="/manual",
         description="Endpoint URL for the root of the HTML documentation"
         )
+    no_browser: bool = Field(
+        short="n",
+        default=False,
+        description="Do not start browser when providing image file"
+        )
     tiles_path : str = Field(
         default="/tiles",
         description="Endpoint URL for tile queries"
