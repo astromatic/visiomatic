@@ -53,6 +53,8 @@ def create_app() -> FastAPI:
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
     tiles_path = config.settings["tiles_path"]
+    contrast = config.settings["contrast"]
+    color_saturation = config.settings["color_saturation"]
     gamma = config.settings["gamma"]
     quality = config.settings["quality"]
     tile_size = config.settings["tile_size"]
@@ -173,13 +175,13 @@ def create_app() -> FastAPI:
                 title="Name of the colormap"
                 ),
             CNT: float = Query(
-                1.0,
+                contrast,
                 title="Relative contrast",
                 ge=0.0,
                 le=10.0
                 ),
             GAM: float = Query(
-                0.4545,
+                1.0/gamma,
                 title="Inverse display gamma",
                 ge=0.2,
                 le=2.0
@@ -245,6 +247,8 @@ def create_app() -> FastAPI:
             tiled = memCachedTiled(
                 os.path.basename(image),
                 data_dir=os.path.dirname(image),
+                contrast=contrast,
+                color_saturation=color_saturation,
                 gamma=gamma,
                 quality=quality,
                 tilesize=tile_size
@@ -252,6 +256,8 @@ def create_app() -> FastAPI:
         else:
             tiled = memCachedTiled(
                 FIF,
+                contrast=contrast,
+                color_saturation=color_saturation,
                 gamma=gamma,
                 quality=quality,
                 tilesize=tile_size

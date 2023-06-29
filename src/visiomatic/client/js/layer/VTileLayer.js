@@ -31,8 +31,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		maxZoom: null,
 		maxNativeZoom: 18,
 		noWrap: true,
-		contrast: 1.0,
-		colorSat: 1.0,
+		contrast: null,
+		colorSat: null,
 		gamma: null,
 		cMap: 'grey',
 		invertCMap: false,
@@ -360,6 +360,22 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Number of channels
 			nchannel = visio.nChannel = meta.channels;
+
+            // Default contrast
+            if (meta.contrast) {
+                visioDefault.contrast = meta.contrast;
+            }
+            if (!visio.contrast) {
+                visio.contrast = visioDefault.contrast;
+            }
+
+            // Default color saturation
+            if (meta.colorSat) {
+                visioDefault.colorSat = meta.colorSat;
+            }
+            if (!visio.colorSat) {
+                visio.colorSat = visioDefault.colorSat;
+            }
 
             // Default display gamma
             if (meta.gamma) {

@@ -54,6 +54,18 @@ class HostSettings(BaseSettings):
 
 
 class ImageSettings(BaseSettings):
+    contrast: float = Field(
+        default=1.0,
+        ge=0.01,
+        le=10.0,
+        description="Default image contrast"
+        )
+    color_saturation: float = Field(
+        default=1.5,
+        ge=0.0,
+        le=5.0,
+        description="Default color saturation"
+        )
     gamma: float = Field(
         default=2.2,
         ge=0.1,

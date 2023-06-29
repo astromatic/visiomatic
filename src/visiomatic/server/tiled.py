@@ -58,6 +58,8 @@ class TiledModel(BaseModel):
     tile_levels: int
     channels: int
     bits_per_channel: int
+    contrast: float
+    color_saturation: float
     gamma: float
     quality: int
     header: dict
@@ -80,6 +82,10 @@ class Tiled(object):
         shape of the served tiles.
     minmax: tuple[float, float], optional
         Intensity cuts of the served tiles.
+    contrast:  float, optional
+        Relative tile contrast of the served tiles.
+    color_saturation:  float, optional
+        Default color saturation of the served tiles.
     gamma: float, optional
         Display gamma of the served tiles.
     nthreads: int, optional
@@ -92,6 +98,8 @@ class Tiled(object):
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
+            contrast : float = 1.0,
+            color_saturation: float = 1.5,
             gamma : float = 0.45,
             quality: int = 90,
             nthreads : int = config.settings["thread_count"]):
@@ -121,6 +129,8 @@ class Tiled(object):
         self.tile_shape = [self.nchannels, tilesize[0], tilesize[1]];
         self.make_mosaic(self.images)
         hdus.close()
+        self.contrast = contrast
+        self.color_saturation = color_saturation
         self.gamma = gamma
         self.quality = quality
         self.maxfac = 1.0e30
@@ -210,6 +220,8 @@ class Tiled(object):
             tile_levels=self.nlevels,
             channels=self.shape[0],
             bits_per_channel=32,
+            contrast=self.contrast,
+            color_saturation=self.color_saturation,
             gamma=self.gamma,
             quality=self.quality,
             header=dict(self.header.items()),
