@@ -214,7 +214,7 @@ class Config(object):
         gdict: dict
             Dictionary of all settings, organized in groups.
         """
-        config = ConfigParser(converters={'tuple': self.parse_int_tuple})
+        config = ConfigParser(converters={})
         config.read(filename)
         gdict = {}
         for group in self.groups:
@@ -228,8 +228,6 @@ class Config(object):
                     )  if type(settings[setting]) == tuple else value
         return gdict
 
-    def parse_int_tuple(self, s: str) -> tuple[int, int]:
-        return tuple(int(k.strip()) for k in input[1:-1].split(','))
 
     def save_config(self, filename) -> None:
         """
