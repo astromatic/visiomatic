@@ -122,6 +122,215 @@ export const TAN = Zenithal.extend( /** @lends TAN */ {
 });
 
 
+export const TPV = TAN.extend( /** @lends TPV */ {
+	code: 'TPV',
+
+	/**
+	 * Distorted gnomonic (tangential) projection.
+	 *
+	 * @name TPV
+	 * @see {@link https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=12}
+	 * @extends Zenithal
+	 * @memberof module:crs/Zenithal.js
+	 * @constructs
+	 * @param {object} header
+	   JSON representation of the image header.
+	 * @param {projParam} [options]
+	   Projection options: see {@link Zenithal}.
+
+	 * @returns {TPV} Instance of a TPV projection.
+	 */
+	// Initialize() is inherited from the parent class
+
+	/**
+	 * Convert (distorted) pixel coordinates to reduced coordinates.
+	 * @private
+	 * @param {leaflet.Point} pix
+	   Pixel coordinates.
+	 * @returns {leaflet.Point}
+	   Reduced coordinates.
+	 */
+	_pixToRed: function (pix) {
+		const	projparam = this.projparam,
+			cd = projparam.cd,
+			dred = pix.subtract(projparam.crpix);
+
+      	return this._redToRed(point(
+            	dred.x * cd[0][0] + dred.y * cd[0][1],
+           		dred.x * cd[1][0] + dred.y * cd[1][1]),
+           		projparam.pv,
+           		projparam.npv);
+	},
+
+	/**
+	 * Convert reduced coordinates to (distorted) pixel coordinates.
+	 * @private
+	 * @param {leaflet.Point} red
+	   Reduced coordinates.
+	 * @returns {leaflet.Point}
+	   Pixel coordinates.
+	 */
+	_redToPix: function (red) {
+		const projparam = this.projparam,
+		    cdinv = projparam._cdinv;
+		dred = this._redToRed(red,
+           		projparam._pvinv,
+           		projparam.npv);
+		return point(red.x * cdinv[0][0] + red.y * cdinv[0][1],
+		 red.x * cdinv[1][0] + red.y * cdinv[1][1]).add(projparam.crpix);
+	},
+
+    _redToRed: function (red, pv, npv) {
+		const	projparam = this.projparam,
+    		pvx = pv[0],
+    		pvy = pv[1],
+			dx = red.x,
+			dy = red.y;
+			
+		let	x = pvx[0],
+			y = pvy[0];
+
+		do {
+			if (!--npv) break;
+			x += pvx[1] * dx;
+			y += pvy[1] * dy;
+			if (!--npv) break;
+			x += pvx[2] * dy;
+			y += pvy[2] * dx;
+			if (!--npv) break;
+			const	dr = Math.sqrt(dx * dx + dy * dy);
+			x += pvx[3] * dr;
+			y += pvy[3] * dr;
+			if (!--npv) break;
+			const dx2 = dx * dx,
+				dy2 = dy * dy;
+			x += pvx[4] * dx2;
+			y += pvy[4] * dy2;
+			if (!--npv) break;
+			const dxy = dx * dy;
+			x += pvx[5] * dxy;
+			y += pvy[5] * dxy;
+			if (!--npv) break;
+			x += pvx[6] * dy2;
+			y += pvy[6] * dx2;
+			if (!--npv) break;
+			const dx3 = dx2 * dx,
+				dy3 = dy2 * dy;
+			x += pvx[7] * dx3;
+			y += pvy[7] * dy3;
+			if (!--npv) break;
+			x += pvx[8] * dx2 * dy;
+			y += pvy[8] * dy2 * dx;
+			if (!--npv) break;
+			x += pvx[9] * dx * dy2;
+			y += pvy[9] * dy * dx2;
+			if (!--npv) break;
+			x += pvx[10] * dy3;
+			y += pvy[10] * dx3;
+			if (!--npv) break;
+			const	dr3 = dr * dr * dr;
+			x += pvx[11] * dr3;
+			y += pvy[11] * dr3;
+			if (!--npv) break;
+			const dx4 = dx2 * dx2,
+				dy4 = dy2 * dy2;
+			x += pvx[12] * dx4;
+			y += pvy[12] * dy4;
+			if (!--npv) break;
+			x += pvx[13] * dx3 * dy;
+			y += pvy[13] * dy3 * dx;
+			if (!--npv) break;
+			x += pvx[14] * dx2 * dy2;
+			y += pvy[14] * dy2 * dx2;
+			if (!--npv) break;
+			x += pvx[15] * dx * dy3;
+			y += pvy[15] * dy * dx3;
+			if (!--npv) break;
+			x += pvx[16] * dy4;
+			y += pvy[16] * dx4;
+			if (!--npv) break;
+			const dx5 = dx4 * dx,
+				dy5 = dy4 * dy;
+			x += pvx[17] * dx5;
+			y += pvy[17] * dy5;
+			if (!--npv) break;
+			x += pvx[18] * dx4 * dy;
+			y += pvy[18] * dy4 * dx;
+			if (!--npv) break;
+			x += pvx[19] * dx3 * dy2;
+			y += pvy[19] * dy3 * dx2;
+			if (!--npv) break;
+			x += pvx[20] * dx2 * dy3;
+			y += pvy[20] * dy2 * dx3;
+			if (!--npv) break;
+			x += pvx[21] * dx * dy4;
+			y += pvy[21] * dy * dx4;
+			if (!--npv) break;
+			x += pvx[22] * dy5;
+			y += pvy[22] * dx5;
+			if (!--npv) break;
+			const	dr5 = dr3 * dr * dr;
+			x += pvx[23] * dr5;
+			y += pvy[23] * dr5;
+			if (!--npv) break;
+			const dx6 = dx5 * dx,
+				dy6 = dy5 * dy;
+			x += pvx[24] * dx6;
+			y += pvy[24] * dy6;
+			if (!--npv) break;
+			x += pvx[25] * dx5 * dy;
+			y += pvy[25] * dy5 * dx;
+			if (!--npv) break;
+			x += pvx[26] * dx4 * dy2;
+			y += pvy[26] * dy4 * dx2;
+			if (!--npv) break;
+			x += pvx[27] * dx3 * dy3;
+			y += pvy[27] * dy3 * dx3;
+			if (!--npv) break;
+			x += pvx[28] * dx2 * dy4;
+			y += pvy[28] * dy2 * dx4;
+			if (!--npv) break;
+			x += pvx[29] * dx * dy5;
+			y += pvy[29] * dy * dx5;
+			if (!--npv) break;
+			x += pvx[30] * dy6;
+			y += pvy[30] * dx6;
+			if (!--npv) break;
+			const dx7 = dx6 * dx,
+				dy7 = dy6 * dy;
+			x += pvx[31] * dx7;
+			y += pvy[31] * dy7;
+			if (!--npv) break;
+			x += pvx[32] * dx6 * dy;
+			y += pvy[32] * dy6 * dx;
+			if (!--npv) break;
+			x += pvx[33] * dx5 * dy2;
+			y += pvy[33] * dy5 * dx2;
+			if (!--npv) break;
+			x += pvx[34] * dx4 * dy3;
+			y += pvy[34] * dy4 * dx3;
+			if (!--npv) break;
+			x += pvx[35] * dx3 * dy4;
+			y += pvy[35] * dy3 * dx4;
+			if (!--npv) break;
+			x += pvx[36] * dx2 * dy5;
+			y += pvy[36] * dy2 * dx5;
+			if (!--npv) break;
+			x += pvx[37] * dx * dy6;
+			y += pvy[37] * dy * dx6;
+			if (!--npv) break;
+			x += pvx[38] * dy7;
+			y += pvy[38] * dx7;
+			if (!--npv) break;
+			const	dr7 = dr5 * dr * dr;
+			x += pvx[39] * dr7;
+			y += pvy[39] * dr7;
+		} while (false)
+		return point(x, y);
+    }
+});
+
+
 export const ZEA = Zenithal.extend( /** @lends ZEA */ {
 	code: 'ZEA',
 

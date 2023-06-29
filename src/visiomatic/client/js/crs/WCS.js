@@ -21,7 +21,7 @@ import {
 
 import {COE} from './Conical';
 import {CAR, CEA} from './Cylindrical';
-import {TAN, ZEA} from './Zenithal';
+import {TAN, TPV, ZEA} from './Zenithal';
 import {Pixel} from './Pixel';
 
 
@@ -233,6 +233,9 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			break;
 		case 'TAN':
 			proj = new TAN(header, options);
+			break;
+		case 'TPV':
+			proj = new TPV(header, options);
 			break;
 		case 'CAR':
 			proj = new CAR(header, options);

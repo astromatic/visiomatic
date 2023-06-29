@@ -487,20 +487,20 @@
           clone: function() {
             return new Point2(this.x, this.y);
           },
-          add: function(point7) {
-            return this.clone()._add(toPoint(point7));
+          add: function(point8) {
+            return this.clone()._add(toPoint(point8));
           },
-          _add: function(point7) {
-            this.x += point7.x;
-            this.y += point7.y;
+          _add: function(point8) {
+            this.x += point8.x;
+            this.y += point8.y;
             return this;
           },
-          subtract: function(point7) {
-            return this.clone()._subtract(toPoint(point7));
+          subtract: function(point8) {
+            return this.clone()._subtract(toPoint(point8));
           },
-          _subtract: function(point7) {
-            this.x -= point7.x;
-            this.y -= point7.y;
+          _subtract: function(point8) {
+            this.x -= point8.x;
+            this.y -= point8.y;
             return this;
           },
           divideBy: function(num) {
@@ -519,11 +519,11 @@
             this.y *= num;
             return this;
           },
-          scaleBy: function(point7) {
-            return new Point2(this.x * point7.x, this.y * point7.y);
+          scaleBy: function(point8) {
+            return new Point2(this.x * point8.x, this.y * point8.y);
           },
-          unscaleBy: function(point7) {
-            return new Point2(this.x / point7.x, this.y / point7.y);
+          unscaleBy: function(point8) {
+            return new Point2(this.x / point8.x, this.y / point8.y);
           },
           round: function() {
             return this.clone()._round();
@@ -557,18 +557,18 @@
             this.y = trunc(this.y);
             return this;
           },
-          distanceTo: function(point7) {
-            point7 = toPoint(point7);
-            var x = point7.x - this.x, y = point7.y - this.y;
+          distanceTo: function(point8) {
+            point8 = toPoint(point8);
+            var x = point8.x - this.x, y = point8.y - this.y;
             return Math.sqrt(x * x + y * y);
           },
-          equals: function(point7) {
-            point7 = toPoint(point7);
-            return point7.x === this.x && point7.y === this.y;
+          equals: function(point8) {
+            point8 = toPoint(point8);
+            return point8.x === this.x && point8.y === this.y;
           },
-          contains: function(point7) {
-            point7 = toPoint(point7);
-            return Math.abs(point7.x) <= Math.abs(this.x) && Math.abs(point7.y) <= Math.abs(this.y);
+          contains: function(point8) {
+            point8 = toPoint(point8);
+            return Math.abs(point8.x) <= Math.abs(this.x) && Math.abs(point8.y) <= Math.abs(this.y);
           },
           toString: function() {
             return "Point(" + formatNum(this.x) + ", " + formatNum(this.y) + ")";
@@ -884,15 +884,15 @@
             var projectedPoint = this.projection.project(latlng), scale3 = this.scale(zoom2);
             return this.transformation._transform(projectedPoint, scale3);
           },
-          pointToLatLng: function(point7, zoom2) {
-            var scale3 = this.scale(zoom2), untransformedPoint = this.transformation.untransform(point7, scale3);
+          pointToLatLng: function(point8, zoom2) {
+            var scale3 = this.scale(zoom2), untransformedPoint = this.transformation.untransform(point8, scale3);
             return this.projection.unproject(untransformedPoint);
           },
           project: function(latlng) {
             return this.projection.project(latlng);
           },
-          unproject: function(point7) {
-            return this.projection.unproject(point7);
+          unproject: function(point8) {
+            return this.projection.unproject(point8);
           },
           scale: function(zoom2) {
             return 256 * Math.pow(2, zoom2);
@@ -940,11 +940,11 @@
               this.R * Math.log((1 + sin) / (1 - sin)) / 2
             );
           },
-          unproject: function(point7) {
+          unproject: function(point8) {
             var d2 = 180 / Math.PI;
             return new LatLng2(
-              (2 * Math.atan(Math.exp(point7.y / this.R)) - Math.PI / 2) * d2,
-              point7.x * d2 / this.R
+              (2 * Math.atan(Math.exp(point8.y / this.R)) - Math.PI / 2) * d2,
+              point8.x * d2 / this.R
             );
           },
           bounds: function() {
@@ -966,20 +966,20 @@
           this._d = d2;
         }
         Transformation2.prototype = {
-          transform: function(point7, scale3) {
-            return this._transform(point7.clone(), scale3);
+          transform: function(point8, scale3) {
+            return this._transform(point8.clone(), scale3);
           },
-          _transform: function(point7, scale3) {
+          _transform: function(point8, scale3) {
             scale3 = scale3 || 1;
-            point7.x = scale3 * (this._a * point7.x + this._b);
-            point7.y = scale3 * (this._c * point7.y + this._d);
-            return point7;
+            point8.x = scale3 * (this._a * point8.x + this._b);
+            point8.y = scale3 * (this._c * point8.y + this._d);
+            return point8;
           },
-          untransform: function(point7, scale3) {
+          untransform: function(point8, scale3) {
             scale3 = scale3 || 1;
             return new Point2(
-              (point7.x / scale3 - this._b) / this._a,
-              (point7.y / scale3 - this._d) / this._c
+              (point8.x / scale3 - this._b) / this._a,
+              (point8.y / scale3 - this._d) / this._c
             );
           }
         };
@@ -1370,13 +1370,13 @@
           var pos = offset || new Point2(0, 0);
           el.style[TRANSFORM] = (Browser4.ie3d ? "translate(" + pos.x + "px," + pos.y + "px)" : "translate3d(" + pos.x + "px," + pos.y + "px,0)") + (scale3 ? " scale(" + scale3 + ")" : "");
         }
-        function setPosition(el, point7) {
-          el._leaflet_pos = point7;
+        function setPosition(el, point8) {
+          el._leaflet_pos = point8;
           if (Browser4.any3d) {
-            setTransform(el, point7);
+            setTransform(el, point8);
           } else {
-            el.style.left = point7.x + "px";
-            el.style.top = point7.y + "px";
+            el.style.left = point8.x + "px";
+            el.style.top = point8.y + "px";
           }
         }
         function getPosition(el) {
@@ -2228,12 +2228,12 @@
             zoom2 = zoom2 === void 0 ? this._zoom : zoom2;
             return this.options.crs.latLngToPoint(toLatLng(latlng), zoom2);
           },
-          unproject: function(point7, zoom2) {
+          unproject: function(point8, zoom2) {
             zoom2 = zoom2 === void 0 ? this._zoom : zoom2;
-            return this.options.crs.pointToLatLng(toPoint(point7), zoom2);
+            return this.options.crs.pointToLatLng(toPoint(point8), zoom2);
           },
-          layerPointToLatLng: function(point7) {
-            var projectedPoint = toPoint(point7).add(this.getPixelOrigin());
+          layerPointToLatLng: function(point8) {
+            var projectedPoint = toPoint(point8).add(this.getPixelOrigin());
             return this.unproject(projectedPoint);
           },
           latLngToLayerPoint: function(latlng) {
@@ -2249,14 +2249,14 @@
           distance: function(latlng1, latlng2) {
             return this.options.crs.distance(toLatLng(latlng1), toLatLng(latlng2));
           },
-          containerPointToLayerPoint: function(point7) {
-            return toPoint(point7).subtract(this._getMapPanePos());
+          containerPointToLayerPoint: function(point8) {
+            return toPoint(point8).subtract(this._getMapPanePos());
           },
-          layerPointToContainerPoint: function(point7) {
-            return toPoint(point7).add(this._getMapPanePos());
+          layerPointToContainerPoint: function(point8) {
+            return toPoint(point8).add(this._getMapPanePos());
           },
-          containerPointToLatLng: function(point7) {
-            var layerPoint = this.containerPointToLayerPoint(toPoint(point7));
+          containerPointToLatLng: function(point8) {
+            var layerPoint = this.containerPointToLayerPoint(toPoint(point8));
             return this.layerPointToLatLng(layerPoint);
           },
           latLngToContainerPoint: function(latlng) {
@@ -3696,8 +3696,8 @@
           project: function(latlng) {
             return new Point2(latlng.lng, latlng.lat);
           },
-          unproject: function(point7) {
-            return new LatLng2(point7.y, point7.x);
+          unproject: function(point8) {
+            return new LatLng2(point8.y, point8.x);
           },
           bounds: new Bounds2([-180, -90], [180, 90])
         };
@@ -3711,15 +3711,15 @@
             y = -r * Math.log(Math.max(ts, 1e-10));
             return new Point2(latlng.lng * d2 * r, y);
           },
-          unproject: function(point7) {
-            var d2 = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point7.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
+          unproject: function(point8) {
+            var d2 = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point8.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
             for (var i2 = 0, dphi = 0.1, con; i2 < 15 && Math.abs(dphi) > 1e-7; i2++) {
               con = e * Math.sin(phi);
               con = Math.pow((1 - con) / (1 + con), e / 2);
               dphi = Math.PI / 2 - 2 * Math.atan(ts * con) - phi;
               phi += dphi;
             }
-            return new LatLng2(phi * d2, point7.x * d2 / r);
+            return new LatLng2(phi * d2, point8.x * d2 / r);
           }
         };
         var index = {
@@ -7119,10 +7119,10 @@
             }
           },
           _onClick: function(e) {
-            var point7 = this._map.mouseEventToLayerPoint(e), layer, clickedLayer;
+            var point8 = this._map.mouseEventToLayerPoint(e), layer, clickedLayer;
             for (var order = this._drawFirst; order; order = order.next) {
               layer = order.layer;
-              if (layer.options.interactive && layer._containsPoint(point7)) {
+              if (layer.options.interactive && layer._containsPoint(point8)) {
                 if (!(e.type === "click" || e.type === "preclick") || !this._map._draggableMoved(layer)) {
                   clickedLayer = layer;
                 }
@@ -7134,8 +7134,8 @@
             if (!this._map || this._map.dragging.moving() || this._map._animatingZoom) {
               return;
             }
-            var point7 = this._map.mouseEventToLayerPoint(e);
-            this._handleMouseHover(e, point7);
+            var point8 = this._map.mouseEventToLayerPoint(e);
+            this._handleMouseHover(e, point8);
           },
           _handleMouseOut: function(e) {
             var layer = this._hoveredLayer;
@@ -7146,14 +7146,14 @@
               this._mouseHoverThrottled = false;
             }
           },
-          _handleMouseHover: function(e, point7) {
+          _handleMouseHover: function(e, point8) {
             if (this._mouseHoverThrottled) {
               return;
             }
             var layer, candidateHoveredLayer;
             for (var order = this._drawFirst; order; order = order.next) {
               layer = order.layer;
-              if (layer.options.interactive && layer._containsPoint(point7)) {
+              if (layer.options.interactive && layer._containsPoint(point8)) {
                 candidateHoveredLayer = layer;
               }
             }
@@ -29772,12 +29772,12 @@
       const map2 = this._map, crs = map2.options.crs;
       this._point = map2.latLngToLayerPoint(this._latlng);
       if (!this._majAxis1) {
-        const lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point7 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet3.latLng)(lat + dl, lng)).subtract(point7), dpointdlng = crs.project(
+        const lng = this._latlng.lng, lat = this._latlng.lat, deg = Math.PI / 180, clat = Math.cos(lat * deg), dl = lat < 90 ? 1e-3 : -1e-3, point8 = crs.project(this._latlng), dpointdlat = crs.project((0, import_leaflet3.latLng)(lat + dl, lng)).subtract(point8), dpointdlng = crs.project(
           (0, import_leaflet3.latLng)(
             lat,
             lng + dl * 1 / (clat > dl ? clat : dl)
           )
-        ).subtract(point7), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl;
+        ).subtract(point8), c11 = dpointdlat.x / dl, c12 = dpointdlng.x / dl, c21 = dpointdlat.y / dl, c22 = dpointdlng.y / dl;
         let mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 + 2 * c11 * c12 * this._mLatLng, my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 + 2 * c21 * c22 * this._mLatLng, mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 + (c11 * c22 + c12 * c21) * this._mLatLng, a1 = 0.5 * (mx2 + my2), a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy), a3 = mx2 * my2 - mxy * mxy;
         this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
         this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0;
@@ -32409,8 +32409,8 @@
             if (this._currProfileLine) {
               this._updateLine();
             } else {
-              const map2 = _this._map, point7 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet18.polyline)(
-                [point7, point7],
+              const map2 = _this._map, point8 = map2.getCenter(), line2 = this._currProfileLine = (0, import_leaflet18.polyline)(
+                [point8, point8],
                 {
                   color: linecolpick.value,
                   weight: 7,
@@ -32447,7 +32447,7 @@
           "spectrum",
           "Plot a spectrum at the current map position",
           function() {
-            const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point7 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point7, zoom), marker2 = this._spectrumMarker = (0, import_leaflet18.circleMarker)(rLatLng, {
+            const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point8 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet18.circleMarker)(rLatLng, {
               color: speccolpick.value,
               radius: 6,
               title: "Spectrum"
@@ -32469,7 +32469,7 @@
               }
             ).openPopup();
             VUtil.requestURL(
-              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point7.x - 0.5).toFixed(0) + "," + (point7.y - 0.5).toFixed(0) + "-" + (point7.x - 0.5).toFixed(0) + "," + (point7.y - 0.5).toFixed(0),
+              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
               "getting layer spectrum",
               this._plotSpectrum,
               this
@@ -32489,7 +32489,7 @@
       this._currProfileLine.redraw();
     },
     _profileEnd: function() {
-      const map2 = this._map, point7 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
+      const map2 = this._map, point8 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
       map2.off("drag", this._updateLine, this);
       this._currProfileLine = void 0;
       const popdiv = import_leaflet18.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet18.DomUtil.create(
@@ -33263,6 +33263,7 @@
     COE: () => COE,
     Pixel: () => Pixel,
     TAN: () => TAN,
+    TPV: () => TPV,
     WCS: () => WCS,
     ZEA: () => ZEA,
     wcs: () => wcs
@@ -33331,7 +33332,8 @@
           0,
           0
         ]
-      ]
+      ],
+      npv: 0
     },
     initialize: function(header, options2) {
       const projparam2 = this._paramUpdate(this.defaultProjParam);
@@ -33403,6 +33405,7 @@
     },
     _readWCS: function(header) {
       const projparam2 = this.projparam;
+      let npv = -1;
       var v;
       this.name = projparam2.name;
       if (v = header["EXTNAME"]) {
@@ -33451,12 +33454,15 @@
         projparam2.cd[1][1] = v;
       }
       for (var d2 = 0; d2 < 2; d2++) {
-        for (var j = 0; j < 20; j++) {
+        var pv = projparam2[d2];
+        for (var j = 0; j < 40; j++) {
           if (v = header["PV" + (d2 + 1) + "_" + j]) {
-            projparam2.pv[d2][j] = v;
+            pv[j] = v;
+            npv = j > npv ? j : npv;
           }
         }
       }
+      projparam2.npv = npv + 1;
     },
     _shiftWCS: function(projparam2) {
       const crpix = projparam2.crpix, cd = projparam2.cd, dataslice = projparam2.dataslice, detslice = projparam2.detslice;
@@ -33624,6 +33630,9 @@
         [cd[1][1] * detinv, -cd[0][1] * detinv],
         [-cd[1][0] * detinv, cd[0][0] * detinv]
       ];
+    },
+    _invertPV: function(pv, npv) {
+      return pv;
     }
   });
 
@@ -33755,6 +33764,206 @@
       return Math.tan((90 - theta) * Math.PI / 180) * 180 / Math.PI;
     }
   });
+  var TPV = TAN.extend({
+    code: "TPV",
+    _pixToRed: function(pix) {
+      const projparam2 = this.projparam, cd = projparam2.cd, dred2 = pix.subtract(projparam2.crpix);
+      return this._redToRed(
+        point(
+          dred2.x * cd[0][0] + dred2.y * cd[0][1],
+          dred2.x * cd[1][0] + dred2.y * cd[1][1]
+        ),
+        projparam2.pv,
+        projparam2.npv
+      );
+    },
+    _redToPix: function(red) {
+      const projparam2 = this.projparam, cdinv = projparam2._cdinv;
+      dred = this._redToRed(
+        red,
+        projparam2._pvinv,
+        projparam2.npv
+      );
+      return point(
+        red.x * cdinv[0][0] + red.y * cdinv[0][1],
+        red.x * cdinv[1][0] + red.y * cdinv[1][1]
+      ).add(projparam2.crpix);
+    },
+    _redToRed: function(red, pv, npv) {
+      const projparam2 = this.projparam, pvx = pv[0], pvy = pv[1], dx = red.x, dy = red.y;
+      let x = pvx[0], y = pvy[0];
+      do {
+        if (!--npv)
+          break;
+        x += pvx[1] * dx;
+        y += pvy[1] * dy;
+        if (!--npv)
+          break;
+        x += pvx[2] * dy;
+        y += pvy[2] * dx;
+        if (!--npv)
+          break;
+        const dr = Math.sqrt(dx * dx + dy * dy);
+        x += pvx[3] * dr;
+        y += pvy[3] * dr;
+        if (!--npv)
+          break;
+        const dx2 = dx * dx, dy2 = dy * dy;
+        x += pvx[4] * dx2;
+        y += pvy[4] * dy2;
+        if (!--npv)
+          break;
+        const dxy = dx * dy;
+        x += pvx[5] * dxy;
+        y += pvy[5] * dxy;
+        if (!--npv)
+          break;
+        x += pvx[6] * dy2;
+        y += pvy[6] * dx2;
+        if (!--npv)
+          break;
+        const dx3 = dx2 * dx, dy3 = dy2 * dy;
+        x += pvx[7] * dx3;
+        y += pvy[7] * dy3;
+        if (!--npv)
+          break;
+        x += pvx[8] * dx2 * dy;
+        y += pvy[8] * dy2 * dx;
+        if (!--npv)
+          break;
+        x += pvx[9] * dx * dy2;
+        y += pvy[9] * dy * dx2;
+        if (!--npv)
+          break;
+        x += pvx[10] * dy3;
+        y += pvy[10] * dx3;
+        if (!--npv)
+          break;
+        const dr3 = dr * dr * dr;
+        x += pvx[11] * dr3;
+        y += pvy[11] * dr3;
+        if (!--npv)
+          break;
+        const dx4 = dx2 * dx2, dy4 = dy2 * dy2;
+        x += pvx[12] * dx4;
+        y += pvy[12] * dy4;
+        if (!--npv)
+          break;
+        x += pvx[13] * dx3 * dy;
+        y += pvy[13] * dy3 * dx;
+        if (!--npv)
+          break;
+        x += pvx[14] * dx2 * dy2;
+        y += pvy[14] * dy2 * dx2;
+        if (!--npv)
+          break;
+        x += pvx[15] * dx * dy3;
+        y += pvy[15] * dy * dx3;
+        if (!--npv)
+          break;
+        x += pvx[16] * dy4;
+        y += pvy[16] * dx4;
+        if (!--npv)
+          break;
+        const dx5 = dx4 * dx, dy5 = dy4 * dy;
+        x += pvx[17] * dx5;
+        y += pvy[17] * dy5;
+        if (!--npv)
+          break;
+        x += pvx[18] * dx4 * dy;
+        y += pvy[18] * dy4 * dx;
+        if (!--npv)
+          break;
+        x += pvx[19] * dx3 * dy2;
+        y += pvy[19] * dy3 * dx2;
+        if (!--npv)
+          break;
+        x += pvx[20] * dx2 * dy3;
+        y += pvy[20] * dy2 * dx3;
+        if (!--npv)
+          break;
+        x += pvx[21] * dx * dy4;
+        y += pvy[21] * dy * dx4;
+        if (!--npv)
+          break;
+        x += pvx[22] * dy5;
+        y += pvy[22] * dx5;
+        if (!--npv)
+          break;
+        const dr5 = dr3 * dr * dr;
+        x += pvx[23] * dr5;
+        y += pvy[23] * dr5;
+        if (!--npv)
+          break;
+        const dx6 = dx5 * dx, dy6 = dy5 * dy;
+        x += pvx[24] * dx6;
+        y += pvy[24] * dy6;
+        if (!--npv)
+          break;
+        x += pvx[25] * dx5 * dy;
+        y += pvy[25] * dy5 * dx;
+        if (!--npv)
+          break;
+        x += pvx[26] * dx4 * dy2;
+        y += pvy[26] * dy4 * dx2;
+        if (!--npv)
+          break;
+        x += pvx[27] * dx3 * dy3;
+        y += pvy[27] * dy3 * dx3;
+        if (!--npv)
+          break;
+        x += pvx[28] * dx2 * dy4;
+        y += pvy[28] * dy2 * dx4;
+        if (!--npv)
+          break;
+        x += pvx[29] * dx * dy5;
+        y += pvy[29] * dy * dx5;
+        if (!--npv)
+          break;
+        x += pvx[30] * dy6;
+        y += pvy[30] * dx6;
+        if (!--npv)
+          break;
+        const dx7 = dx6 * dx, dy7 = dy6 * dy;
+        x += pvx[31] * dx7;
+        y += pvy[31] * dy7;
+        if (!--npv)
+          break;
+        x += pvx[32] * dx6 * dy;
+        y += pvy[32] * dy6 * dx;
+        if (!--npv)
+          break;
+        x += pvx[33] * dx5 * dy2;
+        y += pvy[33] * dy5 * dx2;
+        if (!--npv)
+          break;
+        x += pvx[34] * dx4 * dy3;
+        y += pvy[34] * dy4 * dx3;
+        if (!--npv)
+          break;
+        x += pvx[35] * dx3 * dy4;
+        y += pvy[35] * dy3 * dx4;
+        if (!--npv)
+          break;
+        x += pvx[36] * dx2 * dy5;
+        y += pvy[36] * dy2 * dx5;
+        if (!--npv)
+          break;
+        x += pvx[37] * dx * dy6;
+        y += pvy[37] * dy * dx6;
+        if (!--npv)
+          break;
+        x += pvx[38] * dy7;
+        y += pvy[38] * dx7;
+        if (!--npv)
+          break;
+        const dr7 = dr5 * dr * dr;
+        x += pvx[39] * dr7;
+        y += pvy[39] * dr7;
+      } while (false);
+      return point(x, y);
+    }
+  });
   var ZEA = Zenithal.extend({
     code: "ZEA",
     _rToTheta: function(r) {
@@ -33794,8 +34003,8 @@
     project: function(latlng) {
       return (0, import_leaflet28.point)(latlng.lng, latlng.lat);
     },
-    unproject: function(point7) {
-      return (0, import_leaflet28.latLng)(point7.y, point7.x);
+    unproject: function(point8) {
+      return (0, import_leaflet28.latLng)(point8.y, point8.x);
     }
   });
 
@@ -33903,6 +34112,9 @@
           break;
         case "TAN":
           proj = new TAN(header, options2);
+          break;
+        case "TPV":
+          proj = new TPV(header, options2);
           break;
         case "CAR":
           proj = new CAR(header, options2);
@@ -34047,8 +34259,8 @@
       maxZoom: null,
       maxNativeZoom: 18,
       noWrap: true,
-      contrast: 1,
-      colorSat: 1,
+      contrast: null,
+      colorSat: null,
       gamma: null,
       cMap: "grey",
       invertCMap: false,
@@ -34154,13 +34366,25 @@
           visio.gridSize[z] = visio.gridSize[visio.maxZoom];
         }
         visio.bpp = meta.bits_per_channel;
+        nchannel = visio.nChannel = meta.channels;
+        if (meta.contrast) {
+          visioDefault.contrast = meta.contrast;
+        }
+        if (!visio.contrast) {
+          visio.contrast = visioDefault.contrast;
+        }
+        if (meta.colorSat) {
+          visioDefault.colorSat = meta.colorSat;
+        }
+        if (!visio.colorSat) {
+          visio.colorSat = visioDefault.colorSat;
+        }
         if (meta.gamma) {
           visioDefault.gamma = meta.gamma;
         }
         if (!visio.gamma) {
           visio.gamma = visioDefault.gamma;
         }
-        nchannel = visio.nChannel = meta.channels;
         if (meta.quality) {
           visioDefault.quality = meta.quality;
         }
