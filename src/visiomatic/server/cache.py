@@ -81,7 +81,10 @@ class LRUSharedRWLockCache:
     """
     def __init__(self, name: Union[str, None]=None, maxsize: int=8):
         self.name = name if name else f"lrucache_{os.getppid()}"
-        self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        try:
+            self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        except:
+            pass
         self.maxsize = maxsize
 
 
@@ -132,8 +135,8 @@ class SharedRWLock:
     """
     def __init__(self, name="RWLock"):
         self.name = name
-        self._rlock_name = f"{package.title}_{name}.r.lock"
-        self._glock_name = f"{package.title}_{name}.g.lock"
+        self._rlock_name = f"{package.name}_{name}.r.lock"
+        self._glock_name = f"{package.name}_{name}.g.lock"
         rlock = Semaphore(self._rlock_name, O_CREAT, initial_value=1)
         glock = Semaphore(self._glock_name, O_CREAT, initial_value=1)
         self.b = 0
