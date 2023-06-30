@@ -202,7 +202,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 */
 	_readWCS: function (header) {
 		const	projparam = this.projparam;
-		let		npv = -1;
+		let	npv = -1;
 		var	v;
 
 		this.name = projparam.name;
@@ -223,7 +223,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if ((v = header['CD2_2'])) { projparam.cd[1][1] = v; }
 		// Check PV keyword values
 		for (var d = 0; d < 2; d++) {
-			var	pv = projparam[d];
+			var	pv = projparam.pv[d];
 			for (var j = 0; j < 40; j++) {
 				if ((v = header['PV' + (d + 1) + '_' + j])) {
 					pv[j] = v;

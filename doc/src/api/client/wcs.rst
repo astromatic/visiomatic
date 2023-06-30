@@ -52,6 +52,10 @@ Built-in
    :members:
    :private-members:
 
+.. js:autoclass:: TPV
+   :members:
+   :private-members:
+
 .. js:autoclass:: ZEA
    :members:
    :private-members:

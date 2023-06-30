@@ -476,16 +476,16 @@
         Events.fireEvent = Events.fire;
         Events.hasEventListeners = Events.listens;
         var Evented4 = Class4.extend(Events);
-        function Point2(x, y, round) {
+        function Point(x, y, round) {
           this.x = round ? Math.round(x) : x;
           this.y = round ? Math.round(y) : y;
         }
         var trunc = Math.trunc || function(v) {
           return v > 0 ? Math.floor(v) : Math.ceil(v);
         };
-        Point2.prototype = {
+        Point.prototype = {
           clone: function() {
-            return new Point2(this.x, this.y);
+            return new Point(this.x, this.y);
           },
           add: function(point8) {
             return this.clone()._add(toPoint(point8));
@@ -520,10 +520,10 @@
             return this;
           },
           scaleBy: function(point8) {
-            return new Point2(this.x * point8.x, this.y * point8.y);
+            return new Point(this.x * point8.x, this.y * point8.y);
           },
           unscaleBy: function(point8) {
-            return new Point2(this.x / point8.x, this.y / point8.y);
+            return new Point(this.x / point8.x, this.y / point8.y);
           },
           round: function() {
             return this.clone()._round();
@@ -575,19 +575,19 @@
           }
         };
         function toPoint(x, y, round) {
-          if (x instanceof Point2) {
+          if (x instanceof Point) {
             return x;
           }
           if (isArray(x)) {
-            return new Point2(x[0], x[1]);
+            return new Point(x[0], x[1]);
           }
           if (x === void 0 || x === null) {
             return x;
           }
           if (typeof x === "object" && "x" in x && "y" in x) {
-            return new Point2(x.x, x.y);
+            return new Point(x.x, x.y);
           }
-          return new Point2(x, y, round);
+          return new Point(x, y, round);
         }
         function Bounds2(a, b) {
           if (!a) {
@@ -604,7 +604,7 @@
             if (!obj) {
               return this;
             }
-            if (obj instanceof Point2 || typeof obj[0] === "number" || "x" in obj) {
+            if (obj instanceof Point || typeof obj[0] === "number" || "x" in obj) {
               min2 = max2 = toPoint(obj);
             } else {
               obj = toBounds(obj);
@@ -649,7 +649,7 @@
           },
           contains: function(obj) {
             var min, max;
-            if (typeof obj[0] === "number" || obj instanceof Point2) {
+            if (typeof obj[0] === "number" || obj instanceof Point) {
               obj = toPoint(obj);
             } else {
               obj = toBounds(obj);
@@ -935,7 +935,7 @@
           MAX_LATITUDE: 85.0511287798,
           project: function(latlng) {
             var d2 = Math.PI / 180, max = this.MAX_LATITUDE, lat = Math.max(Math.min(max, latlng.lat), -max), sin = Math.sin(lat * d2);
-            return new Point2(
+            return new Point(
               this.R * latlng.lng * d2,
               this.R * Math.log((1 + sin) / (1 - sin)) / 2
             );
@@ -977,7 +977,7 @@
           },
           untransform: function(point8, scale3) {
             scale3 = scale3 || 1;
-            return new Point2(
+            return new Point(
               (point8.x / scale3 - this._b) / this._a,
               (point8.y / scale3 - this._d) / this._c
             );
@@ -1367,7 +1367,7 @@
           return false;
         }
         function setTransform(el, offset, scale3) {
-          var pos = offset || new Point2(0, 0);
+          var pos = offset || new Point(0, 0);
           el.style[TRANSFORM] = (Browser4.ie3d ? "translate(" + pos.x + "px," + pos.y + "px)" : "translate3d(" + pos.x + "px," + pos.y + "px,0)") + (scale3 ? " scale(" + scale3 + ")" : "");
         }
         function setPosition(el, point8) {
@@ -1380,7 +1380,7 @@
           }
         }
         function getPosition(el) {
-          return el._leaflet_pos || new Point2(0, 0);
+          return el._leaflet_pos || new Point(0, 0);
         }
         var disableTextSelection;
         var enableTextSelection;
@@ -1633,10 +1633,10 @@
         }
         function getMousePosition(e, container) {
           if (!container) {
-            return new Point2(e.clientX, e.clientY);
+            return new Point(e.clientX, e.clientY);
           }
           var scale3 = getScale(container), offset = scale3.boundingClientRect;
-          return new Point2(
+          return new Point(
             (e.clientX - offset.left) / scale3.x - container.clientLeft,
             (e.clientY - offset.top) / scale3.y - container.clientTop
           );
@@ -1806,7 +1806,7 @@
             return this.setZoom(this._zoom - delta, options2);
           },
           setZoomAround: function(latlng, zoom2, options2) {
-            var scale3 = this.getZoomScale(zoom2), viewHalf = this.getSize().divideBy(2), containerPoint = latlng instanceof Point2 ? latlng : this.latLngToContainerPoint(latlng), centerOffset = containerPoint.subtract(viewHalf).multiplyBy(1 - 1 / scale3), newCenter = this.containerPointToLatLng(viewHalf.add(centerOffset));
+            var scale3 = this.getZoomScale(zoom2), viewHalf = this.getSize().divideBy(2), containerPoint = latlng instanceof Point ? latlng : this.latLngToContainerPoint(latlng), centerOffset = containerPoint.subtract(viewHalf).multiplyBy(1 - 1 / scale3), newCenter = this.containerPointToLatLng(viewHalf.add(centerOffset));
             return this.setView(newCenter, zoom2, { zoom: options2 });
           },
           _getBoundsCenterZoom: function(bounds3, options2) {
@@ -2185,7 +2185,7 @@
           },
           getSize: function() {
             if (!this._size || this._sizeChanged) {
-              this._size = new Point2(
+              this._size = new Point(
                 this._container.clientWidth || 0,
                 this._container.clientHeight || 0
               );
@@ -2298,7 +2298,7 @@
             var panes = this._panes = {};
             this._paneRenderers = {};
             this._mapPane = this.createPane("mapPane", this._container);
-            setPosition(this._mapPane, new Point2(0, 0));
+            setPosition(this._mapPane, new Point(0, 0));
             this.createPane("tilePane");
             this.createPane("overlayPane");
             this.createPane("shadowPane");
@@ -2311,7 +2311,7 @@
             }
           },
           _resetView: function(center, zoom2, noMoveStart) {
-            setPosition(this._mapPane, new Point2(0, 0));
+            setPosition(this._mapPane, new Point(0, 0));
             var loading = !this._loaded;
             this._loaded = true;
             zoom2 = this._limitZoom(zoom2);
@@ -2514,7 +2514,7 @@
             return this;
           },
           _getMapPanePos: function() {
-            return getPosition(this._mapPane) || new Point2(0, 0);
+            return getPosition(this._mapPane) || new Point(0, 0);
           },
           _moved: function() {
             var pos = this._getMapPanePos();
@@ -2569,7 +2569,7 @@
               this.project(maxBounds.getNorthEast(), zoom2),
               this.project(maxBounds.getSouthWest(), zoom2)
             ), minOffset = projectedMaxBounds.min.subtract(pxBounds.min), maxOffset = projectedMaxBounds.max.subtract(pxBounds.max), dx = this._rebound(minOffset.x, -maxOffset.x), dy = this._rebound(minOffset.y, -maxOffset.y);
-            return new Point2(dx, dy);
+            return new Point(dx, dy);
           },
           _rebound: function(left, right) {
             return left + right > 0 ? Math.round(left - right) / 2 : Math.max(0, Math.ceil(left)) - Math.max(0, Math.floor(right));
@@ -3371,7 +3371,7 @@
             }
             this.fire("down");
             var first2 = e.touches ? e.touches[0] : e, sizedParent = getSizedParentNode(this._element);
-            this._startPoint = new Point2(first2.clientX, first2.clientY);
+            this._startPoint = new Point(first2.clientX, first2.clientY);
             this._startPos = getPosition(this._element);
             this._parentScale = getScale(sizedParent);
             var mouseevent = e.type === "mousedown";
@@ -3386,7 +3386,7 @@
               this._moved = true;
               return;
             }
-            var first2 = e.touches && e.touches.length === 1 ? e.touches[0] : e, offset = new Point2(first2.clientX, first2.clientY)._subtract(this._startPoint);
+            var first2 = e.touches && e.touches.length === 1 ? e.touches[0] : e, offset = new Point(first2.clientX, first2.clientY)._subtract(this._startPoint);
             if (!offset.x && !offset.y) {
               return;
             }
@@ -3536,7 +3536,7 @@
             x = min.x;
             y = a.y + dy * (min.x - a.x) / dx;
           }
-          return new Point2(x, y, round);
+          return new Point(x, y, round);
         }
         function _getBitCode(p, bounds3) {
           var code = 0;
@@ -3570,7 +3570,7 @@
           }
           dx = p.x - x;
           dy = p.y - y;
-          return sqDist ? dx * dx + dy * dy : new Point2(x, y);
+          return sqDist ? dx * dx + dy * dy : new Point(x, y);
         }
         function isFlat(latlngs) {
           return !isArray(latlngs[0]) || typeof latlngs[0][0] !== "object" && typeof latlngs[0][0] !== "undefined";
@@ -3694,7 +3694,7 @@
         };
         var LonLat = {
           project: function(latlng) {
-            return new Point2(latlng.lng, latlng.lat);
+            return new Point(latlng.lng, latlng.lat);
           },
           unproject: function(point8) {
             return new LatLng2(point8.y, point8.x);
@@ -3709,7 +3709,7 @@
             var d2 = Math.PI / 180, r = this.R, y = latlng.lat * d2, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), con = e * Math.sin(y);
             var ts = Math.tan(Math.PI / 4 - y / 2) / Math.pow((1 - con) / (1 + con), e / 2);
             y = -r * Math.log(Math.max(ts, 1e-10));
-            return new Point2(latlng.lng * d2 * r, y);
+            return new Point(latlng.lng * d2 * r, y);
           },
           unproject: function(point8) {
             var d2 = 180 / Math.PI, r = this.R, tmp = this.R_MINOR / r, e = Math.sqrt(1 - tmp * tmp), ts = Math.exp(-point8.y / r), phi = Math.PI / 2 - 2 * Math.atan(ts);
@@ -4682,7 +4682,7 @@
             }
           },
           _updateBounds: function() {
-            var w = this._clickTolerance(), p = new Point2(w, w);
+            var w = this._clickTolerance(), p = new Point(w, w);
             if (!this._rawPxBounds) {
               return;
             }
@@ -4803,7 +4803,7 @@
             return isFlat(this._latlngs[0]) ? this._latlngs[0] : this._latlngs[0][0];
           },
           _clipPoints: function() {
-            var bounds3 = this._renderer._bounds, w = this.options.weight, p = new Point2(w, w);
+            var bounds3 = this._renderer._bounds, w = this.options.weight, p = new Point(w, w);
             bounds3 = new Bounds2(bounds3.min.subtract(p), bounds3.max.add(p));
             this._parts = [];
             if (!this._pxBounds || !this._pxBounds.intersects(bounds3)) {
@@ -5641,7 +5641,7 @@
               this._autopanning = false;
               return;
             }
-            var map2 = this._map, marginBottom = parseInt(getStyle(this._container, "marginBottom"), 10) || 0, containerHeight = this._container.offsetHeight + marginBottom, containerWidth = this._containerWidth, layerPos = new Point2(this._containerLeft, -containerHeight - this._containerBottom);
+            var map2 = this._map, marginBottom = parseInt(getStyle(this._container, "marginBottom"), 10) || 0, containerHeight = this._container.offsetHeight + marginBottom, containerWidth = this._containerWidth, layerPos = new Point(this._containerLeft, -containerHeight - this._containerBottom);
             layerPos._add(getPosition(this._container));
             var containerPos = map2.layerPointToContainerPoint(layerPos), padding = toPoint(this.options.autoPanPadding), paddingTL = toPoint(this.options.autoPanPaddingTopLeft || padding), paddingBR = toPoint(this.options.autoPanPaddingBottomRight || padding), size = map2.getSize(), dx = 0, dy = 0;
             if (containerPos.x + containerWidth + paddingBR.x > size.x) {
@@ -6139,7 +6139,7 @@
           },
           getTileSize: function() {
             var s = this.options.tileSize;
-            return s instanceof Point2 ? s : new Point2(s, s);
+            return s instanceof Point ? s : new Point(s, s);
           },
           _updateZIndex: function() {
             if (this._container && this.options.zIndex !== void 0 && this.options.zIndex !== null) {
@@ -6292,7 +6292,7 @@
             this._tileZoom = void 0;
           },
           _retainParent: function(x, y, z, minZoom) {
-            var x2 = Math.floor(x / 2), y2 = Math.floor(y / 2), z2 = z - 1, coords2 = new Point2(+x2, +y2);
+            var x2 = Math.floor(x / 2), y2 = Math.floor(y / 2), z2 = z - 1, coords2 = new Point(+x2, +y2);
             coords2.z = +z2;
             var key = this._tileCoordsToKey(coords2), tile2 = this._tiles[key];
             if (tile2 && tile2.active) {
@@ -6309,7 +6309,7 @@
           _retainChildren: function(x, y, z, maxZoom) {
             for (var i2 = 2 * x; i2 < 2 * x + 2; i2++) {
               for (var j = 2 * y; j < 2 * y + 2; j++) {
-                var coords2 = new Point2(i2, j);
+                var coords2 = new Point(i2, j);
                 coords2.z = z + 1;
                 var key = this._tileCoordsToKey(coords2), tile2 = this._tiles[key];
                 if (tile2 && tile2.active) {
@@ -6425,7 +6425,7 @@
             }
             for (var key in this._tiles) {
               var c2 = this._tiles[key].coords;
-              if (c2.z !== this._tileZoom || !noPruneRange.contains(new Point2(c2.x, c2.y))) {
+              if (c2.z !== this._tileZoom || !noPruneRange.contains(new Point(c2.x, c2.y))) {
                 this._tiles[key].current = false;
               }
             }
@@ -6435,7 +6435,7 @@
             }
             for (var j = tileRange.min.y; j <= tileRange.max.y; j++) {
               for (var i2 = tileRange.min.x; i2 <= tileRange.max.x; i2++) {
-                var coords2 = new Point2(i2, j);
+                var coords2 = new Point(i2, j);
                 coords2.z = this._tileZoom;
                 if (!this._isValidTile(coords2)) {
                   continue;
@@ -6495,7 +6495,7 @@
             return coords2.x + ":" + coords2.y + ":" + coords2.z;
           },
           _keyToTileCoords: function(key) {
-            var k = key.split(":"), coords2 = new Point2(+k[0], +k[1]);
+            var k = key.split(":"), coords2 = new Point(+k[0], +k[1]);
             coords2.z = +k[2];
             return coords2;
           },
@@ -6584,7 +6584,7 @@
             return coords2.scaleBy(this.getTileSize()).subtract(this._level.origin);
           },
           _wrapCoords: function(coords2) {
-            var newCoords = new Point2(
+            var newCoords = new Point(
               this._wrapX ? wrapNum(coords2.x, this._wrapX) : coords2.x,
               this._wrapY ? wrapNum(coords2.y, this._wrapY) : coords2.y
             );
@@ -7926,7 +7926,7 @@
               return;
             }
             var first2 = e.touches[0];
-            this._startPos = this._newPos = new Point2(first2.clientX, first2.clientY);
+            this._startPos = this._newPos = new Point(first2.clientX, first2.clientY);
             this._holdTimeout = setTimeout(bind(function() {
               this._cancel();
               if (!this._isTapValid()) {
@@ -7950,7 +7950,7 @@
           },
           _onMove: function(e) {
             var first2 = e.touches[0];
-            this._newPos = new Point2(first2.clientX, first2.clientY);
+            this._newPos = new Point(first2.clientX, first2.clientY);
           },
           _isTapValid: function() {
             return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance;
@@ -8086,7 +8086,7 @@
         exports2.Marker = Marker;
         exports2.Mixin = Mixin;
         exports2.Path = Path2;
-        exports2.Point = Point2;
+        exports2.Point = Point;
         exports2.PolyUtil = PolyUtil;
         exports2.Polygon = Polygon;
         exports2.Polyline = Polyline;
@@ -33454,7 +33454,7 @@
         projparam2.cd[1][1] = v;
       }
       for (var d2 = 0; d2 < 2; d2++) {
-        var pv = projparam2[d2];
+        var pv = projparam2.pv[d2];
         for (var j = 0; j < 40; j++) {
           if (v = header["PV" + (d2 + 1) + "_" + j]) {
             pv[j] = v;
@@ -33752,7 +33752,7 @@
     },
     _phiRToRed: function(phiR) {
       const deg = Math.PI / 180, p = phiR.lng * deg;
-      return new import_leaflet27.Point(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p));
+      return (0, import_leaflet27.point)(phiR.lat * Math.sin(p), -phiR.lat * Math.cos(p));
     }
   });
   var TAN = Zenithal.extend({
@@ -33768,200 +33768,274 @@
     code: "TPV",
     _pixToRed: function(pix) {
       const projparam2 = this.projparam, cd = projparam2.cd, dred2 = pix.subtract(projparam2.crpix);
-      return this._redToRed(
-        point(
-          dred2.x * cd[0][0] + dred2.y * cd[0][1],
-          dred2.x * cd[1][0] + dred2.y * cd[1][1]
-        ),
-        projparam2.pv,
-        projparam2.npv
-      );
+      return this._dRedToRed((0, import_leaflet27.point)(
+        dred2.x * cd[0][0] + dred2.y * cd[0][1],
+        dred2.x * cd[1][0] + dred2.y * cd[1][1]
+      ));
     },
     _redToPix: function(red) {
       const projparam2 = this.projparam, cdinv = projparam2._cdinv;
-      dred = this._redToRed(
-        red,
-        projparam2._pvinv,
-        projparam2.npv
-      );
-      return point(
-        red.x * cdinv[0][0] + red.y * cdinv[0][1],
-        red.x * cdinv[1][0] + red.y * cdinv[1][1]
+      dred = this._redToDRed(red);
+      return (0, import_leaflet27.point)(
+        dred.x * cdinv[0][0] + dred.y * cdinv[0][1],
+        dred.x * cdinv[1][0] + dred.y * cdinv[1][1]
       ).add(projparam2.crpix);
     },
-    _redToRed: function(red, pv, npv) {
-      const projparam2 = this.projparam, pvx = pv[0], pvy = pv[1], dx = red.x, dy = red.y;
-      let x = pvx[0], y = pvy[0];
+    _dRedToRed: function(dred2) {
+      const projparam2 = this.projparam, pvx = projparam2.pv[0], pvy = projparam2.pv[1], dx = dred2.x, dy = dred2.y;
+      let x = pvx[0], y = pvy[0], npv = projparam2.npv;
       do {
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[1] * dx;
         y += pvy[1] * dy;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[2] * dy;
         y += pvy[2] * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dr = Math.sqrt(dx * dx + dy * dy);
         x += pvx[3] * dr;
         y += pvy[3] * dr;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx2 = dx * dx, dy2 = dy * dy;
         x += pvx[4] * dx2;
         y += pvy[4] * dy2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dxy = dx * dy;
         x += pvx[5] * dxy;
         y += pvy[5] * dxy;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[6] * dy2;
         y += pvy[6] * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx3 = dx2 * dx, dy3 = dy2 * dy;
         x += pvx[7] * dx3;
         y += pvy[7] * dy3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[8] * dx2 * dy;
         y += pvy[8] * dy2 * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[9] * dx * dy2;
         y += pvy[9] * dy * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[10] * dy3;
         y += pvy[10] * dx3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dr3 = dr * dr * dr;
         x += pvx[11] * dr3;
         y += pvy[11] * dr3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx4 = dx2 * dx2, dy4 = dy2 * dy2;
         x += pvx[12] * dx4;
         y += pvy[12] * dy4;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[13] * dx3 * dy;
         y += pvy[13] * dy3 * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[14] * dx2 * dy2;
         y += pvy[14] * dy2 * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[15] * dx * dy3;
         y += pvy[15] * dy * dx3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[16] * dy4;
         y += pvy[16] * dx4;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx5 = dx4 * dx, dy5 = dy4 * dy;
         x += pvx[17] * dx5;
         y += pvy[17] * dy5;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[18] * dx4 * dy;
         y += pvy[18] * dy4 * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[19] * dx3 * dy2;
         y += pvy[19] * dy3 * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[20] * dx2 * dy3;
         y += pvy[20] * dy2 * dx3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[21] * dx * dy4;
         y += pvy[21] * dy * dx4;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[22] * dy5;
         y += pvy[22] * dx5;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dr5 = dr3 * dr * dr;
         x += pvx[23] * dr5;
         y += pvy[23] * dr5;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx6 = dx5 * dx, dy6 = dy5 * dy;
         x += pvx[24] * dx6;
         y += pvy[24] * dy6;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[25] * dx5 * dy;
         y += pvy[25] * dy5 * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[26] * dx4 * dy2;
         y += pvy[26] * dy4 * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[27] * dx3 * dy3;
         y += pvy[27] * dy3 * dx3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[28] * dx2 * dy4;
         y += pvy[28] * dy2 * dx4;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[29] * dx * dy5;
         y += pvy[29] * dy * dx5;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[30] * dy6;
         y += pvy[30] * dx6;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dx7 = dx6 * dx, dy7 = dy6 * dy;
         x += pvx[31] * dx7;
         y += pvy[31] * dy7;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[32] * dx6 * dy;
         y += pvy[32] * dy6 * dx;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[33] * dx5 * dy2;
         y += pvy[33] * dy5 * dx2;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[34] * dx4 * dy3;
         y += pvy[34] * dy4 * dx3;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[35] * dx3 * dy4;
         y += pvy[35] * dy3 * dx4;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[36] * dx2 * dy5;
         y += pvy[36] * dy2 * dx5;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[37] * dx * dy6;
         y += pvy[37] * dy * dx6;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         x += pvx[38] * dy7;
         y += pvy[38] * dx7;
-        if (!--npv)
+        if (!--npv) {
           break;
+        }
+        ;
         const dr7 = dr5 * dr * dr;
         x += pvx[39] * dr7;
         y += pvy[39] * dr7;
       } while (false);
-      return point(x, y);
+      return (0, import_leaflet27.point)(x, y);
+    },
+    _redToDRed: function(red) {
+      const projparam2 = this.projparam, dx = red.x, dy = red.y, red1 = red.multiplyBy(2).subtract(this._dRedToRed(red));
+      return red1.add(red.subtract(this._dRedToRed(red1)));
     }
   });
   var ZEA = Zenithal.extend({
