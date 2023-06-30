@@ -361,37 +361,37 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Number of channels
 			nchannel = visio.nChannel = meta.channels;
 
-            // Default contrast
-            if (meta.contrast) {
-                visioDefault.contrast = meta.contrast;
-            }
-            if (!visio.contrast) {
-                visio.contrast = visioDefault.contrast;
-            }
+			// Default contrast
+			if (meta.contrast) {
+				visioDefault.contrast = meta.contrast;
+			}
+			if (!visio.contrast) {
+				visio.contrast = visioDefault.contrast;
+			}
 
-            // Default color saturation
-            if (meta.colorSat) {
-                visioDefault.colorSat = meta.colorSat;
-            }
-            if (!visio.colorSat) {
-                visio.colorSat = visioDefault.colorSat;
-            }
+			// Default color saturation
+			if (meta.colorSat) {
+				visioDefault.colorSat = meta.colorSat;
+			}
+			if (!visio.colorSat) {
+				visio.colorSat = visioDefault.colorSat;
+			}
 
-            // Default display gamma
-            if (meta.gamma) {
-                visioDefault.gamma = meta.gamma;
-            }
-            if (!visio.gamma) {
-                visio.gamma = visioDefault.gamma;
-            }
+			// Default display gamma
+			if (meta.gamma) {
+				visioDefault.gamma = meta.gamma;
+			}
+			if (!visio.gamma) {
+				visio.gamma = visioDefault.gamma;
+			}
 
-            // Default compression quality
-            if (meta.quality) {
-                visioDefault.quality = meta.quality;
-            }
-            if (!visio.quality) {
-                visio.quality = visioDefault.quality;
-            }
+			// Default compression quality
+			if (meta.quality) {
+				visioDefault.quality = meta.quality;
+			}
+			if (!visio.quality) {
+				visio.quality = visioDefault.quality;
+			}
 
 			// Images
 			images = meta.images;
