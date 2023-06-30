@@ -85,7 +85,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
 		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
+		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+		npv: 0
 	},
 
 	/**
@@ -201,6 +202,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 */
 	_readWCS: function (header) {
 		const	projparam = this.projparam;
+		let	npv = -1;
 		var	v;
 
 		this.name = projparam.name;
@@ -219,13 +221,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if ((v = header['CD1_2'])) { projparam.cd[0][1] = v; }
 		if ((v = header['CD2_1'])) { projparam.cd[1][0] = v; }
 		if ((v = header['CD2_2'])) { projparam.cd[1][1] = v; }
+		// Check PV keyword values
 		for (var d = 0; d < 2; d++) {
-			for (var j = 0; j < 20; j++) {
+			var	pv = projparam.pv[d];
+			for (var j = 0; j < 40; j++) {
 				if ((v = header['PV' + (d + 1) + '_' + j])) {
-					projparam.pv[d][j] = v;
+					pv[j] = v;
+					npv = j > npv? j : npv;
 				}
 			}
 		}
+		// Max number of PV terms involved (for any dimension)
+		projparam.npv = npv + 1;
 	},
 
 	/**
@@ -574,6 +581,22 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
+	},
+
+	/**
+	 * Invert the `PV` distortion polynomial of the de-projection.
+	 *
+	 * Currently valid only for small distortions.
+	 * @private
+	 * @param {number[][]} pv
+	   `PV` array of polynomial coefficients.
+	 * @param {number} npv
+	   Number of non-zero polynomial coefficients.
+	 * @returns {number[][]}
+	   array of coefficients from the pseudo inverse polynomial.
+	 */
+	_invertPV: function (pv, npv) {
+		return pv;
 	}
 });
 
