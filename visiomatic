@@ -1,5 +1,5 @@
 #! /usr/bin/python
-import os, pickle, time, webbrowser
+import glob, os, pickle, time, webbrowser
 
 import uvicorn
 
@@ -34,6 +34,11 @@ if __name__ == "__main__":
     conf = config.Config()
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
+    if config.settings["clear_cache"]:
+        files = glob.glob(os.path.join(config.settings["cache_dir"], '*.pkl')) \
+            + glob.glob(os.path.join(config.settings["cache_dir"], '*.np'))
+        for file in files:
+            os.remove(file)
     if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
         def startup_with_browser(self) -> None:

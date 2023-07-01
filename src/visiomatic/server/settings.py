@@ -15,34 +15,34 @@ from .. import package
 
 class HostSettings(BaseSettings):
     host: str = Field(
-        short="H",
+        short='H',
         default="localhost",
         description="Host name or IP address"
         )
     port: int = Field(
-        short="p",
+        short='p',
         default=8009,
         ge=1,
         le=65535,
         description="Port"
         )
     root_path: str = Field(
-        short="R",
+        short='R',
         default="",
         description="ASGI root_path"
         )
     access_log: bool = Field(
-        short="a",
+        short='a',
         default=False,
         description="Display access log"
         )
     reload: bool = Field(
-        short="r",
+        short='r',
         default=False,
         description="Enable auto-reload (turns off multiple workers)"
         )
     workers: int = Field(
-        short="w",
+        short='w',
         default=4,
         ge=1,
         description="Number of workers"
@@ -108,7 +108,7 @@ class ServerSettings(BaseSettings):
         description="Endpoint URL for the root of the HTML documentation"
         )
     no_browser: bool = Field(
-        short="n",
+        short='n',
         default=False,
         description="Do not start browser when providing image file"
         )
@@ -128,6 +128,7 @@ class ServerSettings(BaseSettings):
 
 class EngineSettings(BaseSettings):
     thread_count: int = Field(
+        short='t',
         default=cpu_count() // 2,
         ge=1,
         le=1024,
@@ -142,7 +143,12 @@ class EngineSettings(BaseSettings):
 class CacheSettings(BaseSettings):
     cache_dir: str = Field(
         default="tmp",
-        description="Data cache directory"
+        description="Disk cache directory"
+        )
+    clear_cache: bool = Field(
+        short='C',
+        default=False,
+        description="Clear disk cache on startup"
         )
     max_disk_cache_image_count: int = Field(
         default=16,
