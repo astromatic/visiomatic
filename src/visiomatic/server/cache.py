@@ -81,11 +81,18 @@ class LRUSharedRWLockCache:
     """
     def __init__(self, name: Union[str, None]=None, maxsize: int=8):
         self.name = name if name else f"lrucache_{os.getppid()}"
-        try:
+        self._lock_name = self.name + ".lock"
+        lock = Semaphore(self._lock_name, O_CREAT, initial_value=1)
+        with Semaphore(self._lock_name) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
-        except:
-            pass
         self.maxsize = maxsize
+        for sig in (
+            SIGABRT,
+            SIGILL,
+            SIGINT,
+            SIGSEGV,
+            SIGTERM):
+            signal(sig, self.remove)
 
 
     def __call__(self, *args):
@@ -119,6 +126,15 @@ class LRUSharedRWLockCache:
             # Finally update the shared version
             self.cache[hargs] = lock, time_ns()
             return lock
+
+    def remove(self, *args):
+        """
+        Remove semaphores.
+        """
+        try:
+            Semaphore(self._lock_name).unlink()
+        except:
+            pass
 
 
 class SharedRWLock:
