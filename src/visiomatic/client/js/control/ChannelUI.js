@@ -1,132 +1,197 @@
-/*
-#	UI for channel mixing in a VisiOmatic layer.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for managing the channels of a VisiOmatic layer.
+
+ * @requires control/UI.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
+
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
 import {DomEvent, DomUtil, Util}  from 'leaflet';
 
+import {rgb} from '../util';
 import {UI} from './UI';
 
 
-export const ChannelUI = UI.extend({
+export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	options: {
 		title: 'Channel mixing',
-		collapsed: true,
+		mixingMode : undefined,
 		cMap: 'grey',
-		mixingMode : null,	//	'color' or 'mono' (or null for layer settings)
-		position: 'topleft',
+		collapsed: true,
+		position: 'topleft'
 	},
 
-	initialize: function (mode, options) {
+	/**
+	 * Create a VisiOmatic dialog for managing the VisiOmatic layer channels.
+
+	 * @extends UI
+	 * @memberof module:control/ChannelUI.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Channel mixing']
+	   Title of the dialog window or panel.
+
+	 * @param {'grey'|'jet'|'cool'|'hot'} [options.color='grey']
+	   Default color map in ``'mono'`` mixing mode.
+
+	 * @param {'mono' | 'color'} [options.mixingMode]
+	   Mixing mode: single channel (``'mono'``) or color mix (``'color'``).
+	   Defaults to [layer settings]{@link VTileLayer}.
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {ChannelUI} Instance of a channel mixing user interface.
+	 */
+	initialize: function (options) {
 		Util.setOptions(this, options);
 
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipchannel';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-channel';
 		this._sideClass = 'channel';
 		this._settings = [];
 		this._initsettings = [];
 	},
 
-	// Copy channel mixing settings from layer
+	/**
+	 * Copy channel mixing settings from a VisiOmatic layer.
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} settings
+	   Object where to save the settings properties.
+	 * @param {'mono' | 'color'} mode
+	   Mixing mode: single channel (``'mono'``) or color mix (``'color'``).
+	 */
 	saveSettings: function (layer, settings, mode) {
 		if (!settings[mode]) {
 			settings[mode] = {};
 		}
 
-		var setting = settings[mode],
-			nchan = layer.iipNChannel;
+		const	visio = layer.visio,
+			setting = settings[mode];
 
-		setting.channel = layer.iipChannel;
-		setting.cMap = layer.iipCMap;
+		setting.channel = visio.channel;
+		setting.cMap = visio.cMap;
 		setting.rgb = [];
-		for (var c = 0; c < nchan; c++) {
-			setting.rgb[c] = layer.iipRGB[c].clone();
+		for (let c in visio.rgb) {
+			setting.rgb[c] = visio.rgb[c].clone();
 		}
 	},
 
-	// Copy channel mixing settings to layer
-	loadSettings: function (layer, settings, mode, keepchanflag) {
-		var setting = settings[mode],
-			nchan = layer.iipNChannel;
+	/**
+	 * Copy channel mixing settings to a VisiOmatic layer.
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} settings
+	   Object where to save the settings properties.
+	 * @param {'mono' | 'color'} mode
+	   Mixing mode: single channel (``'mono'``) or color mix (``'color'``).
+	 * @param {boolean} [keepChannel=false]
+	   Overwrite the current layer channel?
+	 */
+	loadSettings: function (layer, settings, mode, keepChannel) {
+		const	setting = settings[mode];
 
 		if (!setting) {
 			return;
 		}
 
-		if (!keepchanflag) {
-			layer.iipChannel = setting.channel;
+		const	visio = layer.visio,
+			vrgb = visio.rgb,
+			srgb = setting.rgb;
+
+		if (!keepChannel) {
+			visio.channel = setting.channel;
 		}
-		layer.iipCMap = setting.cMap;
-		for (var c = 0; c < nchan; c++) {
-			layer.iipRGB[c] = setting.rgb[c].clone();
+		visio.cMap = setting.cMap;
+		for (let c in srgb) {
+			vrgb[c] = srgb[c].clone();
 		}
 	},
 
+	/**
+	 * Initialize the channel mixing dialog.
+	 * @private
+	 */
 	_initDialog: function () {
-		var _this = this,
+		const _this = this,
 			layer = this._layer,
 			className = this._className,
 			dialog = this._dialog;
 
-		// copy initial IIP mixing parameters from the layer object
+		// copy initial VisiOmatic mixing parameters from the layer object
 		this.saveSettings(layer, this._initsettings, 'mono');
 		this.saveSettings(layer, this._initsettings, 'color');
 
-		// copy current IIP mixing parameters from the layer object
+		// copy current VisiOmatic mixing parameters from the layer object
 		this.saveSettings(layer, this._settings, 'mono');
 		this.saveSettings(layer, this._settings, 'color');
 
 		this._mode = this.options.mixingMode ?
-		  this.options.mixingMode : layer.iipMode;
+			this.options.mixingMode : layer.visio.mixingMode;
 
-		var	box = this._addDialogBox(),
+		const	box = this._addDialogBox(),
 			modeline = this._addDialogLine('Mode:', box),
 			modelem = this._addDialogElement(modeline),
-			modeinput = DomUtil.create('div', className + '-radios', modelem),
-			elem, modebutton;
+			modeinput = DomUtil.create('div', className + '-radios', modelem);
 
 		// Create Mode selection control section
-		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
-			(this._mode === 'mono'), function () {
+		this._addRadioButton(
+			className + '-radio',
+			modeinput,
+			'mono',
+			(this._mode === 'mono'),
+			'Select mono-channel palettized mode',
+			function () {
 				// Save previous settings 
 				_this.saveSettings(layer, _this._settings, _this._mode);
-
 				// Remove previous dialogs
-				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+				for (let elem = box.lastChild;
+					elem !== modeline;
+					elem = box.lastChild) {
 					box.removeChild(elem);
 				}
-				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+				for (let elem = dialog.lastChild;
+					elem !== box;
+					elem = dialog.lastChild) {
 					dialog.removeChild(elem);
 				}
 				_this._channelList = undefined;
 				_this.loadSettings(layer, _this._settings, 'mono');
 				_this._initMonoDialog(layer, box);
 				_this._mode = 'mono';
-			}, 'Select mono-channel palettized mode'
+			}
 		);
-
-		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
-			(this._mode !== 'mono'), function () {
+		this._addRadioButton(
+			className + '-radio',
+			modeinput,
+			'color',
+			(this._mode !== 'mono'),
+			'Select color mixing mode',
+			function () {
 				// Save previous settings 
 				_this.saveSettings(layer, _this._settings, _this._mode);
 				// Remove previous dialogs
-				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+				for (let elem = box.lastChild;
+					elem !== modeline;
+					elem = box.lastChild) {
 					box.removeChild(elem);
 				}
-				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+				for (let elem = dialog.lastChild;
+					elem !== box;
+					elem = dialog.lastChild) {
 					dialog.removeChild(elem);
 				}
 				_this.loadSettings(layer, _this._settings, 'color');
 				_this._channelList = undefined;
 				_this._initColorDialog(layer, box);
 				_this._mode = 'color';
-			}, 'Select color mixing mode'
+			}
 		);
 
 		if (_this._mode === 'mono') {
@@ -136,202 +201,291 @@ export const ChannelUI = UI.extend({
 		}
 	},
 
+	/**
+	 * Initialize the ``'mono'`` flavor of the channel mixing dialog.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} box
+	   The parent box element.
+	 */
 	_initMonoDialog: function (layer, box) {
 		// Single Channels with colour map
-		var _this = this,
-			channels = layer.iipChannelLabels,
-			className = this._className,
-			line = this._addDialogLine('Channel:', box),
+		const	_this = this,
+			channels = layer.visio.channelLabels,
+			className = this._className;
+
+		const	line = this._addDialogLine('Channel:', box),
 			elem = this._addDialogElement(line);
 
 		layer.updateMono();
 
-		this._chanSelect = this._createSelectMenu(
+		this._chanSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
-			layer.iipChannelLabels,
+			layer.visio.channelLabels,
 			undefined,
-			layer.iipChannel,
+			layer.visio.channel,
+			'Select image channel',
 			function () {
-				layer.iipChannel = parseInt(this._chanSelect.selectedIndex - 1, 10);
-				this._updateChannel(layer, layer.iipChannel);
+				layer.visio.channel = parseInt(
+					this._chanSelect.selectedIndex - 1,
+					10
+				);
+				this._updateChannel(layer, layer.visio.channel);
 				layer.redraw();
-			},
-			'Select image channel'
+			}
 		);
 
-		line = this._addDialogLine('LUT:', box);
-		elem = this._addDialogElement(line);
+		const	line2 = this._addDialogLine('LUT:', box),
+			elem2 = this._addDialogElement(line2);
 
-		var	cmapinput = DomUtil.create('div', className + '-cmaps', elem),
+		const	cmapinput = DomUtil.create('div', className + '-cmaps', elem2),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function (value) {
-				_this._onInputChange(layer, 'iipCMap', value);
-			},
-			i;
-		for (i in cmaps) {
-			cbutton[i] = this._createRadioButton('leaflet-cmap', cmapinput, cmaps[i],
-			  (cmaps[i] === this.options.cMap), _changeMap,
-			  '"' + cmaps[i].charAt(0).toUpperCase() + cmaps[i].substr(1) +  '" color-map');
+				_this._onInputChange(layer, 'cMap', value);
+			};
+
+		for (let c in cmaps) {
+			cbutton[c] = this._addRadioButton(
+				'leaflet-cmap',
+				cmapinput,
+				cmaps[c],
+				(cmaps[c] === this.options.cMap),
+				'"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) +
+					'" color-map',
+				_changeMap
+			);
 		}
 
-		this._addMinMax(layer, layer.iipChannel, box);
+		this._addMinMax(layer, layer.visio.channel, box);
 		layer.redraw();
 	},
  
+	/**
+	 * Initialize the ``'color'`` flavor of the channel mixing dialog.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {object} box
+	   The parent box element.
+	 */
 	_initColorDialog: function (layer, box) {
 		// Multiple Channels with mixing matrix
 
-		var _this = this,
+		const	_this = this,
+			visio = layer.visio,
 			className = this._className,
 			line = this._addDialogLine('Channel:', box),
 			elem = this._addDialogElement(line),
-			colpick = this._chanColPick = this._createColorPicker(
+			colpick = this._chanColPick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'channel',
-			  layer.iipRGB[layer.iipChannel].toStr(),
+				visio.rgb[visio.channel].toStr(),
+				'visiomaticChannel',
+				'Click to set channel color',
 				function () {
-					var chan = layer.iipChannel,
+					const	chan = visio.channel,
 				    hex = $(colpick).val();
 					_this._updateMix(layer, chan, rgb(hex));
 					_this.collapsedOff = true;
-				},
-				'iipChannel',
-				'Click to set channel color'
+				}
 			);
 
-		this._onInputChange(layer, 'iipCMap', 'grey');
+		this._onInputChange(layer, 'cMap', 'grey');
 		layer.updateMix();
 
-		this._chanSelect = this._createSelectMenu(
+		this._chanSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
-			layer.iipChannelLabels,
+			visio.channelLabels,
 			undefined,
-			layer.iipChannel,
+			visio.channel,
+			'Select image channel',
 			function () {
-				layer.iipChannel =  this._chanSelect.selectedIndex - 1;
-				this._updateChannel(layer, layer.iipChannel, colpick);
-			},
-			'Select image channel'
+				visio.channel =  this._chanSelect.selectedIndex - 1;
+				this._updateChannel(layer, visio.channel, colpick);
+			}
 		);
 
-		this._addMinMax(layer, layer.iipChannel, box);
+		this._addMinMax(layer, visio.channel, box);
 
-		line = this._addDialogLine('Colors:', box);
-		elem = this._addDialogElement(line);
+		const line2 = this._addDialogLine('Colors:', box),
+			elem2 = this._addDialogElement(line2);
 
 		// Create reset color settings button
-		this._createButton(className + '-button', elem, 'colormix-reset', function () {
-			_this.loadSettings(layer, _this._initsettings, 'color', true);
-			layer.updateMix();
-			this._updateColPick(layer);
-			this._updateChannelList(layer);
-			layer.redraw();
-		}, 'Reset color mix');
+		this._addButton(
+			className + '-button',
+			elem2,
+			'colormix-reset',
+			'Reset color mix',
+			function () {
+				_this.loadSettings(layer, _this._initsettings, 'color', true);
+				layer.updateMix();
+				this._updateColPick(layer);
+				this._updateChannelList(layer);
+				layer.redraw();
+			}
+		);
 
 		// Create automated color settings button
-		this._createButton(className + '-button', elem, 'colormix-auto', function () {
-			var	nchan = layer.iipNChannel,
-				cc = 0,
-				nchanon = 0,
-				rgb = layer.iipRGB,
-				defcol = layer.iipdefault.channelColors;
+		this._addButton(
+			className + '-button',
+			elem2,
+			'colormix-auto',
+			'Re-color active channels',
+			function () {
+				const	nchan = visio.nChannel,
+					vrgb = visio.rgb,
+					defcol = layer.visioDefault.channelColors;
+				let	nchanon = 0;
 
-			for (var c = 0; c < nchan; c++) {
-				if (rgb[c].isOn()) {
+				for (const c in vrgb) {
 					nchanon++;
 				}
-			}
-			if (nchanon >= defcol.length) {
-				nchanon = defcol.length - 1;
-			}
-
-			for (c = 0; c < nchan; c++) {
-				if (rgb[c].isOn() && cc < nchanon) {
-					rgb[c] = rgb(defcol[nchanon][cc++]);
+				if (nchanon >= defcol.length) {
+					nchanon = defcol.length - 1;
 				}
-			}
-			layer.updateMix();
-			this._updateColPick(layer);
-			this._updateChannelList(layer);
-			layer.redraw();
 
-		}, 'Re-color active channels');
+				let	cc = 0;
+				for (const c in vrgb) {
+					if (cc < nchanon) {
+						vrgb[c] = rgb(defcol[nchanon][cc++]);
+					}
+				}
+				layer.updateMix();
+				this._updateColPick(layer);
+				this._updateChannelList(layer);
+				layer.redraw();
+
+			}
+		);
 
 
 		_this._updateChannelList(layer);
 		layer.redraw();
 	},
 
-	// Add Spinboxes for setting the min and max clipping limits of pixel values
-	_addMinMax: function (layer, chan, box) {
-		var	step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+	/**
+	 * Add a pair of spinboxes for setting the min and max clipping limits of
+	   pixel values.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
+	 * @param {object} box
+	   The parent box element.
+	 */
+	_addMinMax: function (layer, channel, box) {
+		const	visio = layer.visio,
+			step = this._spinboxStep(
+				visio.minValue[channel],
+				visio.maxValue[channel]
+			);
 
 		// Min
-		this._minElem = this._addNumericalInput(layer, box, 'Min:',
-		  'iipMinValue[' + chan + ']',
-		  'Lower clipping limit in ' + layer.iipChannelUnits[chan] + '.',
-		  'leaflet-channel-minvalue', layer.iipMinValue[chan], step);
+		this._minElem = this._addNumericalInput(
+			layer,
+			'minValue[' + channel + ']',
+			box,
+			'Min:',
+			'Lower clipping limit in ' + visio.channelUnits[channel],
+			visio.minValue[channel], step
+		);
 
 		// Max
-		this._maxElem = this._addNumericalInput(layer, box, 'Max:',
-			'iipMaxValue[' + chan + ']',
-		  'Upper clipping limit in ' + layer.iipChannelUnits[chan] + '.',
-		  'leaflet-channel-maxvalue', layer.iipMaxValue[chan], step);
+		this._maxElem = this._addNumericalInput(
+			layer,
+			'maxValue[' + channel + ']',
+			box,
+			'Max:',
+			'Upper clipping limit in ' + visio.channelUnits[channel],
+			visio.maxValue[channel], step
+		);
 	},
 
-	_updateChannel: function (layer, chan, colorElem) {
-		var _this = this,
-			  step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
-		_this._chanSelect.selectedIndex = chan + 1;
+	/**
+	   Set/update the channel controls for a given channel.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
+	 * @param {object) colorElem
+	   Color patch element (if present).
+	 */
+	_updateChannel: function (layer, channel, colorElem=undefined) {
+		const	_this = this,
+			visio = layer.visio,
+			step = this._spinboxStep(
+				visio.minValue[channel],
+				visio.maxValue[channel]);
+		_this._chanSelect.selectedIndex = channel + 1;
 		if (colorElem) {
-			$(colorElem).spectrum('set', layer.iipRGB[chan].toStr());
+			$(colorElem).spectrum('set', visio.rgb[channel].toStr());
 			$(colorElem)
-				.val(layer.iipRGB[chan].toStr())
+				.val(visio.rgb[channel].toStr())
 				.off('change')
 				.on('change', function () {
-					_this._updateMix(layer, chan, rgb($(colorElem).val()));
+					_this._updateMix(layer, channel, rgb($(colorElem).val()));
 				});
 		}
 
 		this._minElem.spinbox
-			.value(layer.iipMinValue[chan])
+			.value(visio.minValue[channel])
 			.step(step)
 			.off('change')
 			.on('change', function () {
 				_this._onInputChange(
-					layer, 'iipMinValue[' + chan + ']',
+					layer, 'minValue[' + channel + ']',
 					_this._minElem.spinbox.value()
 				);
 			}, this);
 
 		this._maxElem.spinbox
-			.value(layer.iipMaxValue[chan])
+			.value(visio.maxValue[channel])
 			.step(step)
 			.off('change')
 			.on('change', function () {
 				_this._onInputChange(
-					layer, 'iipMaxValue[' + chan + ']',
+					layer, 'maxValue[' + channel + ']',
 					_this._maxElem.spinbox.value()
 				);
 			}, this);
 	},
 
-	_updateMix: function (layer, chan, rgb) {
-		layer.rgbToMix(chan, rgb);
+	/**
+	   Update the color mixing matrix with the RGB contribution of a given
+	   channel and redraw the VisiOmatic layer.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
+	 * @param {RGB} channel_rgb
+	   RGB color.
+	 */
+	_updateMix: function (layer, channel, channel_rgb) {
+		layer.rgbToMix(channel, channel_rgb);
 		this._updateChannelList(layer);
 		layer.redraw();
 	},
 
+	/**
+	   Update the list of channels in the dialog.
+	 * @private
+	 * @param {VTileLayer} layer
+	 * VisiOmatic layer.
+	 */
 	_updateChannelList: function (layer) {
-		var	chanLabels = layer.iipChannelLabels,
-			chanList = this._channelList,
+		const	visio = layer.visio,
+			chanLabels = visio.channelLabels;
+		let	chanList = this._channelList,
 			chanElems = this._channelElems,
-			trashElems = this._trashElems,
-			chanElem, trashElem, rgb, color, label, c, chan;
+			trashElems = this._trashElems;
 		if (chanList) {
 		/*
 			for (c in chanElems) {
@@ -341,56 +495,108 @@ export const ChannelUI = UI.extend({
 		*/
 			DomUtil.empty(this._channelList);
 		} else {
-			chanList = this._channelList = DomUtil.create('div', this._className + '-chanlist',
-			  this._dialog);
+			chanList = this._channelList = DomUtil.create(
+				'div',
+				this._className + '-chanlist',
+				this._dialog
+			);
 		}
 
 		chanElems = this._channelElems = [];
 		trashElems = this._trashElems = [];
 
-		for (c in chanLabels) {
-			chan = parseInt(c, 10);
-			rgb = layer.iipRGB[chan];
-			if (rgb.isOn()) {
-				chanElem = DomUtil.create('div', this._className + '-channel', chanList);
-				color = DomUtil.create('div', this._className + '-chancolor', chanElem);
-				color.style.backgroundColor = rgb.toStr();
-				this._activateChanElem(color, layer, chan);
-				label = DomUtil.create('div', this._className + '-chanlabel', chanElem);
-				label.innerHTML = chanLabels[c];
-				this._activateChanElem(label, layer, chan);
-				trashElem = this._createButton('leaflet-control-iip-trash', chanElem,
-					undefined, undefined, 'Delete channel');
-				this._activateTrashElem(trashElem, layer, chan);
-				chanElems.push(chanElem);
-				trashElems.push(trashElem);
-			}
+		for (c in visio.rgb) {
+			var	chan = parseInt(c, 10),
+				vrgb = visio.rgb[chan],
+				chanElem = DomUtil.create(
+					'div',
+					this._className + '-channel',
+					chanList
+				),
+				color = DomUtil.create(
+					'div',
+					this._className + '-chancolor',
+					chanElem
+				);
+			color.style.backgroundColor = vrgb.toStr();
+			this._activateChanElem(color, layer, chan);
+			var	label = DomUtil.create(
+				'div',
+				this._className + '-chanlabel',
+				chanElem
+			);
+			label.innerHTML = chanLabels[c];
+			this._activateChanElem(label, layer, chan);
+			var	trashElem = this._addButton(
+				'visiomatic-control-trash',
+				chanElem,
+				undefined,
+				'Delete channel'
+			);
+			this._activateTrashElem(trashElem, layer, chan);
+			chanElems.push(chanElem);
+			trashElems.push(trashElem);
 		}
 	},
 
+	/**
+	   Update the color picker value based on the current layer color.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 */
 	_updateColPick: function (layer) {
-		$(this._chanColPick).spectrum('set', layer.iipRGB[layer.iipChannel].toStr());
-		$(this._chanColPick).val(layer.iipRGB[layer.iipChannel].toStr());
+		const	visio = layer.visio;
+		$(this._chanColPick).spectrum('set', visio.rgb[visio.channel].toStr());
+		$(this._chanColPick).val(visio.rgb[visio.channel].toStr());
 	},
 
-	_activateTrashElem: function (trashElem, layer, chan) {
+	/**
+	   Add listener to a trash element for blackening the current channel color
+	   of a given VisiOmatic layer.
+	 * @private
+	 * @param {object} trashElem
+	   Trash element.
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
+	 */
+	_activateTrashElem: function (trashElem, layer, channel) {
 		DomEvent.on(trashElem, 'click touch', function () {
-			this._updateMix(layer, chan, rgb(0.0, 0.0, 0.0));
-			if (layer === this._layer && chan === layer.iipChannel) {
+			this._updateMix(layer, channel, false);
+			if (layer === this._layer && channel === layer.visio.channel) {
 				this._updateColPick(layer);
 			}
 		}, this);
 	},
 
-	_activateChanElem: function (chanElem, layer, chan) {
+	/**
+	   Add listener to a channel element for setting the current channel
+	   of a given VisiOmatic layer.
+	 * @private
+	 * @param {object} trashElem
+	   Trash element.
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
+	 */
+	_activateChanElem: function (chanElem, layer, channel) {
 		DomEvent.on(chanElem, 'click touch', function () {
-			layer.iipChannel = chan;
-			this._updateChannel(layer, chan, this._chanColPick);
+			layer.visio.channel = channel;
+			this._updateChannel(layer, channel, this._chanColPick);
 		}, this);
 	}
 
 });
 
+/**
+ * Instantiate a VisiOmatic dialog for managing channels in a VisiOmatic layer.
+ * @function
+ * @param {object} [options] - Options: see {@link ChannelUI}
+ * @returns {ChannelUI} Instance of a channel mixing user interface.
+ */
 export const channelUI = function (options) {
 	return new ChannelUI(options);
 };

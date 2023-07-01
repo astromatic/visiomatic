@@ -1,0 +1,20 @@
+{
+	"opts": {
+		"destination": "doc",
+		"pedantic": true,
+		"private": true,
+		"recurse": true,
+		"template": "./node_modules/tidy-jsdoc"
+	},
+	"templates": {
+		"cleverLinks": true,
+		"monospaceLinks": false
+    },
+	"plugins": [
+		"plugins/markdown"
+	],
+	"metadata": {
+		"title": "VisiOmatic web client"
+	}
+}
+

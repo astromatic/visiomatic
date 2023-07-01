@@ -1,0 +1,66 @@
+#! /usr/bin/python
+import glob, os, pickle, time, webbrowser
+
+import uvicorn
+
+from visiomatic import package
+from visiomatic.server import config
+
+
+def start_server(
+        app="src.visiomatic.server.app:create_app",
+        host="localhost",
+        port=8009,
+        root_path="",
+        workers=4,
+        access_log=False,
+        reload=True
+    ):
+    uvicorn.run(
+        app,
+        host=host,
+        port=port,
+        root_path=root_path,
+        access_log=access_log,
+        workers=workers,
+        reload=reload,
+        factory=True
+    )
+    return
+
+if __name__ == "__main__":
+
+    # Set up settings by instantiating a configuration object
+    conf = config.Config()
+    config.settings = conf.flat_dict()
+    config.image_filename = conf.image_filename
+    if config.settings["clear_cache"]:
+        files = glob.glob(os.path.join(config.settings["cache_dir"], '*.pkl')) \
+            + glob.glob(os.path.join(config.settings["cache_dir"], '*.np'))
+        for file in files:
+            os.remove(file)
+    if config.image_filename and not config.settings["no_browser"]:
+        # Monkey-patch Uvicorn calls to start the browser AFTER the server
+        def startup_with_browser(self) -> None:
+             self.original_startup()
+             self.should_exit.wait(1)
+             webbrowser.open(
+                f"{config.settings['host']}:{config.settings['port']}"
+             )
+
+        for Supervisor in [
+            uvicorn.supervisors.Multiprocess,
+            uvicorn.supervisors.BaseReload
+        ]:
+            Supervisor.original_startup = Supervisor.startup
+            Supervisor.startup = startup_with_browser
+
+    start_server(
+        host=config.settings["host"],
+        port=config.settings["port"],
+        root_path=config.settings["root_path"],
+        access_log=config.settings["access_log"],
+        reload=config.settings["reload"],
+        workers=config.settings["workers"]
+    )
+

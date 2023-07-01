@@ -25,14 +25,13 @@
     <div id='map' style='background:black'></div>
 	<script>
 		var args = V.util.VUtil.parseURL(window.location.search.substring(1)),
-				url = '{{ tiles_url }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
+				url = '{{root_path}}' + '{{ tiles_path }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
 				vlayer = V.layer.vTileLayer(url, {
 					center: args['center'] ? args['center'] : false,
 					fov: args['fov'] ? parseFloat(args['fov']) : false,
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
 					contrast: 1.0,
-					gamma: 2.2,
 					colorSat: 1.5,
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
 					reuseTiles: true
@@ -61,26 +60,16 @@
 				}).addTo(map),
 			sidebar = V.control.sidebar().addTo(map);
 
-		V.control.channelUI('color').addTo(sidebar);
+		V.control.channelUI().addTo(sidebar);
 		V.control.imageUI().addTo(sidebar);
-		V.control.catalogUI([
-			V.catalog.PanSTARRS1,
-			V.catalog.Gaia_DR3,
-			V.catalog.SDSS,
-			V.catalog.URAT_1,
-			V.catalog.GALEX_AIS,
-			V.catalog.TwoMASS,
-			V.catalog.AllWISE,
-			V.catalog.PPMXL,
-			V.catalog.NVSS,
-			V.catalog.FIRST,
-			V.catalog.GLEAM,
-			V.catalog.TGSS
-		]).addTo(sidebar);
-		V.control.regionUI([]).addTo(sidebar);
+		V.control.catalogUI().addTo(sidebar);
+		V.control.regionUI().addTo(sidebar);
 		V.control.profileUI().addTo(sidebar);
 		V.control.snapshotUI().addTo(sidebar);
-		sidebar.addTabList();
+		{% if doc_url %}
+			sidebar.addTabList();
+			V.control.docUI('{{ root_path }}' + '{{ doc_url }}').addTo(sidebar);
+		{% endif %}
 	</script>
   </body>
 </html>

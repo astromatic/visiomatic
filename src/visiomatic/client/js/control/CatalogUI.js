@@ -1,10 +1,13 @@
-/*
-#	UI for catalog overlays.
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for catalog queries and catalog overlays.
+
+ * @requires util/VUtil.js
+ * @requires control/UI.js
+ * @requires catalog/catalogs.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
 	DomEvent,
@@ -17,103 +20,165 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {Gaia_DR3, TwoMASS, SDSS, PPMXL, Abell} from '../catalog';
+import {gaiaDR3, twomass, sdss, panstarrs1} from '../catalog/catalogs';
 
 
-export const CatalogUI = UI.extend({
+export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
+	/**
+	   Default array of catalogs.
+	 * @type {Catalog[]}
+	 * @default
+	 */
 	defaultCatalogs: [
-		Gaia_DR3,
-		TwoMASS,
-		SDSS,
-		PPMXL,
-		Abell
+		gaiaDR3,
+		twomass,
+		sdss,
+		panstarrs1
 	],
 
 	options: {
 		title: 'Catalog overlays',
-		collapsed: true,
-		position: 'topleft',
-		nativeCelsys: true,
+		nativeCelSys: true,
 		color: '#FFFF00',
 		timeOut: 30,	// seconds
-		authenticate: false // string define a method used to authenticate
+		authenticate: false, // Force authentication
+		collapsed: true,
+		position: 'topleft'
 	},
 
+	/**
+	 * Create a VisiOmatic dialog for catalog queries and catalog overlays.
+
+	 * @extends UI
+	 * @memberof module:control/CatalogUI.js
+	 * @constructs
+	 * @param {Catalog[]} catalogs - Array of catalogs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Catalog overlays']
+	   Title of the dialog window or panel.
+
+	 * @param {boolean} [options.nativeCelSys=false]
+	   Use native coordinates (e.g., galactic coordinates) instead of
+	   equatorial coordinates?
+
+	 * @param {string} [options.color='#FFFF00']
+	   Default catalog overlay color.
+
+	 * @param {number} [options.timeOut=30]
+	   Time out delay for catalog queries, in seconds.
+
+	 * @param {boolean} [options.authenticate=false]
+	   Force authentication for querying catalogs?
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {CatalogUI} VisiOmatic CatalogUI instance.
+	 */
 	initialize: function (catalogs, options) {
 		Util.setOptions(this, options);
-		this._className = 'leaflet-control-iip';
-		this._id = 'leaflet-iipcatalog';
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-catalog';
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'catalog';
 		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
+	/**
+	 * Initialize the catalog query dialog.
+	 * @private
+	 */
 	_initDialog: function () {
-		var	className = this._className,
+		const	className = this._className,
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
-			// CDS catalog overlay
 			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
-			colpick = this._createColorPicker(
+			colpick = this._addColorPicker(
 				className + '-color',
 				elem,
 				'catalog',
-			  this.options.color,
-				false,
-				'iipCatalog',
+				this.options.color,
+				'visiomaticCatalog',
 				'Click to set catalog color'
 			);
 
-		var catselect = this._createSelectMenu(
+		const	catselect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
-			catalogs.map(function (catalog) { return catalog.name; }),
+			catalogs.map(
+				function (catalog) {
+					return catalog.name;
+				}
+			),
 			undefined,
 			-1,
+			'Select Catalog',
 			function () {
-				var className = catalogs[catselect.selectedIndex - 1].className;
+				let	className = catalogs[catselect.selectedIndex - 1].className;
 				if (className === undefined) {
 					className = '';
 				}
-				DomUtil.setClass(catselect, this._className + '-select ' + className);
+				DomUtil.setClass(
+					catselect,
+					this._className + '-select ' + className
+				);
 				return;
-			},
-			'Select Catalog'
+			}
 		);
 
 		DomEvent.on(catselect, 'change keyup', function () {
-			var catalog = catalogs[catselect.selectedIndex - 1];
+			const	catalog = catalogs[catselect.selectedIndex - 1];
+
 			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
 
-		elem = this._addDialogElement(line);
+		const	elem2 = this._addDialogElement(line);
 
-		this._createButton(className + '-button', elem, 'catalog', function () {
-			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
-			if (index >= 0) {
-				var catalog = catalogs[index];
-				catalog.color = colpick.value;
-				catselect.selectedIndex = 0;
-				catselect.title = 'Select Catalog';
-				DomUtil.setClass(catselect, this._className + '-select ');
-				this._getCatalog(catalog, this.options.timeOut);
+		this._addButton(
+			className + '-button',
+			elem2,
+			'catalog',
+			'Query catalog',
+			function () {
+				// Ignore dummy 'Choose catalog' entry
+				const	index = catselect.selectedIndex - 1;
+				if (index >= 0) {
+					const	catalog = catalogs[index];
+					catalog.color = colpick.value;
+					catselect.selectedIndex = 0;
+					catselect.title = 'Select Catalog';
+					DomUtil.setClass(catselect, this._className + '-select ');
+					this._getCatalog(catalog, this.options.timeOut);
+				}
 			}
-		}, 'Query catalog');
+		);
 	},
 
+	/**
+	 * Reset the catalog query dialog.
+	 * @private
+	 */
 	_resetDialog: function () {
 	// Do nothing: no need to reset with layer changes
 	},
 
+	/**
+	 * Query catalog.
+	 * @private
+	 * @param {Catalog} catalog
+	   Catalog.
+	 * @param {number} [timeout]
+	   Query time out delay, in seconds. Defaults to no time out.
+	 */
 	_getCatalog: function (catalog, timeout) {
-		var	_this = this,
+		const	_this = this,
 		    map = this._map,
 			wcs = map.options.crs,
-			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
-		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+			sysflag = !wcs.equatorialFlag && !this.options.nativeCelSys,
+		    center = sysflag ? wcs.celSysToEq(map.getCenter()) : map.getCenter(),
 		    b = map.getPixelBounds(),
 		    z = map.getZoom(),
 		    templayer = new LayerGroup(null);
@@ -129,19 +194,23 @@ export const CatalogUI = UI.extend({
 		}
 
 		// Compute the search cone
-		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
-			  c = sysflag ?
-				   [wcs.celsysToEq(map.unproject(b.min, z)),
-			      wcs.celsysToEq(map.unproject(point(b.min.x, b.max.y), z)),
-			      wcs.celsysToEq(map.unproject(b.max, z)),
-			      wcs.celsysToEq(map.unproject(point(b.max.x, b.min.y), z))] :
-			                    [map.unproject(b.min, z),
-			                     map.unproject(point(b.min.x, b.max.y), z),
-			                     map.unproject(b.max, z),
-			                     map.unproject(point(b.max.x, b.min.y), z)],
-			  sys;
-		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
-			switch (wcs.celsyscode) {
+		const	lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+			c = sysflag ?
+				[
+					wcs.celSysToEq(map.unproject(b.min, z)),
+					wcs.celSysToEq(map.unproject(point(b.min.x, b.max.y), z)),
+					wcs.celSysToEq(map.unproject(b.max, z)),
+					wcs.celSysToEq(map.unproject(point(b.max.x, b.min.y), z))
+				] : [
+					map.unproject(b.min, z),
+					map.unproject(point(b.min.x, b.max.y), z),
+					map.unproject(b.max, z),
+					map.unproject(point(b.max.x, b.min.y), z)
+				];
+		var	  sys;
+
+		if (!wcs.equatorialFlag && this.options.nativeCelSys) {
+			switch (wcs.celSysCode) {
 			case 'ecliptic':
 				sys = 'E2000.0';
 				break;
@@ -161,7 +230,7 @@ export const CatalogUI = UI.extend({
 
 		if (catalog.regionType === 'box') {
 			// CDS box search
-			var	dlng = (Math.max(wcs._deltaLng(c[0], center),
+			let	dlng = (Math.max(wcs._deltaLng(c[0], center),
 				                   wcs._deltaLng(c[1], center),
 				                   wcs._deltaLng(c[2], center),
 				                   wcs._deltaLng(c[3], center)) -
@@ -189,15 +258,20 @@ export const CatalogUI = UI.extend({
 					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
-				function (context, httpRequest) {
-					_this._loadCatalog(catalog, templayer, context, httpRequest);
+				function (self, httpRequest) {
+					_this._loadCatalog(
+						catalog,
+						templayer,
+						self,
+						httpRequest
+					);
 				},
 				this,
 				timeout
 			);
 		} else {
 			// Regular cone search
-			var	dr = Math.max(wcs.distance(c[0], center),
+			const	dr = Math.max(wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center));
@@ -209,16 +283,38 @@ export const CatalogUI = UI.extend({
 					dr: dr.toFixed(4),
 					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
-				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
-					_this._loadCatalog(catalog, templayer, context, httpRequest);
-				}, this, this.options.timeOut);
+				})),
+				'querying ' + catalog.service + ' data',
+				function (self, httpRequest) {
+					_this._loadCatalog(
+						catalog,
+						templayer,
+						self,
+						httpRequest
+					);
+				},
+				this,
+				this.options.timeOut
+			);
 		}
 	},
 
-	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
+	/**
+	 * Load catalog data and display the overlay layer.
+	 * @private
+	 * @param {Catalog} catalog
+	   Catalog.
+	 * @param {leaflet.Layer} templayer
+	   "Dummy" layer to activate a spinner sign.
+	 * @param {object} self
+	   Calling control object (``this``).
+	 * @param {object} httpRequest
+	   HTTP request.
+	 */
+	_loadCatalog: function (catalog, templayer, self, httpRequest) {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
-				var	wcs = _this._map.options.crs,
+				const	wcs = self._map.options.crs,
 					response = httpRequest.responseText,
 					geo = catalog.toGeoJSON(response),
 					geocatalog = geoJson(geo, {
@@ -228,11 +324,21 @@ export const CatalogUI = UI.extend({
 							}
 						},
 						coordsToLatLng: function (coords) {
-							if (wcs.forceNativeCelsys) {
-								var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
-								return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+							if (wcs.equatorialFlag) {
+								return new L.LatLng(
+									coords[1],
+									coords[0],
+									coords[2]
+								);
 							} else {
-								return new L.LatLng(coords[1], coords[0], coords[2]);
+								const	latLng = wcs.eqToCelSys(
+									L.latLng(coords[1], coords[0])
+								);
+								return new L.LatLng(
+									latLng.lat,
+									latLng.lng,
+									coords[2]
+								);
 							}
 						},
 						filter: function (feature) {
@@ -244,10 +350,10 @@ export const CatalogUI = UI.extend({
 						style: function (feature) {
 							return {color: catalog.color, weight: 2};
 						}
-					}),
-					excessflag;
+					});
+				let	excessflag = false;
 				geocatalog.nameColor = catalog.color;
-				geocatalog.addTo(_this._map);
+				geocatalog.addTo(self._map);
 				this.removeLayer(templayer);
 				if (geo.features.length > catalog.nmax) {
 					geo.features.pop();
@@ -257,13 +363,16 @@ export const CatalogUI = UI.extend({
 				  ' (' + geo.features.length.toString() +
 				  (excessflag ? '+ entries)' : ' entries)'));
 				if (excessflag) {
-					alert('Selected area is too large: ' + catalog.name +
-					  ' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
+					alert(
+						'Selected area is too large: ' + catalog.name +
+						' sample has been truncated to the brightest ' +
+						catalog.nmax + ' sources.'
+					);
 				}
 			} else {
 				if (httpRequest.status !== 0) {
 					alert('Error ' + httpRequest.status + ' while querying ' +
-					  catalog.service + '.');
+						catalog.service + '.');
 				}
 				this.removeLayer(templayer);
 			}
@@ -272,6 +381,13 @@ export const CatalogUI = UI.extend({
 
 });
 
+/**
+ * Instantiate a VisiOmatic dialog for catalog queries and catalog overlays.
+ * @function
+ * @param {Catalog[]} catalogs - Array of catalogs
+ * @param {object} [options] - Options: see {@link CatalogUI}
+ * @returns {CatalogUI} Instance of a VisiOmatic catalog interface.
+ */
 export const catalogUI = function (catalogs, options) {
 	return new CatalogUI(catalogs, options);
 };

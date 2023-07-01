@@ -20,11 +20,11 @@ import adsarxiv
 # -- Project information -----------------------------------------------------
 
 project = 'VisiOmatic server'
-copyright = '2022, Emmanuel Bertin'
-author = 'Emmanuel Bertin'
+copyright = '2023, Emmanuel Bertin, Hervé Bouy'
+author = 'Emmanuel Bertin, Hervé Bouy'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,6 +35,7 @@ release = '0.1'
 extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
+    'sphinx_js',
     'sphinx.ext.githubpages',
     'sphinx.ext.ifconfig',
     'sphinx.ext.intersphinx',
@@ -50,7 +51,7 @@ templates_path = ['../theme']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['global.rst', 'keys.rst', 'macros.rst', 'roles.rst']
+exclude_patterns = ['global.rst', 'keys.rst', 'roles.rst']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -83,6 +84,19 @@ html_show_sphinx = False
 #
 html_show_copyright = True
 
+mathjax3_config = {
+    'tex': {
+        'macros': {
+            'trans': ['{#1}^\\intercal',1],
+             'vec': ['\\boldsymbol{#1}',1],
+             'oper': ['\\mathbf{#1}',1],
+             'dvol': ['{\\rm d}^{#1}\\hspace{-2pt}#2', 2],
+             'sinc': ['\\mbox{sinc}'],
+             'esp': ['\\mbox{E}\\left\\{#1\\right\\}', 1]
+        }
+    }
+}
+
 # -- Options for LaTeX output ------------------------------------------------
 
 
@@ -102,9 +116,15 @@ latex_elements = {
 'preamble': r'''
 \usepackage{amssymb}
 \usepackage[OT2,T1]{fontenc}
-\DeclareSymbolFont{cyrletters}{OT2}{wncyr}{m}{n}
-\DeclareMathSymbol{\Sha}{\mathalpha}{cyrletters}{"58}
+
 \newcommand{\DUrolecredits}{\footnotesize\color{lightgray}\newline}
+
+\def\trans#1{{#1}^\intercal}
+\def\vec#1{{\boldsymbol{#1}}}
+\def\oper#1{\mathbf{#1}}
+\def\dvol#1#2{{\rm d}^{#1}\hspace{-2pt}#2}
+\def\sinc{\mbox{sinc}}
+\def\esp#1{\mbox{E}\left\{#1\right\}}
 ''',
     # Latex figure (float) alignment
     #
@@ -136,6 +156,10 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/doc/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy', None)
 }
+
+# -- Options for Sphinx-JS ---------------------------------------------------
+js_source_path = '../../src/visiomatic/client/js'
+jsdoc_config_path = './api/client/conf.json'
 
 # -- Options for pybtex ------------------------------------------------------
 bibtex_bibfiles = ['references.bib']

@@ -1,12 +1,11 @@
-/*
-#	Add a full screen toggle button to the map.
-#	Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed jake errors)
-#	(original copyright notice reproduced below).
-#
-#	This file part of:	VisiOmatic
-#
-#	Copyright: (C) 2013-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                         Chiara Marmo    - Paris-Saclay
+/**
+ #	This file part of:	VisiOmatic
+ * @file Add a full screen toggle button to the map.
+
+ * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
+ * @copyright (c) 2013-2023 CNRS/IAP/CFHT/SorbonneU.
+   Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed lint errors)
+   (original copyright notice reproduced below).
 
 Original code Copyright (c) 2013, Bruno Bergot
 All rights reserved.
@@ -98,15 +97,45 @@ if (fullScreenApi.supportsFullScreen) {
 // export api
 window.fullScreenApi = fullScreenApi;
 
-export const FullScreen = Control.extend({
+export const FullScreen = Control.extend( /** @lends FullScreen */ {
 	options: {
-		position: 'topleft',
 		title: 'Toggle full screen mode',
+		position: 'topleft',
 		forceSeparateButton: false
 	},
 
+	/**
+	 * Create a new full-screen toggle button.
+
+	 * @name FullScreen
+	 * @extends leaflet.Control
+	 * @memberof module:control/FullScreen.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Toggle full screen mode']
+	   Title of the panel.
+
+	 * @param {'bottomleft'|'bottomright'|'topleft'|'topright'} [options.position='topleft']
+	   Position of the full-screen button.
+
+	 * @param {boolean} [options.forceSeparateButton=false]
+	   Sidebar button separate from zoom control?
+
+	 * @returns {FullScreen} Full screen toggle control.
+	 */
+	// Initialize() is inherited from the parent class
+
+
+	/**
+	 * Add this full screen toggle to the specified map.
+	 *
+	 * @param {L.Map} map
+	 * @returns {object} Element containing the full screen toggle button.
+	 */
 	onAdd: function (map) {
-		var className = 'leaflet-control-zoom-fullscreen', container;
+		const	className = 'leaflet-control-zoom-fullscreen';
+		var	container;
 
 		if (map.zoomControl && !this.options.forceSeparateButton) {
 			container = map.zoomControl._container;
@@ -114,13 +143,35 @@ export const FullScreen = Control.extend({
 			container = DomUtil.create('div', 'leaflet-bar');
 		}
 
-		this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
+		this._addButton(
+			this.options.title,
+			className,
+			container,
+			this.toogleFullScreen,
+			map
+		);
 
 		return container;
 	},
 
-	_createButton: function (title, className, container, fn, context) {
-		var link = DomUtil.create('a', className, container);
+	/**
+	 * Add a button
+	 *
+	 * @private
+	 * @param {string} [title]
+	   Title of the button.
+	 * @param {string} className
+	   Class name of the button.
+	 * @param {object} container
+	   Element containing the button.
+	 * @param {function} fn
+	   Callback function to call when the button is pressed.
+	 * @param {object} context
+	   Context (this) for the callback function.
+	 * @returns {object} New link (button) element.
+	 */
+	_addButton: function (title, className, container, fn, context) {
+		const	link = DomUtil.create('a', className, container);
 		link.href = '#';
 		link.title = title;
 
@@ -137,9 +188,12 @@ export const FullScreen = Control.extend({
 		return link;
 	},
 
+	/**
+	 * Toggle full-screen mode.
+	 */
 	toogleFullScreen: function () {
 		this._exitFired = false;
-		var container = this._container;
+		const	container = this._container;
 		if (this._isFullscreen) {
 			if (fullScreenApi.supportsFullScreen) {
 				fullScreenApi.cancelFullScreen(container);
@@ -162,6 +216,9 @@ export const FullScreen = Control.extend({
 		}
 	},
 
+	/**
+	 * Exit full-screen mode when ESC key is pressed.
+	 */
 	_handleEscKey: function () {
 		if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
 			this.fire('exitFullscreen');
@@ -171,13 +228,27 @@ export const FullScreen = Control.extend({
 	}
 });
 
+
+/**
+ * Instantiate a full-screen control.
+ * @function
+ * @param {object} [options] - Options: see {@link FullScreen}.
+ * @returns {FullScreen} Instance of a full-screen control.
+*/
 export const fullScreen = function (options) {
 	return new FullScreen(options);
 };
 
+
+/**
+ * Add a hook to maps for full-screen control.
+ * @method
+ * @static
+ * @memberof leaflet.Map
+ */
 Map.addInitHook(function () {
 	if (this.options.fullScreenControl) {
-		this.fullScreenControl = control.fullscreen(this.options.fullScreenControlOptions);
+		this.fullScreenControl = fullscreen(this.options.fullScreenControlOptions);
 		this.addControl(this.fullScreenControl);
 	}
 });

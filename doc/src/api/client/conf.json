@@ -1,0 +1,11 @@
+{
+	"opts": {
+		"pedantic": true,
+		"private": true,
+		"recurse": true
+	},
+	"plugins": [
+		"plugins/summarize"
+	]
+}
+
