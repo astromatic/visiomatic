@@ -37,6 +37,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 
+[project.scripts]
+visiomatic = "visiomatic.cmd.start:main"
+
 [project.urls]
 Repository = "https://github.com/ebertin/visiomatic-server"
 Homepage = "https://visiomatic.org"

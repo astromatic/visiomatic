@@ -1,5 +1,10 @@
 #! /usr/bin/python
-import glob, os, pickle, time, webbrowser
+"""
+Start script (renamed as :program:`visiomatic`).
+"""
+# Copyright CFHT/CNRS/SorbonneU
+# Licensed under the MIT licence
+import glob, os, pickle, sys, time, webbrowser
 
 import uvicorn
 
@@ -8,14 +13,34 @@ from visiomatic.server import config
 
 
 def start_server(
-        app="src.visiomatic.server.app:create_app",
-        host="localhost",
-        port=8009,
-        root_path="",
-        workers=4,
-        access_log=False,
-        reload=True
+        app: str="visiomatic.server.app:create_app",
+        host: str="localhost",
+        port: int=8009,
+        root_path: str="",
+        workers: int=4,
+        access_log: bool=False,
+        reload: bool=True
     ):
+    """
+    Start the Uvicorn server in application factory mode.
+    
+    Parameters
+    ----------
+    app: str, optional
+        Name of the ASGI app callable.
+    host: str, optional
+        Host name or IP address.
+    port: int, optional
+        Port.
+    root_path: str | ~pathlib.Path, optional
+        ASGI root_path.
+    workers: int, optional
+        Number of workers.
+    access_log: bool, optional
+        Display access log.
+    reload: bool, optional
+        Enable auto-reload (turns off multiple workers).
+    """
     uvicorn.run(
         app,
         host=host,
@@ -28,8 +53,10 @@ def start_server(
     )
     return
 
-if __name__ == "__main__":
-
+def main() -> int:
+    """
+    Set up configuration and start the VisiOmatic server.
+    """
     # Set up settings by instantiating a configuration object
     conf = config.Config()
     config.settings = conf.flat_dict()
@@ -63,4 +90,8 @@ if __name__ == "__main__":
         reload=config.settings["reload"],
         workers=config.settings["workers"]
     )
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
 

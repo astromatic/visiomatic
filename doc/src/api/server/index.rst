@@ -6,6 +6,7 @@ Python server
 
    app
    cache
+   cmd
    tiled
    image
    config

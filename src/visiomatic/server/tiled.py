@@ -72,9 +72,9 @@ class Tiled(object):
     
     Parameters
     ----------
-    filename: str or `pathlib.Path`,
+    filename: str | ~pathlib.Path,
         Path to the image.
-    data_dir: str or `pathlib.Path`, optional
+    data_dir: str | ~pathlib.Path, optional
         Data root directory.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
@@ -636,9 +636,9 @@ def pickledTiled(
     
     Parameters
     ----------
-    filename: str or `pathlib.Path`
+    filename: str | ~pathlib.Path
         Path to the image.
-    data_dir: str or `pathlib.Path`, optional
+    data_dir: str | ~pathlib.Path, optional
         Data root directory.
     **kwargs: dict
         Additional keyword arguments.
