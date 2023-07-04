@@ -4,7 +4,10 @@ Package-wide definitions
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT license
 
+from os import path
 from importlib.metadata import metadata
+
+import platformdirs
 
 # Package information
 # Get the current package name, quick and (very) dirty
@@ -27,4 +30,10 @@ license_url = "https://spdx.org/licenses/MIT.html"
 
 # This is where the Python code is
 root_dir = "src/visiomatic"
+
+# Default configuration file
+config_file = path.join(platformdirs.user_config_dir(name), "visiomatic.conf")
+
+# Default cache dir
+cache_dir = platformdirs.user_cache_dir(name)
 

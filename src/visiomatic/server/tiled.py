@@ -72,9 +72,9 @@ class Tiled(object):
     
     Parameters
     ----------
-    filename: str or `pathlib.Path`,
+    filename: str | ~pathlib.Path,
         Path to the image.
-    data_dir: str or `pathlib.Path`, optional
+    data_dir: str | ~pathlib.Path, optional
         Data root directory.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
@@ -532,8 +532,8 @@ class Tiled(object):
             tilelevel: int,
             tileindex: int,
             channel: Union[int, None] = None,
-            minmax: Union[tuple[float, float], None] = None,
-            mix: Union[tuple[int, float, float, float]| None] = None,
+            minmax: Union[Tuple[float, float], None] = None,
+            mix: Union[Tuple[int, float, float, float]| None] = None,
             contrast: float = 1.0,
             gamma: float = 0.4545,
             colormap: str = 'grey',
@@ -636,9 +636,9 @@ def pickledTiled(
     
     Parameters
     ----------
-    filename: str or `pathlib.Path`
+    filename: str | ~pathlib.Path
         Path to the image.
-    data_dir: str or `pathlib.Path`, optional
+    data_dir: str | ~pathlib.Path, optional
         Data root directory.
     **kwargs: dict
         Additional keyword arguments.

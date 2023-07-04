@@ -4,8 +4,9 @@ Configure application.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import sys, time
+import os, sys, time
 from pathlib import Path
+from typing import Tuple
 from argparse import ArgumentParser
 from configparser import ConfigParser
 from pydantic import validate_model
@@ -25,6 +26,7 @@ class Config(object):
         self.settings = AppSettings()
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
+
        # Skip argument parsing and stuff if Sphinx is involved
         if not 'sphinx' in sys.modules:
             # Parse command line
@@ -33,23 +35,31 @@ class Config(object):
                 print(f"{package.title} {package.version}")
                 exit(0)
             if args_dict['save_config']:
-                self.save_config('visiomatic-default.conf')
+                # Create config dir if it does not exist
+                os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
+                self.save_config(package.config_file)
                 exit(0)
-            # Parse config file
+
+            # Parse configuration file
             config_filename = args_dict['config']
             if Path(config_filename).exists():
                 config_dict = self.parse_config(config_filename)
+                self.config_filename = config_filename
+
             # Update settings
             # First, from the config file
             self.update_from_dict(config_dict) 
+
             # Second, from the command line
             self.update_from_dict(args_dict)
+
             # Save configuration file if requested
             image_filename = args_dict['file']
             if Path(image_filename).exists():
                 self.image_filename = image_filename
             else:
                 sys.exit(f"*Error*: {image_filename} not found!")
+
 
     def dict(self) -> dict:
         """
@@ -133,8 +143,8 @@ class Config(object):
         )
         config.add_argument(
             "-c", "--config",
-            type=str, default="config/visiomatic.conf",
-            help="Name of the VisiOmatic configuration file", 
+            type=str, default=package.config_file,
+            help=f"Configuration filename (default={package.config_file})", 
             metavar="FILE"
         )
         config.add_argument(
@@ -197,7 +207,7 @@ class Config(object):
         return gdict
 
 
-    def parse_config(self, filename) -> dict:
+    def parse_config(self, filename: str) -> dict:
         """
         Return a dictionary of all settings, with values updated from a
         configuration file in INI format.
@@ -206,7 +216,7 @@ class Config(object):
 
         Parameters
         ----------
-        filename: str or Path
+        filename: str | ~pathlib.Path
             Configuration filename.
 
         Returns
@@ -237,7 +247,7 @@ class Config(object):
 
         Parameters
         ----------
-        filename: str or Path
+        filename: str | ~pathlib.Path
             Configuration filename.
         """
         config = ConfigParser()
@@ -247,8 +257,17 @@ class Config(object):
             for setting in settings:
                 props = f"{settings[setting]}"
                 config[group][setting] = props
+
+        # Ask confirmation if file already exists
+        if Path(filename).exists():
+            user_input = input(
+                f"This will overwrite {filename}! Continue? [y/N]"
+            )
+            if user_input.lower() not in ('y', 'yes'):
+                return
+
         with open(filename, 'w') as config_file:
-            config_file.write(f"; Defaut {package.title} configuration file\n")
+            config_file.write(f"; Default {package.title} configuration file\n")
             nowstr = time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime())
             config_file.write(f"; {nowstr}\n")
             config.write(config_file)
@@ -279,5 +298,6 @@ class Config(object):
 
 # Initialize global dictionary
 config = None
+config_filename = None
 image_filename = None
 

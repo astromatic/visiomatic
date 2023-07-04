@@ -13,6 +13,7 @@ keywords = ["astronomy", "CFHT", "imaging"]
 readme = "README.md"
 license = {text = "MIT"}
 license_files = ["LICENSE"]
+data_files = ["config/visiomatic.conf"]
 dependencies = [
     "astropy >= 5.0",
     "atomics >= 1.0",
@@ -22,6 +23,7 @@ dependencies = [
     "methodtools >= 0.4.7",
     "numpy >= 1.19",
     "opencv-python >= 4.5",
+    "platformdirs >= 3.4.0",
     "posix_ipc >= 1.1.0",
     "simplejpeg >= 1.6",
     "tiler >= 0.5",
@@ -36,6 +38,9 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11"
 ]
+
+[project.scripts]
+visiomatic = "visiomatic.cmd.start:main"
 
 [project.urls]
 Repository = "https://github.com/ebertin/visiomatic-server"
