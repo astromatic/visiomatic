@@ -61,11 +61,20 @@ def main() -> int:
     conf = config.Config()
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
+
+    cache_dir = config.settings["cache_dir"]
+
+    # Create cache dir if it does not exist
+    os.makedirs(cache_dir, exist_ok=True)
+
+    # Clear cache if requested
     if config.settings["clear_cache"]:
-        files = glob.glob(os.path.join(config.settings["cache_dir"], '*.pkl')) \
-            + glob.glob(os.path.join(config.settings["cache_dir"], '*.np'))
+        files = glob.glob(os.path.join(cache_dir, '*.pkl')) \
+            + glob.glob(os.path.join(cache_dir, '*.np'))
         for file in files:
             os.remove(file)
+
+    # Local use case
     if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
         def startup_with_browser(self) -> None:
@@ -82,6 +91,7 @@ def main() -> int:
             Supervisor.original_startup = Supervisor.startup
             Supervisor.startup = startup_with_browser
 
+    # Start the server
     start_server(
         host=config.settings["host"],
         port=config.settings["port"],

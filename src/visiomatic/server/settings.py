@@ -5,6 +5,7 @@ Configuration settings for the application.
 # Licensed under the MIT licence
 
 from os import cpu_count
+from typing import Tuple
 
 from pydantic import (
     BaseSettings,
@@ -78,7 +79,7 @@ class ImageSettings(BaseSettings):
         le=100,
         description="Default image compression quality in %%"
         )
-    tile_size: tuple[int, int] = Field(
+    tile_size: Tuple[int, int] = Field(
         default=(256, 256),
         ge=1,
         le=4096,
@@ -142,7 +143,7 @@ class EngineSettings(BaseSettings):
 
 class CacheSettings(BaseSettings):
     cache_dir: str = Field(
-        default="tmp",
+        default=package.cache_dir,
         description="Disk cache directory"
         )
     clear_cache: bool = Field(

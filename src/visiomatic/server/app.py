@@ -22,6 +22,7 @@ from . import config
 # Set up settings by instantiating a configuration object
 conf = config.Config()
 config.settings = conf.flat_dict()
+config.config_filename = conf.config_filename
 config.image_filename = conf.image_filename
 
 from .tiled import colordict, pickledTiled, Tiled
@@ -61,6 +62,14 @@ def create_app() -> FastAPI:
     image = config.image_filename
 
     logger = logging.getLogger("uvicorn.error")
+
+    # Provide an endpoint for the user's manual (if it exists)
+    if config.config_filename:
+        logger.info(f"Configuration read from {config.config_filename}.")
+    else:
+        logger.warning(
+            f"Configuration file not found: {config.config_filename}!"
+        )
 
     app = FastAPI(
         title=package.title,
