@@ -4,7 +4,7 @@ Configuration settings for the application.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-from os import cpu_count
+from os import cpu_count, path
 from typing import Tuple
 
 from pydantic import (
@@ -97,11 +97,11 @@ class ServerSettings(BaseSettings):
         description="Name of the HTML file with the service banner"
         )
     data_dir: str = Field(
-        default="fits",
+        default=".",
         description="Data root directory"
         )
     doc_dir: str = Field(
-        default="doc/build/html",
+        default=path.join(package.root_dir, "doc/build/html"),
         description="HTML documentation root directory (after build)"
         )
     doc_path: str = Field(

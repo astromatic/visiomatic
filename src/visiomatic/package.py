@@ -5,6 +5,7 @@ Package-wide definitions
 # Licensed under the MIT license
 
 from os import path
+from pathlib import Path
 from importlib.metadata import metadata
 
 import platformdirs
@@ -28,8 +29,11 @@ contact_email = "bertin@cfht.hawaii.edu"
 license_name = "MIT"
 license_url = "https://spdx.org/licenses/MIT.html"
 
-# This is where the Python code is
-root_dir = "src/visiomatic"
+# Package source directory
+src_dir = path.dirname(path.abspath(__file__))
+
+# Package root directory
+root_dir = Path(src_dir).parent.parent
 
 # Default configuration file
 config_file = path.join(platformdirs.user_config_dir(name), "visiomatic.conf")
