@@ -47,6 +47,10 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Latitude and longitude of the native pole.
 	 * @property {number[][]} pv
 	   Projection distortion terms on each axis (`PVi_j` FITS keyword values).
+	 * @property {number} npv
+	   Number of non-zero
+	 * @property {number[]} mjd
+	   Modified Julian Date for start and end of observation.
 	 * @property {number[][]} dataslice
 	   Start index, end index, and direction (+1 only) of the used section of
 	   the image data for each axis. The range notation follows the FITS
@@ -79,14 +83,15 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		crpix: [129, 129],
-		crval: [0.0, 0.0],							// (\delta_0, \alpha_0)
-		cd: [[1.0, 0.0], [0.0, 1.0]],
-		natpole: [90.0, 999.0],						// (\theta_p, \phi_p)
-		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
-		npv: 0
+		crval: [0., 0.],							// (\delta_0, \alpha_0)
+		cd: [[1., 0.], [0., 1.]],
+		natpole: [90., 999.],						// (\theta_p, \phi_p)
+		pv: [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+		     [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
+		npv: 0,
+		mjd: [0., 0.]
 	},
 
 	/**
@@ -185,6 +190,12 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			projparam.pv[0] = paramsrc.pv[0].slice();
 			projparam.pv[1] = paramsrc.pv[1].slice();
 		}
+		if (paramsrc.npv) {
+			projparam.npv = point(paramsrc.npv);
+		}
+		if (paramsrc.mjd) {
+			projparam.mjd = [paramsrc.mjd[0], paramsrc.mjd[1]];
+		}
 
 		if (paramsrc.dataslice && paramsrc.detslice) {
 			projparam.dataslice = paramsrc.dataslice;
@@ -233,6 +244,21 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		}
 		// Max number of PV terms involved (for any dimension)
 		projparam.npv = npv + 1;
+
+		// Time parameters
+		// Modified Julian Date/Time at start of observing
+		if ((v = header['MJD-OBS']) || (v = header['MJDSTART'])) {
+			projparam.mjd[0] = v;
+		} else if ((v = header['DATE-OBS'])) {
+			// Decode DATE-OBS format: DD/MM/YY or YYYY-MM-DD
+			projparam.mjd[0] = new Date(v).getTime() / 86400000. + 40587.;
+		}
+		if ((v = header['MJDEND'])) {
+			projparam.mjd[1] = v;
+		} else if ((v = header['EXPTIME'])) {
+			// Add exposure time to compute end MJD
+			projparam.mjd[1] = projparam.mjd[0] + v / 86400.
+		}
 	},
 
 	/**

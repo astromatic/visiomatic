@@ -33333,7 +33333,8 @@
           0
         ]
       ],
-      npv: 0
+      npv: 0,
+      mjd: [0, 0]
     },
     initialize: function(header, options2) {
       const projparam2 = this._paramUpdate(this.defaultProjParam);
@@ -33395,6 +33396,12 @@
         projparam.pv = [];
         projparam.pv[0] = paramsrc.pv[0].slice();
         projparam.pv[1] = paramsrc.pv[1].slice();
+      }
+      if (paramsrc.npv) {
+        projparam.npv = (0, import_leaflet24.point)(paramsrc.npv);
+      }
+      if (paramsrc.mjd) {
+        projparam.mjd = [paramsrc.mjd[0], paramsrc.mjd[1]];
       }
       if (paramsrc.dataslice && paramsrc.detslice) {
         projparam.dataslice = paramsrc.dataslice;
@@ -33463,6 +33470,16 @@
         }
       }
       projparam2.npv = npv + 1;
+      if ((v = header["MJD-OBS"]) || (v = header["MJDSTART"])) {
+        projparam2.mjd[0] = v;
+      } else if (v = header["DATE-OBS"]) {
+        projparam2.mjd[0] = new Date(v).getTime() / 864e5 + 40587;
+      }
+      if (v = header["MJDEND"]) {
+        projparam2.mjd[1] = v;
+      } else if (v = header["EXPTIME"]) {
+        projparam2.mjd[1] = projparam2.mjd[0] + v / 86400;
+      }
     },
     _shiftWCS: function(projparam2) {
       const crpix = projparam2.crpix, cd = projparam2.cd, dataslice = projparam2.dataslice, detslice = projparam2.detslice;

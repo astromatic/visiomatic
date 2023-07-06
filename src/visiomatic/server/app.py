@@ -106,7 +106,7 @@ def create_app() -> FastAPI:
     # Provide an endpoint for static files (such as js and css)
     app.mount(
         "/client",
-        StaticFiles(directory=os.path.join(package.root_dir, "client")),
+        StaticFiles(directory=os.path.join(package.src_dir, "client")),
         name="client"
     )
 
@@ -126,7 +126,9 @@ def create_app() -> FastAPI:
 
 
     # Instantiate templates
-    templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
+    templates = Jinja2Templates(
+        directory=os.path.join(package.src_dir, "templates")
+    )
 
     # Prepare the RegExps
     reg_jtl = r"^(\d+),(\d+)$"
