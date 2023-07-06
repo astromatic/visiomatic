@@ -49,8 +49,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Projection distortion terms on each axis (`PVi_j` FITS keyword values).
 	 * @property {number} npv
 	   Number of non-zero
-	 * @property {number[]} mjd
-	   Modified Julian Date for start and end of observation.
+	 * @property {number[]} jd
+	   Julian Date for start and end of observation.
 	 * @property {number[][]} dataslice
 	   Start index, end index, and direction (+1 only) of the used section of
 	   the image data for each axis. The range notation follows the FITS
@@ -91,7 +91,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		     [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
 		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
 		npv: 0,
-		mjd: [0., 0.]
+		jd: [0., 0.]
 	},
 
 	/**
@@ -193,8 +193,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (paramsrc.npv) {
 			projparam.npv = point(paramsrc.npv);
 		}
-		if (paramsrc.mjd) {
-			projparam.mjd = [paramsrc.mjd[0], paramsrc.mjd[1]];
+		if (paramsrc.jd) {
+			projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
 		}
 
 		if (paramsrc.dataslice && paramsrc.detslice) {
@@ -246,18 +246,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		projparam.npv = npv + 1;
 
 		// Time parameters
-		// Modified Julian Date/Time at start of observing
+		// Julian Date/Time at start of observing
 		if ((v = header['MJD-OBS']) || (v = header['MJDSTART'])) {
-			projparam.mjd[0] = v;
+			projparam.jd[0] = v + 2400000.5;
 		} else if ((v = header['DATE-OBS'])) {
 			// Decode DATE-OBS format: DD/MM/YY or YYYY-MM-DD
-			projparam.mjd[0] = new Date(v).getTime() / 86400000. + 40587.;
+			projparam.jd[0] = new Date(v).getTime() / 86400000. + 2440587.5;
 		}
 		if ((v = header['MJDEND'])) {
-			projparam.mjd[1] = v;
+			projparam.jd[1] = v + 2400000.5;
 		} else if ((v = header['EXPTIME'])) {
-			// Add exposure time to compute end MJD
-			projparam.mjd[1] = projparam.mjd[0] + v / 86400.
+			// Add exposure time to compute end JD
+			projparam.jd[1] = projparam.jd[0] + v / 86400.
 		}
 	},
 

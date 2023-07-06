@@ -20,7 +20,7 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {gaiaDR3, twomass, sdss, panstarrs1} from '../catalog/catalogs';
+import {gaiaDR3, panstarrs1, skybot, sdss, twomass} from '../catalog/catalogs';
 
 
 export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
@@ -34,7 +34,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		gaiaDR3,
 		twomass,
 		sdss,
-		panstarrs1
+		panstarrs1,
+		skybot
 	],
 
 	options: {
@@ -250,6 +251,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			VUtil.requestURL(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
+					jd: wcs.jdobs,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),

@@ -29627,6 +29627,7 @@
     panstarrs1: () => panstarrs1,
     ppmXL: () => ppmXL,
     sdss: () => sdss,
+    skybot: () => skybot,
     tgss: () => tgss,
     twomass: () => twomass,
     urat1: () => urat1
@@ -30026,6 +30027,20 @@
     properties: ["f<sub>mag</sub>", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
     units: ["", "mas/yr", "mas/yr"],
     objectURL: "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+  });
+  var skybot = new Catalog({
+    service: "SkyBot@IMCCE",
+    name: "SkyBot",
+    className: "logo-catalog-imcce",
+    attribution: "SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)",
+    color: "orange",
+    magLim: 30,
+    regionType: "box",
+    serviceURL: "https://ssp.imcce.fr/webservices/skybot/api",
+    catalogURL: "/conesearch.php?&-mime=json&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}",
+    properties: ["Name", "Class", "V"],
+    units: ["", "", ""],
+    objectURL: "/VizieR-5?-source=B/astorb/astorb&Name==="
   });
 
   // js/control/index.js
@@ -30936,7 +30951,8 @@
       gaiaDR3,
       twomass,
       sdss,
-      panstarrs1
+      panstarrs1,
+      skybot
     ],
     options: {
       title: "Catalog overlays",
@@ -31073,6 +31089,7 @@
         VUtil.requestURL(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
+            jd: wcs2.jdobs,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dlng: dlng.toFixed(4),
@@ -33334,7 +33351,7 @@
         ]
       ],
       npv: 0,
-      mjd: [0, 0]
+      jd: [0, 0]
     },
     initialize: function(header, options2) {
       const projparam2 = this._paramUpdate(this.defaultProjParam);
@@ -33400,8 +33417,8 @@
       if (paramsrc.npv) {
         projparam.npv = (0, import_leaflet24.point)(paramsrc.npv);
       }
-      if (paramsrc.mjd) {
-        projparam.mjd = [paramsrc.mjd[0], paramsrc.mjd[1]];
+      if (paramsrc.jd) {
+        projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
       }
       if (paramsrc.dataslice && paramsrc.detslice) {
         projparam.dataslice = paramsrc.dataslice;
@@ -33471,14 +33488,14 @@
       }
       projparam2.npv = npv + 1;
       if ((v = header["MJD-OBS"]) || (v = header["MJDSTART"])) {
-        projparam2.mjd[0] = v;
+        projparam2.jd[0] = v + 24000005e-1;
       } else if (v = header["DATE-OBS"]) {
-        projparam2.mjd[0] = new Date(v).getTime() / 864e5 + 40587;
+        projparam2.jd[0] = new Date(v).getTime() / 864e5 + 24405875e-1;
       }
       if (v = header["MJDEND"]) {
-        projparam2.mjd[1] = v;
+        projparam2.jd[1] = v + 24000005e-1;
       } else if (v = header["EXPTIME"]) {
-        projparam2.mjd[1] = projparam2.mjd[0] + v / 86400;
+        projparam2.jd[1] = projparam2.jd[0] + v / 86400;
       }
     },
     _shiftWCS: function(projparam2) {
@@ -34112,6 +34129,7 @@
       options2 = import_leaflet29.Util.setOptions(this, options2);
       this.nzoom = options2.nzoom;
       this.projection = this.getProjection(header, options2);
+      const merged_proj = this.projection;
       if (nimages > 1) {
         this.projections = new Array(nimages);
         for (const [i2, image] of images2.entries()) {
@@ -34126,7 +34144,7 @@
           if (proj2.name === "") {
             proj2.name = "#" + str(i2 + 1);
           }
-          proj2.centerPnt = proj2._getCenter(this.projection);
+          proj2.centerPnt = proj2._getCenter(merged_proj);
           this.projections[i2] = proj2;
         }
         this.latLngToPoint = this.multiLatLngToPoint;
@@ -34134,9 +34152,9 @@
         this.project = this.multiProject;
         this.unproject = this.multiUnproject;
       }
-      this.naxis = this.projection.projparam.naxis;
-      this.centerLatLng = this.projection.unproject(
-        this.projection._getCenter(this.projection)
+      this.naxis = merged_proj.projparam.naxis;
+      this.centerLatLng = merged_proj.unproject(
+        merged_proj._getCenter(merged_proj)
       );
       this.wrapLng = [0.5, this.naxis.x - 0.5];
       this.wrapLat = [this.naxis.y - 0.5, 0.5];
@@ -34146,11 +34164,12 @@
         -1,
         this.naxis.y + 0.5
       );
-      this.code += ":" + this.projection.code;
-      this.equatorialFlag = this.projection.equatorialFlag;
-      this.celSysCode = this.projection.projparam._celsyscode;
-      this.pixelFlag = this.projection.projparam._pixelFlag;
-      this.infinite = this.projection.projparam._infinite;
+      this.code += ":" + merged_proj.code;
+      this.equatorialFlag = merged_proj.equatorialFlag;
+      this.celSysCode = merged_proj.projparam._celsyscode;
+      this.pixelFlag = merged_proj.projparam._pixelFlag;
+      this.infinite = merged_proj.projparam._infinite;
+      this.jdobs = 0.5 * (merged_proj.projparam.jd[0] + merged_proj.projparam.jd[1]);
     },
     multiLatLngToPoint(latlng, zoom) {
       const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);

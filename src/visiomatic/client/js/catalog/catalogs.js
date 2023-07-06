@@ -348,3 +348,26 @@ export const urat1 = new Catalog({
 	objectURL: '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
+/**
+ * SkyBot database.
+ * @name skybot
+ * @type {Catalog}
+ * @memberof catalogs
+ */
+export const skybot = new Catalog({
+	service: 'SkyBot@IMCCE',
+	name: 'SkyBot',
+	className: 'logo-catalog-imcce',
+	attribution: 'SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)',
+	color: 'orange',
+	magLim: 30.0,
+	regionType: 'box',
+	serviceURL: 'https://ssp.imcce.fr/webservices/skybot/api',
+	catalogURL: '/conesearch.php?&-mime=json&-from=VisiOmatic&' +
+	 '-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&' +
+	 '-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}',
+	properties: ['Name', 'Class', 'V'],
+	units: ['', '', ''],
+	objectURL: '/VizieR-5?-source=B/astorb/astorb&Name==='
+});
+
