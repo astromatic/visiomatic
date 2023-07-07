@@ -34,6 +34,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		objectURL: '/',
 		authenticate: 'false',
 		nmax: 10000,
+		format: 'text',
 		draw: undefined
 	},
 
@@ -93,6 +94,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 * @param {number} [options.nmax=10000]
 	   Maximum number of sources per query.
 
+	 * @param {string} [options.format='csv']
+	   Data format ('csv' or 'json')
+
 	 * @param {Catalog~drawCallback} [options.draw]
 	   Callback function called for drawing object. Defaults to a circle marker.
 
@@ -120,9 +124,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 */
 	_csvToGeoJSON: function (str) {
 		// Check to see if the delimiter is defined. If not, then default to comma.
-		var badreg = new RegExp('#|--|objName|string|^$'),
-		 lines = str.split('\n'),
-		 geo = {type: 'FeatureCollection', features: []};
+		const	badreg = new RegExp('#|--|objName|string|^$'),
+			lines = str.split('\n'),
+			geo = {type: 'FeatureCollection', features: []};
 
 		for (var i in lines) {
 			var line = lines[i];
@@ -141,12 +145,11 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 					geometry = feature.geometry,
 					properties = feature.properties;
 
-				var cell = line.split(/[,;\t]/);
+				const	cell = line.split(/[,;\t]/);
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
-				var items = cell.slice(3),
-				    item;
+				const	items = cell.slice(3);
 				for (var j in items) {
 					properties.items.push(this.readProperty(items[j]));
 				}
@@ -157,26 +160,42 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	},
 
 	/**
+	 * Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
+	 * @private
+	 * @param {string} str - CSV data.
+	 * @return {object} GeoJSON object.
+	 */
+	_jsonToGeoJSON: function (json) {
+		for (var o in json) {
+			console.log(json[o]);
+		}
+		return json;
+	},
+
+	/**
 	 * Read number in a cell from a
 	   [Vizier]{@link https://vizier.cds.unistra.fr/} ASCII output.
 	 * @param {string} item - Cell content.
 	 * @return {number} Value in the cell.
 	 */
 	readProperty: function (item) {
-		var	fitem = parseFloat(item);
+		const	fitem = parseFloat(item);
 		return isNaN(fitem) ? '--' : fitem;
 	},
 
 	/**
-	 * @summary Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
-	 * @desc Wrapper around private method
-	   [_csvToGeoJSON]{@link Catalog._csvToGeoJSON}.
-	 * @override
-	 * @param {string} str - CSV data.
+	 * @summary Convert catalog data to [GeoJSON]{@link https://geojson.org/}.
+	 * @param {string|object} data - catalog data.
 	 * @return {object} GeoJSON object.
 	 */
-	toGeoJSON: function (str) {
-		return this._csvToGeoJSON(str);
+	toGeoJSON: function (data) {
+		switch (this.format) {
+		case 'json':
+			return this._jsonToGeoJSON(data);
+		case 'csv':
+		default:
+			return this._csvToGeoJSON(data);
+		}
 	},
 
 	/**
@@ -210,7 +229,6 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		}
 		str += '</TBODY></TABLE>';
 		return str;
-
 	},
 
 	/**

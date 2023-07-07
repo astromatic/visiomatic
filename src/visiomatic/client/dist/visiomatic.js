@@ -23301,13 +23301,13 @@
             if (ax.yaxis.show) {
               gridPadding.left += ax.yaxis.getWidth();
             }
-            var ra = ["y2axis", "y3axis", "y4axis", "y5axis", "y6axis", "y7axis", "y8axis", "y9axis"];
+            var ra2 = ["y2axis", "y3axis", "y4axis", "y5axis", "y6axis", "y7axis", "y8axis", "y9axis"];
             var rapad = [0, 0, 0, 0, 0, 0, 0, 0];
             var gpr = 0;
             var n;
             for (n = 0; n < 8; n++) {
-              if (ax[ra[n]].show) {
-                gpr += ax[ra[n]].getWidth();
+              if (ax[ra2[n]].show) {
+                gpr += ax[ra2[n]].getWidth();
                 rapad[n] = gpr;
               }
             }
@@ -23349,7 +23349,7 @@
             ax.yaxis.pack({ position: "absolute", top: 0, left: this._gridPadding.left - ax.yaxis.getWidth(), height: this._height }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             ax.x2axis.pack({ position: "absolute", top: this._gridPadding.top - ax.x2axis.getHeight(), left: 0, width: this._width }, { min: this._gridPadding.left, max: this._width - this._gridPadding.right });
             for (i2 = 8; i2 > 0; i2--) {
-              ax[ra[i2 - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i2 - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
+              ax[ra2[i2 - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i2 - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             }
             var ltemp = (this._width - this._gridPadding.left - this._gridPadding.right) / 2 + this._gridPadding.left - ax.yMidAxis.getWidth() / 2;
             ax.yMidAxis.pack({ position: "absolute", top: 0, left: ltemp, zIndex: 9, textAlign: "center" }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
@@ -29530,6 +29530,7 @@
       objectURL: "/",
       authenticate: "false",
       nmax: 1e4,
+      format: "text",
       draw: void 0
     },
     initialize: function(options2) {
@@ -29545,7 +29546,7 @@
       }
     },
     _csvToGeoJSON: function(str2) {
-      var badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
+      const badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
       for (var i2 in lines) {
         var line = lines[i2];
         if (badreg.test(line) === false) {
@@ -29560,11 +29561,11 @@
               coordinates: [0, 0]
             }
           }, geometry = feature.geometry, properties = feature.properties;
-          var cell = line.split(/[,;\t]/);
+          const cell = line.split(/[,;\t]/);
           feature.id = cell[0];
           geometry.coordinates[0] = parseFloat(cell[1]);
           geometry.coordinates[1] = parseFloat(cell[2]);
-          var items = cell.slice(3), item;
+          const items = cell.slice(3);
           for (var j in items) {
             properties.items.push(this.readProperty(items[j]));
           }
@@ -29573,12 +29574,24 @@
       }
       return geo;
     },
+    _jsonToGeoJSON: function(json) {
+      for (var o in json) {
+        console.log(json[o]);
+      }
+      return json;
+    },
     readProperty: function(item) {
-      var fitem = parseFloat(item);
+      const fitem = parseFloat(item);
       return isNaN(fitem) ? "--" : fitem;
     },
-    toGeoJSON: function(str2) {
-      return this._csvToGeoJSON(str2);
+    toGeoJSON: function(data) {
+      switch (this.format) {
+        case "json":
+          return this._jsonToGeoJSON(data);
+        case "csv":
+        default:
+          return this._csvToGeoJSON(data);
+      }
     },
     popup: function(feature) {
       var str2 = "<div>";
@@ -30038,9 +30051,36 @@
     regionType: "box",
     serviceURL: "https://ssp.imcce.fr/webservices/skybot/api",
     catalogURL: "/conesearch.php?&-mime=json&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}",
-    properties: ["Name", "Class", "V"],
-    units: ["", "", ""],
-    objectURL: "/VizieR-5?-source=B/astorb/astorb&Name==="
+    properties: ["Class", "V", "dRA", "dDEC"],
+    units: ["", "", "arcsec/h", "arcsec/h"],
+    objectURL: "/VizieR-5?-source=B/astorb/astorb&Name===",
+    format: "json",
+    toGeoJSON: function(sources) {
+      const sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/, geo = { type: "FeatureCollection", features: [] };
+      for (var s in sources) {
+        var source = sources[s];
+        var feature = {
+          type: "Feature",
+          id: "",
+          properties: { items: [] },
+          geometry: { type: "Point", coordinates: [0, 0] }
+        }, geometry = feature.geometry, properties = feature.properties;
+        feature.id = source["Name"];
+        ra = sexare.exec(source["RA (deg)"]);
+        dec = sexare.exec(source["DEC (deg)"]);
+        geometry.coordinates = [
+          Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600),
+          Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240
+        ];
+        properties.items.push(source["Class"]);
+        properties.items.push(source["VMag (mag)"]);
+        properties.items.push(source["dRA (arcsec/h)"]);
+        properties.items.push(source["dDEC (arcsec/h)"]);
+        geo.features.push(feature);
+      }
+      console.log(geo);
+      return geo;
+    }
   });
 
   // js/control/index.js
@@ -31029,7 +31069,7 @@
     },
     _resetDialog: function() {
     },
-    _getCatalog: function(catalog, timeout) {
+    _getCatalog: async function(catalog, timeout) {
       const _this = this, map2 = this._map, wcs2 = map2.options.crs, sysflag = !wcs2.equatorialFlag && !this.options.nativeCelSys, center = sysflag ? wcs2.celSysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet11.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
@@ -31049,7 +31089,7 @@
         map2.unproject(b.max, z),
         map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z)
       ];
-      var sys;
+      var response, sys;
       if (!wcs2.equatorialFlag && this.options.nativeCelSys) {
         switch (wcs2.celSysCode) {
           case "ecliptic":
@@ -31086,7 +31126,7 @@
         if (dlng < 1e-4) {
           dlng = 1e-4;
         }
-        VUtil.requestURL(
+        response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             jd: wcs2.jdobs,
@@ -31096,18 +31136,7 @@
             dlat: dlat.toFixed(4),
             nmax: catalog.nmax + 1,
             maglim: catalog.maglim
-          })),
-          "getting " + catalog.service + " data",
-          function(self2, httpRequest) {
-            _this._loadCatalog(
-              catalog,
-              templayer,
-              self2,
-              httpRequest
-            );
-          },
-          this,
-          timeout
+          }))
         );
       } else {
         const dr = Math.max(
@@ -31116,86 +31145,67 @@
           wcs2.distance(c2[0], center),
           wcs2.distance(c2[0], center)
         );
-        VUtil.requestURL(
+        response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
+            jd: wcs2.jdobs,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dr: dr.toFixed(4),
             drm: (dr * 60).toFixed(4),
             nmax: catalog.nmax + 1
-          })),
-          "querying " + catalog.service + " data",
-          function(self2, httpRequest) {
-            _this._loadCatalog(
-              catalog,
-              templayer,
-              self2,
-              httpRequest
-            );
-          },
-          this,
-          this.options.timeOut
+          }))
         );
       }
+      if (response.status == 200) {
+        this._loadCatalog(catalog, templayer, await response);
+      } else {
+        this.removeLayer(templayer);
+        alert("Error " + response.status + " while querying " + catalog.service + ".");
+      }
     },
-    _loadCatalog: function(catalog, templayer, self2, httpRequest) {
-      if (httpRequest.readyState === 4) {
-        if (httpRequest.status === 200) {
-          const wcs2 = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet11.geoJson)(geo, {
-            onEachFeature: function(feature, layer) {
-              if (feature.properties && feature.properties.items) {
-                layer.bindPopup(catalog.popup(feature));
-              }
-            },
-            coordsToLatLng: function(coords2) {
-              if (wcs2.equatorialFlag) {
-                return new L.LatLng(
-                  coords2[1],
-                  coords2[0],
-                  coords2[2]
-                );
-              } else {
-                const latLng11 = wcs2.eqToCelSys(
-                  L.latLng(coords2[1], coords2[0])
-                );
-                return new L.LatLng(
-                  latLng11.lat,
-                  latLng11.lng,
-                  coords2[2]
-                );
-              }
-            },
-            filter: function(feature) {
-              return catalog.filter(feature);
-            },
-            pointToLayer: function(feature, latlng) {
-              return catalog.draw(feature, latlng);
-            },
-            style: function(feature) {
-              return { color: catalog.color, weight: 2 };
-            }
-          });
-          let excessflag = false;
-          geocatalog.nameColor = catalog.color;
-          geocatalog.addTo(self2._map);
-          this.removeLayer(templayer);
-          if (geo.features.length > catalog.nmax) {
-            geo.features.pop();
-            excessflag = true;
+    _loadCatalog: async function(catalog, templayer, response) {
+      const wcs2 = this._map.options.crs, geo = catalog.toGeoJSON(
+        catalog.format == "json" ? await response.json() : await response.text()
+      ), geocatalog = (0, import_leaflet11.geoJson)(geo, {
+        onEachFeature: function(feature, layer) {
+          if (feature.properties && feature.properties.items) {
+            layer.bindPopup(catalog.popup(feature));
           }
-          this.addLayer(geocatalog, catalog.name + " (" + geo.features.length.toString() + (excessflag ? "+ entries)" : " entries)"));
-          if (excessflag) {
-            alert(
-              "Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources."
+        },
+        coordsToLatLng: function(coords2) {
+          if (wcs2.equatorialFlag) {
+            return new L.LatLng(coords2[1], coords2[0], coords2[2]);
+          } else {
+            const latLng11 = wcs2.eqToCelSys(
+              L.latLng(coords2[1], coords2[0])
             );
+            return new L.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
           }
-        } else {
-          if (httpRequest.status !== 0) {
-            alert("Error " + httpRequest.status + " while querying " + catalog.service + ".");
-          }
-          this.removeLayer(templayer);
+        },
+        filter: function(feature) {
+          return catalog.filter(feature);
+        },
+        pointToLayer: function(feature, latlng) {
+          return catalog.draw(feature, latlng);
+        },
+        style: function(feature) {
+          return { color: catalog.color, weight: 2 };
         }
+      });
+      let excessflag = false;
+      geocatalog.nameColor = catalog.color;
+      geocatalog.addTo(this._map);
+      this.removeLayer(templayer);
+      if (geo.features.length > catalog.nmax) {
+        geo.features.pop();
+        excessflag = true;
+      }
+      this.addLayer(geocatalog, catalog.name + " (" + geo.features.length.toString() + (excessflag ? "+ entries)" : " entries)"));
+      if (excessflag) {
+        alert(
+          "Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources."
+        );
       }
     }
   });

@@ -174,7 +174,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	 * @param {number} [timeout]
 	   Query time out delay, in seconds. Defaults to no time out.
 	 */
-	_getCatalog: function (catalog, timeout) {
+	_getCatalog: async function (catalog, timeout) {
 		const	_this = this,
 		    map = this._map,
 			wcs = map.options.crs,
@@ -208,7 +208,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					map.unproject(b.max, z),
 					map.unproject(point(b.max.x, b.min.y), z)
 				];
-		var	  sys;
+		var	  response,
+			sys;
 
 		if (!wcs.equatorialFlag && this.options.nativeCelSys) {
 			switch (wcs.celSysCode) {
@@ -248,7 +249,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				dlng = 0.0001;
 			}
 
-			VUtil.requestURL(
+			response = await fetch(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					jd: wcs.jdobs,
@@ -258,18 +259,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					dlat: dlat.toFixed(4),
 					nmax: catalog.nmax + 1,
 					maglim: catalog.maglim
-				})),
-				'getting ' + catalog.service + ' data',
-				function (self, httpRequest) {
-					_this._loadCatalog(
-						catalog,
-						templayer,
-						self,
-						httpRequest
-					);
-				},
-				this,
-				timeout
+				}))
 			);
 		} else {
 			// Regular cone search
@@ -277,27 +267,24 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center),
 				                wcs.distance(c[0], center));
-			VUtil.requestURL(
+			response = await fetch(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
+					jd: wcs.jdobs,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
 					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
 				})),
-				'querying ' + catalog.service + ' data',
-				function (self, httpRequest) {
-					_this._loadCatalog(
-						catalog,
-						templayer,
-						self,
-						httpRequest
-					);
-				},
-				this,
-				this.options.timeOut
 			);
+		}
+		if (response.status == 200) {
+			this._loadCatalog(catalog, templayer, await response);
+		} else {
+			this.removeLayer(templayer);
+			alert('Error ' + response.status + ' while querying ' +
+						catalog.service + '.');
 		}
 	},
 
@@ -308,80 +295,64 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	   Catalog.
 	 * @param {leaflet.Layer} templayer
 	   "Dummy" layer to activate a spinner sign.
-	 * @param {object} self
-	   Calling control object (``this``).
-	 * @param {object} httpRequest
-	   HTTP request.
+	 * @param {object} response
+	   Response object from the fetch() request.
 	 */
-	_loadCatalog: function (catalog, templayer, self, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				const	wcs = self._map.options.crs,
-					response = httpRequest.responseText,
-					geo = catalog.toGeoJSON(response),
-					geocatalog = geoJson(geo, {
-						onEachFeature: function (feature, layer) {
-							if (feature.properties && feature.properties.items) {
-								layer.bindPopup(catalog.popup(feature));
-							}
-						},
-						coordsToLatLng: function (coords) {
-							if (wcs.equatorialFlag) {
-								return new L.LatLng(
-									coords[1],
-									coords[0],
-									coords[2]
-								);
-							} else {
-								const	latLng = wcs.eqToCelSys(
-									L.latLng(coords[1], coords[0])
-								);
-								return new L.LatLng(
-									latLng.lat,
-									latLng.lng,
-									coords[2]
-								);
-							}
-						},
-						filter: function (feature) {
-							return catalog.filter(feature);
-						},
-						pointToLayer: function (feature, latlng) {
-							return catalog.draw(feature, latlng);
-						},
-						style: function (feature) {
-							return {color: catalog.color, weight: 2};
-						}
-					});
-				let	excessflag = false;
-				geocatalog.nameColor = catalog.color;
-				geocatalog.addTo(self._map);
-				this.removeLayer(templayer);
-				if (geo.features.length > catalog.nmax) {
-					geo.features.pop();
-					excessflag = true;
+	_loadCatalog: async function (catalog, templayer, response) {
+		const	wcs = this._map.options.crs,
+			geo = catalog.toGeoJSON(
+				catalog.format == 'json' ?
+					await response.json() : await response.text()
+			),
+			geocatalog = geoJson(geo, {
+				onEachFeature: function (feature, layer) {
+					if (feature.properties && feature.properties.items) {
+						layer.bindPopup(catalog.popup(feature));
+					}
+				},
+				coordsToLatLng: function (coords) {
+					if (wcs.equatorialFlag) {
+						return new L.LatLng(coords[1],coords[0],coords[2]);
+					} else {
+						const	latLng = wcs.eqToCelSys(
+							L.latLng(coords[1], coords[0])
+						);
+						return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+					}
+				},
+				filter: function (feature) {
+					return catalog.filter(feature);
+				},
+				pointToLayer: function (feature, latlng) {
+					return catalog.draw(feature, latlng);
+				},
+				style: function (feature) {
+					return {color: catalog.color, weight: 2};
 				}
-				this.addLayer(geocatalog, catalog.name +
-				  ' (' + geo.features.length.toString() +
-				  (excessflag ? '+ entries)' : ' entries)'));
-				if (excessflag) {
-					alert(
-						'Selected area is too large: ' + catalog.name +
-						' sample has been truncated to the brightest ' +
-						catalog.nmax + ' sources.'
-					);
-				}
-			} else {
-				if (httpRequest.status !== 0) {
-					alert('Error ' + httpRequest.status + ' while querying ' +
-						catalog.service + '.');
-				}
-				this.removeLayer(templayer);
-			}
+			});
+
+		let	excessflag = false;
+
+		geocatalog.nameColor = catalog.color;
+		geocatalog.addTo(this._map);
+		this.removeLayer(templayer);
+		if (geo.features.length > catalog.nmax) {
+			geo.features.pop();
+			excessflag = true;
+		}
+		this.addLayer(geocatalog, catalog.name +
+			' (' + geo.features.length.toString() +
+			(excessflag ? '+ entries)' : ' entries)'));
+		if (excessflag) {
+			alert(
+				'Selected area is too large: ' + catalog.name +
+				' sample has been truncated to the brightest ' +
+				catalog.nmax + ' sources.'
+			);
 		}
 	}
-
 });
+
 
 /**
  * Instantiate a VisiOmatic dialog for catalog queries and catalog overlays.

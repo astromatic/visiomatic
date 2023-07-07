@@ -348,6 +348,7 @@ export const urat1 = new Catalog({
 	objectURL: '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1'
 });
 
+
 /**
  * SkyBot database.
  * @name skybot
@@ -366,8 +367,51 @@ export const skybot = new Catalog({
 	catalogURL: '/conesearch.php?&-mime=json&-from=VisiOmatic&' +
 	 '-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&' +
 	 '-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}',
-	properties: ['Name', 'Class', 'V'],
-	units: ['', '', ''],
-	objectURL: '/VizieR-5?-source=B/astorb/astorb&Name==='
+	properties: ['Class', 'V', 'dRA', 'dDEC'],
+	units: ['', '', 'arcsec/h', 'arcsec/h'],
+	objectURL: '/VizieR-5?-source=B/astorb/astorb&Name===',
+	format: 'json',
+
+	/**
+	 * @summary Convert SkyBot data to [GeoJSON]{@link https://geojson.org/}.
+	 * @override
+	 * @param {object} sources - JSON object with source data.
+	 * @return {object} GeoJSON object.
+	 */
+	toGeoJSON: function (sources) {
+		const	sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/,
+			geo = {type: 'FeatureCollection', features: []};
+
+		for (var s in sources) {
+			var source = sources[s];
+			var feature = {
+					type: 'Feature',
+					id: '',
+					properties: {items: []},
+					geometry: {type: 'Point', coordinates: [0.0, 0.0]}
+				},
+				geometry = feature.geometry,
+				properties = feature.properties;
+			feature.id = source['Name'];
+			ra = sexare.exec(source['RA (deg)']);
+			dec = sexare.exec(source['DEC (deg)']);
+			geometry.coordinates = [
+				Number(dec[1] + '1') * (
+					Number(dec[2]) +
+					Number(dec[3]) / 60.0 +
+					Number(dec[4]) / 3600.0
+				),
+				Number(ra[2]) * 15.0 +
+				Number(ra[3]) / 4.0 +
+				Number(ra[4]) / 240.0
+			]
+			properties.items.push(source['Class']);
+			properties.items.push(source['VMag (mag)']);
+			properties.items.push(source['dRA (arcsec/h)']);
+			properties.items.push(source['dDEC (arcsec/h)']);
+			geo.features.push(feature);
+		}
+	return geo;
+	}
 });
 
