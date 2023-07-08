@@ -89,6 +89,8 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		options = Util.setOptions(this, options);
 		this.nzoom = options.nzoom;
 		this.projection = this.getProjection(header, options);
+
+		const merged_proj = this.projection;
 		if (nimages > 1) {
 			this.projections = new Array(nimages);
 			for (const [i, image] of images.entries()) {
@@ -103,7 +105,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 				if (proj.name === '') {
 					proj.name = '#' + str(i+1);
 				}
-				proj.centerPnt = proj._getCenter(this.projection);
+				proj.centerPnt = proj._getCenter(merged_proj);
 				this.projections[i] = proj;
 			}
 
@@ -114,9 +116,9 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		}
 
 		// Propagate some projection properties.
-		this.naxis = this.projection.projparam.naxis;
-		this.centerLatLng = this.projection.unproject(
-			this.projection._getCenter(this.projection)
+		this.naxis = merged_proj.projparam.naxis;
+		this.centerLatLng = merged_proj.unproject(
+			merged_proj._getCenter(merged_proj)
 		);
 		this.wrapLng = [0.5, this.naxis.x - 0.5];
 		this.wrapLat = [this.naxis.y - 0.5, 0.5];
@@ -124,11 +126,12 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			1.0, -0.5,
 			-1.0, this.naxis.y + 0.5
 		);
-		this.code += ':' + this.projection.code;
-		this.equatorialFlag = this.projection.equatorialFlag;
-		this.celSysCode = this.projection.projparam._celsyscode;
-		this.pixelFlag = this.projection.projparam._pixelFlag;
-		this.infinite = this.projection.projparam._infinite;
+		this.code += ':' + merged_proj.code;
+		this.equatorialFlag = merged_proj.equatorialFlag;
+		this.celSysCode = merged_proj.projparam._celsyscode;
+		this.pixelFlag = merged_proj.projparam._pixelFlag;
+		this.infinite = merged_proj.projparam._infinite;
+		this.jd = merged_proj.projparam.jd;
 	},
 
 	/**

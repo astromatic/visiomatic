@@ -4769,7 +4769,7 @@
             return false;
           }
         });
-        function polyline2(latlngs, options2) {
+        function polyline3(latlngs, options2) {
           return new Polyline(latlngs, options2);
         }
         Polyline._flat = _flat;
@@ -8123,7 +8123,7 @@
         exports2.marker = marker2;
         exports2.point = toPoint;
         exports2.polygon = polygon;
-        exports2.polyline = polyline2;
+        exports2.polyline = polyline3;
         exports2.popup = popup;
         exports2.rectangle = rectangle2;
         exports2.setOptions = setOptions;
@@ -23301,13 +23301,13 @@
             if (ax.yaxis.show) {
               gridPadding.left += ax.yaxis.getWidth();
             }
-            var ra = ["y2axis", "y3axis", "y4axis", "y5axis", "y6axis", "y7axis", "y8axis", "y9axis"];
+            var ra2 = ["y2axis", "y3axis", "y4axis", "y5axis", "y6axis", "y7axis", "y8axis", "y9axis"];
             var rapad = [0, 0, 0, 0, 0, 0, 0, 0];
             var gpr = 0;
             var n;
             for (n = 0; n < 8; n++) {
-              if (ax[ra[n]].show) {
-                gpr += ax[ra[n]].getWidth();
+              if (ax[ra2[n]].show) {
+                gpr += ax[ra2[n]].getWidth();
                 rapad[n] = gpr;
               }
             }
@@ -23349,7 +23349,7 @@
             ax.yaxis.pack({ position: "absolute", top: 0, left: this._gridPadding.left - ax.yaxis.getWidth(), height: this._height }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             ax.x2axis.pack({ position: "absolute", top: this._gridPadding.top - ax.x2axis.getHeight(), left: 0, width: this._width }, { min: this._gridPadding.left, max: this._width - this._gridPadding.right });
             for (i2 = 8; i2 > 0; i2--) {
-              ax[ra[i2 - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i2 - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
+              ax[ra2[i2 - 1]].pack({ position: "absolute", top: 0, right: this._gridPadding.right - rapad[i2 - 1] }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
             }
             var ltemp = (this._width - this._gridPadding.left - this._gridPadding.right) / 2 + this._gridPadding.left - ax.yMidAxis.getWidth() / 2;
             ax.yMidAxis.pack({ position: "absolute", top: 0, left: ltemp, zIndex: 9, textAlign: "center" }, { min: this._height - this._gridPadding.bottom, max: this._gridPadding.top });
@@ -29530,6 +29530,7 @@
       objectURL: "/",
       authenticate: "false",
       nmax: 1e4,
+      format: "text",
       draw: void 0
     },
     initialize: function(options2) {
@@ -29541,11 +29542,11 @@
       }
       this.url = this.serviceURL + this.catalogURL;
       if (this.objectURL) {
-        this.objURL = this.serviceURL + this.objectURL;
+        this.objURL = this.objectURL.startsWith("http") ? this.objectURL : this.serviceURL + this.objectURL;
       }
     },
     _csvToGeoJSON: function(str2) {
-      var badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
+      const badreg = new RegExp("#|--|objName|string|^$"), lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
       for (var i2 in lines) {
         var line = lines[i2];
         if (badreg.test(line) === false) {
@@ -29560,11 +29561,11 @@
               coordinates: [0, 0]
             }
           }, geometry = feature.geometry, properties = feature.properties;
-          var cell = line.split(/[,;\t]/);
+          const cell = line.split(/[,;\t]/);
           feature.id = cell[0];
           geometry.coordinates[0] = parseFloat(cell[1]);
           geometry.coordinates[1] = parseFloat(cell[2]);
-          var items = cell.slice(3), item;
+          const items = cell.slice(3);
           for (var j in items) {
             properties.items.push(this.readProperty(items[j]));
           }
@@ -29574,16 +29575,17 @@
       return geo;
     },
     readProperty: function(item) {
-      var fitem = parseFloat(item);
+      const fitem = parseFloat(item);
       return isNaN(fitem) ? "--" : fitem;
     },
-    toGeoJSON: function(str2) {
-      return this._csvToGeoJSON(str2);
+    toGeoJSON: function(data) {
+      return this._csvToGeoJSON(data);
     },
     popup: function(feature) {
       var str2 = "<div>";
       if (this.objURL) {
         str2 += 'ID: <a href="' + import_leaflet.Util.template(this.objURL, (0, import_leaflet.extend)({
+          id: feature.id,
           ra: feature.geometry.coordinates[0].toFixed(6),
           dec: feature.geometry.coordinates[1].toFixed(6)
         })) + '" target="_blank">' + feature.id + "</a></div>";
@@ -29591,9 +29593,10 @@
         str2 += "ID: " + feature.id + "</div>";
       }
       str2 += '<TABLE style="margin:auto;"><TBODY style="vertical-align:top;text-align:left;">';
+      var items = feature.properties.items;
       for (var i2 in this.properties) {
         if (this.propertyMask === void 0 || this.propertyMask[i2] === true) {
-          str2 += "<TR><TD>" + this.properties[i2] + ":</TD><TD>" + feature.properties.items[i2].toString() + " ";
+          str2 += "<TR><TD>" + this.properties[i2] + ":</TD><TD>" + (typeof items[i2] === "number" ? items[i2].toPrecision(4) : items[i2].toString()) + " ";
           if (this.units[i2]) {
             str2 += this.units[i2];
           }
@@ -29608,6 +29611,9 @@
       return (0, import_leaflet.circleMarker)(latlng, {
         radius: refmag ? this.magLim + 5 - refmag : 8
       });
+    },
+    style: function(feature) {
+      return { color: this.color, weight: 2 };
     },
     filter: function(feature) {
       return true;
@@ -29627,6 +29633,7 @@
     panstarrs1: () => panstarrs1,
     ppmXL: () => ppmXL,
     sdss: () => sdss,
+    skybot: () => skybot,
     tgss: () => tgss,
     twomass: () => twomass,
     urat1: () => urat1
@@ -30026,6 +30033,69 @@
     properties: ["f<sub>mag</sub>", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
     units: ["", "mas/yr", "mas/yr"],
     objectURL: "/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+  });
+  var skybot = new Catalog({
+    service: "SkyBot@IMCCE",
+    name: "SkyBot",
+    className: "logo-catalog-imcce",
+    attribution: "SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)",
+    color: "orange",
+    magLim: 30,
+    magIndex: 1,
+    regionType: "box",
+    serviceURL: "https://vo.imcce.fr/webservices/skybot/",
+    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
+    properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>", "Geocentric distance", "Heliocentric distance"],
+    units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h", "au", "au"],
+    objectURL: "https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}",
+    format: "text",
+    draw: function(feature, latlng) {
+      const prop = feature.properties.items, djd = (this.jd[1] - this.jd[0]) * 24, clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180)), invclat = clat > 0 ? 1 / clat : 1e-3, dlng = invclat * djd * prop[3] / 7200, dlat = djd * prop[4] / 7200;
+      return (0, import_leaflet4.polyline)(
+        [
+          [latlng.lat - dlat, latlng.lng - dlng],
+          [latlng.lat + dlat, latlng.lng + dlng]
+        ]
+      );
+    },
+    style: function(feature) {
+      return { color: this.color, weight: 8 };
+    },
+    toGeoJSON: function(str2) {
+      const badreg = /#|No\s|^$/, sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/, lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
+      for (var i2 in lines) {
+        var line = lines[i2];
+        if (badreg.test(line) === false) {
+          var feature = {
+            type: "Feature",
+            id: "",
+            properties: {
+              items: []
+            },
+            geometry: {
+              type: "Point",
+              coordinates: [0, 0]
+            }
+          }, geometry = feature.geometry, properties = feature.properties;
+          const cell = line.split(" | ");
+          feature.id = cell[1];
+          ra = sexare.exec(cell[2]);
+          dec = sexare.exec(cell[3]);
+          geometry.coordinates = [
+            Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240,
+            Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600)
+          ];
+          properties.items.push(cell[4]);
+          properties.items.push(this.readProperty(cell[5]));
+          const items = cell.slice(7);
+          for (var j in items) {
+            properties.items.push(this.readProperty(items[j]));
+          }
+          geo.features.push(feature);
+        }
+      }
+      return geo;
+    }
   });
 
   // js/control/index.js
@@ -30936,7 +31006,8 @@
       gaiaDR3,
       twomass,
       sdss,
-      panstarrs1
+      panstarrs1,
+      skybot
     ],
     options: {
       title: "Catalog overlays",
@@ -31013,7 +31084,7 @@
     },
     _resetDialog: function() {
     },
-    _getCatalog: function(catalog, timeout) {
+    _getCatalog: async function(catalog, timeout) {
       const _this = this, map2 = this._map, wcs2 = map2.options.crs, sysflag = !wcs2.equatorialFlag && !this.options.nativeCelSys, center = sysflag ? wcs2.celSysToEq(map2.getCenter()) : map2.getCenter(), b = map2.getPixelBounds(), z = map2.getZoom(), templayer = new import_leaflet11.LayerGroup(null);
       templayer.notReady = true;
       this.addLayer(templayer, catalog.name);
@@ -31033,7 +31104,7 @@
         map2.unproject(b.max, z),
         map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z)
       ];
-      var sys;
+      var response, sys;
       if (!wcs2.equatorialFlag && this.options.nativeCelSys) {
         switch (wcs2.celSysCode) {
           case "ecliptic":
@@ -31052,6 +31123,7 @@
       } else {
         sys = "J2000.0";
       }
+      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]);
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),
@@ -31070,27 +31142,17 @@
         if (dlng < 1e-4) {
           dlng = 1e-4;
         }
-        VUtil.requestURL(
+        response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
+            jd: jdmean,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dlng: dlng.toFixed(4),
             dlat: dlat.toFixed(4),
             nmax: catalog.nmax + 1,
             maglim: catalog.maglim
-          })),
-          "getting " + catalog.service + " data",
-          function(self2, httpRequest) {
-            _this._loadCatalog(
-              catalog,
-              templayer,
-              self2,
-              httpRequest
-            );
-          },
-          this,
-          timeout
+          }))
         );
       } else {
         const dr = Math.max(
@@ -31099,86 +31161,69 @@
           wcs2.distance(c2[0], center),
           wcs2.distance(c2[0], center)
         );
-        VUtil.requestURL(
+        response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
+            jd: jdmean,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dr: dr.toFixed(4),
             drm: (dr * 60).toFixed(4),
             nmax: catalog.nmax + 1
-          })),
-          "querying " + catalog.service + " data",
-          function(self2, httpRequest) {
-            _this._loadCatalog(
-              catalog,
-              templayer,
-              self2,
-              httpRequest
-            );
-          },
-          this,
-          this.options.timeOut
+          }))
         );
       }
+      if (response.status == 200) {
+        this._loadCatalog(catalog, templayer, await response);
+      } else {
+        this.removeLayer(templayer);
+        alert("Error " + response.status + " while querying " + catalog.service + ".");
+      }
     },
-    _loadCatalog: function(catalog, templayer, self2, httpRequest) {
-      if (httpRequest.readyState === 4) {
-        if (httpRequest.status === 200) {
-          const wcs2 = self2._map.options.crs, response = httpRequest.responseText, geo = catalog.toGeoJSON(response), geocatalog = (0, import_leaflet11.geoJson)(geo, {
-            onEachFeature: function(feature, layer) {
-              if (feature.properties && feature.properties.items) {
-                layer.bindPopup(catalog.popup(feature));
-              }
-            },
-            coordsToLatLng: function(coords2) {
-              if (wcs2.equatorialFlag) {
-                return new L.LatLng(
-                  coords2[1],
-                  coords2[0],
-                  coords2[2]
-                );
-              } else {
-                const latLng11 = wcs2.eqToCelSys(
-                  L.latLng(coords2[1], coords2[0])
-                );
-                return new L.LatLng(
-                  latLng11.lat,
-                  latLng11.lng,
-                  coords2[2]
-                );
-              }
-            },
-            filter: function(feature) {
-              return catalog.filter(feature);
-            },
-            pointToLayer: function(feature, latlng) {
-              return catalog.draw(feature, latlng);
-            },
-            style: function(feature) {
-              return { color: catalog.color, weight: 2 };
-            }
-          });
-          let excessflag = false;
-          geocatalog.nameColor = catalog.color;
-          geocatalog.addTo(self2._map);
-          this.removeLayer(templayer);
-          if (geo.features.length > catalog.nmax) {
-            geo.features.pop();
-            excessflag = true;
+    _loadCatalog: async function(catalog, templayer, response) {
+      const wcs2 = this._map.options.crs;
+      catalog.jd = wcs2.jd;
+      const geo = catalog.toGeoJSON(
+        catalog.format == "json" ? await response.json() : await response.text()
+      ), geocatalog = (0, import_leaflet11.geoJson)(geo, {
+        onEachFeature: function(feature, layer) {
+          if (feature.properties && feature.properties.items) {
+            layer.bindPopup(catalog.popup(feature));
           }
-          this.addLayer(geocatalog, catalog.name + " (" + geo.features.length.toString() + (excessflag ? "+ entries)" : " entries)"));
-          if (excessflag) {
-            alert(
-              "Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources."
+        },
+        coordsToLatLng: function(coords2) {
+          if (wcs2.equatorialFlag) {
+            return new L.LatLng(coords2[1], coords2[0], coords2[2]);
+          } else {
+            const latLng11 = wcs2.eqToCelSys(
+              L.latLng(coords2[1], coords2[0])
             );
+            return new L.LatLng(latLng11.lat, latLng11.lng, coords2[2]);
           }
-        } else {
-          if (httpRequest.status !== 0) {
-            alert("Error " + httpRequest.status + " while querying " + catalog.service + ".");
-          }
-          this.removeLayer(templayer);
+        },
+        filter: function(feature) {
+          return catalog.filter(feature);
+        },
+        pointToLayer: function(feature, latlng) {
+          return catalog.draw(feature, latlng);
+        },
+        style: function(feature) {
+          return catalog.style(feature);
         }
+      });
+      let excessflag = false;
+      geocatalog.nameColor = catalog.color;
+      geocatalog.addTo(this._map);
+      this.removeLayer(templayer);
+      if (geo.features.length > catalog.nmax) {
+        geo.features.pop();
+        excessflag = true;
+      }
+      this.addLayer(geocatalog, catalog.name + " (" + geo.features.length.toString() + (excessflag ? "+ entries)" : " entries)"));
+      if (excessflag) {
+        alert(
+          "Selected area is too large: " + catalog.name + " sample has been truncated to the brightest " + catalog.nmax + " sources."
+        );
       }
     }
   });
@@ -33333,7 +33378,8 @@
           0
         ]
       ],
-      npv: 0
+      npv: 0,
+      jd: [0, 0]
     },
     initialize: function(header, options2) {
       const projparam2 = this._paramUpdate(this.defaultProjParam);
@@ -33395,6 +33441,12 @@
         projparam.pv = [];
         projparam.pv[0] = paramsrc.pv[0].slice();
         projparam.pv[1] = paramsrc.pv[1].slice();
+      }
+      if (paramsrc.npv) {
+        projparam.npv = (0, import_leaflet24.point)(paramsrc.npv);
+      }
+      if (paramsrc.jd) {
+        projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
       }
       if (paramsrc.dataslice && paramsrc.detslice) {
         projparam.dataslice = paramsrc.dataslice;
@@ -33463,6 +33515,16 @@
         }
       }
       projparam2.npv = npv + 1;
+      if ((v = header["MJD-OBS"]) || (v = header["MJDSTART"])) {
+        projparam2.jd[0] = v + 24000005e-1;
+      } else if (v = header["DATE-OBS"]) {
+        projparam2.jd[0] = new Date(v).getTime() / 864e5 + 24405875e-1;
+      }
+      if (v = header["MJDEND"]) {
+        projparam2.jd[1] = v + 24000005e-1;
+      } else if (v = header["EXPTIME"]) {
+        projparam2.jd[1] = projparam2.jd[0] + v / 86400;
+      }
     },
     _shiftWCS: function(projparam2) {
       const crpix = projparam2.crpix, cd = projparam2.cd, dataslice = projparam2.dataslice, detslice = projparam2.detslice;
@@ -34095,6 +34157,7 @@
       options2 = import_leaflet29.Util.setOptions(this, options2);
       this.nzoom = options2.nzoom;
       this.projection = this.getProjection(header, options2);
+      const merged_proj = this.projection;
       if (nimages > 1) {
         this.projections = new Array(nimages);
         for (const [i2, image] of images2.entries()) {
@@ -34109,7 +34172,7 @@
           if (proj2.name === "") {
             proj2.name = "#" + str(i2 + 1);
           }
-          proj2.centerPnt = proj2._getCenter(this.projection);
+          proj2.centerPnt = proj2._getCenter(merged_proj);
           this.projections[i2] = proj2;
         }
         this.latLngToPoint = this.multiLatLngToPoint;
@@ -34117,9 +34180,9 @@
         this.project = this.multiProject;
         this.unproject = this.multiUnproject;
       }
-      this.naxis = this.projection.projparam.naxis;
-      this.centerLatLng = this.projection.unproject(
-        this.projection._getCenter(this.projection)
+      this.naxis = merged_proj.projparam.naxis;
+      this.centerLatLng = merged_proj.unproject(
+        merged_proj._getCenter(merged_proj)
       );
       this.wrapLng = [0.5, this.naxis.x - 0.5];
       this.wrapLat = [this.naxis.y - 0.5, 0.5];
@@ -34129,11 +34192,12 @@
         -1,
         this.naxis.y + 0.5
       );
-      this.code += ":" + this.projection.code;
-      this.equatorialFlag = this.projection.equatorialFlag;
-      this.celSysCode = this.projection.projparam._celsyscode;
-      this.pixelFlag = this.projection.projparam._pixelFlag;
-      this.infinite = this.projection.projparam._infinite;
+      this.code += ":" + merged_proj.code;
+      this.equatorialFlag = merged_proj.equatorialFlag;
+      this.celSysCode = merged_proj.projparam._celsyscode;
+      this.pixelFlag = merged_proj.projparam._pixelFlag;
+      this.infinite = merged_proj.projparam._infinite;
+      this.jd = merged_proj.projparam.jd;
     },
     multiLatLngToPoint(latlng, zoom) {
       const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
