@@ -30043,12 +30043,12 @@
     magLim: 30,
     magIndex: 1,
     regionType: "box",
-    serviceURL: "https://ssp.imcce.fr/webservices/skybot/api",
-    catalogURL: "/conesearch.php?&-mime=json&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}",
-    properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
-    units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h"],
+    serviceURL: "https://vo.imcce.fr/webservices/skybot/",
+    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
+    properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>", "Geocentric distance", "Heliocentric distance"],
+    units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h", "au", "au"],
     objectURL: "https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}",
-    format: "json",
+    format: "text",
     draw: function(feature, latlng) {
       const prop = feature.properties.items, djd = (this.jd[1] - this.jd[0]) * 24, clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180)), invclat = clat > 0 ? 1 / clat : 1e-3, dlng = invclat * djd * prop[3] / 7200, dlat = djd * prop[4] / 7200;
       return (0, import_leaflet4.polyline)(
@@ -30061,29 +30061,38 @@
     style: function(feature) {
       return { color: this.color, weight: 8 };
     },
-    toGeoJSON: function(sources) {
-      const sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/, geo = { type: "FeatureCollection", features: [] };
-      for (var s in sources) {
-        var source = sources[s];
-        var feature = {
-          type: "Feature",
-          id: "",
-          properties: { items: [] },
-          geometry: { type: "Point", coordinates: [0, 0] }
-        }, geometry = feature.geometry, properties = feature.properties;
-        feature.id = source["Name"];
-        ra = sexare.exec(source["RA (deg)"]);
-        dec = sexare.exec(source["DEC (deg)"]);
-        geometry.coordinates = [
-          Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240,
-          Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600)
-        ];
-        properties.items.push(source["Class"]);
-        properties.items.push(source["VMag (mag)"]);
-        properties.items.push(source["Err (arcsec)"]);
-        properties.items.push(source["dRA (arcsec/h)"]);
-        properties.items.push(source["dDEC (arcsec/h)"]);
-        geo.features.push(feature);
+    toGeoJSON: function(str2) {
+      const badreg = /#|No\s|^$/, sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/, lines = str2.split("\n"), geo = { type: "FeatureCollection", features: [] };
+      for (var i2 in lines) {
+        var line = lines[i2];
+        if (badreg.test(line) === false) {
+          var feature = {
+            type: "Feature",
+            id: "",
+            properties: {
+              items: []
+            },
+            geometry: {
+              type: "Point",
+              coordinates: [0, 0]
+            }
+          }, geometry = feature.geometry, properties = feature.properties;
+          const cell = line.split(" | ");
+          feature.id = cell[1];
+          ra = sexare.exec(cell[2]);
+          dec = sexare.exec(cell[3]);
+          geometry.coordinates = [
+            Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240,
+            Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600)
+          ];
+          properties.items.push(cell[4]);
+          properties.items.push(this.readProperty(cell[5]));
+          const items = cell.slice(7);
+          for (var j in items) {
+            properties.items.push(this.readProperty(items[j]));
+          }
+          geo.features.push(feature);
+        }
       }
       return geo;
     }
