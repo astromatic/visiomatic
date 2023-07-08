@@ -131,9 +131,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		this.celSysCode = merged_proj.projparam._celsyscode;
 		this.pixelFlag = merged_proj.projparam._pixelFlag;
 		this.infinite = merged_proj.projparam._infinite;
-		this.jdobs = 0.5 * (
-			merged_proj.projparam.jd[0] + merged_proj.projparam.jd[1]
-		);
+		this.jd = merged_proj.projparam.jd;
 	},
 
 	/**

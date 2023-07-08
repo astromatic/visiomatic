@@ -230,6 +230,9 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			sys = 'J2000.0';
 		}
 
+		// Mean Julian date during the exposure
+		const	jdmean = 0.5 * (wcs.jd[0] + wcs.jd[1]);
+
 		if (catalog.regionType === 'box') {
 			// CDS box search
 			let	dlng = (Math.max(wcs._deltaLng(c[0], center),
@@ -252,7 +255,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			response = await fetch(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
-					jd: wcs.jdobs,
+					jd: jdmean,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
@@ -270,7 +273,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			response = await fetch(
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
-					jd: wcs.jdobs,
+					jd: jdmean,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
@@ -299,10 +302,13 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 	   Response object from the fetch() request.
 	 */
 	_loadCatalog: async function (catalog, templayer, response) {
-		const	wcs = this._map.options.crs,
-			geo = catalog.toGeoJSON(
-				catalog.format == 'json' ?
-					await response.json() : await response.text()
+		const	wcs = this._map.options.crs;
+		// Propagate Julian date interval
+		catalog.jd = wcs.jd;
+
+		const	geo = catalog.toGeoJSON(
+			catalog.format == 'json' ?
+				await response.json() : await response.text()
 			),
 			geocatalog = geoJson(geo, {
 				onEachFeature: function (feature, layer) {
@@ -327,7 +333,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					return catalog.draw(feature, latlng);
 				},
 				style: function (feature) {
-					return {color: catalog.color, weight: 2};
+					return catalog.style(feature);
 				}
 			});
 

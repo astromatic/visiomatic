@@ -4769,7 +4769,7 @@
             return false;
           }
         });
-        function polyline2(latlngs, options2) {
+        function polyline3(latlngs, options2) {
           return new Polyline(latlngs, options2);
         }
         Polyline._flat = _flat;
@@ -8123,7 +8123,7 @@
         exports2.marker = marker2;
         exports2.point = toPoint;
         exports2.polygon = polygon;
-        exports2.polyline = polyline2;
+        exports2.polyline = polyline3;
         exports2.popup = popup;
         exports2.rectangle = rectangle2;
         exports2.setOptions = setOptions;
@@ -29542,7 +29542,7 @@
       }
       this.url = this.serviceURL + this.catalogURL;
       if (this.objectURL) {
-        this.objURL = this.serviceURL + this.objectURL;
+        this.objURL = this.objectURL.startsWith("http") ? this.objectURL : this.serviceURL + this.objectURL;
       }
     },
     _csvToGeoJSON: function(str2) {
@@ -29574,29 +29574,18 @@
       }
       return geo;
     },
-    _jsonToGeoJSON: function(json) {
-      for (var o in json) {
-        console.log(json[o]);
-      }
-      return json;
-    },
     readProperty: function(item) {
       const fitem = parseFloat(item);
       return isNaN(fitem) ? "--" : fitem;
     },
     toGeoJSON: function(data) {
-      switch (this.format) {
-        case "json":
-          return this._jsonToGeoJSON(data);
-        case "csv":
-        default:
-          return this._csvToGeoJSON(data);
-      }
+      return this._csvToGeoJSON(data);
     },
     popup: function(feature) {
       var str2 = "<div>";
       if (this.objURL) {
         str2 += 'ID: <a href="' + import_leaflet.Util.template(this.objURL, (0, import_leaflet.extend)({
+          id: feature.id,
           ra: feature.geometry.coordinates[0].toFixed(6),
           dec: feature.geometry.coordinates[1].toFixed(6)
         })) + '" target="_blank">' + feature.id + "</a></div>";
@@ -29604,9 +29593,10 @@
         str2 += "ID: " + feature.id + "</div>";
       }
       str2 += '<TABLE style="margin:auto;"><TBODY style="vertical-align:top;text-align:left;">';
+      var items = feature.properties.items;
       for (var i2 in this.properties) {
         if (this.propertyMask === void 0 || this.propertyMask[i2] === true) {
-          str2 += "<TR><TD>" + this.properties[i2] + ":</TD><TD>" + feature.properties.items[i2].toString() + " ";
+          str2 += "<TR><TD>" + this.properties[i2] + ":</TD><TD>" + (typeof items[i2] === "number" ? items[i2].toPrecision(4) : items[i2].toString()) + " ";
           if (this.units[i2]) {
             str2 += this.units[i2];
           }
@@ -29621,6 +29611,9 @@
       return (0, import_leaflet.circleMarker)(latlng, {
         radius: refmag ? this.magLim + 5 - refmag : 8
       });
+    },
+    style: function(feature) {
+      return { color: this.color, weight: 2 };
     },
     filter: function(feature) {
       return true;
@@ -30048,13 +30041,26 @@
     attribution: "SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)",
     color: "orange",
     magLim: 30,
+    magIndex: 1,
     regionType: "box",
     serviceURL: "https://ssp.imcce.fr/webservices/skybot/api",
     catalogURL: "/conesearch.php?&-mime=json&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}",
-    properties: ["Class", "V", "dRA", "dDEC"],
-    units: ["", "", "arcsec/h", "arcsec/h"],
-    objectURL: "/VizieR-5?-source=B/astorb/astorb&Name===",
+    properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>"],
+    units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h"],
+    objectURL: "https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}",
     format: "json",
+    draw: function(feature, latlng) {
+      const prop = feature.properties.items, djd = (this.jd[1] - this.jd[0]) * 24, clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180)), invclat = clat > 0 ? 1 / clat : 1e-3, dlng = invclat * djd * prop[3] / 7200, dlat = djd * prop[4] / 7200;
+      return (0, import_leaflet4.polyline)(
+        [
+          [latlng.lat - dlat, latlng.lng - dlng],
+          [latlng.lat + dlat, latlng.lng + dlng]
+        ]
+      );
+    },
+    style: function(feature) {
+      return { color: this.color, weight: 8 };
+    },
     toGeoJSON: function(sources) {
       const sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/, geo = { type: "FeatureCollection", features: [] };
       for (var s in sources) {
@@ -30069,16 +30075,16 @@
         ra = sexare.exec(source["RA (deg)"]);
         dec = sexare.exec(source["DEC (deg)"]);
         geometry.coordinates = [
-          Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600),
-          Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240
+          Number(ra[2]) * 15 + Number(ra[3]) / 4 + Number(ra[4]) / 240,
+          Number(dec[1] + "1") * (Number(dec[2]) + Number(dec[3]) / 60 + Number(dec[4]) / 3600)
         ];
         properties.items.push(source["Class"]);
         properties.items.push(source["VMag (mag)"]);
+        properties.items.push(source["Err (arcsec)"]);
         properties.items.push(source["dRA (arcsec/h)"]);
         properties.items.push(source["dDEC (arcsec/h)"]);
         geo.features.push(feature);
       }
-      console.log(geo);
       return geo;
     }
   });
@@ -31108,6 +31114,7 @@
       } else {
         sys = "J2000.0";
       }
+      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]);
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),
@@ -31129,7 +31136,7 @@
         response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
-            jd: wcs2.jdobs,
+            jd: jdmean,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dlng: dlng.toFixed(4),
@@ -31148,7 +31155,7 @@
         response = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
-            jd: wcs2.jdobs,
+            jd: jdmean,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dr: dr.toFixed(4),
@@ -31165,7 +31172,9 @@
       }
     },
     _loadCatalog: async function(catalog, templayer, response) {
-      const wcs2 = this._map.options.crs, geo = catalog.toGeoJSON(
+      const wcs2 = this._map.options.crs;
+      catalog.jd = wcs2.jd;
+      const geo = catalog.toGeoJSON(
         catalog.format == "json" ? await response.json() : await response.text()
       ), geocatalog = (0, import_leaflet11.geoJson)(geo, {
         onEachFeature: function(feature, layer) {
@@ -31190,7 +31199,7 @@
           return catalog.draw(feature, latlng);
         },
         style: function(feature) {
-          return { color: catalog.color, weight: 2 };
+          return catalog.style(feature);
         }
       });
       let excessflag = false;
@@ -34179,7 +34188,7 @@
       this.celSysCode = merged_proj.projparam._celsyscode;
       this.pixelFlag = merged_proj.projparam._pixelFlag;
       this.infinite = merged_proj.projparam._infinite;
-      this.jdobs = 0.5 * (merged_proj.projparam.jd[0] + merged_proj.projparam.jd[1]);
+      this.jd = merged_proj.projparam.jd;
     },
     multiLatLngToPoint(latlng, zoom) {
       const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);

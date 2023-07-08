@@ -8,7 +8,7 @@
  * @copyright (c) 2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import {extend} from 'leaflet';
+import {extend, polyline} from 'leaflet';
 
 import {Catalog} from './Catalog';
 import {ellipse} from '../vector';
@@ -362,22 +362,32 @@ export const skybot = new Catalog({
 	attribution: 'SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)',
 	color: 'orange',
 	magLim: 30.0,
+	magIndex: 1,
 	regionType: 'box',
 	serviceURL: 'https://ssp.imcce.fr/webservices/skybot/api',
 	catalogURL: '/conesearch.php?&-mime=json&-from=VisiOmatic&' +
 	 '-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&' +
 	 '-ep={jd}&-ra={lng}&-dec={lat}&-c.bd={dlng}x{dlat}',
-	properties: ['Class', 'V', 'dRA', 'dDEC'],
-	units: ['', '', 'arcsec/h', 'arcsec/h'],
-	objectURL: '/VizieR-5?-source=B/astorb/astorb&Name===',
+	properties: ['Class', 'V', 'Position uncertainty', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', '', '&#8243;', '&#8243;/h', '&#8243;/h'],
+	objectURL: 'https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}',
 	format: 'json',
+	draw: function (feature, latlng) {
+		const	prop = feature.properties.items,
+			djd =  (this.jd[1] - this.jd[0]) * 24.0,
+			clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180.)),
+			invclat = clat > 0. ? 1. / clat : 0.001,
+			dlng = invclat * djd * prop[3] / 7200.,
+			dlat = djd * prop[4] / 7200.;
 
-	/**
-	 * @summary Convert SkyBot data to [GeoJSON]{@link https://geojson.org/}.
-	 * @override
-	 * @param {object} sources - JSON object with source data.
-	 * @return {object} GeoJSON object.
-	 */
+		return polyline(
+			[[latlng.lat - dlat, latlng.lng - dlng],
+			[latlng.lat + dlat, latlng.lng + dlng]]
+		);
+	},
+	style: function (feature) {
+		return {color: this.color, weight: 8};
+	},
 	toGeoJSON: function (sources) {
 		const	sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/,
 			geo = {type: 'FeatureCollection', features: []};
@@ -396,17 +406,18 @@ export const skybot = new Catalog({
 			ra = sexare.exec(source['RA (deg)']);
 			dec = sexare.exec(source['DEC (deg)']);
 			geometry.coordinates = [
+				Number(ra[2]) * 15.0 +
+				Number(ra[3]) / 4.0 +
+				Number(ra[4]) / 240.0,
 				Number(dec[1] + '1') * (
 					Number(dec[2]) +
 					Number(dec[3]) / 60.0 +
 					Number(dec[4]) / 3600.0
-				),
-				Number(ra[2]) * 15.0 +
-				Number(ra[3]) / 4.0 +
-				Number(ra[4]) / 240.0
+				)
 			]
 			properties.items.push(source['Class']);
 			properties.items.push(source['VMag (mag)']);
+			properties.items.push(source['Err (arcsec)']);
 			properties.items.push(source['dRA (arcsec/h)']);
 			properties.items.push(source['dDEC (arcsec/h)']);
 			geo.features.push(feature);
