@@ -231,7 +231,11 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		}
 
 		// Mean Julian date during the exposure
-		const	jdmean = 0.5 * (wcs.jd[0] + wcs.jd[1]);
+		const	jdmean = 0.5 * (wcs.jd[0] + wcs.jd[1]),
+			observer = (wcs.obslatlng[0]==0. && wcs.obslatlng[1]==0.) ?
+				'500' :
+				wcs.obslatlng[1].toFixed(4) + ',' +
+				wcs.obslatlng[0].toFixed(4) + ',0';
 
 		if (catalog.regionType === 'box') {
 			// CDS box search
@@ -256,6 +260,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					jd: jdmean,
+					observer: 568,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
@@ -274,6 +279,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				Util.template(catalog.url, Util.extend({
 					sys: sys,
 					jd: jdmean,
+					observer: 568,
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
@@ -307,8 +313,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		catalog.jd = wcs.jd;
 
 		const	geo = catalog.toGeoJSON(
-			catalog.format == 'json' ?
-				await response.json() : await response.text()
+				catalog.format == 'json' ?
+					await response.json() : await response.text()
 			),
 			geocatalog = geoJson(geo, {
 				onEachFeature: function (feature, layer) {

@@ -51,6 +51,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Number of non-zero
 	 * @property {number[]} jd
 	   Julian Date for start and end of observation.
+	 * @property {number[]} obslatlng
+	   Latitude and longitude of observatory.
 	 * @property {number[][]} dataslice
 	   Start index, end index, and direction (+1 only) of the used section of
 	   the image data for each axis. The range notation follows the FITS
@@ -91,7 +93,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		     [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
 		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
 		npv: 0,
-		jd: [0., 0.]
+		jd: [0., 0.],
+		obslatlng: [0., 0.]
 	},
 
 	/**
@@ -196,6 +199,11 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (paramsrc.jd) {
 			projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
 		}
+		if (paramsrc.obslatlng) {
+			projparam.obslatlng = [
+				paramsrc.obslatlng[0], paramsrc.obslatlng[1]
+			];
+		}
 
 		if (paramsrc.dataslice && paramsrc.detslice) {
 			projparam.dataslice = paramsrc.dataslice;
@@ -259,6 +267,10 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			// Add exposure time to compute end JD
 			projparam.jd[1] = projparam.jd[0] + v / 86400.
 		}
+
+		// Observer's location
+		if ((v = header['LONGITUD'])) { projparam.obslatlng[1] = v; }
+		if ((v = header['LATITUDE'])) { projparam.obslatlng[0] = v; }
 	},
 
 	/**

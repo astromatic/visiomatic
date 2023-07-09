@@ -366,8 +366,8 @@ export const skybot = new Catalog({
 	regionType: 'box',
 	serviceURL: 'https://vo.imcce.fr/webservices/skybot/',
 	catalogURL: 'skybotconesearch_query.php?-mime=text&-from=VisiOmatic&' +
-	 '-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&' +
-	 '-ep={jd}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}',
+	 '-output=basic&-objFilter=111&-refsys=EQJ2000&' +
+	 '-ep={jd}&-observer={observer}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}',
 	properties: ['Class', 'V', 'Position uncertainty', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>', 'Geocentric distance', 'Heliocentric distance'],
 	units: ['', '', '&#8243;', '&#8243;/h', '&#8243;/h', 'au', 'au'],
 	objectURL: 'https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}',
@@ -380,10 +380,10 @@ export const skybot = new Catalog({
 			dlng = invclat * djd * prop[3] / 7200.,
 			dlat = djd * prop[4] / 7200.;
 
-		return polyline(
-			[[latlng.lat - dlat, latlng.lng - dlng],
-			[latlng.lat + dlat, latlng.lng + dlng]]
-		);
+		return polyline([
+			[latlng.lat - dlat, latlng.lng - dlng],
+			[latlng.lat + dlat, latlng.lng + dlng]
+		]);
 	},
 	style: function (feature) {
 		return {color: this.color, weight: 8};

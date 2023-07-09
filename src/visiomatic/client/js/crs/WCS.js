@@ -132,6 +132,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		this.pixelFlag = merged_proj.projparam._pixelFlag;
 		this.infinite = merged_proj.projparam._infinite;
 		this.jd = merged_proj.projparam.jd;
+		this.obslatlng = merged_proj.projparam.obslatlng;
 	},
 
 	/**

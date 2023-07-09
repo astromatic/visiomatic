@@ -30044,7 +30044,7 @@
     magIndex: 1,
     regionType: "box",
     serviceURL: "https://vo.imcce.fr/webservices/skybot/",
-    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-observer=500&-objFilter=110&-refsys=EQJ2000&-ep={jd}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
+    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-objFilter=111&-refsys=EQJ2000&-ep={jd}&-observer={observer}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
     properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>", "Geocentric distance", "Heliocentric distance"],
     units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h", "au", "au"],
     objectURL: "https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}",
@@ -31123,7 +31123,9 @@
       } else {
         sys = "J2000.0";
       }
-      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]);
+      console.log(wcs2.obslatlng);
+      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]), observer = wcs2.obslatlng[0] == 0 && wcs2.obslatlng[1] == 0 ? "500" : wcs2.obslatlng[1].toFixed(4) + "," + wcs2.obslatlng[0].toFixed(4) + ",0";
+      console.log(observer);
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),
@@ -31146,6 +31148,7 @@
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             jd: jdmean,
+            observer: 568,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dlng: dlng.toFixed(4),
@@ -31165,6 +31168,7 @@
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             jd: jdmean,
+            observer: 568,
             lng: center.lng.toFixed(6),
             lat: center.lat.toFixed(6),
             dr: dr.toFixed(4),
@@ -33379,7 +33383,8 @@
         ]
       ],
       npv: 0,
-      jd: [0, 0]
+      jd: [0, 0],
+      obslatlng: [0, 0]
     },
     initialize: function(header, options2) {
       const projparam2 = this._paramUpdate(this.defaultProjParam);
@@ -33447,6 +33452,12 @@
       }
       if (paramsrc.jd) {
         projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
+      }
+      if (paramsrc.obslatlng) {
+        projparam.obslatlng = [
+          paramsrc.obslatlng[0],
+          paramsrc.obslatlng[1]
+        ];
       }
       if (paramsrc.dataslice && paramsrc.detslice) {
         projparam.dataslice = paramsrc.dataslice;
@@ -33524,6 +33535,12 @@
         projparam2.jd[1] = v + 24000005e-1;
       } else if (v = header["EXPTIME"]) {
         projparam2.jd[1] = projparam2.jd[0] + v / 86400;
+      }
+      if (v = header["LONGITUD"]) {
+        projparam2.obslatlng[1] = v;
+      }
+      if (v = header["LATITUDE"]) {
+        projparam2.obslatlng[0] = v;
       }
     },
     _shiftWCS: function(projparam2) {
@@ -34198,6 +34215,7 @@
       this.pixelFlag = merged_proj.projparam._pixelFlag;
       this.infinite = merged_proj.projparam._infinite;
       this.jd = merged_proj.projparam.jd;
+      this.obslatlng = merged_proj.projparam.obslatlng;
     },
     multiLatLngToPoint(latlng, zoom) {
       const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
