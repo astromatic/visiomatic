@@ -527,6 +527,7 @@ class Tiled(object):
         # No longer needed (tiles buffer will be remapped on demand)
         del self.tiles
 
+
     def get_tile(
             self,
             tilelevel: int,
@@ -624,6 +625,35 @@ class Tiled(object):
         Cached version of get_tile().
         """
         return self.get_tile(*args, **kwargs)
+
+
+    def get_pixel_values(self, x: int, y: int):
+        """
+        Get pixel values at the given pixel coordinates in merged frame.
+        
+        Parameters
+        ----------
+        x:  int
+            X coordinate.
+        y:  int
+            Y coordinate.
+
+        Returns
+        -------
+        values: np.ndarray
+            Pixel value(s) at the given position, or NaN(s) outside of the
+            frame boundaries.
+        """
+        shape = self.shape
+        if not hasattr(self, 'data'):
+            self.data = np.memmap(
+                self.data_filename,
+                dtype=np.float32,
+                mode='r',
+                shape=shape
+            )
+        return self.data[:, y, x] if 0 < x < shape[2] and 0 < y < shape[1] \
+        	else np.full(shape[0], 0., dtype=np.float32)
 
 
 

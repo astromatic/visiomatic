@@ -131,14 +131,20 @@ def create_app() -> FastAPI:
     )
 
     # Prepare the RegExps
+	# JTL
     reg_jtl = r"^(\d+),(\d+)$"
     app.parse_jtl = re.compile(reg_jtl)
+	# MINMAX
     reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
         r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
         r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
     app.parse_minmax = re.compile(reg_minmax)
+	# MIX
     reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
     app.parse_mix = re.compile(reg_mix) 
+	# VAL
+    reg_val = r"^(\d+),(\d+)$"
+    app.parse_val = re.compile(reg_val)
 
     # Test endpoint
     @app.get("/random", tags=["services"])
@@ -231,6 +237,13 @@ def create_app() -> FastAPI:
                 min_length=7,
                 max_length=2000,
                 regex=reg_mix
+                ),
+            VAL: str = Query(
+                None,
+                title="Pixel value(s)",
+                min_length=3,
+                max_length=11,
+                regex=reg_val
                 )
             ):
         """
@@ -281,7 +294,20 @@ def create_app() -> FastAPI:
         elif INFO != None:
             if share:
                 lock.release()
-            return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
+            return responses.JSONResponse(
+            	content=jsonable_encoder(
+            		tiled.get_model()
+            	)
+            )
+        elif VAL != None:
+            if share:
+                lock.release()
+            val = app.parse_val.findall(VAL)[0]
+            return responses.JSONResponse(
+            	content=jsonable_encoder(
+            		tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
+            	)
+            )
         if JTL == None:
             if share:
                 lock.release()
