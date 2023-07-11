@@ -7,6 +7,7 @@ Application module
 import io, logging, os, pickle, re
 from typing import List, Literal, Optional, Union
 
+import cv2
 from fastapi import FastAPI, Query, Request
 from fastapi import responses
 from fastapi.staticfiles import StaticFiles
@@ -53,7 +54,7 @@ def create_app() -> FastAPI:
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
-    tiles_path = config.settings["tiles_path"]
+    api_path = config.settings["api_path"]
     contrast = config.settings["contrast"]
     color_saturation = config.settings["color_saturation"]
     gamma = config.settings["gamma"]
@@ -124,7 +125,6 @@ def create_app() -> FastAPI:
         logger.warning("De-activating documentation URL in built-in web client.")
         userdoc_url = ""
 
-
     # Instantiate templates
     templates = Jinja2Templates(
         directory=os.path.join(package.src_dir, "templates")
@@ -165,7 +165,7 @@ def create_app() -> FastAPI:
         return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
-    @app.get(tiles_path, tags=["services"])
+    @app.get(api_path, tags=["services"])
     async def read_visio(
             request: Request,
             FIF: str = Query(
@@ -243,6 +243,7 @@ def create_app() -> FastAPI:
             containing the JPEG image.
         """
         if FIF == None:
+			# Just return the banner describing the service
             return templates.TemplateResponse(
                 banner,
                 {
@@ -273,21 +274,6 @@ def create_app() -> FastAPI:
                 quality=quality,
                 tilesize=tile_size
             )
-        '''
-        if FIF in app.tiled:
-            tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
-            tiled.tiles = app.tiles
-        else:
-            app.tiled[FIF] = (tiled := Tiled(FIF))
-            app.tiles = tiled.tiles
-            tiled.tiles = None
-            tiled.data = None
-            for image in tiled.images:
-                image.data = None
-            pickle.dump(tiled, open(f"{FIF}_{worker_id}.p", "wb"), protocol=5)
-            tiled.tiles = app.tiles
-        '''
-
         if obj != None:
             if share:
                 lock.release()
@@ -357,7 +343,7 @@ def create_app() -> FastAPI:
             {
                 "request": request,
                 "root_path": request.scope.get("root_path"),
-                "tiles_path": tiles_path,
+                "api_path": api_path,
                 "doc_url": userdoc_url,
                 "image": image,
                 "package": package.title

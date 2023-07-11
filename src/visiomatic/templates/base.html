@@ -25,7 +25,7 @@
     <div id='map' style='background:black'></div>
 	<script>
 		var args = V.util.VUtil.parseURL(window.location.search.substring(1)),
-				url = '{{root_path}}' + '{{ tiles_path }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
+				url = '{{root_path}}' + '{{ api_path }}?FIF=' + (args['image'] ? args['image'] : '{{ image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
 				vlayer = V.layer.vTileLayer(url, {
 					center: args['center'] ? args['center'] : false,
