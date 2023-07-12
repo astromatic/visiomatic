@@ -30085,7 +30085,8 @@
           ];
           properties.items.push(cell[4]);
           properties.items.push(this.readProperty(cell[5]));
-          const items = cell.slice(7);
+          properties.items.push(this.readProperty(cell[6]));
+          const items = cell.slice(8);
           for (var j in items) {
             properties.items.push(this.readProperty(items[j]));
           }
@@ -31121,7 +31122,7 @@
       } else {
         sys = "J2000.0";
       }
-      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]), observer = wcs2.obslatlng[0] == 0 && wcs2.obslatlng[1] == 0 ? "500" : wcs2.obslatlng[1].toFixed(4) + "," + wcs2.obslatlng[0].toFixed(4) + ",0";
+      const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]), observer = wcs2.obslatlng[0] == 0 && wcs2.obslatlng[1] == 0 ? "500" : wcs2.obslatlng[0].toFixed(4) + "," + wcs2.obslatlng[1].toFixed(4) + ",0";
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),

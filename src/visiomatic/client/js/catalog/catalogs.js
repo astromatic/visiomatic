@@ -428,7 +428,8 @@ export const skybot = new Catalog({
 				];
 				properties.items.push(cell[4]);
 				properties.items.push(this.readProperty(cell[5]));
-				const	items = cell.slice(7);
+				properties.items.push(this.readProperty(cell[6]));
+				const	items = cell.slice(8);
 				for (var j in items) {
 					properties.items.push(this.readProperty(items[j]));
 				}
