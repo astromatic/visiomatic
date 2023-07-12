@@ -234,8 +234,8 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		const	jdmean = 0.5 * (wcs.jd[0] + wcs.jd[1]),
 			observer = (wcs.obslatlng[0]==0. && wcs.obslatlng[1]==0.) ?
 				'500' :
-				wcs.obslatlng[1].toFixed(4) + ',' +
-				wcs.obslatlng[0].toFixed(4) + ',0';
+				wcs.obslatlng[0].toFixed(4) + ',' +
+				wcs.obslatlng[1].toFixed(4) + ',0';
 
 		if (catalog.regionType === 'box') {
 			// CDS box search
