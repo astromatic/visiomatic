@@ -115,6 +115,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 			className = 'leaflet-control-coords',
 			dialog = this._wcsdialog;
 
+		// Manage multiple extensions
 		if ((projections)) {
 			const	extSelect = this._wcsext = DomUtil.create(
 					'select',
@@ -242,7 +243,15 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		let	latlng = this._map.getCenter();
 			
 		if (wcs.projections) {
-			this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true; 
+			const	extindex = wcs.multiLatLngToIndex(latlng);
+			this._wcsext.options[extindex].selected = true; 
+			// console.log(wcs.untransform(
+			//		this._map._getCenterLayerPoint().add(
+			//			this._map.getPixelOrigin()
+			//		),
+			//		this._map._zoom
+			//	)
+			// );
 		}
 		if (wcs.pixelFlag) {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +

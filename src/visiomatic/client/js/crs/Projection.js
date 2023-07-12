@@ -608,6 +608,44 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	},
 
 	/**
+	 * Convert pixel coordinates to sliced (merged) coordinates.
+	 * @private
+	 * @param {leaflet.Point} pix
+	   Pixel coordinates.
+	 * @returns {leaflet.Point}
+	   Sliced (merged) coordinates.
+	 */
+	_pixToMulti: function (pix) {
+		const	dataslice = projparam.dataslice,
+			detslice = projparam.detslice;
+
+		return point([
+			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
+			(pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0],
+		]);
+	},
+
+
+	/**
+	 * Convert sliced (merged) coordinates to pixel coordinates.
+	 * @private
+	 * @param {leaflet.Point} pnt
+	   Sliced (merged) coordinates.
+	 * @returns {leaflet.Point}
+	   Pixel coordinates.
+	 */
+	_multiToPix: function (pnt) {
+		const	dataslice = projparam.dataslice,
+			detslice = projparam.detslice;
+
+		return point([
+			(pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
+			(pnt.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0],
+		]);
+	},
+
+
+	/**
 	 * Invert the `CD` Jacobian matrix of the linear part of the de-projection.
 	 * @private
 	 * @param {number[][]} cd

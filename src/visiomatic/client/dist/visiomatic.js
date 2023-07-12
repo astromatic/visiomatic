@@ -30051,12 +30051,10 @@
     format: "text",
     draw: function(feature, latlng) {
       const prop = feature.properties.items, djd = (this.jd[1] - this.jd[0]) * 24, clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180)), invclat = clat > 0 ? 1 / clat : 1e-3, dlng = invclat * djd * prop[3] / 7200, dlat = djd * prop[4] / 7200;
-      return (0, import_leaflet4.polyline)(
-        [
-          [latlng.lat - dlat, latlng.lng - dlng],
-          [latlng.lat + dlat, latlng.lng + dlng]
-        ]
-      );
+      return (0, import_leaflet4.polyline)([
+        [latlng.lat - dlat, latlng.lng - dlng],
+        [latlng.lat + dlat, latlng.lng + dlng]
+      ]);
     },
     style: function(feature) {
       return { color: this.color, weight: 8 };
@@ -31123,9 +31121,7 @@
       } else {
         sys = "J2000.0";
       }
-      console.log(wcs2.obslatlng);
       const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]), observer = wcs2.obslatlng[0] == 0 && wcs2.obslatlng[1] == 0 ? "500" : wcs2.obslatlng[1].toFixed(4) + "," + wcs2.obslatlng[0].toFixed(4) + ",0";
-      console.log(observer);
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),
@@ -31706,7 +31702,8 @@
       const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
       let latlng = this._map.getCenter();
       if (wcs2.projections) {
-        this._wcsext.options[wcs2.multiLatLngToIndex(latlng)].selected = true;
+        const extindex = wcs2.multiLatLngToIndex(latlng);
+        this._wcsext.options[extindex].selected = true;
       }
       if (wcs2.pixelFlag) {
         this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
@@ -33586,8 +33583,8 @@
       phiTheta.lat = this._thetaToR(phiTheta.lat);
       return this._redToPix(this._phiRToRed(phiTheta));
     },
-    unproject: function(pnt) {
-      const phiTheta = this._redToPhiR(this._pixToRed(pnt));
+    unproject: function(pnt2) {
+      const phiTheta = this._redToPhiR(this._pixToRed(pnt2));
       phiTheta.lat = this._rToTheta(phiTheta.lat);
       const latlng = this._phiThetaToRADec(phiTheta);
       if (latlng.lng < -180) {
@@ -33702,6 +33699,20 @@
         red.x * cdinv[0][0] + red.y * cdinv[0][1],
         red.x * cdinv[1][0] + red.y * cdinv[1][1]
       ).add(projparam2.crpix);
+    },
+    _pixToMulti: function(pix) {
+      const dataslice = projparam.dataslice, detslice = projparam.detslice;
+      return (0, import_leaflet24.point)([
+        (pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
+        (pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0]
+      ]);
+    },
+    _multiToPix: function(pnt2) {
+      const dataslice = projparam.dataslice, detslice = projparam.detslice;
+      return (0, import_leaflet24.point)([
+        (pnt2.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
+        (pnt2.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0]
+      ]);
     },
     _invertCD: function(cd) {
       const detinv = 1 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
@@ -34217,43 +34228,40 @@
       this.jd = merged_proj.projparam.jd;
       this.obslatlng = merged_proj.projparam.obslatlng;
     },
-    multiLatLngToPoint(latlng, zoom) {
-      const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
-      return this.transformation._transform(projectedPoint, scale2);
+    transform(pnt2, zoom) {
+      return this.transformation._transform(pnt2, this.scale(zoom));
     },
-    multiPointToLatLng(pnt, zoom) {
-      const scale2 = this.scale(zoom), untransformedPoint = this.transformation.untransform(pnt, scale2);
-      return this.multiUnproject(untransformedPoint);
+    untransform(layerpnt, zoom) {
+      return this.transformation.untransform(layerpnt, this.scale(zoom));
+    },
+    multiLatLngToPoint(latlng, zoom) {
+      return this.transform(this.multiProject(latlng), zoom);
+    },
+    multiPointToLatLng(pnt2, zoom) {
+      return this.multiUnproject(this.untransform(pnt2, zoom));
     },
     multiProject(latlng) {
-      const pnt = this.projection.project(latlng);
-      let dc = 1e30, pc = -1;
-      for (var p in this.projections) {
-        var pntc = this.projections[p].centerPnt;
-        if ((d = pnt.distanceTo(pntc)) < dc) {
-          pc = p;
-          dc = d;
-        }
-      }
-      return this.projections[pc].project(latlng);
+      return this.projections[this.multiLatLngToIndex(latlng)].project(latlng);
     },
-    multiUnproject(pnt) {
+    multiUnproject(pnt2) {
       let dc = 1e30, pc = -1;
       for (var p in this.projections) {
         var pntc = this.projections[p].centerPnt;
-        if ((d = pnt.distanceTo(pntc)) < dc) {
+        if ((d = pnt2.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }
       }
-      return this.projections[pc].unproject(pnt);
+      return this.projections[this.multiPntToIndex(pnt2)].unproject(pnt2);
     },
     multiLatLngToIndex(latlng) {
-      const pnt = this.projection.project(latlng);
+      return this.multiPntToIndex(this.projection.project(latlng));
+    },
+    multiPntToIndex(pnt2) {
       let dc = 1e30, pc = -1;
       for (var p in this.projections) {
         var pntc = this.projections[p].centerPnt;
-        if ((d = pnt.distanceTo(pntc)) < dc) {
+        if ((d = pnt2.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }
