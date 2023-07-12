@@ -30044,19 +30044,17 @@
     magIndex: 1,
     regionType: "box",
     serviceURL: "https://vo.imcce.fr/webservices/skybot/",
-    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-objFilter=111&-refsys=EQJ2000&-ep={jd}&-observer={observer}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
+    catalogURL: "skybotconesearch_query.php?-mime=text&-from=VisiOmatic&-output=basic&-objFilter=111&-refsys=EQJ2000&-ep={jd}&-loc={observer}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}",
     properties: ["Class", "V", "Position uncertainty", "&#956;<sub>&#593;</sub> cos &#948;", "&#956;<sub>&#948;</sub>", "Geocentric distance", "Heliocentric distance"],
     units: ["", "", "&#8243;", "&#8243;/h", "&#8243;/h", "au", "au"],
     objectURL: "https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}",
     format: "text",
     draw: function(feature, latlng) {
       const prop = feature.properties.items, djd = (this.jd[1] - this.jd[0]) * 24, clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180)), invclat = clat > 0 ? 1 / clat : 1e-3, dlng = invclat * djd * prop[3] / 7200, dlat = djd * prop[4] / 7200;
-      return (0, import_leaflet4.polyline)(
-        [
-          [latlng.lat - dlat, latlng.lng - dlng],
-          [latlng.lat + dlat, latlng.lng + dlng]
-        ]
-      );
+      return (0, import_leaflet4.polyline)([
+        [latlng.lat - dlat, latlng.lng - dlng],
+        [latlng.lat + dlat, latlng.lng + dlng]
+      ]);
     },
     style: function(feature) {
       return { color: this.color, weight: 8 };
@@ -31123,9 +31121,7 @@
       } else {
         sys = "J2000.0";
       }
-      console.log(wcs2.obslatlng);
       const jdmean = 0.5 * (wcs2.jd[0] + wcs2.jd[1]), observer = wcs2.obslatlng[0] == 0 && wcs2.obslatlng[1] == 0 ? "500" : wcs2.obslatlng[1].toFixed(4) + "," + wcs2.obslatlng[0].toFixed(4) + ",0";
-      console.log(observer);
       if (catalog.regionType === "box") {
         let dlng = (Math.max(
           wcs2._deltaLng(c2[0], center),
