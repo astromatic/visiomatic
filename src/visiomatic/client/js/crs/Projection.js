@@ -140,7 +140,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			// true if world coordinates are equatorial.
 			this.equatorialFlag = !projparam.nativeCelSys ||
 				projparam._celsyscode == 'equatorial';
-			// true if a celestial system transformations are required.
+			// true if a celestial system transformation is required.
 			this.celSysConvFlag = !projparam.nativeCelSys &&
 				projparam._celsyscode !== 'equatorial';
 			if (this.celSysConvFlag) {
@@ -208,7 +208,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (paramsrc.dataslice && paramsrc.detslice) {
 			projparam.dataslice = paramsrc.dataslice;
 			projparam.detslice = paramsrc.detslice;
-			this._shiftWCS(projparam);
+			//this._shiftWCS(projparam);
 		}
 
 		return projparam;

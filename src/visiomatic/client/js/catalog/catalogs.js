@@ -437,7 +437,7 @@ export const skybot = new Catalog({
 			}
 		}
 		return geo;
-	},
+	}
 
 });
 

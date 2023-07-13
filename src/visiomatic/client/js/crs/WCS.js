@@ -120,6 +120,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		this.centerLatLng = merged_proj.unproject(
 			merged_proj._getCenter(merged_proj)
 		);
+		// Default limits of validity for coordinates
 		this.wrapLng = [0.5, this.naxis.x - 0.5];
 		this.wrapLat = [this.naxis.y - 0.5, 0.5];
 		// Leaflet's transformation parameters to deal with the FITS standard:
@@ -128,6 +129,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			1.0, -0.5,
 			-1.0, this.naxis.y + 0.5
 		);
+		// Custom projection code, e.g., WCS-TAN
 		this.code += ':' + merged_proj.code;
 		this.equatorialFlag = merged_proj.equatorialFlag;
 		this.celSysCode = merged_proj.projparam._celsyscode;
@@ -201,20 +203,12 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @returns {leaflet.LatLng} De-projected world coordinates.
 	 */
 	multiUnproject(pnt) {
-		let	dc = 1e+30,
-			pc = -1;
-		for (var p in this.projections) {
-			var	pntc = this.projections[p].centerPnt;
-			if ((d = pnt.distanceTo(pntc)) < dc) {
-				pc = p;
-				dc = d;
-			}
-		}
 		return this.projections[this.multiPntToIndex(pnt)].unproject(pnt);
 	},
 
 	/**
-	 * Return chip index at the given world coordinates in a multi-WCS setting.
+	 * Return index of chip closest to the given world coordinates in a
+	   multi-WCS setting.
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @returns {number} Index of the closest chip (extension).
 	 */
@@ -223,7 +217,8 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	},
 
 	/**
-	 * Return chip index at the given pixel coordinates in a multi-WCS setting.
+	 * Return index of chip closest to the given pixel coordinates in a
+	   multi-WCS setting.
 	 * @param {leaflet.Point} pnt - Input (merged) pixel coordinates.
 	 * @returns {number} Index of the closest chip (extension).
 	 */

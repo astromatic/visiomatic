@@ -33460,7 +33460,6 @@
       if (paramsrc.dataslice && paramsrc.detslice) {
         projparam.dataslice = paramsrc.dataslice;
         projparam.detslice = paramsrc.detslice;
-        this._shiftWCS(projparam);
       }
       return projparam;
     },
@@ -34245,14 +34244,6 @@
       return this.projections[this.multiLatLngToIndex(latlng)].project(latlng);
     },
     multiUnproject(pnt2) {
-      let dc = 1e30, pc = -1;
-      for (var p in this.projections) {
-        var pntc = this.projections[p].centerPnt;
-        if ((d = pnt2.distanceTo(pntc)) < dc) {
-          pc = p;
-          dc = d;
-        }
-      }
       return this.projections[this.multiPntToIndex(pnt2)].unproject(pnt2);
     },
     multiLatLngToIndex(latlng) {
