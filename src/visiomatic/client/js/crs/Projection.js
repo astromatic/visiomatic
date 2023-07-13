@@ -120,6 +120,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (options) {
 			this._paramUpdate(options);
 		}
+		// Projection-dependent initializations
 		this._projInit();
 		if (!projparam._pixelFlag) {
 			// Identify the native celestial coordinate system
@@ -205,10 +206,10 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			];
 		}
 
-		if (paramsrc.dataslice && paramsrc.detslice) {
-			projparam.dataslice = paramsrc.dataslice;
+		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice
+			: [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+		if (paramsrc.detslice) {
 			projparam.detslice = paramsrc.detslice;
-			//this._shiftWCS(projparam);
 		}
 
 		return projparam;
@@ -419,13 +420,13 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 */
 	_getCenter(proj) {
 		const	projparam = this.projparam,
-			detslice = projparam.detslice;
-		return detslice?
+			dataslice = projparam.dataslice;
+		return projparam.detslice?
 			proj.project(
-				this.unproject(point(detslice[0][0], detslice[1][0]))
-			)._add(proj.project(
-				this.unproject(point(detslice[0][1], detslice[1][1]))))
-				._divideBy(2.0) :
+					this.unproject(point(dataslice[0][0], dataslice[1][0]))
+				)._add(proj.project(
+					this.unproject(point(dataslice[0][1], dataslice[1][1]))))
+					._divideBy(2.0) :
 			point(
 				(projparam.naxis.x + 1.0) / 2.0,
 				(projparam.naxis.y + 1.0) / 2.0
@@ -610,18 +611,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	/**
 	 * Convert pixel coordinates to sliced (merged) coordinates.
 	 * @private
-	 * @param {leaflet.Point} pix
+	 * @param {leaflet.Point} pnt
 	   Pixel coordinates.
 	 * @returns {leaflet.Point}
 	   Sliced (merged) coordinates.
 	 */
-	_pixToMulti: function (pix) {
+	_pixToMulti: function (pnt) {
 		const	dataslice = projparam.dataslice,
 			detslice = projparam.detslice;
 
 		return point([
 			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
-			(pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0],
+			(pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
 		]);
 	},
 
@@ -639,8 +640,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			detslice = projparam.detslice;
 
 		return point([
-			(pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
-			(pnt.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0],
+			(pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+			(pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
 		]);
 	},
 
@@ -657,22 +658,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
-	},
-
-	/**
-	 * Invert the `PV` distortion polynomial of the de-projection.
-	 *
-	 * Currently valid only for small distortions.
-	 * @private
-	 * @param {number[][]} pv
-	   `PV` array of polynomial coefficients.
-	 * @param {number} npv
-	   Number of non-zero polynomial coefficients.
-	 * @returns {number[][]}
-	   array of coefficients from the pseudo inverse polynomial.
-	 */
-	_invertPV: function (pv, npv) {
-		return pv;
 	}
 });
 

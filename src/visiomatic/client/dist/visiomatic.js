@@ -33457,8 +33457,8 @@
           paramsrc.obslatlng[1]
         ];
       }
-      if (paramsrc.dataslice && paramsrc.detslice) {
-        projparam.dataslice = paramsrc.dataslice;
+      projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice : [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+      if (paramsrc.detslice) {
         projparam.detslice = paramsrc.detslice;
       }
       return projparam;
@@ -33583,8 +33583,8 @@
       phiTheta.lat = this._thetaToR(phiTheta.lat);
       return this._redToPix(this._phiRToRed(phiTheta));
     },
-    unproject: function(pnt2) {
-      const phiTheta = this._redToPhiR(this._pixToRed(pnt2));
+    unproject: function(pnt) {
+      const phiTheta = this._redToPhiR(this._pixToRed(pnt));
       phiTheta.lat = this._rToTheta(phiTheta.lat);
       const latlng = this._phiThetaToRADec(phiTheta);
       if (latlng.lng < -180) {
@@ -33607,11 +33607,11 @@
       );
     },
     _getCenter(proj2) {
-      const projparam2 = this.projparam, detslice = projparam2.detslice;
-      return detslice ? proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][0], detslice[1][0]))
+      const projparam2 = this.projparam, dataslice = projparam2.dataslice;
+      return projparam2.detslice ? proj2.project(
+        this.unproject((0, import_leaflet24.point)(dataslice[0][0], dataslice[1][0]))
       )._add(proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][1], detslice[1][1]))
+        this.unproject((0, import_leaflet24.point)(dataslice[0][1], dataslice[1][1]))
       ))._divideBy(2) : (0, import_leaflet24.point)(
         (projparam2.naxis.x + 1) / 2,
         (projparam2.naxis.y + 1) / 2
@@ -33700,18 +33700,18 @@
         red.x * cdinv[1][0] + red.y * cdinv[1][1]
       ).add(projparam2.crpix);
     },
-    _pixToMulti: function(pix) {
+    _pixToMulti: function(pnt) {
       const dataslice = projparam.dataslice, detslice = projparam.detslice;
       return (0, import_leaflet24.point)([
         (pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
-        (pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0]
+        (pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
       ]);
     },
-    _multiToPix: function(pnt2) {
+    _multiToPix: function(pnt) {
       const dataslice = projparam.dataslice, detslice = projparam.detslice;
       return (0, import_leaflet24.point)([
-        (pnt2.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
-        (pnt2.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0]
+        (pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+        (pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
       ]);
     },
     _invertCD: function(cd) {
@@ -33720,9 +33720,6 @@
         [cd[1][1] * detinv, -cd[0][1] * detinv],
         [-cd[1][0] * detinv, cd[0][0] * detinv]
       ];
-    },
-    _invertPV: function(pv, npv) {
-      return pv;
     }
   });
 
@@ -34228,8 +34225,8 @@
       this.jd = merged_proj.projparam.jd;
       this.obslatlng = merged_proj.projparam.obslatlng;
     },
-    transform(pnt2, zoom) {
-      return this.transformation._transform(pnt2, this.scale(zoom));
+    transform(pnt, zoom) {
+      return this.transformation._transform(pnt, this.scale(zoom));
     },
     untransform(layerpnt, zoom) {
       return this.transformation.untransform(layerpnt, this.scale(zoom));
@@ -34237,23 +34234,25 @@
     multiLatLngToPoint(latlng, zoom) {
       return this.transform(this.multiProject(latlng), zoom);
     },
-    multiPointToLatLng(pnt2, zoom) {
-      return this.multiUnproject(this.untransform(pnt2, zoom));
+    multiPointToLatLng(pnt, zoom) {
+      return this.multiUnproject(this.untransform(pnt, zoom));
     },
     multiProject(latlng) {
-      return this.projections[this.multiLatLngToIndex(latlng)].project(latlng);
+      const proj2 = this.projections[this.multiLatLngToIndex(latlng)];
+      return proj2._pixToMulti(proj2.project(latlng));
     },
-    multiUnproject(pnt2) {
-      return this.projections[this.multiPntToIndex(pnt2)].unproject(pnt2);
+    multiUnproject(pnt) {
+      const proj2 = this.projections[this.multiPntToIndex(pnt)];
+      return proj2.unproject(proj2._multiToPix(pnt));
     },
     multiLatLngToIndex(latlng) {
       return this.multiPntToIndex(this.projection.project(latlng));
     },
-    multiPntToIndex(pnt2) {
+    multiPntToIndex(pnt) {
       let dc = 1e30, pc = -1;
       for (var p in this.projections) {
         var pntc = this.projections[p].centerPnt;
-        if ((d = pnt2.distanceTo(pntc)) < dc) {
+        if ((d = pnt.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }
