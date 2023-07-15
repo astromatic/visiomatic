@@ -31571,11 +31571,20 @@
     options: {
       title: "Center coordinates. Click to change",
       position: "topright",
-      coordinates: [{
-        label: "RA, Dec",
-        units: "HMS",
-        nativeCelSys: false
-      }],
+      coordinates: [
+        {
+          type: "world",
+          label: "RA, Dec",
+          units: "HMS",
+          nativeCelSys: false
+        },
+        {
+          type: "pixel",
+          label: "x, y",
+          units: "",
+          nativeCelSys: false
+        }
+      ],
       centerQueryKey: "center",
       fovQueryKey: "fov",
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
@@ -31600,7 +31609,7 @@
       }
     },
     _initDialog: function() {
-      const _this = this, wcs2 = this._map.options.crs, projections = wcs2.projections, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
+      const _this = this, wcs2 = this._map.options.crs, projections = wcs2.projections, coordinates = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
       if (projections) {
         const extSelect = this._wcsext = import_leaflet13.DomUtil.create(
           "select",
@@ -31636,9 +31645,9 @@
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
       coordSelect.title = "Switch coordinate system";
-      for (var c2 in coords2) {
+      for (var c2 in coordinates) {
         coordOpt[c2] = document.createElement("option");
-        coordOpt[c2].text = coords2[c2].label;
+        coordOpt[c2].text = coordinates[c2].label;
         var coordIndex = parseInt(c2, 10);
         coordOpt[c2].value = coordIndex;
         if (coordIndex === 0) {
@@ -31700,21 +31709,34 @@
       map2.off("drag", this._onDrag);
     },
     _onDrag: function(e) {
-      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      const wcs2 = this._map.options.crs, coordinate = this.options.coordinates[this._currentCoord];
       let latlng = this._map.getCenter();
+      let extindex = -1;
       if (wcs2.projections) {
-        const extindex = wcs2.multiLatLngToIndex(latlng);
+        extindex = wcs2.multiLatLngToIndex(latlng);
         this._wcsext.options[extindex].selected = true;
       }
-      if (wcs2.pixelFlag) {
+      if (coordinate.type == "pixel") {
+        const prec = wcs2.nzoom - this._map._zoom > 0 ? 0 : 2;
+        let pnt = wcs2.untransform(
+          this._map._getCenterLayerPoint().add(
+            this._map.getPixelOrigin()
+          ),
+          this._map._zoom
+        );
+        if (extindex >= 0) {
+          pnt = wcs2.projections[extindex]._multiToPix(pnt);
+        }
+        this._wcsinput.value = pnt.x.toFixed(prec) + " , " + pnt.y.toFixed(prec);
+      } else if (wcs2.pixelFlag) {
         this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
       } else {
-        if (!coord.nativeCelSys && !wcs2.equatorialFlag) {
+        if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
           latlng = wcs2.celSysToEq(latlng);
-        } else if (coord.nativeCelSys && wcs2.equatorialFlag) {
+        } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
           latlng = wcs2.eqToCelSys(latlng);
         }
-        switch (coord.units) {
+        switch (coordinate.units) {
           case "HMS":
             this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
             break;
@@ -31728,15 +31750,15 @@
       }
     },
     panTo: function(str2) {
-      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      const wcs2 = this._map.options.crs, coordinate = this.options.coordinates[this._currentCoord];
       let latlng = wcs2.parseCoords(str2);
       if (latlng) {
         if (wcs2.pixelFlag) {
           this._map.panTo(latlng);
         } else {
-          if (!coord.nativeCelSys && !wcs2.equatorialFlag) {
+          if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
             latlng = wcs2.eqToCelSys(latlng);
-          } else if (coord.nativeCelSys && wcs2.equatorialFlag) {
+          } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
             latlng = wcs2.celSysToEq(latlng);
           }
           this._map.panTo(latlng);

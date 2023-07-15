@@ -912,7 +912,7 @@ iframe.visiomatic-control-doc {
 	background-color: #F4F4F4;
 	vertical-align: top;
 	margin: 0px;
-	padding: 4px 0px;
+	padding: 0px 0px 0px 4px;
 	border-width: 0px;
 	box-shadow: 1px 1px 2px #a0a0a0 inset;
 	border-radius: 4px 0px 0px 4px;
@@ -927,7 +927,8 @@ iframe.visiomatic-control-doc {
 	background-color: #F4F4F4;
 	vertical-align: top;
 	margin: 0px;
-	padding: 4px 0px;
+	text-align: center;
+	padding: 0px 0px 0px 4px;
 	border-width: 0px;
 	box-shadow: 1px 1px 2px #a0a0a0 inset;
 	border-radius: 4px 0px 0px 4px;
