@@ -119,7 +119,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (options) {
 			this._paramUpdate(options);
 		}
-
+		// Projection-dependent initializations
 		this._projInit();
 		projparam = this.projparam;
 		if (!projparam._pixelFlag) {
@@ -203,10 +203,10 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			];
 		}
 
-		if (paramsrc.dataslice && paramsrc.detslice) {
-			projparam.dataslice = paramsrc.dataslice;
+		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice
+			: [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+		if (paramsrc.detslice) {
 			projparam.detslice = paramsrc.detslice;
-			//this._shiftWCS(projparam);
 		}
 	},
 
@@ -611,9 +611,10 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	_pixToMulti: function (pnt) {
 		const	dataslice = this.projparam.dataslice,
 			detslice = this.projparam.detslice;
+
 		return point([
 			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
-			(pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0],
+			(pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
 		]);
 	},
 
@@ -631,8 +632,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			detslice = this.projparam.detslice;
 
 		return point([
-			(pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
-			(pnt.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0],
+			(pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+			(pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
 		]);
 	},
 
@@ -649,22 +650,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
-	},
-
-	/**
-	 * Invert the `PV` distortion polynomial of the de-projection.
-	 *
-	 * Currently valid only for small distortions.
-	 * @private
-	 * @param {number[][]} pv
-	   `PV` array of polynomial coefficients.
-	 * @param {number} npv
-	   Number of non-zero polynomial coefficients.
-	 * @returns {number[][]}
-	   array of coefficients from the pseudo inverse polynomial.
-	 */
-	_invertPV: function (pv, npv) {
-		return pv;
 	}
 });
 

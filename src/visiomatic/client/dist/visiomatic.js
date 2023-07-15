@@ -33458,8 +33458,8 @@
           paramsrc.obslatlng[1]
         ];
       }
-      if (paramsrc.dataslice && paramsrc.detslice) {
-        projparam.dataslice = paramsrc.dataslice;
+      projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice : [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+      if (paramsrc.detslice) {
         projparam.detslice = paramsrc.detslice;
       }
     },
@@ -33702,14 +33702,14 @@
       const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
       return (0, import_leaflet24.point)([
         (pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
-        (pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0]
+        (pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
       ]);
     },
     _multiToPix: function(pnt) {
       const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
       return (0, import_leaflet24.point)([
-        (pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
-        (pnt.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0]
+        (pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+        (pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
       ]);
     },
     _invertCD: function(cd) {
@@ -33718,9 +33718,6 @@
         [cd[1][1] * detinv, -cd[0][1] * detinv],
         [-cd[1][0] * detinv, cd[0][0] * detinv]
       ];
-    },
-    _invertPV: function(pv, npv) {
-      return pv;
     }
   });
 

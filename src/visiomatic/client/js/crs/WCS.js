@@ -204,6 +204,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 */
 	multiUnproject(pnt) {
 		const	proj = this.projections[this.multiPntToIndex(pnt)];
+
 		return proj.unproject(proj._multiToPix(pnt));
 	},
 
