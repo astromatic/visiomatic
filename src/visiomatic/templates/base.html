@@ -40,10 +40,7 @@
         V.control.fullScreen().addTo(map);
 		V.control.scale({pixels: false}).addTo(map);
 		V.control.reticle().addTo(map);
-		V.control.coords({coordinates: [
-			{label: 'X,Y', units: 'deg'},
-			{label: 'RA,Dec', units: 'HMS'},
-		], position: 'topright'}).addTo(map);
+		V.control.coords({position: 'topright'}).addTo(map);
 
 		var	minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',

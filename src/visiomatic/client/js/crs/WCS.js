@@ -192,9 +192,9 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @returns {leaflet.Point} Projected (merged) pixel coordinates.
 	 */
 	multiProject(latlng) {
-		return this.projections[
-			this.multiLatLngToIndex(latlng)
-		].project(latlng);
+		const	proj = this.projections[this.multiLatLngToIndex(latlng)];
+
+		return proj._pixToMulti(proj.project(latlng));
 	},
 	
 	/**
@@ -203,7 +203,8 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	 * @returns {leaflet.LatLng} De-projected world coordinates.
 	 */
 	multiUnproject(pnt) {
-		return this.projections[this.multiPntToIndex(pnt)].unproject(pnt);
+		const	proj = this.projections[this.multiPntToIndex(pnt)];
+		return proj.unproject(proj._multiToPix(pnt));
 	},
 
 	/**

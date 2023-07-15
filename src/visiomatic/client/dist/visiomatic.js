@@ -33385,32 +33385,33 @@
       obslatlng: [0, 0]
     },
     initialize: function(header, options2) {
-      const projparam2 = this._paramUpdate(this.defaultProjParam);
+      this._paramUpdate(this.defaultProjParam);
       this.options = options2;
       this._readWCS(header);
       if (options2) {
         this._paramUpdate(options2);
       }
       this._projInit();
-      if (!projparam2._pixelFlag) {
-        switch (projparam2.ctype.x.substr(0, 1)) {
+      projparam = this.projparam;
+      if (!projparam._pixelFlag) {
+        switch (projparam.ctype.x.substr(0, 1)) {
           case "G":
-            projparam2._celsyscode = "galactic";
+            projparam._celsyscode = "galactic";
             break;
           case "E":
-            projparam2._celsyscode = "ecliptic";
+            projparam._celsyscode = "ecliptic";
             break;
           case "S":
-            projparam2._celsyscode = "supergalactic";
+            projparam._celsyscode = "supergalactic";
             break;
           default:
-            projparam2._celsyscode = "equatorial";
+            projparam._celsyscode = "equatorial";
             break;
         }
-        this.equatorialFlag = !projparam2.nativeCelSys || projparam2._celsyscode == "equatorial";
-        this.celSysConvFlag = !projparam2.nativeCelSys && projparam2._celsyscode !== "equatorial";
+        this.equatorialFlag = !projparam.nativeCelSys || projparam._celsyscode == "equatorial";
+        this.celSysConvFlag = !projparam.nativeCelSys && projparam._celsyscode !== "equatorial";
         if (this.celSysConvFlag) {
-          projparam2._celsysmat = this._celsysmatInit(this.celsyscode);
+          projparam._celsysmat = this._celsysmatInit(this.celsyscode);
         }
       }
     },
@@ -33461,7 +33462,6 @@
         projparam.dataslice = paramsrc.dataslice;
         projparam.detslice = paramsrc.detslice;
       }
-      return projparam;
     },
     _readWCS: function(header) {
       const projparam2 = this.projparam;
@@ -33583,8 +33583,8 @@
       phiTheta.lat = this._thetaToR(phiTheta.lat);
       return this._redToPix(this._phiRToRed(phiTheta));
     },
-    unproject: function(pnt2) {
-      const phiTheta = this._redToPhiR(this._pixToRed(pnt2));
+    unproject: function(pnt) {
+      const phiTheta = this._redToPhiR(this._pixToRed(pnt));
       phiTheta.lat = this._rToTheta(phiTheta.lat);
       const latlng = this._phiThetaToRADec(phiTheta);
       if (latlng.lng < -180) {
@@ -33608,11 +33608,9 @@
     },
     _getCenter(proj2) {
       const projparam2 = this.projparam, detslice = projparam2.detslice;
-      return detslice ? proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][0], detslice[1][0]))
-      )._add(proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][1], detslice[1][1]))
-      ))._divideBy(2) : (0, import_leaflet24.point)(
+      return detslice ? (0, import_leaflet24.point)(detslice[0][0], detslice[1][0])._add(
+        (0, import_leaflet24.point)(detslice[0][1], detslice[1][1])
+      )._divideBy(2) : (0, import_leaflet24.point)(
         (projparam2.naxis.x + 1) / 2,
         (projparam2.naxis.y + 1) / 2
       );
@@ -33700,18 +33698,18 @@
         red.x * cdinv[1][0] + red.y * cdinv[1][1]
       ).add(projparam2.crpix);
     },
-    _pixToMulti: function(pix) {
-      const dataslice = projparam.dataslice, detslice = projparam.detslice;
+    _pixToMulti: function(pnt) {
+      const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
       return (0, import_leaflet24.point)([
         (pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
         (pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0]
       ]);
     },
-    _multiToPix: function(pnt2) {
-      const dataslice = projparam.dataslice, detslice = projparam.detslice;
+    _multiToPix: function(pnt) {
+      const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
       return (0, import_leaflet24.point)([
-        (pnt2.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
-        (pnt2.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0]
+        (pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
+        (pnt.y - detslice[1][0]) / detslice[0][2] + dataslice[1][0]
       ]);
     },
     _invertCD: function(cd) {
@@ -34228,8 +34226,8 @@
       this.jd = merged_proj.projparam.jd;
       this.obslatlng = merged_proj.projparam.obslatlng;
     },
-    transform(pnt2, zoom) {
-      return this.transformation._transform(pnt2, this.scale(zoom));
+    transform(pnt, zoom) {
+      return this.transformation._transform(pnt, this.scale(zoom));
     },
     untransform(layerpnt, zoom) {
       return this.transformation.untransform(layerpnt, this.scale(zoom));
@@ -34237,23 +34235,25 @@
     multiLatLngToPoint(latlng, zoom) {
       return this.transform(this.multiProject(latlng), zoom);
     },
-    multiPointToLatLng(pnt2, zoom) {
-      return this.multiUnproject(this.untransform(pnt2, zoom));
+    multiPointToLatLng(pnt, zoom) {
+      return this.multiUnproject(this.untransform(pnt, zoom));
     },
     multiProject(latlng) {
-      return this.projections[this.multiLatLngToIndex(latlng)].project(latlng);
+      const proj2 = this.projections[this.multiLatLngToIndex(latlng)];
+      return proj2._pixToMulti(proj2.project(latlng));
     },
-    multiUnproject(pnt2) {
-      return this.projections[this.multiPntToIndex(pnt2)].unproject(pnt2);
+    multiUnproject(pnt) {
+      const proj2 = this.projections[this.multiPntToIndex(pnt)];
+      return proj2.unproject(proj2._multiToPix(pnt));
     },
     multiLatLngToIndex(latlng) {
       return this.multiPntToIndex(this.projection.project(latlng));
     },
-    multiPntToIndex(pnt2) {
+    multiPntToIndex(pnt) {
       let dc = 1e30, pc = -1;
       for (var p in this.projections) {
         var pntc = this.projections[p].centerPnt;
-        if ((d = pnt2.distanceTo(pntc)) < dc) {
+        if ((d = pnt.distanceTo(pntc)) < dc) {
           pc = p;
           dc = d;
         }

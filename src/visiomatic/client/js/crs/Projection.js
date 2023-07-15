@@ -110,17 +110,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @returns {Projection} Instance of a projection.
 	 */
 	initialize: function (header, options) {
-		const	projparam = this._paramUpdate(this.defaultProjParam);
-
+		this._paramUpdate(this.defaultProjParam);
 		this.options = options;
-
 		this._readWCS(header);
+
 		// Override selected WCS parameters with options
 		// (including data slicing)
 		if (options) {
 			this._paramUpdate(options);
 		}
+
 		this._projInit();
+		projparam = this.projparam;
 		if (!projparam._pixelFlag) {
 			// Identify the native celestial coordinate system
 			switch (projparam.ctype.x.substr(0, 1)) {
@@ -147,7 +148,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 				projparam._celsysmat = this._celsysmatInit(this.celsyscode);
 			}
 		}
-
 	},
 
 	/**
@@ -157,8 +157,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @private
 	 * @param {projParam} paramSrc
 	   Input projection parameters.
-	 * @returns {projParam}
-	   Reference to the internal projection parameter object.
 	 */
 	_paramUpdate: function (paramsrc) {
 
@@ -210,8 +208,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			projparam.detslice = paramsrc.detslice;
 			//this._shiftWCS(projparam);
 		}
-
-		return projparam;
 	},
 
 	/**
@@ -421,11 +417,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	projparam = this.projparam,
 			detslice = projparam.detslice;
 		return detslice?
-			proj.project(
-				this.unproject(point(detslice[0][0], detslice[1][0]))
-			)._add(proj.project(
-				this.unproject(point(detslice[0][1], detslice[1][1]))))
-				._divideBy(2.0) :
+			(point(detslice[0][0], detslice[1][0])._add(
+				point(detslice[0][1], detslice[1][1])))._divideBy(2.0) :
 			point(
 				(projparam.naxis.x + 1.0) / 2.0,
 				(projparam.naxis.y + 1.0) / 2.0
@@ -610,15 +603,14 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	/**
 	 * Convert pixel coordinates to sliced (merged) coordinates.
 	 * @private
-	 * @param {leaflet.Point} pix
+	 * @param {leaflet.Point} pnt
 	   Pixel coordinates.
 	 * @returns {leaflet.Point}
 	   Sliced (merged) coordinates.
 	 */
-	_pixToMulti: function (pix) {
-		const	dataslice = projparam.dataslice,
-			detslice = projparam.detslice;
-
+	_pixToMulti: function (pnt) {
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
 		return point([
 			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
 			(pnt.y - dataslice[1][0]) * detslice[0][2] + detslice[1][0],
@@ -635,8 +627,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Pixel coordinates.
 	 */
 	_multiToPix: function (pnt) {
-		const	dataslice = projparam.dataslice,
-			detslice = projparam.detslice;
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
 
 		return point([
 			(pnt.x - detslice[0][0]) / detslice[0][2] + dataslice[0][0],
