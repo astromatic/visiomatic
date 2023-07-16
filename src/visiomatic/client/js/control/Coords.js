@@ -251,47 +251,49 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	_onDrag: function (e) {
 		const	wcs = this._map.options.crs,
 			coordinate = this.options.coordinates[this._currentCoord];
-		let	latlng = this._map.getCenter();
 		let	extindex = -1;
+		let	pnt = wcs.untransform(
+			this._map._getCenterLayerPoint().add(
+				this._map.getPixelOrigin()
+			),
+			this._map._zoom
+		);
 		if (wcs.projections) {
-			extindex = wcs.multiLatLngToIndex(latlng);
+			extindex = wcs.multiPntToIndex(pnt);
 			this._wcsext.options[extindex].selected = true; 
+			pnt = wcs.projections[extindex]._multiToPix(pnt);
 		}
 
 		if (coordinate.type == 'pixel') {
 			const	prec = (wcs.nzoom - this._map._zoom) > 0 ? 0 : 2;
-			let	pnt = wcs.untransform(
-				this._map._getCenterLayerPoint().add(
-					this._map.getPixelOrigin()
-				),
-				this._map._zoom
-			);
-			if (extindex >= 0) {
-				pnt = wcs.projections[extindex]._multiToPix(pnt);
-			}
 			this._wcsinput.value = pnt.x.toFixed(prec) + ' , ' +
 				pnt.y.toFixed(prec);
-		} else if (wcs.pixelFlag) {
-			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
-				latlng.lat.toFixed(0);
 		} else {
-			if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
-				latlng = wcs.celSysToEq(latlng);
-			} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
-				latlng = wcs.eqToCelSys(latlng);
-			}
-			switch (coordinate.units) {
-			case 'HMS':
-				this._wcsinput.value = wcs.latLngToHMSDMS(latlng);
-				break;
-			case 'deg':
-				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +
-					latlng.lat.toFixed(5);
-				break;
-			default:
-				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' +
-					latlng.lat.toFixed(1);
-				break;
+			let	latlng = extindex >= 0 ?
+				wcs.projections[extindex].unproject(pnt) :
+				this._map.getCenter();
+			if (wcs.pixelFlag) {
+				this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
+					latlng.lat.toFixed(0);
+			} else {
+				if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
+					latlng = wcs.celSysToEq(latlng);
+				} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
+					latlng = wcs.eqToCelSys(latlng);
+				}
+				switch (coordinate.units) {
+				case 'HMS':
+					this._wcsinput.value = wcs.latLngToHMSDMS(latlng);
+					break;
+				case 'deg':
+					this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +
+						latlng.lat.toFixed(5);
+					break;
+				default:
+					this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' +
+						latlng.lat.toFixed(1);
+					break;
+				}
 			}
 		}
 	},

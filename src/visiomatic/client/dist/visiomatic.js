@@ -31710,42 +31710,42 @@
     },
     _onDrag: function(e) {
       const wcs2 = this._map.options.crs, coordinate = this.options.coordinates[this._currentCoord];
-      let latlng = this._map.getCenter();
       let extindex = -1;
+      let pnt = wcs2.untransform(
+        this._map._getCenterLayerPoint().add(
+          this._map.getPixelOrigin()
+        ),
+        this._map._zoom
+      );
       if (wcs2.projections) {
-        extindex = wcs2.multiLatLngToIndex(latlng);
+        extindex = wcs2.multiPntToIndex(pnt);
         this._wcsext.options[extindex].selected = true;
+        pnt = wcs2.projections[extindex]._multiToPix(pnt);
       }
       if (coordinate.type == "pixel") {
         const prec = wcs2.nzoom - this._map._zoom > 0 ? 0 : 2;
-        let pnt = wcs2.untransform(
-          this._map._getCenterLayerPoint().add(
-            this._map.getPixelOrigin()
-          ),
-          this._map._zoom
-        );
-        if (extindex >= 0) {
-          pnt = wcs2.projections[extindex]._multiToPix(pnt);
-        }
         this._wcsinput.value = pnt.x.toFixed(prec) + " , " + pnt.y.toFixed(prec);
-      } else if (wcs2.pixelFlag) {
-        this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
       } else {
-        if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
-          latlng = wcs2.celSysToEq(latlng);
-        } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
-          latlng = wcs2.eqToCelSys(latlng);
-        }
-        switch (coordinate.units) {
-          case "HMS":
-            this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
-            break;
-          case "deg":
-            this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
-            break;
-          default:
-            this._wcsinput.value = latlng.lng.toFixed(1) + " , " + latlng.lat.toFixed(1);
-            break;
+        let latlng = extindex >= 0 ? wcs2.projections[extindex].unproject(pnt) : this._map.getCenter();
+        if (wcs2.pixelFlag) {
+          this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
+        } else {
+          if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
+            latlng = wcs2.celSysToEq(latlng);
+          } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
+            latlng = wcs2.eqToCelSys(latlng);
+          }
+          switch (coordinate.units) {
+            case "HMS":
+              this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
+              break;
+            case "deg":
+              this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
+              break;
+            default:
+              this._wcsinput.value = latlng.lng.toFixed(1) + " , " + latlng.lat.toFixed(1);
+              break;
+          }
         }
       }
     },
@@ -34258,7 +34258,7 @@
       return this.multiUnproject(this.untransform(pnt, zoom));
     },
     multiProject(latlng) {
-      const proj2 = this.projections[this.multiLatLngToIndex(latlng)];
+      const proj1 = this.projections[this.multiLatLngToIndex(latlng)], pnt = proj1._pixToMulti(proj1.project(latlng)), proj2 = this.projections[this.multiPntToIndex(pnt)];
       return proj2._pixToMulti(proj2.project(latlng));
     },
     multiUnproject(pnt) {
