@@ -113,9 +113,9 @@ class ServerSettings(BaseSettings):
         default=False,
         description="Do not start browser when providing image file"
         )
-    tiles_path : str = Field(
-        default="/tiles",
-        description="Endpoint URL for tile queries"
+    api_path : str = Field(
+        default="/api",
+        description="Endpoint URL for the webservice API"
         )
     userdoc_url: str = Field(
         default=doc_path.default + "/interface.html",

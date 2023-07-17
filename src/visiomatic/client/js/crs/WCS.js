@@ -120,12 +120,16 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		this.centerLatLng = merged_proj.unproject(
 			merged_proj._getCenter(merged_proj)
 		);
+		// Default limits of validity for coordinates
 		this.wrapLng = [0.5, this.naxis.x - 0.5];
 		this.wrapLat = [this.naxis.y - 0.5, 0.5];
+		// Leaflet's transformation parameters to deal with the FITS standard:
+		// y increases from bottom to top, center coords of 1st pixel are 1.,1.
 		this.transformation = new Transformation(
 			1.0, -0.5,
 			-1.0, this.naxis.y + 0.5
 		);
+		// Custom projection code, e.g., WCS-TAN
 		this.code += ':' + merged_proj.code;
 		this.equatorialFlag = merged_proj.equatorialFlag;
 		this.celSysCode = merged_proj.projparam._celsyscode;
@@ -136,17 +140,37 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	},
 
 	/**
+	 * Convert pixel (image) coordinates to layer coordinates.
+	 * @param {leaflet.Point} pnt - Pixel coordinates.
+	 * @param {number} zoom - Zoom level.
+	 * @returns {leaflet.Point}
+	   Layer coordinates at the given zoom level.
+	 */
+	transform(pnt, zoom) {
+		return this.transformation._transform(pnt, this.scale(zoom));
+	},
+
+
+	/**
+	 * Convert layer coordinates to pixel (image) coordinates.
+	 * @param {leaflet.Point} layerpnt - Layer coordinates.
+	 * @param {number} zoom - Zoom level.
+	 * @returns {leaflet.Point}
+	   Pixel (image) coordinates
+	 */
+	untransform(layerpnt, zoom) {
+		return this.transformation.untransform(layerpnt, this.scale(zoom));
+	},
+
+	/**
 	 * Multi-WCS version of the projection to layer coordinates.
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @param {number} zoom - Zoom level.
 	 * @returns {leaflet.Point}
-	   Projected layer coordinates at the given zoom level.
+	   Layer coordinates at the given zoom level.
 	 */
 	multiLatLngToPoint(latlng, zoom) {
-		const projectedPoint = this.multiProject(latlng),
-		    scale = this.scale(zoom);
-
-		return this.transformation._transform(projectedPoint, scale);
+		return this.transform(this.multiProject(latlng), zoom);
 	},
 
 	/**
@@ -159,57 +183,50 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	   De-projected world coordinates.
 	 */
 	multiPointToLatLng(pnt, zoom) {
-		const scale = this.scale(zoom),
-		    untransformedPoint = this.transformation.untransform(pnt, scale);
-
-		return this.multiUnproject(untransformedPoint);
+		return this.multiUnproject(this.untransform(pnt, zoom));
 	},
 
 	/**
 	 * Multi-WCS astrometric projection.
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
-	 * @returns {leaflet.Point} Projected image coordinates.
+	 * @returns {leaflet.Point} Projected (merged) pixel coordinates.
 	 */
 	multiProject(latlng) {
-		const	pnt = this.projection.project(latlng);
-		let	dc = 1e+30,
-			pc = -1;
-		for (var p in this.projections) {
-			var	pntc = this.projections[p].centerPnt;
-			if ((d = pnt.distanceTo(pntc)) < dc) {
-				pc = p;
-				dc = d;
-			}
-		}
+		const	proj1 = this.projections[this.multiLatLngToIndex(latlng)],
+			pnt = proj1._pixToMulti(proj1.project(latlng)),
+			proj2 = this.projections[this.multiPntToIndex(pnt)];
 
-		return this.projections[pc].project(latlng);
+		return proj2._pixToMulti(proj2.project(latlng));
 	},
 	
 	/**
 	 * Multi-WCS version of the astrometric de-projection.
-	 * @param {leaflet.Point} pnt - Input image coordinates.
+	 * @param {leaflet.Point} pnt - Input (merged) pixel coordinates.
 	 * @returns {leaflet.LatLng} De-projected world coordinates.
 	 */
 	multiUnproject(pnt) {
-		let	dc = 1e+30,
-			pc = -1;
-		for (var p in this.projections) {
-			var	pntc = this.projections[p].centerPnt;
-			if ((d = pnt.distanceTo(pntc)) < dc) {
-				pc = p;
-				dc = d;
-			}
-		}
-		return this.projections[pc].unproject(pnt);
+		const	proj = this.projections[this.multiPntToIndex(pnt)];
+
+		return proj.unproject(proj._multiToPix(pnt));
 	},
 
 	/**
-	 * Return chip index at the given world coordinates in a multi-WCS setting.
+	 * Return index of chip closest to the given world coordinates in a
+	   multi-WCS setting.
 	 * @param {leaflet.LatLng} latlng - Input world coordinates.
 	 * @returns {number} Index of the closest chip (extension).
 	 */
 	multiLatLngToIndex(latlng) {
-		const	pnt = this.projection.project(latlng);
+		return this.multiPntToIndex(this.projection.project(latlng));
+	},
+
+	/**
+	 * Return index of chip closest to the given pixel coordinates in a
+	   multi-WCS setting.
+	 * @param {leaflet.Point} pnt - Input (merged) pixel coordinates.
+	 * @returns {number} Index of the closest chip (extension).
+	 */
+	multiPntToIndex(pnt) {
 		let	dc = 1e+30,
 			pc = -1;
 		for (var p in this.projections) {

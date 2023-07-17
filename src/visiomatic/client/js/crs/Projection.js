@@ -110,17 +110,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @returns {Projection} Instance of a projection.
 	 */
 	initialize: function (header, options) {
-		const	projparam = this._paramUpdate(this.defaultProjParam);
-
+		this._paramUpdate(this.defaultProjParam);
 		this.options = options;
-
 		this._readWCS(header);
+
 		// Override selected WCS parameters with options
 		// (including data slicing)
 		if (options) {
 			this._paramUpdate(options);
 		}
+		// Projection-dependent initializations
 		this._projInit();
+		projparam = this.projparam;
 		if (!projparam._pixelFlag) {
 			// Identify the native celestial coordinate system
 			switch (projparam.ctype.x.substr(0, 1)) {
@@ -140,14 +141,13 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			// true if world coordinates are equatorial.
 			this.equatorialFlag = !projparam.nativeCelSys ||
 				projparam._celsyscode == 'equatorial';
-			// true if a celestial system transformations are required.
+			// true if a celestial system transformation is required.
 			this.celSysConvFlag = !projparam.nativeCelSys &&
 				projparam._celsyscode !== 'equatorial';
 			if (this.celSysConvFlag) {
 				projparam._celsysmat = this._celsysmatInit(this.celsyscode);
 			}
 		}
-
 	},
 
 	/**
@@ -157,8 +157,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @private
 	 * @param {projParam} paramSrc
 	   Input projection parameters.
-	 * @returns {projParam}
-	   Reference to the internal projection parameter object.
 	 */
 	_paramUpdate: function (paramsrc) {
 
@@ -205,13 +203,11 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			];
 		}
 
-		if (paramsrc.dataslice && paramsrc.detslice) {
-			projparam.dataslice = paramsrc.dataslice;
+		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice
+			: [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+		if (paramsrc.detslice) {
 			projparam.detslice = paramsrc.detslice;
-			this._shiftWCS(projparam);
 		}
-
-		return projparam;
 	},
 
 	/**
@@ -421,11 +417,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	projparam = this.projparam,
 			detslice = projparam.detslice;
 		return detslice?
-			proj.project(
-				this.unproject(point(detslice[0][0], detslice[1][0]))
-			)._add(proj.project(
-				this.unproject(point(detslice[0][1], detslice[1][1]))))
-				._divideBy(2.0) :
+			(point(detslice[0][0], detslice[1][0])._add(
+				point(detslice[0][1], detslice[1][1])))._divideBy(2.0) :
 			point(
 				(projparam.naxis.x + 1.0) / 2.0,
 				(projparam.naxis.y + 1.0) / 2.0
@@ -608,6 +601,44 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	},
 
 	/**
+	 * Convert pixel coordinates to sliced (merged) coordinates.
+	 * @private
+	 * @param {leaflet.Point} pnt
+	   Pixel coordinates.
+	 * @returns {leaflet.Point}
+	   Sliced (merged) coordinates.
+	 */
+	_pixToMulti: function (pnt) {
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
+
+		return point([
+			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
+			(pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
+		]);
+	},
+
+
+	/**
+	 * Convert sliced (merged) coordinates to pixel coordinates.
+	 * @private
+	 * @param {leaflet.Point} pnt
+	   Sliced (merged) coordinates.
+	 * @returns {leaflet.Point}
+	   Pixel coordinates.
+	 */
+	_multiToPix: function (pnt) {
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
+
+		return point([
+			(pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+			(pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
+		]);
+	},
+
+
+	/**
 	 * Invert the `CD` Jacobian matrix of the linear part of the de-projection.
 	 * @private
 	 * @param {number[][]} cd
@@ -619,22 +650,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
-	},
-
-	/**
-	 * Invert the `PV` distortion polynomial of the de-projection.
-	 *
-	 * Currently valid only for small distortions.
-	 * @private
-	 * @param {number[][]} pv
-	   `PV` array of polynomial coefficients.
-	 * @param {number} npv
-	   Number of non-zero polynomial coefficients.
-	 * @returns {number[][]}
-	   array of coefficients from the pseudo inverse polynomial.
-	 */
-	_invertPV: function (pv, npv) {
-		return pv;
 	}
 });
 

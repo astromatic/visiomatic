@@ -25,7 +25,7 @@
     <div id='map' style='background:black'></div>
 	<script>
 		var args = V.util.VUtil.parseURL(window.location.search.substring(1)),
-				url = '{{root_path}}' + '{{ tiles_path }}?FIF=' + (args['tile'] ? args['tile'] : '{{ image }}'),
+				url = '{{root_path}}' + '{{ api_path }}?FIF=' + (args['image'] ? args['image'] : '{{ image }}'),
 				map = L.map('map', {fullscreenControl: true, zoom: 1}),
 				vlayer = V.layer.vTileLayer(url, {
 					center: args['center'] ? args['center'] : false,
@@ -40,9 +40,7 @@
         V.control.fullScreen().addTo(map);
 		V.control.scale({pixels: false}).addTo(map);
 		V.control.reticle().addTo(map);
-		V.control.coords({coordinates: [
-			{label: 'RA,Dec', units: 'HMS'},
-		], position: 'topright'}).addTo(map);
+		V.control.coords({position: 'topright'}).addTo(map);
 
 		var	minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',

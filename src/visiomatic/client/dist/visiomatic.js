@@ -31571,11 +31571,20 @@
     options: {
       title: "Center coordinates. Click to change",
       position: "topright",
-      coordinates: [{
-        label: "RA, Dec",
-        units: "HMS",
-        nativeCelSys: false
-      }],
+      coordinates: [
+        {
+          type: "world",
+          label: "RA, Dec",
+          units: "HMS",
+          nativeCelSys: false
+        },
+        {
+          type: "pixel",
+          label: "x, y",
+          units: "",
+          nativeCelSys: false
+        }
+      ],
       centerQueryKey: "center",
       fovQueryKey: "fov",
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame"
@@ -31600,7 +31609,7 @@
       }
     },
     _initDialog: function() {
-      const _this = this, wcs2 = this._map.options.crs, projections = wcs2.projections, coords2 = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
+      const _this = this, wcs2 = this._map.options.crs, projections = wcs2.projections, coordinates = this.options.coordinates, className = "leaflet-control-coords", dialog = this._wcsdialog;
       if (projections) {
         const extSelect = this._wcsext = import_leaflet13.DomUtil.create(
           "select",
@@ -31636,9 +31645,9 @@
       this._currentCoord = 0;
       coordSelect.id = "leaflet-coord-select";
       coordSelect.title = "Switch coordinate system";
-      for (var c2 in coords2) {
+      for (var c2 in coordinates) {
         coordOpt[c2] = document.createElement("option");
-        coordOpt[c2].text = coords2[c2].label;
+        coordOpt[c2].text = coordinates[c2].label;
         var coordIndex = parseInt(c2, 10);
         coordOpt[c2].value = coordIndex;
         if (coordIndex === 0) {
@@ -31700,42 +31709,56 @@
       map2.off("drag", this._onDrag);
     },
     _onDrag: function(e) {
-      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
-      let latlng = this._map.getCenter();
+      const wcs2 = this._map.options.crs, coordinate = this.options.coordinates[this._currentCoord];
+      let extindex = -1;
+      let pnt = wcs2.untransform(
+        this._map._getCenterLayerPoint().add(
+          this._map.getPixelOrigin()
+        ),
+        this._map._zoom
+      );
       if (wcs2.projections) {
-        this._wcsext.options[wcs2.multiLatLngToIndex(latlng)].selected = true;
+        extindex = wcs2.multiPntToIndex(pnt);
+        this._wcsext.options[extindex].selected = true;
+        pnt = wcs2.projections[extindex]._multiToPix(pnt);
       }
-      if (wcs2.pixelFlag) {
-        this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
+      if (coordinate.type == "pixel") {
+        const prec = wcs2.nzoom - this._map._zoom > 0 ? 0 : 2;
+        this._wcsinput.value = pnt.x.toFixed(prec) + " , " + pnt.y.toFixed(prec);
       } else {
-        if (!coord.nativeCelSys && !wcs2.equatorialFlag) {
-          latlng = wcs2.celSysToEq(latlng);
-        } else if (coord.nativeCelSys && wcs2.equatorialFlag) {
-          latlng = wcs2.eqToCelSys(latlng);
-        }
-        switch (coord.units) {
-          case "HMS":
-            this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
-            break;
-          case "deg":
-            this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
-            break;
-          default:
-            this._wcsinput.value = latlng.lng.toFixed(1) + " , " + latlng.lat.toFixed(1);
-            break;
+        let latlng = extindex >= 0 ? wcs2.projections[extindex].unproject(pnt) : this._map.getCenter();
+        if (wcs2.pixelFlag) {
+          this._wcsinput.value = latlng.lng.toFixed(0) + " , " + latlng.lat.toFixed(0);
+        } else {
+          if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
+            latlng = wcs2.celSysToEq(latlng);
+          } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
+            latlng = wcs2.eqToCelSys(latlng);
+          }
+          switch (coordinate.units) {
+            case "HMS":
+              this._wcsinput.value = wcs2.latLngToHMSDMS(latlng);
+              break;
+            case "deg":
+              this._wcsinput.value = latlng.lng.toFixed(5) + " , " + latlng.lat.toFixed(5);
+              break;
+            default:
+              this._wcsinput.value = latlng.lng.toFixed(1) + " , " + latlng.lat.toFixed(1);
+              break;
+          }
         }
       }
     },
     panTo: function(str2) {
-      const wcs2 = this._map.options.crs, coord = this.options.coordinates[this._currentCoord];
+      const wcs2 = this._map.options.crs, coordinate = this.options.coordinates[this._currentCoord];
       let latlng = wcs2.parseCoords(str2);
       if (latlng) {
         if (wcs2.pixelFlag) {
           this._map.panTo(latlng);
         } else {
-          if (!coord.nativeCelSys && !wcs2.equatorialFlag) {
+          if (!coordinate.nativeCelSys && !wcs2.equatorialFlag) {
             latlng = wcs2.eqToCelSys(latlng);
-          } else if (coord.nativeCelSys && wcs2.equatorialFlag) {
+          } else if (coordinate.nativeCelSys && wcs2.equatorialFlag) {
             latlng = wcs2.celSysToEq(latlng);
           }
           this._map.panTo(latlng);
@@ -33384,32 +33407,33 @@
       obslatlng: [0, 0]
     },
     initialize: function(header, options2) {
-      const projparam2 = this._paramUpdate(this.defaultProjParam);
+      this._paramUpdate(this.defaultProjParam);
       this.options = options2;
       this._readWCS(header);
       if (options2) {
         this._paramUpdate(options2);
       }
       this._projInit();
-      if (!projparam2._pixelFlag) {
-        switch (projparam2.ctype.x.substr(0, 1)) {
+      projparam = this.projparam;
+      if (!projparam._pixelFlag) {
+        switch (projparam.ctype.x.substr(0, 1)) {
           case "G":
-            projparam2._celsyscode = "galactic";
+            projparam._celsyscode = "galactic";
             break;
           case "E":
-            projparam2._celsyscode = "ecliptic";
+            projparam._celsyscode = "ecliptic";
             break;
           case "S":
-            projparam2._celsyscode = "supergalactic";
+            projparam._celsyscode = "supergalactic";
             break;
           default:
-            projparam2._celsyscode = "equatorial";
+            projparam._celsyscode = "equatorial";
             break;
         }
-        this.equatorialFlag = !projparam2.nativeCelSys || projparam2._celsyscode == "equatorial";
-        this.celSysConvFlag = !projparam2.nativeCelSys && projparam2._celsyscode !== "equatorial";
+        this.equatorialFlag = !projparam.nativeCelSys || projparam._celsyscode == "equatorial";
+        this.celSysConvFlag = !projparam.nativeCelSys && projparam._celsyscode !== "equatorial";
         if (this.celSysConvFlag) {
-          projparam2._celsysmat = this._celsysmatInit(this.celsyscode);
+          projparam._celsysmat = this._celsysmatInit(this.celsyscode);
         }
       }
     },
@@ -33456,12 +33480,10 @@
           paramsrc.obslatlng[1]
         ];
       }
-      if (paramsrc.dataslice && paramsrc.detslice) {
-        projparam.dataslice = paramsrc.dataslice;
+      projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice : [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+      if (paramsrc.detslice) {
         projparam.detslice = paramsrc.detslice;
-        this._shiftWCS(projparam);
       }
-      return projparam;
     },
     _readWCS: function(header) {
       const projparam2 = this.projparam;
@@ -33608,11 +33630,9 @@
     },
     _getCenter(proj2) {
       const projparam2 = this.projparam, detslice = projparam2.detslice;
-      return detslice ? proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][0], detslice[1][0]))
-      )._add(proj2.project(
-        this.unproject((0, import_leaflet24.point)(detslice[0][1], detslice[1][1]))
-      ))._divideBy(2) : (0, import_leaflet24.point)(
+      return detslice ? (0, import_leaflet24.point)(detslice[0][0], detslice[1][0])._add(
+        (0, import_leaflet24.point)(detslice[0][1], detslice[1][1])
+      )._divideBy(2) : (0, import_leaflet24.point)(
         (projparam2.naxis.x + 1) / 2,
         (projparam2.naxis.y + 1) / 2
       );
@@ -33700,15 +33720,26 @@
         red.x * cdinv[1][0] + red.y * cdinv[1][1]
       ).add(projparam2.crpix);
     },
+    _pixToMulti: function(pnt) {
+      const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
+      return (0, import_leaflet24.point)([
+        (pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
+        (pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
+      ]);
+    },
+    _multiToPix: function(pnt) {
+      const dataslice = this.projparam.dataslice, detslice = this.projparam.detslice;
+      return (0, import_leaflet24.point)([
+        (pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+        (pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
+      ]);
+    },
     _invertCD: function(cd) {
       const detinv = 1 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
       return [
         [cd[1][1] * detinv, -cd[0][1] * detinv],
         [-cd[1][0] * detinv, cd[0][0] * detinv]
       ];
-    },
-    _invertPV: function(pv, npv) {
-      return pv;
     }
   });
 
@@ -34214,39 +34245,30 @@
       this.jd = merged_proj.projparam.jd;
       this.obslatlng = merged_proj.projparam.obslatlng;
     },
+    transform(pnt, zoom) {
+      return this.transformation._transform(pnt, this.scale(zoom));
+    },
+    untransform(layerpnt, zoom) {
+      return this.transformation.untransform(layerpnt, this.scale(zoom));
+    },
     multiLatLngToPoint(latlng, zoom) {
-      const projectedPoint = this.multiProject(latlng), scale2 = this.scale(zoom);
-      return this.transformation._transform(projectedPoint, scale2);
+      return this.transform(this.multiProject(latlng), zoom);
     },
     multiPointToLatLng(pnt, zoom) {
-      const scale2 = this.scale(zoom), untransformedPoint = this.transformation.untransform(pnt, scale2);
-      return this.multiUnproject(untransformedPoint);
+      return this.multiUnproject(this.untransform(pnt, zoom));
     },
     multiProject(latlng) {
-      const pnt = this.projection.project(latlng);
-      let dc = 1e30, pc = -1;
-      for (var p in this.projections) {
-        var pntc = this.projections[p].centerPnt;
-        if ((d = pnt.distanceTo(pntc)) < dc) {
-          pc = p;
-          dc = d;
-        }
-      }
-      return this.projections[pc].project(latlng);
+      const proj1 = this.projections[this.multiLatLngToIndex(latlng)], pnt = proj1._pixToMulti(proj1.project(latlng)), proj2 = this.projections[this.multiPntToIndex(pnt)];
+      return proj2._pixToMulti(proj2.project(latlng));
     },
     multiUnproject(pnt) {
-      let dc = 1e30, pc = -1;
-      for (var p in this.projections) {
-        var pntc = this.projections[p].centerPnt;
-        if ((d = pnt.distanceTo(pntc)) < dc) {
-          pc = p;
-          dc = d;
-        }
-      }
-      return this.projections[pc].unproject(pnt);
+      const proj2 = this.projections[this.multiPntToIndex(pnt)];
+      return proj2.unproject(proj2._multiToPix(pnt));
     },
     multiLatLngToIndex(latlng) {
-      const pnt = this.projection.project(latlng);
+      return this.multiPntToIndex(this.projection.project(latlng));
+    },
+    multiPntToIndex(pnt) {
       let dc = 1e30, pc = -1;
       for (var p in this.projections) {
         var pntc = this.projections[p].centerPnt;

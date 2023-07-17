@@ -23,22 +23,33 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		title: 'Center coordinates. Click to change',
 		position: 'topright',
 		/**
-		 * Coordinates settings.
+		 * Coordinate settings.
 		 * @typedef coordinate
+		 * @property {'world'|'pixel'} type
+		   Coordinate type.
 		 * @property {string} label
 		   Coordinate name.
-		 * @property {'deg'|'HMS'} units
+		 * @property {'deg'|'HMS'|''} units
 		   Coordinate units.
 		 * @property {boolean} [nativeCelSys=false]
 		   Use native coordinates (e.g., galactic coordinates) instead of
 		   equatorial coordinates?
 		 * @default
 		 */
-		coordinates: [{
-			label: 'RA, Dec',
-			units: 'HMS',
-			nativeCelSys: false
-		}],
+		coordinates: [
+			{
+				type: 'world',
+				label: 'RA, Dec',
+				units: 'HMS',
+				nativeCelSys: false
+			},
+			{
+				type: 'pixel',
+				label: 'x, y',
+				units: '',
+				nativeCelSys: false
+			}
+		],
 		centerQueryKey: 'center',
 		fovQueryKey: 'fov',
 		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
@@ -111,10 +122,11 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		const	_this = this,
 			wcs = this._map.options.crs,
 			projections = wcs.projections,
-			coords = this.options.coordinates,
+			coordinates = this.options.coordinates,
 			className = 'leaflet-control-coords',
 			dialog = this._wcsdialog;
 
+		// Manage multiple extensions
 		if ((projections)) {
 			const	extSelect = this._wcsext = DomUtil.create(
 					'select',
@@ -156,9 +168,9 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		this._currentCoord = 0;
 		coordSelect.id = 'leaflet-coord-select';
 		coordSelect.title = 'Switch coordinate system';
-		for (var c in coords) {
+		for (var c in coordinates) {
 			coordOpt[c] = document.createElement('option');
-			coordOpt[c].text = coords[c].label;
+			coordOpt[c].text = coordinates[c].label;
 			var	coordIndex = parseInt(c, 10);
 			coordOpt[c].value = coordIndex;
 			if (coordIndex === 0) {
@@ -238,33 +250,50 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	 */
 	_onDrag: function (e) {
 		const	wcs = this._map.options.crs,
-			coord = this.options.coordinates[this._currentCoord];
-		let	latlng = this._map.getCenter();
-			
+			coordinate = this.options.coordinates[this._currentCoord];
+		let	extindex = -1;
+		let	pnt = wcs.untransform(
+			this._map._getCenterLayerPoint().add(
+				this._map.getPixelOrigin()
+			),
+			this._map._zoom
+		);
 		if (wcs.projections) {
-			this._wcsext.options[wcs.multiLatLngToIndex(latlng)].selected = true; 
+			extindex = wcs.multiPntToIndex(pnt);
+			this._wcsext.options[extindex].selected = true; 
+			pnt = wcs.projections[extindex]._multiToPix(pnt);
 		}
-		if (wcs.pixelFlag) {
-			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
-				latlng.lat.toFixed(0);
+
+		if (coordinate.type == 'pixel') {
+			const	prec = (wcs.nzoom - this._map._zoom) > 0 ? 0 : 2;
+			this._wcsinput.value = pnt.x.toFixed(prec) + ' , ' +
+				pnt.y.toFixed(prec);
 		} else {
-			if (!coord.nativeCelSys && !wcs.equatorialFlag) {
-				latlng = wcs.celSysToEq(latlng);
-			} else if (coord.nativeCelSys && wcs.equatorialFlag) {
-				latlng = wcs.eqToCelSys(latlng);
-			}
-			switch (coord.units) {
-			case 'HMS':
-				this._wcsinput.value = wcs.latLngToHMSDMS(latlng);
-				break;
-			case 'deg':
-				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +
-					latlng.lat.toFixed(5);
-				break;
-			default:
-				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' +
-					latlng.lat.toFixed(1);
-				break;
+			let	latlng = extindex >= 0 ?
+				wcs.projections[extindex].unproject(pnt) :
+				this._map.getCenter();
+			if (wcs.pixelFlag) {
+				this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
+					latlng.lat.toFixed(0);
+			} else {
+				if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
+					latlng = wcs.celSysToEq(latlng);
+				} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
+					latlng = wcs.eqToCelSys(latlng);
+				}
+				switch (coordinate.units) {
+				case 'HMS':
+					this._wcsinput.value = wcs.latLngToHMSDMS(latlng);
+					break;
+				case 'deg':
+					this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' +
+						latlng.lat.toFixed(5);
+					break;
+				default:
+					this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' +
+						latlng.lat.toFixed(1);
+					break;
+				}
 			}
 		}
 	},
@@ -275,16 +304,16 @@ export const Coords = Control.extend( /** @lends Coords */ {
 	 */
 	panTo: function (str) {
 		const	wcs = this._map.options.crs,
-			coord = this.options.coordinates[this._currentCoord];
+			coordinate = this.options.coordinates[this._currentCoord];
 		let	latlng = wcs.parseCoords(str);
 
 		if (latlng) {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
 			} else {
-				if (!coord.nativeCelSys && !wcs.equatorialFlag) {
+				if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
 					latlng = wcs.eqToCelSys(latlng);
-				} else if (coord.nativeCelSys && wcs.equatorialFlag) {
+				} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
 					latlng = wcs.celSysToEq(latlng);
 				}
 				this._map.panTo(latlng);
