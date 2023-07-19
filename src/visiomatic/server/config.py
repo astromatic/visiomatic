@@ -41,16 +41,13 @@ class Config(object):
                 exit(0)
 
             # Parse configuration file
-            config_filename = args_dict['config']
-            if Path(config_filename).exists():
-                config_dict = self.parse_config(config_filename)
-                self.config_filename = config_filename
+            self.config_filename = args_dict['config']
+            if Path(self.config_filename).exists():
+                config_dict = self.parse_config(self.config_filename)
+                # Update settings from the config file
+                self.update_from_dict(config_dict) 
 
-            # Update settings
-            # First, from the config file
-            self.update_from_dict(config_dict) 
-
-            # Second, from the command line
+            # Update settings from the command line
             self.update_from_dict(args_dict)
 
             # Save configuration file if requested

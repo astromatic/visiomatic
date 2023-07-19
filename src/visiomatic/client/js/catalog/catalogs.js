@@ -8,7 +8,7 @@
  * @copyright (c) 2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import {extend} from 'leaflet';
+import {extend, polyline} from 'leaflet';
 
 import {Catalog} from './Catalog';
 import {ellipse} from '../vector';
@@ -346,5 +346,98 @@ export const urat1 = new Catalog({
 	properties: ['f<sub>mag</sub>', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objectURL: '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.1'
+});
+
+
+/**
+ * SkyBot database.
+ * @name skybot
+ * @type {Catalog}
+ * @memberof catalogs
+ */
+export const skybot = new Catalog({
+	service: 'SkyBot@IMCCE',
+	name: 'SkyBot',
+	className: 'logo-catalog-imcce',
+	attribution: 'SkyBoT: a VO service to identify Solar System objects (Berthier et al. 2006)',
+	color: 'orange',
+	magLim: 30.0,
+	magIndex: 1,
+	regionType: 'box',
+	serviceURL: 'https://vo.imcce.fr/webservices/skybot/',
+	catalogURL: 'skybotconesearch_query.php?-mime=text&-from=VisiOmatic&' +
+	 '-output=basic&-objFilter=111&-refsys=EQJ2000&' +
+	 '-ep={jd}&-loc={observer}&-ra={lng}&-dec={lat}&-bd={dlng}x{dlat}',
+	properties: ['Class', 'V', 'Position uncertainty', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>', 'Geocentric distance', 'Heliocentric distance'],
+	units: ['', '', '&#8243;', '&#8243;/h', '&#8243;/h', 'au', 'au'],
+	objectURL: 'https://vizier.unistra.fr/viz-bin/VizieR-5?-source=B/astorb/astorb&Name==={id}',
+	format: 'text',
+	draw: function (feature, latlng) {
+		const	prop = feature.properties.items,
+			djd =  (this.jd[1] - this.jd[0]) * 24.0,
+			clat = Math.abs(Math.cos(latlng.lat * Math.PI / 180.)),
+			invclat = clat > 0. ? 1. / clat : 0.001,
+			dlng = invclat * djd * prop[3] / 7200.,
+			dlat = djd * prop[4] / 7200.;
+
+		return polyline([
+			[latlng.lat - dlat, latlng.lng - dlng],
+			[latlng.lat + dlat, latlng.lng + dlng]
+		]);
+	},
+	style: function (feature) {
+		return {color: this.color, weight: 8};
+	},
+	toGeoJSON: function (str) {
+		// Check to see if the delimiter is defined. If not, then default to comma.
+		const	badreg = /#|No\s|^$/,
+			sexare = /^([-+]?)(\d+)\s(\d+)\s(\d+\.?\d*)/,
+			lines = str.split('\n'),
+			geo = {type: 'FeatureCollection', features: []};
+
+		for (var i in lines) {
+			var line = lines[i];
+			if (badreg.test(line) === false) {
+				var feature = {
+						type: 'Feature',
+						id: '',
+						properties: {
+							items: []
+						},
+						geometry: {
+							type: 'Point',
+							coordinates: [0.0, 0.0]
+						}
+					},
+					geometry = feature.geometry,
+					properties = feature.properties;
+
+				const	cell = line.split(' | ');
+				feature.id = cell[1];
+				ra = sexare.exec(cell[2]);
+				dec = sexare.exec(cell[3]);
+				geometry.coordinates = [
+					Number(ra[2]) * 15.0 +
+					Number(ra[3]) / 4.0 +
+					Number(ra[4]) / 240.0,
+					Number(dec[1] + '1') * (
+						Number(dec[2]) +
+						Number(dec[3]) / 60.0 +
+						Number(dec[4]) / 3600.0
+					)
+				];
+				properties.items.push(cell[4]);
+				properties.items.push(this.readProperty(cell[5]));
+				properties.items.push(this.readProperty(cell[6]));
+				const	items = cell.slice(8);
+				for (var j in items) {
+					properties.items.push(this.readProperty(items[j]));
+				}
+				geo.features.push(feature);
+			}
+		}
+		return geo;
+	}
+
 });
 

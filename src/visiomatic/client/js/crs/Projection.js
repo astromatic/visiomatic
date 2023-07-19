@@ -47,6 +47,12 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Latitude and longitude of the native pole.
 	 * @property {number[][]} pv
 	   Projection distortion terms on each axis (`PVi_j` FITS keyword values).
+	 * @property {number} npv
+	   Number of non-zero
+	 * @property {number[]} jd
+	   Julian Date for start and end of observation.
+	 * @property {number[]} obslatlng
+	   Latitude and longitude of observatory.
 	 * @property {number[][]} dataslice
 	   Start index, end index, and direction (+1 only) of the used section of
 	   the image data for each axis. The range notation follows the FITS
@@ -79,14 +85,16 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		ctype: {x: 'PIXEL', y: 'PIXEL'},
 		naxis: [256, 256],
 		crpix: [129, 129],
-		crval: [0.0, 0.0],							// (\delta_0, \alpha_0)
-		cd: [[1.0, 0.0], [0.0, 1.0]],
-		natpole: [90.0, 999.0],						// (\theta_p, \phi_p)
-		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
-		npv: 0
+		crval: [0., 0.],							// (\delta_0, \alpha_0)
+		cd: [[1., 0.], [0., 1.]],
+		natpole: [90., 999.],						// (\theta_p, \phi_p)
+		pv: [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+		     [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
+		npv: 0,
+		jd: [0., 0.],
+		obslatlng: [0., 0.]
 	},
 
 	/**
@@ -102,17 +110,18 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @returns {Projection} Instance of a projection.
 	 */
 	initialize: function (header, options) {
-		const	projparam = this._paramUpdate(this.defaultProjParam);
-
+		this._paramUpdate(this.defaultProjParam);
 		this.options = options;
-
 		this._readWCS(header);
+
 		// Override selected WCS parameters with options
 		// (including data slicing)
 		if (options) {
 			this._paramUpdate(options);
 		}
+		// Projection-dependent initializations
 		this._projInit();
+		projparam = this.projparam;
 		if (!projparam._pixelFlag) {
 			// Identify the native celestial coordinate system
 			switch (projparam.ctype.x.substr(0, 1)) {
@@ -132,14 +141,13 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			// true if world coordinates are equatorial.
 			this.equatorialFlag = !projparam.nativeCelSys ||
 				projparam._celsyscode == 'equatorial';
-			// true if a celestial system transformations are required.
+			// true if a celestial system transformation is required.
 			this.celSysConvFlag = !projparam.nativeCelSys &&
 				projparam._celsyscode !== 'equatorial';
 			if (this.celSysConvFlag) {
 				projparam._celsysmat = this._celsysmatInit(this.celsyscode);
 			}
 		}
-
 	},
 
 	/**
@@ -149,8 +157,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 * @private
 	 * @param {projParam} paramSrc
 	   Input projection parameters.
-	 * @returns {projParam}
-	   Reference to the internal projection parameter object.
 	 */
 	_paramUpdate: function (paramsrc) {
 
@@ -185,14 +191,23 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			projparam.pv[0] = paramsrc.pv[0].slice();
 			projparam.pv[1] = paramsrc.pv[1].slice();
 		}
-
-		if (paramsrc.dataslice && paramsrc.detslice) {
-			projparam.dataslice = paramsrc.dataslice;
-			projparam.detslice = paramsrc.detslice;
-			this._shiftWCS(projparam);
+		if (paramsrc.npv) {
+			projparam.npv = point(paramsrc.npv);
+		}
+		if (paramsrc.jd) {
+			projparam.jd = [paramsrc.jd[0], paramsrc.jd[1]];
+		}
+		if (paramsrc.obslatlng) {
+			projparam.obslatlng = [
+				paramsrc.obslatlng[0], paramsrc.obslatlng[1]
+			];
 		}
 
-		return projparam;
+		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice
+			: [[1, projparam.naxis[0], 1], [1, projparam.naxis[1], 1]];
+		if (paramsrc.detslice) {
+			projparam.detslice = paramsrc.detslice;
+		}
 	},
 
 	/**
@@ -233,6 +248,25 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		}
 		// Max number of PV terms involved (for any dimension)
 		projparam.npv = npv + 1;
+
+		// Time parameters
+		// Julian Date/Time at start of observing
+		if ((v = header['MJD-OBS']) || (v = header['MJDSTART'])) {
+			projparam.jd[0] = v + 2400000.5;
+		} else if ((v = header['DATE-OBS'])) {
+			// Decode DATE-OBS format: DD/MM/YY or YYYY-MM-DD
+			projparam.jd[0] = new Date(v).getTime() / 86400000. + 2440587.5;
+		}
+		if ((v = header['MJDEND'])) {
+			projparam.jd[1] = v + 2400000.5;
+		} else if ((v = header['EXPTIME'])) {
+			// Add exposure time to compute end JD
+			projparam.jd[1] = projparam.jd[0] + v / 86400.
+		}
+
+		// Observer's location
+		if ((v = header['LONGITUD'])) { projparam.obslatlng[1] = v; }
+		if ((v = header['LATITUDE'])) { projparam.obslatlng[0] = v; }
 	},
 
 	/**
@@ -383,11 +417,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	projparam = this.projparam,
 			detslice = projparam.detslice;
 		return detslice?
-			proj.project(
-				this.unproject(point(detslice[0][0], detslice[1][0]))
-			)._add(proj.project(
-				this.unproject(point(detslice[0][1], detslice[1][1]))))
-				._divideBy(2.0) :
+			(point(detslice[0][0], detslice[1][0])._add(
+				point(detslice[0][1], detslice[1][1])))._divideBy(2.0) :
 			point(
 				(projparam.naxis.x + 1.0) / 2.0,
 				(projparam.naxis.y + 1.0) / 2.0
@@ -570,6 +601,44 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	},
 
 	/**
+	 * Convert pixel coordinates to sliced (merged) coordinates.
+	 * @private
+	 * @param {leaflet.Point} pnt
+	   Pixel coordinates.
+	 * @returns {leaflet.Point}
+	   Sliced (merged) coordinates.
+	 */
+	_pixToMulti: function (pnt) {
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
+
+		return point([
+			(pnt.x - dataslice[0][0]) * detslice[0][2] + detslice[0][0],
+			(pnt.y - dataslice[1][0]) * detslice[1][2] + detslice[1][0]
+		]);
+	},
+
+
+	/**
+	 * Convert sliced (merged) coordinates to pixel coordinates.
+	 * @private
+	 * @param {leaflet.Point} pnt
+	   Sliced (merged) coordinates.
+	 * @returns {leaflet.Point}
+	   Pixel coordinates.
+	 */
+	_multiToPix: function (pnt) {
+		const	dataslice = this.projparam.dataslice,
+			detslice = this.projparam.detslice;
+
+		return point([
+			(pnt.x - detslice[0][0]) * detslice[0][2] + dataslice[0][0],
+			(pnt.y - detslice[1][0]) * detslice[1][2] + dataslice[1][0]
+		]);
+	},
+
+
+	/**
 	 * Invert the `CD` Jacobian matrix of the linear part of the de-projection.
 	 * @private
 	 * @param {number[][]} cd
@@ -581,22 +650,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		const	detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
 		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
-	},
-
-	/**
-	 * Invert the `PV` distortion polynomial of the de-projection.
-	 *
-	 * Currently valid only for small distortions.
-	 * @private
-	 * @param {number[][]} pv
-	   `PV` array of polynomial coefficients.
-	 * @param {number} npv
-	   Number of non-zero polynomial coefficients.
-	 * @returns {number[][]}
-	   array of coefficients from the pseudo inverse polynomial.
-	 */
-	_invertPV: function (pv, npv) {
-		return pv;
 	}
 });
 

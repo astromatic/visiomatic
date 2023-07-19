@@ -34,6 +34,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		objectURL: '/',
 		authenticate: 'false',
 		nmax: 10000,
+		format: 'text',
 		draw: undefined
 	},
 
@@ -93,6 +94,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 * @param {number} [options.nmax=10000]
 	   Maximum number of sources per query.
 
+	 * @param {string} [options.format='csv']
+	   Data format ('csv' or 'json')
+
 	 * @param {Catalog~drawCallback} [options.draw]
 	   Callback function called for drawing object. Defaults to a circle marker.
 
@@ -108,7 +112,8 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		}
 		this.url = this.serviceURL + this.catalogURL;
 		if (this.objectURL) {
-			this.objURL = this.serviceURL + this.objectURL;
+			this.objURL = this.objectURL.startsWith('http')?
+				this.objectURL : this.serviceURL + this.objectURL;
 		}		
 	},
 
@@ -120,9 +125,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 */
 	_csvToGeoJSON: function (str) {
 		// Check to see if the delimiter is defined. If not, then default to comma.
-		var badreg = new RegExp('#|--|objName|string|^$'),
-		 lines = str.split('\n'),
-		 geo = {type: 'FeatureCollection', features: []};
+		const	badreg = new RegExp('#|--|objName|string|^$'),
+			lines = str.split('\n'),
+			geo = {type: 'FeatureCollection', features: []};
 
 		for (var i in lines) {
 			var line = lines[i];
@@ -141,12 +146,11 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 					geometry = feature.geometry,
 					properties = feature.properties;
 
-				var cell = line.split(/[,;\t]/);
+				const	cell = line.split(/[,;\t]/);
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
-				var items = cell.slice(3),
-				    item;
+				const	items = cell.slice(3);
 				for (var j in items) {
 					properties.items.push(this.readProperty(items[j]));
 				}
@@ -163,20 +167,19 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	 * @return {number} Value in the cell.
 	 */
 	readProperty: function (item) {
-		var	fitem = parseFloat(item);
+		const	fitem = parseFloat(item);
 		return isNaN(fitem) ? '--' : fitem;
 	},
 
 	/**
-	 * @summary Convert CSV data to [GeoJSON]{@link https://geojson.org/}.
-	 * @desc Wrapper around private method
+	 * @summary Convert catalog data to [GeoJSON]{@link https://geojson.org/}.
+	 * @desc Defaults to a wrapper around private method
 	   [_csvToGeoJSON]{@link Catalog._csvToGeoJSON}.
-	 * @override
-	 * @param {string} str - CSV data.
+	 * @param {string|object} data - catalog data.
 	 * @return {object} GeoJSON object.
 	 */
-	toGeoJSON: function (str) {
-		return this._csvToGeoJSON(str);
+	toGeoJSON: function (data) {
+		return this._csvToGeoJSON(data);
 	},
 
 	/**
@@ -189,6 +192,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		var str = '<div>';
 		if (this.objURL) {
 			str += 'ID: <a href=\"' + Util.template(this.objURL, extend({
+				id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
@@ -197,11 +201,13 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		}
 		str += '<TABLE style="margin:auto;">' +
 		       '<TBODY style="vertical-align:top;text-align:left;">';
+		var	items = feature.properties.items;
 		for (var i in this.properties) {
 			if (this.propertyMask === undefined ||
 				this.propertyMask[i] === true) {
 				str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-				       '<TD>' + feature.properties.items[i].toString() + ' ';
+					'<TD>' + (typeof(items[i]) === 'number' ?
+					items[i].toPrecision(4) : items[i].toString()) + ' ';
 				if (this.units[i]) {
 					str += this.units[i];
 				}
@@ -210,7 +216,6 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		}
 		str += '</TBODY></TABLE>';
 		return str;
-
 	},
 
 	/**
@@ -225,6 +230,16 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		return circleMarker(latlng, {
 			radius: refmag ? this.magLim + 5 - refmag : 8
 		});
+	},
+
+	/**
+	 * Return drawing style for sources.
+	 * @override
+	 * @param {object} feature - Feature property of the source.
+	 * @return {leaflet.Path.options} Drawing style options.
+	 */
+	style: function (feature) {
+		return {color: this.color, weight: 2};
 	},
 
 	/**

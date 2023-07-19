@@ -7,6 +7,7 @@ Application module
 import io, logging, os, pickle, re
 from typing import List, Literal, Optional, Union
 
+import cv2
 from fastapi import FastAPI, Query, Request
 from fastapi import responses
 from fastapi.staticfiles import StaticFiles
@@ -53,7 +54,7 @@ def create_app() -> FastAPI:
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
-    tiles_path = config.settings["tiles_path"]
+    api_path = config.settings["api_path"]
     contrast = config.settings["contrast"]
     color_saturation = config.settings["color_saturation"]
     gamma = config.settings["gamma"]
@@ -106,7 +107,7 @@ def create_app() -> FastAPI:
     # Provide an endpoint for static files (such as js and css)
     app.mount(
         "/client",
-        StaticFiles(directory=os.path.join(package.root_dir, "client")),
+        StaticFiles(directory=os.path.join(package.src_dir, "client")),
         name="client"
     )
 
@@ -124,19 +125,26 @@ def create_app() -> FastAPI:
         logger.warning("De-activating documentation URL in built-in web client.")
         userdoc_url = ""
 
-
     # Instantiate templates
-    templates = Jinja2Templates(directory=os.path.join(package.root_dir, "templates"))
+    templates = Jinja2Templates(
+        directory=os.path.join(package.src_dir, "templates")
+    )
 
     # Prepare the RegExps
+	# JTL
     reg_jtl = r"^(\d+),(\d+)$"
     app.parse_jtl = re.compile(reg_jtl)
+	# MINMAX
     reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
         r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
         r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
     app.parse_minmax = re.compile(reg_minmax)
+	# MIX
     reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
     app.parse_mix = re.compile(reg_mix) 
+	# VAL
+    reg_val = r"^(\d+),(\d+)$"
+    app.parse_val = re.compile(reg_val)
 
     # Test endpoint
     @app.get("/random", tags=["services"])
@@ -163,7 +171,7 @@ def create_app() -> FastAPI:
         return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
-    @app.get(tiles_path, tags=["services"])
+    @app.get(api_path, tags=["services"])
     async def read_visio(
             request: Request,
             FIF: str = Query(
@@ -229,6 +237,13 @@ def create_app() -> FastAPI:
                 min_length=7,
                 max_length=2000,
                 regex=reg_mix
+                ),
+            VAL: str = Query(
+                None,
+                title="Pixel value(s)",
+                min_length=3,
+                max_length=11,
+                regex=reg_val
                 )
             ):
         """
@@ -241,6 +256,7 @@ def create_app() -> FastAPI:
             containing the JPEG image.
         """
         if FIF == None:
+			# Just return the banner describing the service
             return templates.TemplateResponse(
                 banner,
                 {
@@ -271,21 +287,6 @@ def create_app() -> FastAPI:
                 quality=quality,
                 tilesize=tile_size
             )
-        '''
-        if FIF in app.tiled:
-            tiled = pickle.load(open(f"{FIF}_{worker_id}.p", "rb"))
-            tiled.tiles = app.tiles
-        else:
-            app.tiled[FIF] = (tiled := Tiled(FIF))
-            app.tiles = tiled.tiles
-            tiled.tiles = None
-            tiled.data = None
-            for image in tiled.images:
-                image.data = None
-            pickle.dump(tiled, open(f"{FIF}_{worker_id}.p", "wb"), protocol=5)
-            tiled.tiles = app.tiles
-        '''
-
         if obj != None:
             if share:
                 lock.release()
@@ -293,7 +294,20 @@ def create_app() -> FastAPI:
         elif INFO != None:
             if share:
                 lock.release()
-            return responses.JSONResponse(content=jsonable_encoder(tiled.get_model()))
+            return responses.JSONResponse(
+            	content=jsonable_encoder(
+            		tiled.get_model()
+            	)
+            )
+        elif VAL != None:
+            if share:
+                lock.release()
+            val = app.parse_val.findall(VAL)[0]
+            return responses.JSONResponse(
+            	content=jsonable_encoder(
+            		tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
+            	)
+            )
         if JTL == None:
             if share:
                 lock.release()
@@ -355,7 +369,7 @@ def create_app() -> FastAPI:
             {
                 "request": request,
                 "root_path": request.scope.get("root_path"),
-                "tiles_path": tiles_path,
+                "api_path": api_path,
                 "doc_url": userdoc_url,
                 "image": image,
                 "package": package.title

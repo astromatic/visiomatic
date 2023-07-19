@@ -69,7 +69,7 @@ export const VUtil = {
 		}
 		httpRequest.open('GET', url);
 
-		// Send Credrentials
+		// Send Credentials
 		if ((context) && (context.options.credentials)) {
 			httpRequest.withCredentials = true;
 
