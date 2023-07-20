@@ -1061,15 +1061,15 @@
         }();
         var svg$1 = !!(document.createElementNS && svgCreate("svg").createSVGRect);
         var inlineSvg = !!svg$1 && function() {
-          var div = document.createElement("div");
-          div.innerHTML = "<svg/>";
-          return (div.firstChild && div.firstChild.namespaceURI) === "http://www.w3.org/2000/svg";
+          var div2 = document.createElement("div");
+          div2.innerHTML = "<svg/>";
+          return (div2.firstChild && div2.firstChild.namespaceURI) === "http://www.w3.org/2000/svg";
         }();
         var vml = !svg$1 && function() {
           try {
-            var div = document.createElement("div");
-            div.innerHTML = '<v:shape adj="1"/>';
-            var shape = div.firstChild;
+            var div2 = document.createElement("div");
+            div2.innerHTML = '<v:shape adj="1"/>';
+            var shape = div2.firstChild;
             shape.style.behavior = "url(#default#VML)";
             return shape && typeof shape.adj === "object";
           } catch (e) {
@@ -6015,19 +6015,19 @@
             className: "leaflet-div-icon"
           },
           createIcon: function(oldIcon) {
-            var div = oldIcon && oldIcon.tagName === "DIV" ? oldIcon : document.createElement("div"), options2 = this.options;
+            var div2 = oldIcon && oldIcon.tagName === "DIV" ? oldIcon : document.createElement("div"), options2 = this.options;
             if (options2.html instanceof Element) {
-              empty(div);
-              div.appendChild(options2.html);
+              empty(div2);
+              div2.appendChild(options2.html);
             } else {
-              div.innerHTML = options2.html !== false ? options2.html : "";
+              div2.innerHTML = options2.html !== false ? options2.html : "";
             }
             if (options2.bgPos) {
               var bgPos = toPoint(options2.bgPos);
-              div.style.backgroundPosition = -bgPos.x + "px " + -bgPos.y + "px";
+              div2.style.backgroundPosition = -bgPos.x + "px " + -bgPos.y + "px";
             }
-            this._setIconStyles(div, "icon");
-            return div;
+            this._setIconStyles(div2, "icon");
+            return div2;
           },
           createShadow: function() {
             return null;
@@ -8581,16 +8581,16 @@
             return fn;
           }
           function assert(fn) {
-            var div = document3.createElement("div");
+            var div2 = document3.createElement("div");
             try {
-              return !!fn(div);
+              return !!fn(div2);
             } catch (e) {
               return false;
             } finally {
-              if (div.parentNode) {
-                div.parentNode.removeChild(div);
+              if (div2.parentNode) {
+                div2.parentNode.removeChild(div2);
               }
-              div = null;
+              div2 = null;
             }
           }
           function addHandle(attrs, handler) {
@@ -8662,17 +8662,17 @@
               }
             }
             documentIsHTML = !isXML(doc);
-            support2.attributes = assert(function(div) {
-              div.className = "i";
-              return !div.getAttribute("className");
+            support2.attributes = assert(function(div2) {
+              div2.className = "i";
+              return !div2.getAttribute("className");
             });
-            support2.getElementsByTagName = assert(function(div) {
-              div.appendChild(doc.createComment(""));
-              return !div.getElementsByTagName("*").length;
+            support2.getElementsByTagName = assert(function(div2) {
+              div2.appendChild(doc.createComment(""));
+              return !div2.getElementsByTagName("*").length;
             });
             support2.getElementsByClassName = rnative.test(doc.getElementsByClassName);
-            support2.getById = assert(function(div) {
-              docElem2.appendChild(div).id = expando;
+            support2.getById = assert(function(div2) {
+              docElem2.appendChild(div2).id = expando;
               return !doc.getElementsByName || !doc.getElementsByName(expando).length;
             });
             if (support2.getById) {
@@ -8724,42 +8724,42 @@
             rbuggyMatches = [];
             rbuggyQSA = [];
             if (support2.qsa = rnative.test(doc.querySelectorAll)) {
-              assert(function(div) {
-                docElem2.appendChild(div).innerHTML = "<a id='" + expando + "'></a><select id='" + expando + "-\f]' msallowcapture=''><option selected=''></option></select>";
-                if (div.querySelectorAll("[msallowcapture^='']").length) {
+              assert(function(div2) {
+                docElem2.appendChild(div2).innerHTML = "<a id='" + expando + "'></a><select id='" + expando + "-\f]' msallowcapture=''><option selected=''></option></select>";
+                if (div2.querySelectorAll("[msallowcapture^='']").length) {
                   rbuggyQSA.push("[*^$]=" + whitespace + `*(?:''|"")`);
                 }
-                if (!div.querySelectorAll("[selected]").length) {
+                if (!div2.querySelectorAll("[selected]").length) {
                   rbuggyQSA.push("\\[" + whitespace + "*(?:value|" + booleans + ")");
                 }
-                if (!div.querySelectorAll("[id~=" + expando + "-]").length) {
+                if (!div2.querySelectorAll("[id~=" + expando + "-]").length) {
                   rbuggyQSA.push("~=");
                 }
-                if (!div.querySelectorAll(":checked").length) {
+                if (!div2.querySelectorAll(":checked").length) {
                   rbuggyQSA.push(":checked");
                 }
-                if (!div.querySelectorAll("a#" + expando + "+*").length) {
+                if (!div2.querySelectorAll("a#" + expando + "+*").length) {
                   rbuggyQSA.push(".#.+[+~]");
                 }
               });
-              assert(function(div) {
+              assert(function(div2) {
                 var input = doc.createElement("input");
                 input.setAttribute("type", "hidden");
-                div.appendChild(input).setAttribute("name", "D");
-                if (div.querySelectorAll("[name=d]").length) {
+                div2.appendChild(input).setAttribute("name", "D");
+                if (div2.querySelectorAll("[name=d]").length) {
                   rbuggyQSA.push("name" + whitespace + "*[*^$|!~]?=");
                 }
-                if (!div.querySelectorAll(":enabled").length) {
+                if (!div2.querySelectorAll(":enabled").length) {
                   rbuggyQSA.push(":enabled", ":disabled");
                 }
-                div.querySelectorAll("*,:x");
+                div2.querySelectorAll("*,:x");
                 rbuggyQSA.push(",.*:");
               });
             }
             if (support2.matchesSelector = rnative.test(matches = docElem2.matches || docElem2.webkitMatchesSelector || docElem2.mozMatchesSelector || docElem2.oMatchesSelector || docElem2.msMatchesSelector)) {
-              assert(function(div) {
-                support2.disconnectedMatch = matches.call(div, "div");
-                matches.call(div, "[s!='']:x");
+              assert(function(div2) {
+                support2.disconnectedMatch = matches.call(div2, "div");
+                matches.call(div2, "[s!='']:x");
                 rbuggyMatches.push("!=", pseudos);
               });
             }
@@ -9523,9 +9523,9 @@
           support2.sortDetached = assert(function(div1) {
             return div1.compareDocumentPosition(document3.createElement("div")) & 1;
           });
-          if (!assert(function(div) {
-            div.innerHTML = "<a href='#'></a>";
-            return div.firstChild.getAttribute("href") === "#";
+          if (!assert(function(div2) {
+            div2.innerHTML = "<a href='#'></a>";
+            return div2.firstChild.getAttribute("href") === "#";
           })) {
             addHandle("type|href|height|width", function(elem, name, isXML2) {
               if (!isXML2) {
@@ -9533,10 +9533,10 @@
               }
             });
           }
-          if (!support2.attributes || !assert(function(div) {
-            div.innerHTML = "<input/>";
-            div.firstChild.setAttribute("value", "");
-            return div.firstChild.getAttribute("value") === "";
+          if (!support2.attributes || !assert(function(div2) {
+            div2.innerHTML = "<input/>";
+            div2.firstChild.setAttribute("value", "");
+            return div2.firstChild.getAttribute("value") === "";
           })) {
             addHandle("value", function(elem, name, isXML2) {
               if (!isXML2 && elem.nodeName.toLowerCase() === "input") {
@@ -9544,8 +9544,8 @@
               }
             });
           }
-          if (!assert(function(div) {
-            return div.getAttribute("disabled") == null;
+          if (!assert(function(div2) {
+            return div2.getAttribute("disabled") == null;
           })) {
             addHandle(booleans, function(elem, name, isXML2) {
               var val;
@@ -10414,14 +10414,14 @@
         };
         var rcheckableType = /^(?:checkbox|radio)$/i;
         (function() {
-          var fragment = document2.createDocumentFragment(), div = fragment.appendChild(document2.createElement("div")), input = document2.createElement("input");
+          var fragment = document2.createDocumentFragment(), div2 = fragment.appendChild(document2.createElement("div")), input = document2.createElement("input");
           input.setAttribute("type", "radio");
           input.setAttribute("checked", "checked");
           input.setAttribute("name", "t");
-          div.appendChild(input);
-          support.checkClone = div.cloneNode(true).cloneNode(true).lastChild.checked;
-          div.innerHTML = "<textarea>x</textarea>";
-          support.noCloneChecked = !!div.cloneNode(true).lastChild.defaultValue;
+          div2.appendChild(input);
+          support.checkClone = div2.cloneNode(true).cloneNode(true).lastChild.checked;
+          div2.innerHTML = "<textarea>x</textarea>";
+          support.noCloneChecked = !!div2.cloneNode(true).lastChild.defaultValue;
         })();
         var strundefined = "undefined";
         support.focusinBubbles = "onfocusin" in window2;
@@ -11394,20 +11394,20 @@
           };
         }
         (function() {
-          var pixelPositionVal, boxSizingReliableVal, docElem2 = document2.documentElement, container = document2.createElement("div"), div = document2.createElement("div");
-          if (!div.style) {
+          var pixelPositionVal, boxSizingReliableVal, docElem2 = document2.documentElement, container = document2.createElement("div"), div2 = document2.createElement("div");
+          if (!div2.style) {
             return;
           }
-          div.style.backgroundClip = "content-box";
-          div.cloneNode(true).style.backgroundClip = "";
-          support.clearCloneStyle = div.style.backgroundClip === "content-box";
+          div2.style.backgroundClip = "content-box";
+          div2.cloneNode(true).style.backgroundClip = "";
+          support.clearCloneStyle = div2.style.backgroundClip === "content-box";
           container.style.cssText = "border:0;width:0;height:0;top:0;left:-9999px;margin-top:1px;position:absolute";
-          container.appendChild(div);
+          container.appendChild(div2);
           function computePixelPositionAndBoxSizingReliable() {
-            div.style.cssText = "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:block;margin-top:1%;top:1%;border:1px;padding:1px;width:4px;position:absolute";
-            div.innerHTML = "";
+            div2.style.cssText = "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:block;margin-top:1%;top:1%;border:1px;padding:1px;width:4px;position:absolute";
+            div2.innerHTML = "";
             docElem2.appendChild(container);
-            var divStyle = window2.getComputedStyle(div, null);
+            var divStyle = window2.getComputedStyle(div2, null);
             pixelPositionVal = divStyle.top !== "1%";
             boxSizingReliableVal = divStyle.width === "4px";
             docElem2.removeChild(container);
@@ -11425,14 +11425,14 @@
                 return boxSizingReliableVal;
               },
               reliableMarginRight: function() {
-                var ret, marginDiv = div.appendChild(document2.createElement("div"));
-                marginDiv.style.cssText = div.style.cssText = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;margin:0;border:0;padding:0";
+                var ret, marginDiv = div2.appendChild(document2.createElement("div"));
+                marginDiv.style.cssText = div2.style.cssText = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;margin:0;border:0;padding:0";
                 marginDiv.style.marginRight = marginDiv.style.width = "0";
-                div.style.width = "1px";
+                div2.style.width = "1px";
                 docElem2.appendChild(container);
                 ret = !parseFloat(window2.getComputedStyle(marginDiv, null).marginRight);
                 docElem2.removeChild(container);
-                div.removeChild(marginDiv);
+                div2.removeChild(marginDiv);
                 return ret;
               }
             });
@@ -17950,16 +17950,16 @@
         var rtagName = /<([a-z][^\/\0>\x20\t\r\n\f]*)/i;
         var rscriptType = /^$|^module$|\/(?:java|ecma)script/i;
         (function() {
-          var fragment = document2.createDocumentFragment(), div = fragment.appendChild(document2.createElement("div")), input = document2.createElement("input");
+          var fragment = document2.createDocumentFragment(), div2 = fragment.appendChild(document2.createElement("div")), input = document2.createElement("input");
           input.setAttribute("type", "radio");
           input.setAttribute("checked", "checked");
           input.setAttribute("name", "t");
-          div.appendChild(input);
-          support.checkClone = div.cloneNode(true).cloneNode(true).lastChild.checked;
-          div.innerHTML = "<textarea>x</textarea>";
-          support.noCloneChecked = !!div.cloneNode(true).lastChild.defaultValue;
-          div.innerHTML = "<option></option>";
-          support.option = !!div.lastChild;
+          div2.appendChild(input);
+          support.checkClone = div2.cloneNode(true).cloneNode(true).lastChild.checked;
+          div2.innerHTML = "<textarea>x</textarea>";
+          support.noCloneChecked = !!div2.cloneNode(true).lastChild.defaultValue;
+          div2.innerHTML = "<option></option>";
+          support.option = !!div2.lastChild;
         })();
         var wrapMap = {
           thead: [1, "<table>", "</table>"],
@@ -18865,33 +18865,33 @@
         );
         (function() {
           function computeStyleTests() {
-            if (!div) {
+            if (!div2) {
               return;
             }
             container.style.cssText = "position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0";
-            div.style.cssText = "position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%";
-            documentElement.appendChild(container).appendChild(div);
-            var divStyle = window2.getComputedStyle(div);
+            div2.style.cssText = "position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%";
+            documentElement.appendChild(container).appendChild(div2);
+            var divStyle = window2.getComputedStyle(div2);
             pixelPositionVal = divStyle.top !== "1%";
             reliableMarginLeftVal = roundPixelMeasures(divStyle.marginLeft) === 12;
-            div.style.right = "60%";
+            div2.style.right = "60%";
             pixelBoxStylesVal = roundPixelMeasures(divStyle.right) === 36;
             boxSizingReliableVal = roundPixelMeasures(divStyle.width) === 36;
-            div.style.position = "absolute";
-            scrollboxSizeVal = roundPixelMeasures(div.offsetWidth / 3) === 12;
+            div2.style.position = "absolute";
+            scrollboxSizeVal = roundPixelMeasures(div2.offsetWidth / 3) === 12;
             documentElement.removeChild(container);
-            div = null;
+            div2 = null;
           }
           function roundPixelMeasures(measure) {
             return Math.round(parseFloat(measure));
           }
-          var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal, reliableTrDimensionsVal, reliableMarginLeftVal, container = document2.createElement("div"), div = document2.createElement("div");
-          if (!div.style) {
+          var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal, reliableTrDimensionsVal, reliableMarginLeftVal, container = document2.createElement("div"), div2 = document2.createElement("div");
+          if (!div2.style) {
             return;
           }
-          div.style.backgroundClip = "content-box";
-          div.cloneNode(true).style.backgroundClip = "";
-          support.clearCloneStyle = div.style.backgroundClip === "content-box";
+          div2.style.backgroundClip = "content-box";
+          div2.cloneNode(true).style.backgroundClip = "";
+          support.clearCloneStyle = div2.style.backgroundClip === "content-box";
           jQuery5.extend(support, {
             boxSizingReliable: function() {
               computeStyleTests();
@@ -30757,8 +30757,8 @@
       return button;
     },
     _addRadioButton: function(className, parent, value, checked, title = void 0, fn = void 0) {
-      const button = import_leaflet10.DomUtil.create("input", className, parent);
-      button.type = "radio";
+      const label = import_leaflet10.DomUtil.create("label", className, parent), button = import_leaflet10.DomUtil.create("input", className, label);
+      div = import_leaflet10.DomUtil.create("div", className, button), button.type = "radio";
       button.name = className;
       button.value = value;
       button.checked = checked;
@@ -30767,7 +30767,6 @@
           fn(value);
         }, this);
       }
-      const label = import_leaflet10.DomUtil.create("label", className, parent);
       label.htmlFor = button.id = className + "-" + value;
       if (title) {
         label.title = title;
@@ -30775,7 +30774,7 @@
       return button;
     },
     _addSelectMenu: function(className, parent, items, disabled = void 0, selected = void 0, title = void 0, fn = void 0) {
-      const div = import_leaflet10.DomUtil.create("div", className, parent), select = import_leaflet10.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [];
+      const div2 = import_leaflet10.DomUtil.create("div", className, parent), select = import_leaflet10.DomUtil.create("select", className, div2), choose = document.createElement("option"), opt = select.opt = [];
       choose.text = "choose";
       choose.disabled = true;
       if (!selected || selected < 0) {
@@ -30820,7 +30819,7 @@
         import_leaflet10.DomEvent.on(select, "change keyup", fn, this);
       }
       if (title) {
-        div.title = title;
+        div2.title = title;
       }
       return select;
     },

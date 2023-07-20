@@ -7,6 +7,50 @@
 #	                            Chiara Marmo - Paris-Saclay,
 #	                            Ruven Pillay - C2RMF/CNRS
 */
+
+:light {
+	--background-color1: rgba(255, 255, 255, 1);
+	--background-color2: rgba(244, 244, 244, 1);
+	--background-color3: rgba(228, 228, 228, 1);
+	--background-color4: rgba(80, 80, 80, 1);
+	--color1: rgba(80, 80, 80, 1);
+	--color2: rgba(48, 48, 48, 1);
+	--color2: rgba(0, 0, 0, 1);
+	--color-on: rgba(208, 0, 0, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.2);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+	--icon-filter: contrast(200%);
+	--icon-filter-hover: blur(5px);
+	--icon-filter-select: none;
+}
+
+:root {
+	--icon-background-color: rgba(50, 50, 50, 1);
+	--icon-color: rgba(180, 180, 180, 1);
+	--icon-color-hover: rgba(240, 240, 240, 1);
+	--icon-background-color-checked: rgba(180, 180, 180, 1);
+	--icon-color-checked: rgba(50, 50, 50, 1);
+	--background-color1: rgba(40, 40, 40, 1);
+	--background-color2: rgba(80, 80, 80, 1);
+	--background-color3: rgba(200, 200, 200, 1);
+	--background-color4: rgba(80, 80, 80, 1);
+	--color1: rgba(230, 230, 230, 1);
+	--color2: rgba(240, 240, 240, 1);
+	--color2: rgba(255, 255, 255, 1);
+	--color-on: rgba(208, 0, 0, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.5);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+	--icon-filter: none;
+	--icon-filter-hover: blur(5px);
+	--icon-filter-select: none;
+}
+
 .leaflet-container {
   touch-action: none;
 }
@@ -17,7 +61,7 @@
 
 @keyframes flash {
 	0%   {background-color: #F4F4F4;}
-	10%   {background-color: #505050;}
+	10%   {background-color: var(--background-color4);}
 	100% {background-color: #F4F4F4;}
 }
 
@@ -29,6 +73,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%% Basic Leaflet Controls %%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+.leaflet-left .leaflet-control {
+	margin-left: 5px;
+	border: none;
+}
 /* Left control bar */
 .leaflet-bar a {
 	width: 32px!important;
@@ -36,26 +84,31 @@
 }
 
 .leaflet-bar a:hover {
-	width: 32px;
-	height: 32px;
+	background-color: var(--icon-color-hover) !important;
+	color: var(--icon-color-hover) !important;
+}
+
+.leaflet-control-zoom {
+	background-color: var(--icon-background-color);
 }
 
 .leaflet-control-zoom-in {
-	background-image: url(../images/icon-magnifyplus.svg);
-	color: rgba(255,255,255,0) !important;
+	background-color: var(--icon-color) !important;
+	mask-image: url(../images/icon-magnifyplus.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
 
 .leaflet-control-zoom-out {
-	background-image: url(../images/icon-magnifyminus.svg);
-	color: rgba(255,255,255,0) !important;
+	background-color: var(--icon-color) !important;
+	mask-image: url(../images/icon-magnifyminus.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
-
-.leaflet-left .leaflet-control {
-	margin-left: 5px;
-	border: none;
-}
 
 .leaflet-top.leaflet-left {
 	z-index: 2000;	/* Make sure it comes on top of other controls areas */
@@ -86,8 +139,8 @@ a {
 
 .visiomatic-control-expanded {
 	padding: 6px 6px 6px 6px;
-	color: #333;
-	background: #fff;
+	color: var(--color2);
+	background: var(--background-color1);
 	z-index:10;
 }
 
@@ -130,62 +183,68 @@ a {
 	vertical-align: bottom;
 	text-align: center;
 	line-height: 27px;
-	color: #505050;
+	color: var(--color1);
 	font-size: 14px;
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing:border-box;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .visiomatic-control-button:hover {
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 	border-width: 1px;
-	border-color: black;
+	border-color: var(--border-color);
 }
 
 .visiomatic-control-button:active  {
-	background-color: #eee;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	background-color: var(--background-color3);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 /*------------------------------- Radio button ------------------------------*/
 
 .visiomatic-control-radios {
     margin: 2px 0px -2px 0px;
+    float: left;
 }
 
 input.visiomatic-control-radio {
-    display: none;
-}
-
-label.visiomatic-control-radio {
-	background-color: #FFFFFF;
-	background-repeat: no-repeat;
-	background-position: center;
+    appearance: none;
+    background-color: var(--icon-background-color);
 	display: inline-block;
 	cursor: pointer;
 	position: relative;
 	padding: 0px;
-	width:32px;
-	height:31px;
-	color: #505050;
 	font-size: 12px;
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing:border-box;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
-.visiomatic-control-radio:hover {
-	background-color: #F4F4F4;
+div.visiomatic-control-radio {
+	background-color: var(--icon-color);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	width:32px;
+	height:31px;
+}
+
+div.visiomatic-control-radio:hover {
+	background-color: var(--icon-color-hover);
 	border-width: 1px;
-	border-color: black;
+	border-color: var(--border-color);
 }
 
-input.visiomatic-control-radio:checked + label {
-	background-color: #eee;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+input.visiomatic-control-radio:checked {
+	background-color: var(--icon-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+input.visiomatic-control-radio:checked > div {
+	background-color: var(--icon-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 /*------------------------------- Select menu -------------------------------*/
@@ -197,12 +256,13 @@ div.visiomatic-control-select {
 
 select.visiomatic-control-select {
 	height: 32px;
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
+	color: var(--color1);
 	vertical-align: top;
 	margin: 2px;
 	padding: 4px 4px;
 	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 0px;
 	width: 100%;
 }
@@ -213,7 +273,7 @@ select.visiomatic-control-select {
 }
 
 .visiomatic-control-select:hover {
-	background-color: #E4E4E4;
+	background-color: var(--background-color3);
 }
 
 /*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
@@ -229,9 +289,10 @@ select.visiomatic-control-select {
 	line-height: 100%;
 	width: 100%;
 	height: 32px;
-	background-color: #F4F4F4;
+	color: var(--color1);
+	background-color: var(--background-color2);
 	padding: 2px 6px 2px 6px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px;
 	box-sizing : border-box;
 	border-width: 0px;
@@ -239,7 +300,7 @@ select.visiomatic-control-select {
 }
 
 .leaflet-spinbox-input:hover,.leaflet-spinbox-input:focus {
-	background-color: #E4E4E4;
+	background-color: var(--background-color3);
 }
 
 .leaflet-spinbox-down {
@@ -249,11 +310,11 @@ select.visiomatic-control-select {
 	display: inline-block;
 	width: 29px;
 	height: 29px;
-	background-color: #FFFFFF;
-	background-image: url(../images/icon-minus.svg);
-	background-repeat: no-repeat;
-	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: var(--icon-color);
+	mask-image: url(../images/icon-minus.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 0px;
 	cursor: pointer;
 }
@@ -265,17 +326,17 @@ select.visiomatic-control-select {
 	display: inline-block;
 	width: 29px;
 	height: 29px;
-	background-color: #FFFFFF;
-	background-image: url(../images/icon-plus.svg);
-	background-repeat: no-repeat;
-	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: var(--icon-color);
+	mask-image: url(../images/icon-plus.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 0px 4px 4px 0px;
 	cursor: pointer;
 }
 
 .leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
-	background-color: #F4F4F4;
+	background-color: var(--icon-color-hover);
 }
 
 /*----------------- Flip switch widget (original proto.io) ------------------*/
@@ -310,28 +371,28 @@ label.leaflet-flipswitch {
 	padding: 0;
 	line-height: 32px;
 	font-size: 14px;
-	color: white;
+	color: var(--background-color1);
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing: border-box;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 .leaflet-flipswitch-inner:before {
 	content: "ON";
 	padding-left: 15px;
-	background-color: #d00000;
-	color: #FFFFFF;
+	background-color: var(--color-on);
+	color: var(--background-color1);
 }
 .leaflet-flipswitch-inner:after {
 	content: "OFF";
 	padding-right: 12px;
-	color: #505050;
+	color: var(--color1);
 	text-align: right;
 }
 .leaflet-flipswitch-button {
 	display: block;
 	margin: 2px;
-	background: #FFFFFF;
+	background: var(--background-color2);
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
@@ -339,12 +400,12 @@ label.leaflet-flipswitch {
 	right: 50%;
 	border: 0;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	transition: all 0.2s ease-in 0s;
 	transition: background none;
 }
 .leaflet-flipswitch-button:hover {
-	background: #F4F4F4;
+	background-color: var(--background-color3);
 }
 input.leaflet-flipswitch:checked + label .leaflet-flipswitch-inner {
 	margin-left: 0;
@@ -372,7 +433,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 	cursor: pointer;
 }
 .sp-preview-inner {
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 .sp-dd {
@@ -390,7 +451,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 .visiomatic-control-layer {
 	display: table-row;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .visiomatic-control-layerswitch {
@@ -439,13 +500,13 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 	background-repeat: no-repeat;
 	background-position: center center;
 	width: 27px;
-  border: 1px solid #a0a0a0 !important;
+	border: 1px solid var(--border-color) !important;
 	border-radius: 0px 4px 4px 0px;
 	cursor: pointer;
 }
 
 .visiomatic-control-trash:hover {
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -467,22 +528,50 @@ a#visiomatic-channel-toggle {
 
 /*--------------------------------- Mixing mode -----------------------------*/
 
-input#visiomatic-control-radio-mono + label {
-	background-image: url(../images/icon-palette.svg);
+input#visiomatic-control-radio-mono {
 	border-radius: 4px 0px 0px 4px;
 }
 
-input#visiomatic-control-radio-color + label {
+input#visiomatic-control-radio-mono > div {
+	mask-image: url(../images/icon-palette.svg);
+}
+
+input#visiomatic-control-radio-color {
 	margin: 0px 0px 0px 2px;
-	background-image: url(../images/icon-stack.svg);
 	border-radius: 0px 4px 4px 0px;
+}
+
+input#visiomatic-control-radio-color > div{
+	mask-image: url(../images/icon-stack.svg);
 }
 
 /*---------------------------------- Color map ------------------------------*/
 
-input.leaflet-cmap {
-    display: none;
+.visiomatic-control-cmaps {
+    margin: 2px 0px -2px 0px;
+    float: left;
 }
+
+input.leaflet-cmap {
+    appearance: none;
+    background-color: var(--icon-background-color);
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	padding: 0px;
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	margin: 0px 1px 0px 1px;
+}
+
+div.leaflet-cmap {
+	background-color: var(--icon-background-color);
+	background-repeat: no-repeat;
+	background-position: center;
+	width:32px;
+	height:32px;
+}
+
 
 label.leaflet-cmap {
 	display: inline-block;
@@ -490,30 +579,28 @@ label.leaflet-cmap {
 	position: relative;
 	width:32px;
 	height:32px;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
-.leaflet-cmap:hover {
-	box-shadow: 0px 0px 2px black inset;
-	border-width: 1px;
-	border-color: black;
+div.leaflet-cmap:hover {
+	box-shadow: 2px 2px 4px var(--shadow-color) inset;
 }
 
-input.leaflet-cmap:checked + label {
-	box-shadow: 1px 1px 2px black inset;
+input.leaflet-cmap:checked > div {
+	box-shadow: 2px 2px 4px var(--shadow-color) inset;
 }
 
-input#leaflet-cmap-grey + label {
+input#leaflet-cmap-grey > div {
 	background-image: url(../images/icon-grey.svg);
 	border-radius: 4px 0px 0px 4px;
 }
-input#leaflet-cmap-jet + label {
+input#leaflet-cmap-jet > div {
 	background-image: url(../images/icon-jet.svg);
 }
-input#leaflet-cmap-cold + label {
+input#leaflet-cmap-cold > div {
 	background-image: url(../images/icon-cold.svg);
 }
-input#leaflet-cmap-hot + label {
+input#leaflet-cmap-hot > div {
 	background-image: url(../images/icon-hot.svg);
 	border-radius: 0px 4px 4px 0px;
 }
@@ -543,7 +630,7 @@ a#visiomatic-control-button-colormix-auto {
 .visiomatic-control-channel {
 	height: 28px;
 	display: table-row;
-	box-shadow: -1px -1px 2px #a0a0a0 inset;
+	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 	border-radius: 4px;
 	cursor: pointer;
 }
@@ -552,7 +639,7 @@ a#visiomatic-control-button-colormix-auto {
 	display: table-cell;
 	vertical-align: middle;
 	width: 27px;
-	box-shadow: 0px -1px 2px #a0a0a0 inset;
+	box-shadow: 0px -1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 
@@ -565,7 +652,7 @@ a#visiomatic-control-button-colormix-auto {
 }
 
 .visiomatic-control-chanlabel:hover {
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 }
 
 
@@ -616,7 +703,7 @@ a#visiomatic-catalog-toggle {
 
 #visiomatic-control-button-catalog:after {
 	content: 'GO';
-	color: #505050;
+	color: var(--color1);
 }
 
 #leaflet-visiomaticcatalog div.visiomatic-control-select {
@@ -680,7 +767,7 @@ a#visiomatic-region-toggle {
 
 #visiomatic-control-button-region:after {
 	content: 'GO';
-	color: #505050;
+	color: var(--color1);
 }
 
 #leaflet-visiomaticregion div.visiomatic-control-select {
@@ -713,7 +800,7 @@ a#visiomatic-profile-toggle {
 
 #visiomatic-control-button-start:after {
 	content: 'START';
-	color: #505050;
+	color: var(--color1);
 }
 
 #visiomatic-control-button-end {
@@ -725,7 +812,7 @@ a#visiomatic-profile-toggle {
 
 #visiomatic-control-button-end:after {
 	content: 'END';
-	color: #505050;
+	color: var(--color1);
 }
 
 #visiomatic-control-button-spectrum {
@@ -737,7 +824,7 @@ a#visiomatic-profile-toggle {
 
 #visiomatic-control-button-spectrum:after {
 	content: 'GO';
-	color: #505050;
+	color: var(--color1);
 }
 
 /*---------------------------------- Plots ----------------------------------*/
@@ -753,13 +840,13 @@ a#visiomatic-profile-toggle {
 
 .jqplot-highlighter-tooltip, .jqplot-canvasOverlay-tooltip {
 	z-index: 2000;
-	background: rgba(255,255,255,0.75);
+	background: var(--background-color1);
 	margin-bottom: 4px;
 }
 
 table.jqplot-table-legend, table.jqplot-cursor-legend {
 	z-index: 2000;
-	background-color: rgba(255,255,255,0.75);
+	background-color: var(--background-color1);
 }
 
 
@@ -850,12 +937,11 @@ iframe.visiomatic-control-doc {
 	height: 36px;
 	box-sizing: border-box;
 	padding: 2px 8px 2px 8px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 #visiomatic-control-button-home {
 	background-image: url(../images/icon-home.svg);
-	color: yellow;
 	background-repeat: no-repeat;
 	background-position: center;
 	width: 32px;
@@ -901,41 +987,41 @@ iframe.visiomatic-control-doc {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-coords-dialog {
-	background-color: #ffffff;
-	color: #505050;
+	background-color: var(--background-color1);
+	color: var(--color1);
 	border-radius: 4px;
 	font-size: 1.2em;
 }
 
 .leaflet-control-coords-ext {
 	height: 32px;
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 	vertical-align: top;
 	margin: 0px;
 	padding: 0px 0px 0px 4px;
 	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 
 .leaflet-control-coords-ext:hover,.leaflet-control-coords-ext:focus {
-	background-color: #E4E4E4;
+	background-color: var(--background-color3);
 }
 
 .leaflet-control-coords-select {
 	height: 32px;
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 	vertical-align: top;
 	margin: 0px;
 	text-align: center;
 	padding: 0px 0px 0px 4px;
 	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 
 .leaflet-control-coords-select:hover,.leaflet-control-coords-select:focus {
-	background-color: #E4E4E4;
+	background-color: var(--background-color3);
 }
 
 .leaflet-control-coords-input {
@@ -943,9 +1029,9 @@ iframe.visiomatic-control-doc {
 	font-size: 14px;
 	line-height: 100%;
 	height: 32px;
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 	padding: 2px 6px 2px 6px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 0px 4px 4px 0px;
 	box-sizing : border-box;
 	border-width: 0px;
@@ -953,7 +1039,7 @@ iframe.visiomatic-control-doc {
 }
 
 .leaflet-control-coords-input:hover {
-	background-color: #E4E4E4;
+	background-color: var(--background-color3);
 }
 
 .leaflet-control-coords-clipboard {
@@ -963,17 +1049,17 @@ iframe.visiomatic-control-doc {
 	display: inline-block;
 	width: 29px;
 	height: 29px;
-	background-color: #FFFFFF;
+	background-color: var(--background-color1);
 	background-image: url(../images/icon-clipboard.svg);
 	background-repeat: no-repeat;
 	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 0px 4px 4px 0px;
 	cursor: pointer;
 }
 
 .leaflet-control-coords-clipboard:hover {
-	background-color: #F4F4F4;
+	background-color: var(--background-color2);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -988,7 +1074,7 @@ iframe.visiomatic-control-doc {
 
 .leaflet-control-scale-line {
 	border: 0px;
-	background-color: rgba(255,255,255,0.66);
+	background-color: var(--scale-color);
 	text-shadow: none;
 }
 
@@ -1040,9 +1126,9 @@ iframe.visiomatic-control-doc {
 (see copyright notice in Control.ExtraMap.js */
 
 .leaflet-control-extramap {
-	border: solid #FFFFFF 2px;
-	box-shadow: 1px 1px 2px #a0a0a0;
-	background: #0f0f0f;
+	border: solid var(--extramap-border-color) 2px;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	background: var(--extramap-fill-color);
 	border-radius: 4px;
 	z-index: 0;
 	transition: all 500ms;
@@ -1050,7 +1136,7 @@ iframe.visiomatic-control-doc {
 
 .leaflet-control-extramap a {
 /*
-	background-color: #FFFFFF;
+	background-color: var(--background-color1);
 	background-position: 1px 2px;
 */
 	background-repeat: no-repeat;
@@ -1068,7 +1154,7 @@ iframe.visiomatic-control-doc {
 .leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topright {
 	opacity: 1.0;
 	background-image: url("../images/icon-map.svg");
-	background-color: #FFFFFF;
+	background-color: var(--background-color1);
 }
 .leaflet-control-extramap:hover .leaflet-control-extramap-toggle-display {
 	opacity: 1.0;
@@ -1112,20 +1198,14 @@ iframe.visiomatic-control-doc {
    (see copyright notice in Control.FullScreen.js
 */
 a.leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-fullscreen.svg);
+	mask-image: url(../images/icon-fullscreen.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	background-color: var(--icon-color);
 }
 
 :fullscreen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-moz-full-screen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-webkit-full-screen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-ms-fullscreen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
+	mask-image: url(../images/icon-windowed.svg);
 }
 
 .leaflet-pseudo-fullscreen {
@@ -1158,13 +1238,13 @@ UL.filetree LI {
 }
 
 UL.filetree A {
-	color: #333;
+	color: var(--color2);
 	text-decoration: none;
 	padding: 0px 2px;
 }
 
 UL.filetree A:hover {
-	background: #BDF;
+	background: var(--background-color2);
 }
 
 .filetree LI.directory {
@@ -1196,7 +1276,7 @@ UL.filetree A:hover {
 .filetree .filesize {
 	font-weight: normal;
 	float: right;
-	color: #999;
+	color: var(--color1);
 	background: inherit;
 }
 
@@ -1216,7 +1296,7 @@ UL.filetree A:hover {
 	background: rgba(100,100,100,0.5) !important;
 	color: white;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	margin-bottom: 5px !important;
 	margin-right: 10px !important;
 	line-height: 200%;
@@ -1256,10 +1336,16 @@ UL.filetree A:hover {
 */
 
 a.leaflet-control-zoom-sidebar {
-	background-image: url(../images/icon-backward2.svg);
+	mask-image: url(../images/icon-backward2.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	background-color: var(--icon-color) !important;
 }
 a.leaflet-control-zoom-sidebar.collapsed {
-	background-image: url(../images/icon-menu.svg);
+	mask-image: url(../images/icon-menu.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	background-color: var(--icon-color) !important;
 }
 
 .sidebar {
@@ -1273,7 +1359,7 @@ a.leaflet-control-zoom-sidebar.collapsed {
 	bottom: 10px;
 	transition: width 500ms;
 	cursor: default;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 4px;
 }
 
@@ -1324,8 +1410,8 @@ a.leaflet-control-zoom-sidebar.collapsed {
 	top: 0px;
 	bottom: 0px;
 	height: 100%;
-	background-color: #fff;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: var(--background-color1);
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	z-index: 1000;
 }
 
@@ -1344,18 +1430,18 @@ a.leaflet-control-zoom-sidebar.collapsed {
 .sidebar-tabs > li, .sidebar-tabs > ul > li {
 	width: 100%;
 	height: 32px;
-	color: #333;
+	color: var(--color2);
 	font-size: 12pt;
 	overflow: hidden;
 	transition: all 80ms;
 }
 .sidebar-tabs > li:hover, .sidebar-tabs > ul > li:hover {
-	color: #000;
-	background-color: #eee;
+	color: var(--color3);
+	background-color: var(--background-color3);
 }
 .sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
-	color: #fff;
-	background-color: #d0d0d0;
+	color: var(--background-color1);
+	background-color: var(--background-color3);
 }
 .sidebar-tabs > li.disabled, .sidebar-tabs > ul > li.disabled {
 	color: rgba(51, 51, 51, 0.4);
@@ -1383,9 +1469,10 @@ cursor: default;
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
-	background-color: rgba(255, 255, 255, 0.95);
+	background-color: var(--background-color1);
 	overflow-x: hidden;
 	overflow-y: auto;
+	color: var(--color1);
 }
 .sidebar-left .sidebar-content {
 	left: 32px;
@@ -1416,10 +1503,10 @@ cursor: default;
 	padding: 0px 36px 0px 4px;
 	line-height: 32px;
 	font-size: 16px;
-	color: #505050;
+	color: var(--color1);
 	text-align: center;
 	text-shadow: none;
-	background-color: #d0d0d0;
+	background-color: var(--background-color3);
 }
 .sidebar-right .sidebar-header {
 	padding-left: 40px;
@@ -1435,10 +1522,10 @@ cursor: default;
 	text-align: center;
 	cursor: pointer;
 	background-image: url(../images/icon-backward.svg);
-	background-color: rgba(255, 255, 255, 0.75);
+	background-color: var(--background-color1);
 	background-repeat: no-repeat;
 	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .sidebar-left .sidebar-close {

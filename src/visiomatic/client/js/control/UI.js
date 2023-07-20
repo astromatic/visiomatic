@@ -370,7 +370,9 @@ export const UI = Control.extend( /** @lends UI */ {
 		title=undefined,
 		fn=undefined
 	) {
-		const	button = DomUtil.create('input', className, parent);
+		const	label =  DomUtil.create('label', className, parent),
+			button = DomUtil.create('input', className, label);
+			div = DomUtil.create('div', className, button),
 
 		button.type = 'radio';
 		button.name = className;
@@ -381,8 +383,6 @@ export const UI = Control.extend( /** @lends UI */ {
 				fn(value);
 			}, this);
 		}
-
-		const	label =  DomUtil.create('label', className, parent);
 
 		label.htmlFor = button.id = className + '-' + value;
 		if (title) {
