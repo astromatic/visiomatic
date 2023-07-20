@@ -30421,10 +30421,18 @@
         "div",
         options2.className + "-down",
         wrap
+      ), downIcon = this._downIcon = import_leaflet9.DomUtil.create(
+        "div",
+        options2.className + "-down-icon",
+        down
       ), up = this._up = import_leaflet9.DomUtil.create(
         "div",
         options2.className + "-up",
         wrap
+      ), upIcon = this._upIcon = import_leaflet9.DomUtil.create(
+        "div",
+        options2.className + "-up-icon",
+        up
       );
       input.type = "number";
       input.step = 0.1;
@@ -30743,7 +30751,7 @@
       return void 0;
     },
     _addButton: function(className, parent, subClassName = void 0, title = void 0, fn = void 0) {
-      const button = import_leaflet10.DomUtil.create("a", className, parent);
+      const button = import_leaflet10.DomUtil.create("div", className, parent), icon = import_leaflet10.DomUtil.create("div", className + "icon", button);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;
@@ -30758,7 +30766,7 @@
     },
     _addRadioButton: function(className, parent, value, checked, title = void 0, fn = void 0) {
       const label = import_leaflet10.DomUtil.create("label", className, parent), button = import_leaflet10.DomUtil.create("input", className, label);
-      div = import_leaflet10.DomUtil.create("div", className, button), button.type = "radio";
+      div = import_leaflet10.DomUtil.create("div", className + "-icon", button), button.type = "radio";
       button.name = className;
       button.value = value;
       button.checked = checked;
@@ -31683,6 +31691,10 @@
         "div",
         className + "-clipboard",
         dialog
+      ), clipboardicon = import_leaflet13.DomUtil.create(
+        "div",
+        className + "-clipboard-icon",
+        clipboardbutton
       );
       clipboardbutton.title = "Copy to clipboard";
       import_leaflet13.DomEvent.on(clipboardbutton, "click", function() {

@@ -330,7 +330,8 @@ export const UI = Control.extend( /** @lends UI */ {
 		title=undefined,
 		fn=undefined
 	) {
-		const	button = DomUtil.create('a', className, parent);
+		const	button = DomUtil.create('div', className, parent),
+			icon = DomUtil.create('div', className + 'icon', button);
 
 		button.target = '_blank';
 		if (subClassName) {
@@ -372,7 +373,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	) {
 		const	label =  DomUtil.create('label', className, parent),
 			button = DomUtil.create('input', className, label);
-			div = DomUtil.create('div', className, button),
+			div = DomUtil.create('div', className + '-icon', button),
 
 		button.type = 'radio';
 		button.name = className;

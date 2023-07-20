@@ -99,10 +99,20 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 				options.className + '-down',
 				wrap
 			),
+			downIcon = this._downIcon = DomUtil.create(
+				'div',
+				options.className + '-down-icon',
+				down
+			),
 			up = this._up = DomUtil.create(
 				'div',
 				options.className + '-up',
 				wrap
+			),
+			upIcon = this._upIcon = DomUtil.create(
+				'div',
+				options.className + '-up-icon',
+				up
 			);
 
 		input.type = 'number';

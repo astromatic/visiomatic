@@ -30,9 +30,18 @@
 :root {
 	--icon-background-color: rgba(50, 50, 50, 1);
 	--icon-color: rgba(180, 180, 180, 1);
+	--icon-background-color-hover: rgba(60, 60, 60, 1);
 	--icon-color-hover: rgba(240, 240, 240, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(50, 50, 50, 1);
+	--input-background-color: rgba(60, 60, 60, 1);
+	--input-color: rgba(200, 200, 200, 1);
+	--input-background-color-hover: rgba(180, 180, 180, 1);
+	--input-color-hover: rgba(50, 50, 50, 1);
+	--input-background-color-focus: rgba(180, 180, 180, 1);
+	--input-color-focus: rgba(50, 50, 50, 1);
+	--dialog-background-color: rgba(40, 40, 40, 1);
+	--dialog-color: rgba(240, 240, 240, 1);
 	--background-color1: rgba(40, 40, 40, 1);
 	--background-color2: rgba(80, 80, 80, 1);
 	--background-color3: rgba(200, 200, 200, 1);
@@ -139,8 +148,8 @@ a {
 
 .visiomatic-control-expanded {
 	padding: 6px 6px 6px 6px;
-	color: var(--color2);
-	background: var(--background-color1);
+	color: var(--dialog-color);
+	background: var(--dialog-background-color);
 	z-index:10;
 }
 
@@ -183,7 +192,7 @@ a {
 	vertical-align: bottom;
 	text-align: center;
 	line-height: 27px;
-	color: var(--color1);
+	color: var(--icon-color);
 	font-size: 14px;
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
@@ -192,13 +201,13 @@ a {
 }
 
 .visiomatic-control-button:hover {
-	background-color: var(--background-color2);
+	background-color: var(--icon-background-color2);
 	border-width: 1px;
 	border-color: var(--border-color);
 }
 
 .visiomatic-control-button:active  {
-	background-color: var(--background-color3);
+	background-color: var(--icon-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
@@ -210,7 +219,7 @@ a {
 }
 
 input.visiomatic-control-radio {
-    appearance: none;
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
     background-color: var(--icon-background-color);
 	display: inline-block;
 	cursor: pointer;
@@ -223,7 +232,7 @@ input.visiomatic-control-radio {
 	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
-div.visiomatic-control-radio {
+div.visiomatic-control-radio-icon {
 	background-color: var(--icon-color);
 	mask-repeat: no-repeat;
 	mask-position: center;
@@ -231,7 +240,7 @@ div.visiomatic-control-radio {
 	height:31px;
 }
 
-div.visiomatic-control-radio:hover {
+div.visiomatic-control-radio-icon:hover {
 	background-color: var(--icon-color-hover);
 	border-width: 1px;
 	border-color: var(--border-color);
@@ -244,7 +253,6 @@ input.visiomatic-control-radio:checked {
 
 input.visiomatic-control-radio:checked > div {
 	background-color: var(--icon-color-checked);
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 /*------------------------------- Select menu -------------------------------*/
@@ -256,8 +264,8 @@ div.visiomatic-control-select {
 
 select.visiomatic-control-select {
 	height: 32px;
-	background-color: var(--background-color2);
-	color: var(--color1);
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	vertical-align: top;
 	margin: 2px;
 	padding: 4px 4px;
@@ -273,7 +281,8 @@ select.visiomatic-control-select {
 }
 
 .visiomatic-control-select:hover {
-	background-color: var(--background-color3);
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
 
 /*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
@@ -289,8 +298,8 @@ select.visiomatic-control-select {
 	line-height: 100%;
 	width: 100%;
 	height: 32px;
-	color: var(--color1);
-	background-color: var(--background-color2);
+	color: var(--input-color);
+	background-color: var(--input-background-color);
 	padding: 2px 6px 2px 6px;
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px;
@@ -299,43 +308,57 @@ select.visiomatic-control-select {
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
 }
 
-.leaflet-spinbox-input:hover,.leaflet-spinbox-input:focus {
-	background-color: var(--background-color3);
+.leaflet-spinbox-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
+}
+.leaflet-spinbox-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
+.leaflet-spinbox-down,.leaflet-spinbox-up {
+	position: absolute;
+	top: 1px;
+	display: inline-block;
+	background-color: var(--icon-background-color);
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	cursor: pointer;
 }
 
 .leaflet-spinbox-down {
-	position: absolute;
-	right: 30px;
-	top: 1px;
-	display: inline-block;
+	right: 31px;
+	border-radius: 0px;
+}
+
+.leaflet-spinbox-down-icon {
 	width: 29px;
 	height: 29px;
-	background-color: var(--icon-color);
 	mask-image: url(../images/icon-minus.svg);
 	mask-repeat: no-repeat;
 	mask-position: center;
-	box-shadow: 1px 1px 2px var(--shadow-color);
-	border-radius: 0px;
-	cursor: pointer;
+	background-color: var(--icon-color);
 }
 
 .leaflet-spinbox-up {
-	position: absolute;
 	right: 1px;
-	top: 1px;
-	display: inline-block;
+	border-radius: 0px 4px 4px 0px;
+}
+
+.leaflet-spinbox-up-icon {
 	width: 29px;
 	height: 29px;
-	background-color: var(--icon-color);
 	mask-image: url(../images/icon-plus.svg);
 	mask-repeat: no-repeat;
 	mask-position: center;
-	box-shadow: 1px 1px 2px var(--shadow-color);
-	border-radius: 0px 4px 4px 0px;
-	cursor: pointer;
+	background-color: var(--icon-color);
 }
 
 .leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
+	background-color: var(--icon-background-color-hover);
+}
+
+.leaflet-spinbox-down-icon:hover,.leaflet-spinbox-up-icon:hover {
 	background-color: var(--icon-color-hover);
 }
 
@@ -371,7 +394,7 @@ label.leaflet-flipswitch {
 	padding: 0;
 	line-height: 32px;
 	font-size: 14px;
-	color: var(--background-color1);
+	color: var(--icon-background-color);
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing: border-box;
@@ -381,18 +404,18 @@ label.leaflet-flipswitch {
 	content: "ON";
 	padding-left: 15px;
 	background-color: var(--color-on);
-	color: var(--background-color1);
+	color: var(--input-color);
 }
 .leaflet-flipswitch-inner:after {
 	content: "OFF";
 	padding-right: 12px;
-	color: var(--color1);
+	color: var(--input-color);
 	text-align: right;
 }
 .leaflet-flipswitch-button {
 	display: block;
 	margin: 2px;
-	background: var(--background-color2);
+	background: var(--input-background-color);
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
@@ -405,7 +428,7 @@ label.leaflet-flipswitch {
 	transition: background none;
 }
 .leaflet-flipswitch-button:hover {
-	background-color: var(--background-color3);
+	background-color: var(--input-background-color-hover);
 }
 input.leaflet-flipswitch:checked + label .leaflet-flipswitch-inner {
 	margin-left: 0;
@@ -553,7 +576,7 @@ input#visiomatic-control-radio-color > div{
 }
 
 input.leaflet-cmap {
-    appearance: none;
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
     background-color: var(--icon-background-color);
 	display: inline-block;
 	cursor: pointer;
@@ -564,7 +587,7 @@ input.leaflet-cmap {
 	margin: 0px 1px 0px 1px;
 }
 
-div.leaflet-cmap {
+div.leaflet-cmap-icon {
 	background-color: var(--icon-background-color);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -987,69 +1010,59 @@ iframe.visiomatic-control-doc {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-coords-dialog {
-	background-color: var(--background-color1);
-	color: var(--color1);
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	border-radius: 4px;
 	font-size: 1.2em;
-}
-
-.leaflet-control-coords-ext {
 	height: 32px;
-	background-color: var(--background-color2);
+}
+
+.leaflet-control-coords-ext,.leaflet-control-coords-select,.leaflet-control-coords-input {
+	height: inherit;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	vertical-align: top;
-	margin: 0px;
-	padding: 0px 0px 0px 4px;
-	border-width: 0px;
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	border-radius: 4px 0px 0px 4px;
-}
-
-.leaflet-control-coords-ext:hover,.leaflet-control-coords-ext:focus {
-	background-color: var(--background-color3);
-}
-
-.leaflet-control-coords-select {
-	height: 32px;
-	background-color: var(--background-color2);
-	vertical-align: top;
-	margin: 0px;
-	text-align: center;
-	padding: 0px 0px 0px 4px;
-	border-width: 0px;
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	border-radius: 4px 0px 0px 4px;
-}
-
-.leaflet-control-coords-select:hover,.leaflet-control-coords-select:focus {
-	background-color: var(--background-color3);
-}
-
-.leaflet-control-coords-input {
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 100%;
-	height: 32px;
-	background-color: var(--background-color2);
-	padding: 2px 6px 2px 6px;
+	padding: 0px 0px 0px 8px;
+	border-width: 0px;
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.leaflet-control-coords-ext {
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-coords-select {
+	text-align: center;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-coords-input {
+	padding: 2px 6px 2px 6px;
 	border-radius: 0px 4px 4px 0px;
 	box-sizing : border-box;
-	border-width: 0px;
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
 }
 
-.leaflet-control-coords-input:hover {
-	background-color: var(--background-color3);
+.leaflet-control-coords-ext:hover,.leaflet-control-coords-select:hover,.leaflet-control-coords-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
+
+.leaflet-control-coords-ext:focus,.leaflet-control-coords-select:focus,.leaflet-control-coords-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
 
 .leaflet-control-coords-clipboard {
 	position: absolute;
 	right: 2px;
 	top: 1px;
 	display: inline-block;
-	width: 29px;
-	height: 29px;
-	background-color: var(--background-color1);
+	background-color: var(--icon-background-color);
 	background-image: url(../images/icon-clipboard.svg);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -1058,8 +1071,21 @@ iframe.visiomatic-control-doc {
 	cursor: pointer;
 }
 
+.leaflet-control-coords-clipboard-icon {
+	background-color: var(--icon-color);
+	width: 29px;
+	height: 29px;
+	mask-image: url(../images/icon-clipboard.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
 .leaflet-control-coords-clipboard:hover {
-	background-color: var(--background-color2);
+	background-color: var(--icon-background-color-hover);
+}
+
+.leaflet-control-coords-clipboard-icon:hover {
+	background-color: var(--icon-color-hover);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
