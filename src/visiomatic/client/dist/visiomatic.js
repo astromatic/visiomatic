@@ -30751,7 +30751,7 @@
       return void 0;
     },
     _addButton: function(className, parent, subClassName = void 0, title = void 0, fn = void 0) {
-      const button = import_leaflet10.DomUtil.create("div", className, parent), icon = import_leaflet10.DomUtil.create("div", className + "icon", button);
+      const button = import_leaflet10.DomUtil.create("div", className, parent), icon = import_leaflet10.DomUtil.create("div", className + "-icon", button);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;

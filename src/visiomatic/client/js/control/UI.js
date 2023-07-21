@@ -331,7 +331,7 @@ export const UI = Control.extend( /** @lends UI */ {
 		fn=undefined
 	) {
 		const	button = DomUtil.create('div', className, parent),
-			icon = DomUtil.create('div', className + 'icon', button);
+			icon = DomUtil.create('div', className + '-icon', button);
 
 		button.target = '_blank';
 		if (subClassName) {

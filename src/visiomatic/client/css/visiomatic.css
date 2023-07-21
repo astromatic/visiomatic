@@ -181,34 +181,43 @@ a {
 /*------------------------------ Simple button ------------------------------*/
 
 .visiomatic-control-button {
-	background-repeat: no-repeat;
-	background-position: center;
 	display: inline-block;
 	cursor: pointer;
 	padding: 0px;
 	margin: 2px 0px 2px 2px;
-	width:32px;
-	height: 31px;
-	vertical-align: bottom;
-	text-align: center;
 	line-height: 27px;
-	color: var(--icon-color);
-	font-size: 14px;
-	font-family: Trebuchet, Arial, sans-serif;
-	font-weight: bold;
+	background-color: var(--icon-background-color);
 	box-sizing:border-box;
 	box-shadow: 1px 1px 2px var(--shadow-color);
+	border-radius: 4px;
+}
+
+.visiomatic-control-button-icon {
+	background-color: var(--icon-color);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	width: 32px;
+	height: 31px;
+
 }
 
 .visiomatic-control-button:hover {
-	background-color: var(--icon-background-color2);
+	background-color: var(--icon-background-color-hover);
 	border-width: 1px;
 	border-color: var(--border-color);
+}
+
+.visiomatic-control-button-icon:hover {
+	background-color: var(--icon-color-hover);
 }
 
 .visiomatic-control-button:active  {
 	background-color: var(--icon-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.visiomatic-control-button:active > div {
+	background-color: var(--icon-color-checked);
 }
 
 /*------------------------------- Radio button ------------------------------*/
@@ -246,12 +255,12 @@ div.visiomatic-control-radio-icon:hover {
 	border-color: var(--border-color);
 }
 
-input.visiomatic-control-radio:checked {
+input.visiomatic-control-radio:active,input.visiomatic-control-radio:checked {
 	background-color: var(--icon-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
-input.visiomatic-control-radio:checked > div {
+input.visiomatic-control-radio:active > div,input.visiomatic-control-radio:checked > div {
 	background-color: var(--icon-color-checked);
 }
 
@@ -519,17 +528,34 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 
 .visiomatic-control-trash {
 	display: table-cell;
-	background-image: url(../images/icon-trash.svg);
-	background-repeat: no-repeat;
-	background-position: center center;
 	width: 27px;
-	border: 1px solid var(--border-color) !important;
+	height: inherit;
+	background-color: var(--icon-background-color);
+	border-left: 1px;
 	border-radius: 0px 4px 4px 0px;
+	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 	cursor: pointer;
 }
 
+.visiomatic-control-trash-icon {
+	width: inherit;
+	height: inherit;
+	background-color: var(--icon-color);
+	mask-image: url(../images/icon-trash.svg);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
 .visiomatic-control-trash:hover {
-	background-color: var(--background-color2);
+	background-color: var(--icon-background-color-hover);
+}
+
+.visiomatic-control-trash-icon:hover {
+	background-color: var(--icon-color-hover);
+}
+
+.visiomatic-control-trash-icon:active {
+	background-color: var(--icon-color-checked);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -560,7 +586,7 @@ input#visiomatic-control-radio-mono > div {
 }
 
 input#visiomatic-control-radio-color {
-	margin: 0px 0px 0px 2px;
+	margin: 0px;
 	border-radius: 0px 4px 4px 0px;
 }
 
@@ -634,14 +660,19 @@ input#leaflet-cmap-hot > div {
 
 /*-------------------------------- Channel list -----------------------------*/
 
-a#visiomatic-control-button-colormix-reset {
-	background-image: url(../images/icon-reset.svg);
-	border-radius: 4px 0px 0px 4px;
+#visiomatic-control-button-colormix-reset {
 }
 
-a#visiomatic-control-button-colormix-auto {
-	background-image: url(../images/icon-magicwand.svg);
-	border-radius: 0px 4px 4px 0px;
+#visiomatic-control-button-colormix-reset > div {
+	mask-image: url(../images/icon-reset.svg);
+}
+
+#visiomatic-control-button-colormix-auto {
+	margin-left: 4px;
+}
+
+#visiomatic-control-button-colormix-auto > div {
+	mask-image: url(../images/icon-magicwand.svg);
 }
 
 .visiomatic-control-chanlist {
@@ -653,7 +684,6 @@ a#visiomatic-control-button-colormix-auto {
 .visiomatic-control-channel {
 	height: 28px;
 	display: table-row;
-	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 	border-radius: 4px;
 	cursor: pointer;
 }
@@ -671,11 +701,14 @@ a#visiomatic-control-button-colormix-auto {
 	vertical-align: middle;
 	padding-left: 4px;
 	padding-right: 8px;
-
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 }
 
 .visiomatic-control-chanlabel:hover {
-	background-color: var(--background-color2);
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
 
 
@@ -696,9 +729,8 @@ a#visiomatic-image-toggle {
 	left: 234px;
 }
 
-a#visiomatic-control-button-image-reset {
-	background-image: url(../images/icon-reset.svg);
-	border-radius: 4px 0px 0px 4px;
+#visiomatic-control-button-image-reset >div {
+	mask-image: url(../images/icon-reset.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
