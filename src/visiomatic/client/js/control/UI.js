@@ -372,24 +372,24 @@ export const UI = Control.extend( /** @lends UI */ {
 		fn=undefined
 	) {
 		const	label =  DomUtil.create('label', className, parent),
-			button = DomUtil.create('input', className, label);
-			div = DomUtil.create('div', className + '-icon', button),
+			input = DomUtil.create('input', className, label),
+			div = DomUtil.create('div', className, label);
 
-		button.type = 'radio';
-		button.name = className;
-		button.value = value;
-		button.checked = checked;
+		input.type = 'radio';
+		input.name = className;
+		input.value = value;
+		input.checked = checked;
 		if (fn) {
-			DomEvent.on(button, 'click touch', function () {
+			DomEvent.on(input, 'click touch', function () {
 				fn(value);
 			}, this);
 		}
 
-		label.htmlFor = button.id = className + '-' + value;
+		label.htmlFor = input.id = className + '-' + value;
 		if (title) {
 			label.title = title;
 		}
-		return button;
+		return input;
 	},
 
 	/**

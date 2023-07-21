@@ -103,18 +103,18 @@
 
 .leaflet-control-zoom-in {
 	background-color: var(--icon-color) !important;
-	mask-image: url(../images/icon-magnifyplus.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-magnifyplus.svg); -webkit-mask-image: url(../images/icon-magnifyplus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
 
 .leaflet-control-zoom-out {
 	background-color: var(--icon-color) !important;
-	mask-image: url(../images/icon-magnifyminus.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-magnifyminus.svg); -webkit-mask-image: url(../images/icon-magnifyminus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
@@ -194,8 +194,8 @@ a {
 
 .visiomatic-control-button-icon {
 	background-color: var(--icon-color);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	width: 32px;
 	height: 31px;
 
@@ -223,44 +223,53 @@ a {
 /*------------------------------- Radio button ------------------------------*/
 
 .visiomatic-control-radios {
-    margin: 2px 0px -2px 0px;
-    float: left;
+    margin: 4px 0px -2px 0px;
 }
 
-input.visiomatic-control-radio {
-	appearance: none; -moz-appearance: none; -webkit-appearance: none;
-    background-color: var(--icon-background-color);
+label.visiomatic-control-radio {
 	display: inline-block;
-	cursor: pointer;
-	position: relative;
-	padding: 0px;
-	font-size: 12px;
-	font-family: Trebuchet, Arial, sans-serif;
-	font-weight: bold;
-	box-sizing:border-box;
-	box-shadow: 1px 1px 2px var(--shadow-color);
-}
-
-div.visiomatic-control-radio-icon {
-	background-color: var(--icon-color);
-	mask-repeat: no-repeat;
-	mask-position: center;
 	width:32px;
 	height:31px;
 }
 
-div.visiomatic-control-radio-icon:hover {
-	background-color: var(--icon-color-hover);
-	border-width: 1px;
-	border-color: var(--border-color);
+input.visiomatic-control-radio {
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
+	float:left;
+	position: relative;
+	width: inherit;
+	height: inherit;
+	background-color: var(--icon-background-color);
+	margin: 0px;
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	cursor: pointer;
 }
 
-input.visiomatic-control-radio:active,input.visiomatic-control-radio:checked {
+div.visiomatic-control-radio {
+    background-color: var(--icon-color);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	position: relative;
+	padding: 0px;
+	width: inherit;
+	height: inherit;
+}
+
+
+input.visiomatic-control-radio:hover {
+	background-color: var(--icon-background-color-hover);
+}
+
+div.visiomatic-control-radio:hover {
+	background-color: var(--icon-color-hover);
+}
+
+input.visiomatic-control-radio:checked,div.visiomatic-control-radio:active {
 	background-color: var(--icon-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
-input.visiomatic-control-radio:active > div,input.visiomatic-control-radio:checked > div {
+input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:active + div {
 	background-color: var(--icon-color-checked);
 }
 
@@ -276,7 +285,7 @@ select.visiomatic-control-select {
 	background-color: var(--input-background-color);
 	color: var(--input-color);
 	vertical-align: top;
-	margin: 2px;
+	margin: 2px 0px 0px 0px;
 	padding: 4px 4px;
 	border-width: 0px;
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
@@ -343,9 +352,9 @@ select.visiomatic-control-select {
 .leaflet-spinbox-down-icon {
 	width: 29px;
 	height: 29px;
-	mask-image: url(../images/icon-minus.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-minus.svg); -webkit-mask-image: url(../images/icon-minus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	background-color: var(--icon-color);
 }
 
@@ -357,9 +366,9 @@ select.visiomatic-control-select {
 .leaflet-spinbox-up-icon {
 	width: 29px;
 	height: 29px;
-	mask-image: url(../images/icon-plus.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-plus.svg); -webkit-mask-image: url(../images/icon-plus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	background-color: var(--icon-color);
 }
 
@@ -541,9 +550,9 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 	width: inherit;
 	height: inherit;
 	background-color: var(--icon-color);
-	mask-image: url(../images/icon-trash.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-trash.svg); -webkit-mask-image: url(../images/icon-trash.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 }
 
 .visiomatic-control-trash:hover {
@@ -577,79 +586,72 @@ a#visiomatic-channel-toggle {
 
 /*--------------------------------- Mixing mode -----------------------------*/
 
-input#visiomatic-control-radio-mono {
+#visiomatic-control-radio-mono {
 	border-radius: 4px 0px 0px 4px;
 }
 
-input#visiomatic-control-radio-mono > div {
-	mask-image: url(../images/icon-palette.svg);
+#visiomatic-control-radio-mono + div {
+	mask-image: url(../images/icon-palette.svg); -webkit-mask-image: url(../images/icon-palette.svg);
 }
 
-input#visiomatic-control-radio-color {
-	margin: 0px;
+#visiomatic-control-radio-color {
+	margin-left: 2px;
 	border-radius: 0px 4px 4px 0px;
 }
 
-input#visiomatic-control-radio-color > div{
-	mask-image: url(../images/icon-stack.svg);
+#visiomatic-control-radio-color + div {
+	mask-image: url(../images/icon-stack.svg); -webkit-mask-image: url(../images/icon-stack.svg);
 }
 
 /*---------------------------------- Color map ------------------------------*/
 
 .visiomatic-control-cmaps {
-    margin: 2px 0px -2px 0px;
+    margin: 6px 0px -2px 0px;
     float: left;
-}
-
-input.leaflet-cmap {
-	appearance: none; -moz-appearance: none; -webkit-appearance: none;
-    background-color: var(--icon-background-color);
-	display: inline-block;
-	cursor: pointer;
-	position: relative;
-	padding: 0px;
-	box-sizing:border-box;
-	box-shadow: 1px 1px 2px var(--shadow-color);
-	margin: 0px 1px 0px 1px;
-}
-
-div.leaflet-cmap-icon {
-	background-color: var(--icon-background-color);
-	background-repeat: no-repeat;
-	background-position: center;
-	width:32px;
-	height:32px;
 }
 
 
 label.leaflet-cmap {
 	display: inline-block;
-	cursor: pointer;
-	position: relative;
 	width:32px;
 	height:32px;
+}
+
+input.leaflet-cmap {
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
+	float: left;
+	cursor: pointer;
+	position: relative;
+	padding: 0px;
+	box-sizing:border-box;
 	box-shadow: 1px 1px 2px var(--shadow-color);
+	margin: 0px 2px 0px 0px;
+	width: inherit;
+	height: inherit;
 }
 
-div.leaflet-cmap:hover {
+div.leaflet-cmap {
+}
+
+input.leaflet-cmap:hover {
 	box-shadow: 2px 2px 4px var(--shadow-color) inset;
 }
 
-input.leaflet-cmap:checked > div {
+input.leaflet-cmap:checked {
 	box-shadow: 2px 2px 4px var(--shadow-color) inset;
 }
 
-input#leaflet-cmap-grey > div {
+#leaflet-cmap-grey {
 	background-image: url(../images/icon-grey.svg);
 	border-radius: 4px 0px 0px 4px;
 }
-input#leaflet-cmap-jet > div {
+#leaflet-cmap-jet  {
 	background-image: url(../images/icon-jet.svg);
 }
-input#leaflet-cmap-cold > div {
+#leaflet-cmap-cold  {
 	background-image: url(../images/icon-cold.svg);
 }
-input#leaflet-cmap-hot > div {
+#leaflet-cmap-hot  {
 	background-image: url(../images/icon-hot.svg);
 	border-radius: 0px 4px 4px 0px;
 }
@@ -664,7 +666,7 @@ input#leaflet-cmap-hot > div {
 }
 
 #visiomatic-control-button-colormix-reset > div {
-	mask-image: url(../images/icon-reset.svg);
+	mask-image: url(../images/icon-reset.svg); -webkit-mask-image: url(../images/icon-reset.svg);
 }
 
 #visiomatic-control-button-colormix-auto {
@@ -672,7 +674,7 @@ input#leaflet-cmap-hot > div {
 }
 
 #visiomatic-control-button-colormix-auto > div {
-	mask-image: url(../images/icon-magicwand.svg);
+	mask-image: url(../images/icon-magicwand.svg); -webkit-mask-image: url(../images/icon-magicwand.svg);
 }
 
 .visiomatic-control-chanlist {
@@ -730,7 +732,7 @@ a#visiomatic-image-toggle {
 }
 
 #visiomatic-control-button-image-reset >div {
-	mask-image: url(../images/icon-reset.svg);
+	mask-image: url(../images/icon-reset.svg); -webkit-mask-image: url(../images/icon-reset.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -1107,9 +1109,9 @@ iframe.visiomatic-control-doc {
 	background-color: var(--icon-color);
 	width: 29px;
 	height: 29px;
-	mask-image: url(../images/icon-clipboard.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-clipboard.svg); -webkit-mask-image: url(../images/icon-clipboard.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 }
 
 .leaflet-control-coords-clipboard:hover {
@@ -1256,14 +1258,14 @@ iframe.visiomatic-control-doc {
    (see copyright notice in Control.FullScreen.js
 */
 a.leaflet-control-zoom-fullscreen {
-	mask-image: url(../images/icon-fullscreen.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-fullscreen.svg); -webkit-mask-image: url(../images/icon-fullscreen.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	background-color: var(--icon-color);
 }
 
 :fullscreen .leaflet-control-zoom-fullscreen {
-	mask-image: url(../images/icon-windowed.svg);
+	mask-image: url(../images/icon-windowed.svg); -webkit-mask-image: url(../images/icon-windowed.svg);
 }
 
 .leaflet-pseudo-fullscreen {
@@ -1394,15 +1396,15 @@ UL.filetree A:hover {
 */
 
 a.leaflet-control-zoom-sidebar {
-	mask-image: url(../images/icon-backward2.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-backward2.svg); -webkit-mask-image: url(../images/icon-backward2.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	background-color: var(--icon-color) !important;
 }
 a.leaflet-control-zoom-sidebar.collapsed {
-	mask-image: url(../images/icon-menu.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-menu.svg); -webkit-mask-image: url(../images/icon-menu.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	background-color: var(--icon-color) !important;
 }
 
