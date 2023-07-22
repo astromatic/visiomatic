@@ -33154,7 +33154,7 @@
       this._tabitems.push(item);
       const pane = import_leaflet22.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet22.DomUtil.create("h1", "sidebar-header", pane);
       header.innerHTML = title;
-      const closeButton = import_leaflet22.DomUtil.create("div", "sidebar-close", header);
+      const closeButton = import_leaflet22.DomUtil.create("div", "sidebar-close", header), closeIcon = import_leaflet22.DomUtil.create("div", "sidebar-close-icon", closeButton);
       this._closeButtons.push(closeButton);
       import_leaflet22.DomEvent.on(closeButton, "click", this._onCloseClick, this);
       pane.id = id;

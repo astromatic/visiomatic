@@ -174,7 +174,8 @@ export const Sidebar = Control.extend( /** @lends Sidebar */ {
 
 		header.innerHTML = title;
 
-		const	closeButton = DomUtil.create('div', 'sidebar-close', header);
+		const	closeButton = DomUtil.create('div', 'sidebar-close', header),
+			closeIcon = DomUtil.create('div', 'sidebar-close-icon', closeButton);
 		this._closeButtons.push(closeButton);
 		DomEvent.on(closeButton, 'click', this._onCloseClick, this);
 		pane.id = id;
