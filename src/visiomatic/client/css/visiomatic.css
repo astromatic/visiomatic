@@ -287,7 +287,7 @@ div.visiomatic-control-radio:hover {
 	background-color: var(--icon-color-hover);
 }
 
-input.visiomatic-control-radio:checked,div.visiomatic-control-radio:active {
+input.visiomatic-control-radio:checked,input.visiomatic-control-radio:active {
 	background-color: var(--icon-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
