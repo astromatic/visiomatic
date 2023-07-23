@@ -187,30 +187,32 @@ a {
 	display: inline-block;
 	cursor: pointer;
 	padding: 0px;
-	margin: 2px 0px 2px 2px;
+	margin: 3px 0px 2px 1px;
 	width:32px;
 	height: 31px;
-	vertical-align: bottom;
-	text-align: center;
-	line-height: 27px;
 	color: var(--icon-color);
-	font-size: 14px;
-	font-family: Trebuchet, Arial, sans-serif;
-	font-weight: bold;
-	line-height: 27px;
 	background-color: var(--icon-background-color);
 	box-sizing:border-box;
 	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 4px;
+	vertical-align: bottom;
+	text-align: center;
+	font-size: 14px;
+	font-family: Trebuchet, Arial, sans-serif;
+	font-weight: bold;
+	line-height: 27px;
 }
 
+.visiomatic-control-button:after {
+	color: var(--icon-color);
+}
 .visiomatic-control-button-icon {
 	background-color: var(--icon-color);
+	background-position: center;
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
 	width: inherit;
 	height: inherit;
-
 }
 
 .visiomatic-control-button:hover {
@@ -219,13 +221,22 @@ a {
 	border-color: var(--border-color);
 }
 
+.visiomatic-control-button:hover:after {
+	color: var(--icon-color-hover) !important;
+}
+
 .visiomatic-control-button-icon:hover {
 	background-color: var(--icon-color-hover);
 }
 
 .visiomatic-control-button:active  {
 	background-color: var(--icon-background-color-checked);
+	color: var(--icon-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.visiomatic-control-button:active:after {
+	color: var(--icon-color-checked) !important;
 }
 
 .visiomatic-control-button:active > div {
@@ -288,8 +299,8 @@ input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:acti
 /*------------------------------- Select menu -------------------------------*/
 
 div.visiomatic-control-select {
-	margin-right: 2px;
 	display: flow-root;
+	margin-right: 2px;
 }
 
 select.visiomatic-control-select {
@@ -310,9 +321,14 @@ select.visiomatic-control-select {
 	border-radius: 0px 4px 4px 0px;
 }
 
-.visiomatic-control-select:hover {
+select.visiomatic-control-select:hover {
 	background-color: var(--input-background-color-hover);
 	color: var(--input-color-hover);
+}
+
+select.visiomatic-control-select:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
 }
 
 /*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
@@ -550,7 +566,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 .visiomatic-control-trash {
 	display: table-cell;
 	width: 27px;
-	height: inherit;
+	height: 27px;
 	background-color: var(--icon-background-color);
 	border-left: 1px;
 	border-radius: 0px 4px 4px 0px;
@@ -734,7 +750,7 @@ input.leaflet-cmap:checked {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-image-toggle {
-	mask-image: url(../images/icon-contrast.svg);
+	mask-image: url(../images/icon-contrast.svg); -webkit-mask-image: url(../images/icon-contrast.svg);
 }
 
 .sidebar.image {
@@ -753,7 +769,7 @@ a#visiomatic-image-toggle {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-catalog-toggle {
-	mask-image: url(../images/icon-make-group.svg);
+	mask-image: url(../images/icon-make-group.svg); -webkit-mask-image: url(../images/icon-make-group.svg);
 }
 
 .sidebar.catalog {
@@ -769,17 +785,17 @@ a#visiomatic-catalog-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-catalog:after {
-	content: 'GO';
-	color: var(--color1);
+#visiomatic-control-button-catalog > div {
+	display: none;
 }
 
-#leaflet-visiomaticcatalog div.visiomatic-control-select {
-	display: flow-root;
+#visiomatic-control-button-catalog:after {
+	content: 'GO';
 }
 
 .logo-catalog-cds {
-	background: url(../images/cds.png) no-repeat;
+	background-image: url(../images/cds.png);
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -787,7 +803,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-mast {
-	background: url(../images/mast.png) no-repeat;
+	background-image: url(../images/mast.png)j;
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -795,7 +812,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-imcce {
-	background: url(../images/imcce.svg) no-repeat;
+	background-image: url(../images/imcce.svg);
+	background-repeat: no-repeat;
 	background-size: 4.0em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -815,7 +833,7 @@ a#visiomatic-catalog-toggle {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-region-toggle {
-	mask-image: url(../images/icon-location.svg);
+	mask-image: url(../images/icon-location.svg); -webkit-mask-image: url(../images/icon-location.svg);
 }
 
 .sidebar.region {
@@ -831,13 +849,12 @@ a#visiomatic-region-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-region:after {
-	content: 'GO';
-	color: var(--color1);
+#visiomatic-control-button-region > div {
+	display: none;
 }
 
-#leaflet-visiomaticregion div.visiomatic-control-select {
-	display: flow-root;
+#visiomatic-control-button-region:after {
+	content: 'GO';
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -845,7 +862,7 @@ a#visiomatic-region-toggle {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-profile-toggle {
-	mask-image: url(../images/icon-plot.svg);
+	mask-image: url(../images/icon-plot.svg); -webkit-mask-image: url(../images/icon-plot.svg);
 }
 
 .sidebar.profile {
@@ -862,9 +879,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px;
 }
 
+#visiomatic-control-button-start > div {
+	display: none;
+}
+
 #visiomatic-control-button-start:after {
 	content: 'START';
-	color: var(--color1);
 }
 
 #visiomatic-control-button-end {
@@ -874,9 +894,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#visiomatic-control-button-end > div {
+	display: none;
+}
+
 #visiomatic-control-button-end:after {
 	content: 'END';
-	color: var(--color1);
 }
 
 #visiomatic-control-button-spectrum {
@@ -886,9 +909,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#visiomatic-control-button-spectrum > div {
+	display: none;
+}
+
 #visiomatic-control-button-spectrum:after {
 	content: 'GO';
-	color: var(--color1);
 }
 
 /*---------------------------------- Plots ----------------------------------*/
@@ -919,17 +945,23 @@ table.jqplot-table-legend, table.jqplot-cursor-legend {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-snapshot-toggle {
-	mask-image: url(../images/icon-camera.svg);
+	mask-image: url(../images/icon-camera.svg); -webkit-mask-image: url(../images/icon-camera.svg);
 }
 
-a#visiomatic-control-button-snapshot {
-	background-image: url(../images/icon-image.svg);
+#visiomatic-control-button-snapshot {
 	border-radius: 4px 4px 4px 4px;
 }
 
-a#visiomatic-control-button-print {
-	background-image: url(../images/icon-print.svg);
+#visiomatic-control-button-snapshot > div {
+	mask-image: url(../images/icon-image.svg);
+}
+
+#visiomatic-control-button-print {
 	border-radius: 4px 4px 4px 4px;
+}
+
+#visiomatic-control-button-print >div {
+	mask-image: url(../images/icon-print.svg);
 }
 
 .sidebar.snapshot {
@@ -948,7 +980,7 @@ a#visiomatic-control-button-print {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-doc-toggle {
-	mask-image: url(../images/icon-info.svg);
+	mask-image: url(../images/icon-info.svg); -webkit-mask-image: url(../images/icon-info.svg);
 	height: 36px;
 }
 
@@ -1001,45 +1033,42 @@ iframe.visiomatic-control-doc {
 }
 
 #visiomatic-control-button-home {
-	background-image: url(../images/icon-home.svg);
-	background-repeat: no-repeat;
-	background-position: center;
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 4px 0px 0px 4px;
 }
 
-#visiomatic-control-button-back {
-	background-image: url(../images/icon-left.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-home > div {
+	mask-image: url(../images/icon-home.svg); -webkit-mask-image: url(../images/icon-home.svg);
+}
+
+#visiomatic-control-button-back{
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 0px;
 }
 
-#visiomatic-control-button-forward {
-	background-image: url(../images/icon-right.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-back > div {
+	mask-image: url(../images/icon-left.svg); -webkit-mask-image: url(../images/icon-left.svg);
+}
+
+#visiomatic-control-button-forward  {
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-pdf {
-	background-image: url(../images/icon-pdf.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-forward > div {
+	mask-image: url(../images/icon-right.svg); -webkit-mask-image: url(../images/icon-right.svg);
+}
+
+#visiomatic-control-button-pdf{
 	width: 32px;
 	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 4px 4px 4px 4px;
 	position: absolute;
 	right: 3px;
+}
+
+#visiomatic-control-button-pdf > div {
+	mask-image: url(../images/icon-pdf.svg); -webkit-mask-image: url(../images/icon-pdf.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -1618,9 +1647,9 @@ cursor: default;
 }
 
 .sidebar-close-icon {
-	mask-image: url(../images/icon-backward.svg);
-	mask-repeat: no-repeat;
-	mask-position: center;
+	mask-image: url(../images/icon-backward.svg); -webkit-mask-image: url(../images/icon-backward.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	width: inherit;
 	height: inherit;
 	background-color: var(--icon-color);
