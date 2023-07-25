@@ -3,7 +3,7 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
+#	Copyright: (C) 2022-2023 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 */
 import "./logo";
 export * from './CatalogUI';
@@ -13,6 +13,7 @@ export * from './DocUI';
 export * from './ExtraMap';
 export * from './FullScreen';
 export * from './ImageUI';
+export * from './PreferencesUI';
 export * from './ProfileUI';
 export * from './RegionUI';
 export * from './Reticle';
