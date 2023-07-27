@@ -1453,7 +1453,7 @@
             boundingClientRect: rect
           };
         }
-        var DomUtil16 = {
+        var DomUtil17 = {
           __proto__: null,
           TRANSFORM,
           TRANSITION,
@@ -8068,7 +8068,7 @@
         exports2.DivIcon = DivIcon;
         exports2.DivOverlay = DivOverlay;
         exports2.DomEvent = DomEvent12;
-        exports2.DomUtil = DomUtil16;
+        exports2.DomUtil = DomUtil17;
         exports2.Draggable = Draggable;
         exports2.Evented = Evented4;
         exports2.FeatureGroup = FeatureGroup;
@@ -32463,18 +32463,40 @@
       this._sideClass = "preferences";
     },
     _initDialog: function() {
-      const _this = this, className = this._className, layer = this._layer, visio = layer.visio, map2 = this._map;
-      const line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), items = ["Light", "Dark"];
-      this._themeIndex = 0;
+      const _this = this, className = this._className, line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), prefix = "visiomatic-theme-";
+      this._themeList = getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-names").split(/\s+/);
+      this._themeClassList = this._themeList.map(
+        (theme) => prefix + theme.toLowerCase()
+      );
+      this._defaultTheme = getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-default");
+      this._themeIndex = this._themeList.findIndex(
+        (theme) => theme === this._defaultTheme
+      );
+      import_leaflet18.DomUtil.addClass(
+        _this._map._container,
+        _this._themeClassList[this._themeIndex]
+      );
       this._themeSelect = this._addSelectMenu(
         this._className + "-select",
         elem,
-        items,
+        this._themeList,
         void 0,
         this._themeIndex,
         "Select theme",
-        function() {
-          this._themeIndex = parseInt(this._themeSelect.selectedIndex - 1, 10);
+        () => {
+          const index = parseInt(
+            _this._themeSelect.selectedIndex - 1,
+            10
+          );
+          import_leaflet18.DomUtil.removeClass(
+            _this._map._container,
+            _this._themeClassList[_this._themeIndex]
+          );
+          import_leaflet18.DomUtil.addClass(
+            _this._map._container,
+            _this._themeClassList[index]
+          );
+          this._themeIndex = index;
         }
       );
     }

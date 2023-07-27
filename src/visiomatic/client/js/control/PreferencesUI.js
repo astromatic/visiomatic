@@ -8,7 +8,7 @@
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import {Util} from 'leaflet';
+import {DomUtil, Util} from 'leaflet';
 
 import {VUtil} from '../util';
 import {UI} from './UI';
@@ -53,25 +53,50 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 	_initDialog: function () {
 		const _this = this,
 			className = this._className,
-			layer = this._layer,
-			visio = layer.visio,
-			map = this._map;
-
-		// Theme preferences
-		const	line = this._addDialogLine('Theme:', this._dialog),
+			line = this._addDialogLine('Theme:', this._dialog),
 			elem = this._addDialogElement(line),
-			items = ['Light', 'Dark'];
+			prefix = 'visiomatic-theme-';
 
-		this._themeIndex = 0;
-		this._themeSelect =  this._addSelectMenu(
+		// Build theme class names from list in the CSS variable in themes.css.
+		this._themeList = getComputedStyle(document.documentElement)
+			.getPropertyValue('--visiomatic-theme-names').split(/\s+/);
+		this._themeClassList = this._themeList.map(
+			theme => prefix + theme.toLowerCase()
+		);
+
+		// Get and apply default theme from CSS variable in themes.css.
+		this._defaultTheme = getComputedStyle(document.documentElement)
+			.getPropertyValue('--visiomatic-theme-default');
+		this._themeIndex = this._themeList.findIndex(
+			theme => theme === this._defaultTheme
+		);
+		DomUtil.addClass(
+			_this._map._container,
+			_this._themeClassList[this._themeIndex]
+		);
+
+		this._themeSelect = this._addSelectMenu(
 			this._className + '-select',
 			elem,
-			items,
+			this._themeList,
 			undefined,
 			this._themeIndex,
 			'Select theme',
-			function () {
-				this._themeIndex = parseInt(this._themeSelect.selectedIndex - 1, 10);
+			() => {
+				const	index = parseInt(
+					_this._themeSelect.selectedIndex - 1,
+					10
+				);				
+				// Remove pre-existing theme
+				DomUtil.removeClass(
+					_this._map._container,
+					_this._themeClassList[_this._themeIndex]
+				);
+				DomUtil.addClass(
+					_this._map._container,
+					_this._themeClassList[index]
+				);
+				this._themeIndex = index;
 			}
 		);
 	}
