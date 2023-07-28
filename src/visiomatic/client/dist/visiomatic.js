@@ -30533,7 +30533,7 @@
       if (val === void 0) {
         return parseFloat(this._input.value);
       } else {
-        this._input.value = val.toPrecision(10);
+        this._input.value = Number(val.toPrecision(10));
         return this;
       }
     },
