@@ -232,7 +232,7 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 			return parseFloat(this._input.value);
 		}
 		else {
-			this._input.value = val.toFixed(6);
+			this._input.value = val.toPrecision(10);
 			return this;
 		}
 	},

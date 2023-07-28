@@ -69,7 +69,7 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 		// from a CSS variable in themes.css.
 		this._defaultTheme = defaultTheme ?
 			defaultTheme : getComputedStyle(document.documentElement)
-			.getPropertyValue('--visiomatic-theme-default');
+				.getPropertyValue('--visiomatic-theme-default');
 		this._themeIndex = this._themeList.findIndex(
 			theme => theme === this._defaultTheme
 		);
