@@ -64,6 +64,7 @@
 		V.control.regionUI().addTo(sidebar);
 		V.control.profileUI().addTo(sidebar);
 		V.control.snapshotUI().addTo(sidebar);
+		V.control.preferencesUI().addTo(sidebar);
 		{% if doc_url %}
 			sidebar.addTabList();
 			V.control.docUI('{{ root_path }}' + '{{ doc_url }}').addTo(sidebar);

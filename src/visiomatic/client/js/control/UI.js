@@ -330,7 +330,8 @@ export const UI = Control.extend( /** @lends UI */ {
 		title=undefined,
 		fn=undefined
 	) {
-		const	button = DomUtil.create('a', className, parent);
+		const	button = DomUtil.create('div', className, parent),
+			icon = DomUtil.create('div', className + '-icon', button);
 
 		button.target = '_blank';
 		if (subClassName) {
@@ -370,25 +371,25 @@ export const UI = Control.extend( /** @lends UI */ {
 		title=undefined,
 		fn=undefined
 	) {
-		const	button = DomUtil.create('input', className, parent);
+		const	label =  DomUtil.create('label', className, parent),
+			input = DomUtil.create('input', className, label),
+			div = DomUtil.create('div', className, label);
 
-		button.type = 'radio';
-		button.name = className;
-		button.value = value;
-		button.checked = checked;
+		input.type = 'radio';
+		input.name = className;
+		input.value = value;
+		input.checked = checked;
 		if (fn) {
-			DomEvent.on(button, 'click touch', function () {
+			DomEvent.on(input, 'click touch', function () {
 				fn(value);
 			}, this);
 		}
 
-		const	label =  DomUtil.create('label', className, parent);
-
-		label.htmlFor = button.id = className + '-' + value;
+		label.htmlFor = input.id = className + '-' + value;
 		if (title) {
 			label.title = title;
 		}
-		return button;
+		return input;
 	},
 
 	/**

@@ -3,10 +3,42 @@
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
-#	                            Chiara Marmo - Paris-Saclay,
-#	                            Ruven Pillay - C2RMF/CNRS
+#	Copyright: (C) 2023 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
 */
+
+@import "themes.css";
+
+:root {
+	--icon-background-color: rgba(50, 50, 50, 1);
+	--icon-color: rgba(180, 180, 180, 1);
+	--icon-background-color-hover: rgba(60, 60, 60, 1);
+	--icon-color-hover: rgba(240, 240, 240, 1);
+	--icon-background-color-checked: rgba(180, 180, 180, 1);
+	--icon-color-checked: rgba(50, 50, 50, 1);
+	--button-background-color: rgba(50, 50, 50, 1);
+	--button-color: rgba(180, 180, 180, 1);
+	--button-background-color-hover: rgba(60, 60, 60, 1);
+	--button-color-hover: rgba(240, 240, 240, 1);
+	--button-background-color-checked: rgba(180, 180, 180, 1);
+	--button-color-checked: rgba(50, 50, 50, 1);
+	--button-color-on: rgba(208, 0, 0, 1);
+	--input-background-color: rgba(60, 60, 60, 1);
+	--input-color: rgba(200, 200, 200, 1);
+	--input-background-color-hover: rgba(180, 180, 180, 1);
+	--input-color-hover: rgba(50, 50, 50, 1);
+	--input-background-color-focus: rgba(180, 180, 180, 1);
+	--input-color-focus: rgba(50, 50, 50, 1);
+	--dialog-background-color: rgba(40, 40, 40, 1);
+	--dialog-color: rgba(240, 240, 240, 1);
+	--header-background-color: rgba(180, 180, 180, 1);
+	--header-color: rgba(50, 50, 50, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.5);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+}
+
 .leaflet-container {
   touch-action: none;
 }
@@ -17,7 +49,7 @@
 
 @keyframes flash {
 	0%   {background-color: #F4F4F4;}
-	10%   {background-color: #505050;}
+	10%   {background-color: var(--input-background-color);}
 	100% {background-color: #F4F4F4;}
 }
 
@@ -29,6 +61,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%% Basic Leaflet Controls %%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+.leaflet-left .leaflet-control {
+	margin-left: 5px;
+	border: none;
+}
 /* Left control bar */
 .leaflet-bar a {
 	width: 32px!important;
@@ -36,26 +72,31 @@
 }
 
 .leaflet-bar a:hover {
-	width: 32px;
-	height: 32px;
+	background-color: var(--icon-color-hover) !important;
+	color: var(--icon-color-hover) !important;
+}
+
+.leaflet-control-zoom {
+	background-color: var(--icon-background-color);
 }
 
 .leaflet-control-zoom-in {
-	background-image: url(../images/icon-magnifyplus.svg);
-	color: rgba(255,255,255,0) !important;
+	background-color: var(--icon-color) !important;
+	mask-image: url(../images/icon-magnifyplus.svg); -webkit-mask-image: url(../images/icon-magnifyplus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
 
 .leaflet-control-zoom-out {
-	background-image: url(../images/icon-magnifyminus.svg);
-	color: rgba(255,255,255,0) !important;
+	background-color: var(--icon-color) !important;
+	mask-image: url(../images/icon-magnifyminus.svg); -webkit-mask-image: url(../images/icon-magnifyminus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	color: var(--icon-color) !important;
 	text-shadow: none;
 	}
-
-.leaflet-left .leaflet-control {
-	margin-left: 5px;
-	border: none;
-}
 
 .leaflet-top.leaflet-left {
 	z-index: 2000;	/* Make sure it comes on top of other controls areas */
@@ -86,8 +127,8 @@ a {
 
 .visiomatic-control-expanded {
 	padding: 6px 6px 6px 6px;
-	color: #333;
-	background: #fff;
+	color: var(--dialog-color);
+	background: var(--dialog-background-color);
 	z-index:10;
 }
 
@@ -101,6 +142,7 @@ a {
 
 .visiomatic-control-label {
 	padding-right: 4px;
+	padding-top: 2px;
 	display: table-cell;
 	vertical-align: middle;
 }
@@ -119,90 +161,134 @@ a {
 /*------------------------------ Simple button ------------------------------*/
 
 .visiomatic-control-button {
-	background-repeat: no-repeat;
-	background-position: center;
 	display: inline-block;
 	cursor: pointer;
 	padding: 0px;
-	margin: 2px 0px 2px 2px;
+	margin: 3px 0px 2px 1px;
 	width:32px;
 	height: 31px;
+	color: var(--button-color);
+	background-color: var(--button-background-color);
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	border-radius: 4px;
 	vertical-align: bottom;
 	text-align: center;
-	line-height: 27px;
-	color: #505050;
 	font-size: 14px;
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
-	box-sizing:border-box;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	line-height: 27px;
+}
+
+.visiomatic-control-button:after {
+	color: var(--button-color);
+}
+.visiomatic-control-button-icon {
+	background-color: var(--button-color);
+	background-position: center;
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	width: inherit;
+	height: inherit;
 }
 
 .visiomatic-control-button:hover {
-	background-color: #F4F4F4;
+	background-color: var(--button-background-color-hover);
 	border-width: 1px;
-	border-color: black;
+	border-color: var(--border-color);
+}
+
+.visiomatic-control-button:hover:after {
+	color: var(--button-color-hover) !important;
+}
+
+.visiomatic-control-button-icon:hover {
+	background-color: var(--button-color-hover);
 }
 
 .visiomatic-control-button:active  {
-	background-color: #eee;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	background-color: var(--button-background-color-checked);
+	color: var(--button-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.visiomatic-control-button:active:after {
+	color: var(--button-color-checked) !important;
+}
+
+.visiomatic-control-button:active > div {
+	background-color: var(--button-color-checked);
 }
 
 /*------------------------------- Radio button ------------------------------*/
 
 .visiomatic-control-radios {
-    margin: 2px 0px -2px 0px;
-}
-
-input.visiomatic-control-radio {
-    display: none;
+    margin: 4px 0px -2px 0px;
 }
 
 label.visiomatic-control-radio {
-	background-color: #FFFFFF;
-	background-repeat: no-repeat;
-	background-position: center;
 	display: inline-block;
-	cursor: pointer;
-	position: relative;
-	padding: 0px;
 	width:32px;
 	height:31px;
-	color: #505050;
-	font-size: 12px;
-	font-family: Trebuchet, Arial, sans-serif;
-	font-weight: bold;
+}
+
+input.visiomatic-control-radio {
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
+	float:left;
+	position: relative;
+	width: inherit;
+	height: inherit;
+	background-color: var(--button-background-color);
+	margin: 0px;
 	box-sizing:border-box;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	cursor: pointer;
 }
 
-.visiomatic-control-radio:hover {
-	background-color: #F4F4F4;
-	border-width: 1px;
-	border-color: black;
+div.visiomatic-control-radio {
+    background-color: var(--button-color);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	position: relative;
+	padding: 0px;
+	width: inherit;
+	height: inherit;
 }
 
-input.visiomatic-control-radio:checked + label {
-	background-color: #eee;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+
+input.visiomatic-control-radio:hover {
+	background-color: var(--button-background-color-hover);
+}
+
+div.visiomatic-control-radio:hover {
+	background-color: var(--button-color-hover);
+}
+
+input.visiomatic-control-radio:checked,input.visiomatic-control-radio:active {
+	background-color: var(--button-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:active + div {
+	background-color: var(--button-color-checked);
 }
 
 /*------------------------------- Select menu -------------------------------*/
 
 div.visiomatic-control-select {
-	margin-right: 2px;
 	display: flow-root;
+	margin-right: 2px;
 }
 
 select.visiomatic-control-select {
 	height: 32px;
-	background-color: #F4F4F4;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	vertical-align: top;
-	margin: 2px;
-	padding: 4px 4px;
+	margin: 2px 0px 2px 4px;
+	padding: -2px 0px 4px 0px;
 	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 0px;
 	width: 100%;
 }
@@ -212,8 +298,14 @@ select.visiomatic-control-select {
 	border-radius: 0px 4px 4px 0px;
 }
 
-.visiomatic-control-select:hover {
-	background-color: #E4E4E4;
+select.visiomatic-control-select:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
+}
+
+select.visiomatic-control-select:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
 }
 
 /*------------------ Spinbox widget (original Tobias Bieniek) ---------------*/
@@ -229,53 +321,68 @@ select.visiomatic-control-select {
 	line-height: 100%;
 	width: 100%;
 	height: 32px;
-	background-color: #F4F4F4;
+	color: var(--input-color);
+	background-color: var(--input-background-color);
 	padding: 2px 6px 2px 6px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px;
 	box-sizing : border-box;
 	border-width: 0px;
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
 }
 
-.leaflet-spinbox-input:hover,.leaflet-spinbox-input:focus {
-	background-color: #E4E4E4;
+.leaflet-spinbox-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
+}
+.leaflet-spinbox-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
+.leaflet-spinbox-down,.leaflet-spinbox-up {
+	position: absolute;
+	top: 1px;
+	display: inline-block;
+	background-color: var(--button-background-color);
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	cursor: pointer;
 }
 
 .leaflet-spinbox-down {
-	position: absolute;
-	right: 30px;
-	top: 1px;
-	display: inline-block;
+	right: 31px;
+	border-radius: 0px;
+}
+
+.leaflet-spinbox-down-icon {
 	width: 29px;
 	height: 29px;
-	background-color: #FFFFFF;
-	background-image: url(../images/icon-minus.svg);
-	background-repeat: no-repeat;
-	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
-	border-radius: 0px;
-	cursor: pointer;
+	mask-image: url(../images/icon-minus.svg); -webkit-mask-image: url(../images/icon-minus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	background-color: var(--button-color);
 }
 
 .leaflet-spinbox-up {
-	position: absolute;
 	right: 1px;
-	top: 1px;
-	display: inline-block;
+	border-radius: 0px 4px 4px 0px;
+}
+
+.leaflet-spinbox-up-icon {
 	width: 29px;
 	height: 29px;
-	background-color: #FFFFFF;
-	background-image: url(../images/icon-plus.svg);
-	background-repeat: no-repeat;
-	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
-	border-radius: 0px 4px 4px 0px;
-	cursor: pointer;
+	mask-image: url(../images/icon-plus.svg); -webkit-mask-image: url(../images/icon-plus.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	background-color: var(--button-color);
 }
 
 .leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
-	background-color: #F4F4F4;
+	background-color: var(--button-background-color-hover);
+}
+
+.leaflet-spinbox-down-icon:hover,.leaflet-spinbox-up-icon:hover {
+	background-color: var(--button-color-hover);
 }
 
 /*----------------- Flip switch widget (original proto.io) ------------------*/
@@ -310,28 +417,28 @@ label.leaflet-flipswitch {
 	padding: 0;
 	line-height: 32px;
 	font-size: 14px;
-	color: white;
+	color: var(--button-background-color);
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing: border-box;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 .leaflet-flipswitch-inner:before {
 	content: "ON";
 	padding-left: 15px;
-	background-color: #d00000;
-	color: #FFFFFF;
+	background-color: var(--button-color-on);
+	color: var(--input-color);
 }
 .leaflet-flipswitch-inner:after {
 	content: "OFF";
 	padding-right: 12px;
-	color: #505050;
+	color: var(--input-color);
 	text-align: right;
 }
 .leaflet-flipswitch-button {
 	display: block;
 	margin: 2px;
-	background: #FFFFFF;
+	background: var(--input-background-color);
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
@@ -339,12 +446,12 @@ label.leaflet-flipswitch {
 	right: 50%;
 	border: 0;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	transition: all 0.2s ease-in 0s;
 	transition: background none;
 }
 .leaflet-flipswitch-button:hover {
-	background: #F4F4F4;
+	background-color: var(--input-background-color-hover);
 }
 input.leaflet-flipswitch:checked + label .leaflet-flipswitch-inner {
 	margin-left: 0;
@@ -372,7 +479,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 	cursor: pointer;
 }
 .sp-preview-inner {
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 .sp-dd {
@@ -390,7 +497,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 .visiomatic-control-layer {
 	display: table-row;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .visiomatic-control-layerswitch {
@@ -435,17 +542,39 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 
 .visiomatic-control-trash {
 	display: table-cell;
-	background-image: url(../images/icon-trash.svg);
-	background-repeat: no-repeat;
-	background-position: center center;
 	width: 27px;
-  border: 1px solid #a0a0a0 !important;
+	height: 27px;
+	background-color: var(--icon-background-color);
+	border-left: 1px;
 	border-radius: 0px 4px 4px 0px;
+	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 	cursor: pointer;
 }
 
+.visiomatic-control-trash-icon {
+	width: inherit;
+	height: inherit;
+	background-color: var(--button-color);
+	mask-image: url(../images/icon-trash.svg); -webkit-mask-image: url(../images/icon-trash.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+}
+
 .visiomatic-control-trash:hover {
-	background-color: #F4F4F4;
+	background-color: var(--button-background-color-hover);
+}
+
+.visiomatic-control-trash-icon:hover {
+	background-color: var(--button-color-hover);
+}
+
+.visiomatic-control-trash:active {
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+	background-color: var(--button-background-color-checked);
+}
+
+.visiomatic-control-trash-icon:active {
+	background-color: var(--button-color-checked);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -453,9 +582,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-channel-toggle {
-	background-image: url(../images/icon-equalizer2.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-equalizer2.svg); -webkit-mask-image: url(../images/icon-equalizer2.svg);
 }
 
 .sidebar.channel {
@@ -467,53 +594,72 @@ a#visiomatic-channel-toggle {
 
 /*--------------------------------- Mixing mode -----------------------------*/
 
-input#visiomatic-control-radio-mono + label {
-	background-image: url(../images/icon-palette.svg);
+#visiomatic-control-radio-mono {
 	border-radius: 4px 0px 0px 4px;
 }
 
-input#visiomatic-control-radio-color + label {
-	margin: 0px 0px 0px 2px;
-	background-image: url(../images/icon-stack.svg);
+#visiomatic-control-radio-mono + div {
+	mask-image: url(../images/icon-palette.svg); -webkit-mask-image: url(../images/icon-palette.svg);
+}
+
+#visiomatic-control-radio-color {
+	margin-left: 2px;
 	border-radius: 0px 4px 4px 0px;
+}
+
+#visiomatic-control-radio-color + div {
+	mask-image: url(../images/icon-stack.svg); -webkit-mask-image: url(../images/icon-stack.svg);
 }
 
 /*---------------------------------- Color map ------------------------------*/
 
-input.leaflet-cmap {
-    display: none;
+.visiomatic-control-cmaps {
+    margin: 6px 0px -2px 0px;
+    float: left;
 }
+
 
 label.leaflet-cmap {
 	display: inline-block;
-	cursor: pointer;
-	position: relative;
 	width:32px;
 	height:32px;
-	box-shadow: 1px 1px 2px #a0a0a0;
 }
 
-.leaflet-cmap:hover {
-	box-shadow: 0px 0px 2px black inset;
-	border-width: 1px;
-	border-color: black;
+input.leaflet-cmap {
+	appearance: none; -moz-appearance: none; -webkit-appearance: none;
+	float: left;
+	cursor: pointer;
+	position: relative;
+	padding: 0px;
+	box-sizing:border-box;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	margin: 0px 2px 0px 0px;
+	width: inherit;
+	height: inherit;
 }
 
-input.leaflet-cmap:checked + label {
-	box-shadow: 1px 1px 2px black inset;
+div.leaflet-cmap {
 }
 
-input#leaflet-cmap-grey + label {
+input.leaflet-cmap:hover {
+	box-shadow: 2px 2px 4px var(--shadow-color) inset;
+}
+
+input.leaflet-cmap:checked {
+	box-shadow: 2px 2px 4px var(--shadow-color) inset;
+}
+
+#leaflet-cmap-grey {
 	background-image: url(../images/icon-grey.svg);
 	border-radius: 4px 0px 0px 4px;
 }
-input#leaflet-cmap-jet + label {
+#leaflet-cmap-jet  {
 	background-image: url(../images/icon-jet.svg);
 }
-input#leaflet-cmap-cold + label {
+#leaflet-cmap-cold  {
 	background-image: url(../images/icon-cold.svg);
 }
-input#leaflet-cmap-hot + label {
+#leaflet-cmap-hot  {
 	background-image: url(../images/icon-hot.svg);
 	border-radius: 0px 4px 4px 0px;
 }
@@ -524,14 +670,19 @@ input#leaflet-cmap-hot + label {
 
 /*-------------------------------- Channel list -----------------------------*/
 
-a#visiomatic-control-button-colormix-reset {
-	background-image: url(../images/icon-reset.svg);
-	border-radius: 4px 0px 0px 4px;
+#visiomatic-control-button-colormix-reset {
 }
 
-a#visiomatic-control-button-colormix-auto {
-	background-image: url(../images/icon-magicwand.svg);
-	border-radius: 0px 4px 4px 0px;
+#visiomatic-control-button-colormix-reset > div {
+	mask-image: url(../images/icon-reset.svg); -webkit-mask-image: url(../images/icon-reset.svg);
+}
+
+#visiomatic-control-button-colormix-auto {
+	margin-left: 4px;
+}
+
+#visiomatic-control-button-colormix-auto > div {
+	mask-image: url(../images/icon-magicwand.svg); -webkit-mask-image: url(../images/icon-magicwand.svg);
 }
 
 .visiomatic-control-chanlist {
@@ -543,7 +694,6 @@ a#visiomatic-control-button-colormix-auto {
 .visiomatic-control-channel {
 	height: 28px;
 	display: table-row;
-	box-shadow: -1px -1px 2px #a0a0a0 inset;
 	border-radius: 4px;
 	cursor: pointer;
 }
@@ -552,7 +702,7 @@ a#visiomatic-control-button-colormix-auto {
 	display: table-cell;
 	vertical-align: middle;
 	width: 27px;
-	box-shadow: 0px -1px 2px #a0a0a0 inset;
+	box-shadow: 0px -1px 2px var(--shadow-color) inset;
 	border-radius: 4px 0px 0px 4px;
 }
 
@@ -561,11 +711,14 @@ a#visiomatic-control-button-colormix-auto {
 	vertical-align: middle;
 	padding-left: 4px;
 	padding-right: 8px;
-
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	box-shadow: -1px -1px 2px var(--shadow-color) inset;
 }
 
 .visiomatic-control-chanlabel:hover {
-	background-color: #F4F4F4;
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
 
 
@@ -574,9 +727,7 @@ a#visiomatic-control-button-colormix-auto {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-image-toggle {
-	background-image: url(../images/icon-contrast.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-contrast.svg); -webkit-mask-image: url(../images/icon-contrast.svg);
 }
 
 .sidebar.image {
@@ -586,9 +737,8 @@ a#visiomatic-image-toggle {
 	left: 234px;
 }
 
-a#visiomatic-control-button-image-reset {
-	background-image: url(../images/icon-reset.svg);
-	border-radius: 4px 0px 0px 4px;
+#visiomatic-control-button-image-reset >div {
+	mask-image: url(../images/icon-reset.svg); -webkit-mask-image: url(../images/icon-reset.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -596,9 +746,7 @@ a#visiomatic-control-button-image-reset {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-catalog-toggle {
-	background-image: url(../images/icon-make-group.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-make-group.svg); -webkit-mask-image: url(../images/icon-make-group.svg);
 }
 
 .sidebar.catalog {
@@ -614,17 +762,17 @@ a#visiomatic-catalog-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-catalog:after {
-	content: 'GO';
-	color: #505050;
+#visiomatic-control-button-catalog > div {
+	display: none;
 }
 
-#leaflet-visiomaticcatalog div.visiomatic-control-select {
-	display: flow-root;
+#visiomatic-control-button-catalog:after {
+	content: 'GO';
 }
 
 .logo-catalog-cds {
-	background: url(../images/cds.png) no-repeat;
+	background-image: url(../images/cds.png);
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -632,7 +780,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-mast {
-	background: url(../images/mast.png) no-repeat;
+	background-image: url(../images/mast.png)j;
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -640,7 +789,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-imcce {
-	background: url(../images/imcce.svg) no-repeat;
+	background-image: url(../images/imcce.svg);
+	background-repeat: no-repeat;
 	background-size: 4.0em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -648,7 +798,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-vizier {
-	background: url(../images/vizier.png) no-repeat;
+	background-image: url(../images/vizier.png);
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -660,9 +811,7 @@ a#visiomatic-catalog-toggle {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-region-toggle {
-	background-image: url(../images/icon-location.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-location.svg); -webkit-mask-image: url(../images/icon-location.svg);
 }
 
 .sidebar.region {
@@ -678,13 +827,12 @@ a#visiomatic-region-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-region:after {
-	content: 'GO';
-	color: #505050;
+#visiomatic-control-button-region > div {
+	display: none;
 }
 
-#leaflet-visiomaticregion div.visiomatic-control-select {
-	display: flow-root;
+#visiomatic-control-button-region:after {
+	content: 'GO';
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -692,9 +840,7 @@ a#visiomatic-region-toggle {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-profile-toggle {
-	background-image: url(../images/icon-plot.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-plot.svg); -webkit-mask-image: url(../images/icon-plot.svg);
 }
 
 .sidebar.profile {
@@ -711,9 +857,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px;
 }
 
+#visiomatic-control-button-start > div {
+	display: none;
+}
+
 #visiomatic-control-button-start:after {
 	content: 'START';
-	color: #505050;
 }
 
 #visiomatic-control-button-end {
@@ -723,9 +872,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#visiomatic-control-button-end > div {
+	display: none;
+}
+
 #visiomatic-control-button-end:after {
 	content: 'END';
-	color: #505050;
 }
 
 #visiomatic-control-button-spectrum {
@@ -735,9 +887,12 @@ a#visiomatic-profile-toggle {
 	border-radius: 0px 4px 4px 0px;
 }
 
+#visiomatic-control-button-spectrum > div {
+	display: none;
+}
+
 #visiomatic-control-button-spectrum:after {
 	content: 'GO';
-	color: #505050;
 }
 
 /*---------------------------------- Plots ----------------------------------*/
@@ -753,13 +908,13 @@ a#visiomatic-profile-toggle {
 
 .jqplot-highlighter-tooltip, .jqplot-canvasOverlay-tooltip {
 	z-index: 2000;
-	background: rgba(255,255,255,0.75);
+	background-color: var(--dialog-background-color);
 	margin-bottom: 4px;
 }
 
 table.jqplot-table-legend, table.jqplot-cursor-legend {
 	z-index: 2000;
-	background-color: rgba(255,255,255,0.75);
+	background-color: var(--dialog-background-color);
 }
 
 
@@ -768,19 +923,23 @@ table.jqplot-table-legend, table.jqplot-cursor-legend {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-snapshot-toggle {
-	background-image: url(../images/icon-camera.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-camera.svg); -webkit-mask-image: url(../images/icon-camera.svg);
 }
 
-a#visiomatic-control-button-snapshot {
-	background-image: url(../images/icon-image.svg);
+#visiomatic-control-button-snapshot {
 	border-radius: 4px 4px 4px 4px;
 }
 
-a#visiomatic-control-button-print {
-	background-image: url(../images/icon-print.svg);
+#visiomatic-control-button-snapshot > div {
+	mask-image: url(../images/icon-image.svg); -webkit-mask-image: url(../images/icon-image.svg);
+}
+
+#visiomatic-control-button-print {
 	border-radius: 4px 4px 4px 4px;
+}
+
+#visiomatic-control-button-print >div {
+	mask-image: url(../images/icon-print.svg); -webkit-mask-image: url(../images/icon-print.svg);
 }
 
 .sidebar.snapshot {
@@ -795,13 +954,26 @@ a#visiomatic-control-button-print {
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Preferences %%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+a#visiomatic-preferences-toggle {
+	mask-image: url(../images/icon-cog.svg); -webkit-mask-image: url(../images/icon-cog.svg);
+}
+
+.sidebar.preferences {
+	width: 200px;
+}
+.sidebar-left.preferences ~ .leaflet-left {
+	left: 214px;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Doc %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-doc-toggle {
-	background-image: url(../images/icon-info.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+	mask-image: url(../images/icon-info.svg); -webkit-mask-image: url(../images/icon-info.svg);
 	height: 36px;
 }
 
@@ -850,50 +1022,46 @@ iframe.visiomatic-control-doc {
 	height: 36px;
 	box-sizing: border-box;
 	padding: 2px 8px 2px 8px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 #visiomatic-control-button-home {
-	background-image: url(../images/icon-home.svg);
-	color: yellow;
-	background-repeat: no-repeat;
-	background-position: center;
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 4px 0px 0px 4px;
 }
 
-#visiomatic-control-button-back {
-	background-image: url(../images/icon-left.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-home > div {
+	mask-image: url(../images/icon-home.svg); -webkit-mask-image: url(../images/icon-home.svg);
+}
+
+#visiomatic-control-button-back{
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 0px;
 }
 
-#visiomatic-control-button-forward {
-	background-image: url(../images/icon-right.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-back > div {
+	mask-image: url(../images/icon-left.svg); -webkit-mask-image: url(../images/icon-left.svg);
+}
+
+#visiomatic-control-button-forward  {
 	width: 32px;
-	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 0px 4px 4px 0px;
 }
 
-#visiomatic-control-button-pdf {
-	background-image: url(../images/icon-pdf.svg);
-	background-repeat: no-repeat;
-	background-position: center;
+#visiomatic-control-button-forward > div {
+	mask-image: url(../images/icon-right.svg); -webkit-mask-image: url(../images/icon-right.svg);
+}
+
+#visiomatic-control-button-pdf{
 	width: 32px;
 	margin: 0px 0px 0px 2px;
-	padding: 2px;
 	border-radius: 4px 4px 4px 4px;
 	position: absolute;
 	right: 3px;
+}
+
+#visiomatic-control-button-pdf > div {
+	mask-image: url(../images/icon-pdf.svg); -webkit-mask-image: url(../images/icon-pdf.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -901,79 +1069,91 @@ iframe.visiomatic-control-doc {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-coords-dialog {
-	background-color: #ffffff;
-	color: #505050;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	border-radius: 4px;
 	font-size: 1.2em;
-}
-
-.leaflet-control-coords-ext {
 	height: 32px;
-	background-color: #F4F4F4;
+}
+
+.leaflet-control-coords-ext,.leaflet-control-coords-select,.leaflet-control-coords-input {
+	height: inherit;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
 	vertical-align: top;
-	margin: 0px;
-	padding: 0px 0px 0px 4px;
-	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
-	border-radius: 4px 0px 0px 4px;
-}
-
-.leaflet-control-coords-ext:hover,.leaflet-control-coords-ext:focus {
-	background-color: #E4E4E4;
-}
-
-.leaflet-control-coords-select {
-	height: 32px;
-	background-color: #F4F4F4;
-	vertical-align: top;
-	margin: 0px;
-	text-align: center;
-	padding: 0px 0px 0px 4px;
-	border-width: 0px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
-	border-radius: 4px 0px 0px 4px;
-}
-
-.leaflet-control-coords-select:hover,.leaflet-control-coords-select:focus {
-	background-color: #E4E4E4;
-}
-
-.leaflet-control-coords-input {
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 100%;
-	height: 32px;
-	background-color: #F4F4F4;
+	padding: 0px 0px 0px 8px;
+	border-width: 0px;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.leaflet-control-coords-ext {
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-coords-select {
+	text-align: center;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-coords-input {
 	padding: 2px 6px 2px 6px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
 	border-radius: 0px 4px 4px 0px;
 	box-sizing : border-box;
-	border-width: 0px;
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
 }
 
-.leaflet-control-coords-input:hover {
-	background-color: #E4E4E4;
+.leaflet-control-coords-ext:hover,.leaflet-control-coords-select:hover,.leaflet-control-coords-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
+
+.leaflet-control-coords-ext:focus,.leaflet-control-coords-select:focus,.leaflet-control-coords-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
 
 .leaflet-control-coords-clipboard {
 	position: absolute;
 	right: 2px;
 	top: 1px;
 	display: inline-block;
-	width: 29px;
-	height: 29px;
-	background-color: #FFFFFF;
+	background-color: var(--icon-background-color);
 	background-image: url(../images/icon-clipboard.svg);
 	background-repeat: no-repeat;
 	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 0px 4px 4px 0px;
 	cursor: pointer;
 }
 
+.leaflet-control-coords-clipboard-icon {
+	background-color: var(--icon-color);
+	width: 29px;
+	height: 29px;
+	mask-image: url(../images/icon-clipboard.svg); -webkit-mask-image: url(../images/icon-clipboard.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+}
+
 .leaflet-control-coords-clipboard:hover {
-	background-color: #F4F4F4;
+	background-color: var(--icon-background-color-hover);
+}
+
+.leaflet-control-coords-clipboard-icon:hover {
+	background-color: var(--icon-color-hover);
+}
+
+.leaflet-control-coords-clipboard:active {
+	background-color: var(--icon-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.leaflet-control-coords-clipboard-icon:active {
+	background-color: var(--icon-color-checked);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -988,7 +1168,7 @@ iframe.visiomatic-control-doc {
 
 .leaflet-control-scale-line {
 	border: 0px;
-	background-color: rgba(255,255,255,0.66);
+	background-color: var(--scale-color);
 	text-shadow: none;
 }
 
@@ -1040,9 +1220,9 @@ iframe.visiomatic-control-doc {
 (see copyright notice in Control.ExtraMap.js */
 
 .leaflet-control-extramap {
-	border: solid #FFFFFF 2px;
-	box-shadow: 1px 1px 2px #a0a0a0;
-	background: #0f0f0f;
+	border: solid var(--extramap-border-color) 2px;
+	box-shadow: 1px 1px 2px var(--shadow-color);
+	background: var(--extramap-fill-color);
 	border-radius: 4px;
 	z-index: 0;
 	transition: all 500ms;
@@ -1050,7 +1230,7 @@ iframe.visiomatic-control-doc {
 
 .leaflet-control-extramap a {
 /*
-	background-color: #FFFFFF;
+	background-color: var(--icon-background-color);
 	background-position: 1px 2px;
 */
 	background-repeat: no-repeat;
@@ -1068,7 +1248,7 @@ iframe.visiomatic-control-doc {
 .leaflet-control-extramap a.leaflet-control-extramap-toggle-display.minimized-topright {
 	opacity: 1.0;
 	background-image: url("../images/icon-map.svg");
-	background-color: #FFFFFF;
+	background-color: var(--icon-color);
 }
 .leaflet-control-extramap:hover .leaflet-control-extramap-toggle-display {
 	opacity: 1.0;
@@ -1112,20 +1292,14 @@ iframe.visiomatic-control-doc {
    (see copyright notice in Control.FullScreen.js
 */
 a.leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-fullscreen.svg);
+	mask-image: url(../images/icon-fullscreen.svg); -webkit-mask-image: url(../images/icon-fullscreen.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	background-color: var(--icon-color);
 }
 
 :fullscreen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-moz-full-screen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-webkit-full-screen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
-}
-:-ms-fullscreen .leaflet-control-zoom-fullscreen {
-	background-image: url(../images/icon-windowed.svg)!important;
+	mask-image: url(../images/icon-windowed.svg); -webkit-mask-image: url(../images/icon-windowed.svg);
 }
 
 .leaflet-pseudo-fullscreen {
@@ -1158,13 +1332,13 @@ UL.filetree LI {
 }
 
 UL.filetree A {
-	color: #333;
+	color: var(--icon-color);
 	text-decoration: none;
 	padding: 0px 2px;
 }
 
 UL.filetree A:hover {
-	background: #BDF;
+	background-color: var(--icon-background-color-hover);
 }
 
 .filetree LI.directory {
@@ -1196,7 +1370,7 @@ UL.filetree A:hover {
 .filetree .filesize {
 	font-weight: normal;
 	float: right;
-	color: #999;
+	color: var(--dialog-color);
 	background: inherit;
 }
 
@@ -1216,7 +1390,7 @@ UL.filetree A:hover {
 	background: rgba(100,100,100,0.5) !important;
 	color: white;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px #a0a0a0 inset;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	margin-bottom: 5px !important;
 	margin-right: 10px !important;
 	line-height: 200%;
@@ -1256,10 +1430,16 @@ UL.filetree A:hover {
 */
 
 a.leaflet-control-zoom-sidebar {
-	background-image: url(../images/icon-backward2.svg);
+	mask-image: url(../images/icon-backward2.svg); -webkit-mask-image: url(../images/icon-backward2.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	background-color: var(--icon-color) !important;
 }
 a.leaflet-control-zoom-sidebar.collapsed {
-	background-image: url(../images/icon-menu.svg);
+	mask-image: url(../images/icon-menu.svg); -webkit-mask-image: url(../images/icon-menu.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	background-color: var(--icon-color) !important;
 }
 
 .sidebar {
@@ -1273,7 +1453,7 @@ a.leaflet-control-zoom-sidebar.collapsed {
 	bottom: 10px;
 	transition: width 500ms;
 	cursor: default;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 4px;
 }
 
@@ -1324,8 +1504,8 @@ a.leaflet-control-zoom-sidebar.collapsed {
 	top: 0px;
 	bottom: 0px;
 	height: 100%;
-	background-color: #fff;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: var(--icon-background-color);
+	box-shadow: 1px 1px 2px var(--shadow-color);
 	z-index: 1000;
 }
 
@@ -1344,19 +1524,37 @@ a.leaflet-control-zoom-sidebar.collapsed {
 .sidebar-tabs > li, .sidebar-tabs > ul > li {
 	width: 100%;
 	height: 32px;
-	color: #333;
+	background-color: var(--icon-background-color);
 	font-size: 12pt;
 	overflow: hidden;
 	transition: all 80ms;
 }
+
 .sidebar-tabs > li:hover, .sidebar-tabs > ul > li:hover {
-	color: #000;
-	background-color: #eee;
+	background-color: var(--icon-background-color-hover);
 }
+
+.sidebar-tabs > li:hover > a, .sidebar-tabs > ul > li:hover > a {
+	background-color: var(--icon-color-hover);
+}
+
+.sidebar-tabs > li:active, .sidebar-tabs > ul > li:active {
+	background-color: var(--icon-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.sidebar-tabs > li:active > a, .sidebar-tabs > ul > li:active > a {
+	background-color: var(--icon-color-checked);
+}
+
 .sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
-	color: #fff;
-	background-color: #d0d0d0;
+	background-color: var(--icon-background-color-checked);
 }
+
+.sidebar-tabs > li.active > a, .sidebar-tabs > ul > li.active > a {
+	background-color: var(--icon-color-checked);
+}
+
 .sidebar-tabs > li.disabled, .sidebar-tabs > ul > li.disabled {
 	color: rgba(51, 51, 51, 0.4);
 }
@@ -1371,7 +1569,9 @@ cursor: default;
 	width: 100%;
 	height: 100%;
 	line-height: 32px;
-	color: inherit;
+	background-color: var(--icon-color);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
 	text-decoration: none;
 	text-align: center;
 }
@@ -1383,9 +1583,10 @@ cursor: default;
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
-	background-color: rgba(255, 255, 255, 0.95);
+	background-color: var(--dialog-background-color);
 	overflow-x: hidden;
 	overflow-y: auto;
+	color: var(--dialog-color);
 }
 .sidebar-left .sidebar-content {
 	left: 32px;
@@ -1416,10 +1617,10 @@ cursor: default;
 	padding: 0px 36px 0px 4px;
 	line-height: 32px;
 	font-size: 16px;
-	color: #505050;
+	color: var(--header-color);
 	text-align: center;
 	text-shadow: none;
-	background-color: #d0d0d0;
+	background-color: var(--header-background-color);
 }
 .sidebar-right .sidebar-header {
 	padding-left: 40px;
@@ -1434,11 +1635,34 @@ cursor: default;
 	outline: none;
 	text-align: center;
 	cursor: pointer;
-	background-image: url(../images/icon-backward.svg);
-	background-color: rgba(255, 255, 255, 0.75);
-	background-repeat: no-repeat;
-	background-position: center;
-	box-shadow: 1px 1px 2px #a0a0a0;
+	background-color: var(--icon-background-color);
+	box-shadow: 1px 1px 2px var(--shadow-color);
+}
+
+.sidebar-close-icon {
+	mask-image: url(../images/icon-backward.svg); -webkit-mask-image: url(../images/icon-backward.svg);
+	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+	mask-position: center; -webkit-mask-position: center;
+	width: inherit;
+	height: inherit;
+	background-color: var(--icon-color);
+}
+
+.sidebar-close:hover {
+	background-color: var(--icon-background-color-hover);
+}
+
+.sidebar-close-icon:hover {
+	background-color: var(--icon-color-hover);
+}
+
+.sidebar-close:active {
+	background-color: var(--icon-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.sidebar-close-icon:active {
+	background-color: var(--icon-color-checked);
 }
 
 .sidebar-left .sidebar-close {
