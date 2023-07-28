@@ -582,7 +582,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 a#visiomatic-channel-toggle {
-	mask-image: url(../images/icon-equalizer2.svg);
+	mask-image: url(../images/icon-equalizer2.svg); -webkit-mask-image: url(../images/icon-equalizer2.svg);
 }
 
 .sidebar.channel {
@@ -798,7 +798,8 @@ a#visiomatic-catalog-toggle {
 }
 
 .logo-catalog-vizier {
-	background: url(../images/vizier.png) no-repeat;
+	background-image: url(../images/vizier.png);
+	background-repeat: no-repeat;
 	background-size: 2.4em;
 	background-position: center right 16px;
 	display: inline-block;
@@ -930,7 +931,7 @@ a#visiomatic-snapshot-toggle {
 }
 
 #visiomatic-control-button-snapshot > div {
-	mask-image: url(../images/icon-image.svg);
+	mask-image: url(../images/icon-image.svg); -webkit-mask-image: url(../images/icon-image.svg);
 }
 
 #visiomatic-control-button-print {
@@ -938,7 +939,7 @@ a#visiomatic-snapshot-toggle {
 }
 
 #visiomatic-control-button-print >div {
-	mask-image: url(../images/icon-print.svg);
+	mask-image: url(../images/icon-print.svg); -webkit-mask-image: url(../images/icon-print.svg);
 }
 
 .sidebar.snapshot {
