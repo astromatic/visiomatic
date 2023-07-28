@@ -30533,7 +30533,7 @@
       if (val === void 0) {
         return parseFloat(this._input.value);
       } else {
-        this._input.value = val;
+        this._input.value = val.toFixed(6);
         return this;
       }
     },
