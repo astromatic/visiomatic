@@ -32463,12 +32463,12 @@
       this._sideClass = "preferences";
     },
     _initDialog: function() {
-      const _this = this, className = this._className, line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), prefix = "visiomatic-theme-";
+      const _this = this, className = this._className, line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), prefix = "visiomatic-theme-", defaultTheme = localStorage.getItem("visiomaticDefaultTheme");
       this._themeList = getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-names").split(/\s+/);
       this._themeClassList = this._themeList.map(
         (theme) => prefix + theme.toLowerCase()
       );
-      this._defaultTheme = getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-default");
+      this._defaultTheme = defaultTheme ? defaultTheme : getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-default");
       this._themeIndex = this._themeList.findIndex(
         (theme) => theme === this._defaultTheme
       );
@@ -32497,6 +32497,10 @@
             _this._themeClassList[index]
           );
           this._themeIndex = index;
+          localStorage.setItem(
+            "visiomaticDefaultTheme",
+            this._themeList[index]
+          );
         }
       );
     }

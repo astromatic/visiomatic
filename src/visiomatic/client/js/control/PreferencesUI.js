@@ -55,7 +55,8 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 			className = this._className,
 			line = this._addDialogLine('Theme:', this._dialog),
 			elem = this._addDialogElement(line),
-			prefix = 'visiomatic-theme-';
+			prefix = 'visiomatic-theme-',
+			defaultTheme = localStorage.getItem('visiomaticDefaultTheme');
 
 		// Build theme class names from list in the CSS variable in themes.css.
 		this._themeList = getComputedStyle(document.documentElement)
@@ -64,8 +65,10 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 			theme => prefix + theme.toLowerCase()
 		);
 
-		// Get and apply default theme from CSS variable in themes.css.
-		this._defaultTheme = getComputedStyle(document.documentElement)
+		// Get and apply default theme from local storage or
+		// from a CSS variable in themes.css.
+		this._defaultTheme = defaultTheme ?
+			defaultTheme : getComputedStyle(document.documentElement)
 			.getPropertyValue('--visiomatic-theme-default');
 		this._themeIndex = this._themeList.findIndex(
 			theme => theme === this._defaultTheme
@@ -97,6 +100,11 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 					_this._themeClassList[index]
 				);
 				this._themeIndex = index;
+				// Set as default theme in local stage
+				localStorage.setItem(
+					'visiomaticDefaultTheme',
+					this._themeList[index]
+				);
 			}
 		);
 	}
