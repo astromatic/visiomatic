@@ -15,6 +15,13 @@
 	--icon-color-hover: rgba(240, 240, 240, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(50, 50, 50, 1);
+	--button-background-color: rgba(50, 50, 50, 1);
+	--button-color: rgba(180, 180, 180, 1);
+	--button-background-color-hover: rgba(60, 60, 60, 1);
+	--button-color-hover: rgba(240, 240, 240, 1);
+	--button-background-color-checked: rgba(180, 180, 180, 1);
+	--button-color-checked: rgba(50, 50, 50, 1);
+	--button-color-on: rgba(208, 0, 0, 1);
 	--input-background-color: rgba(60, 60, 60, 1);
 	--input-color: rgba(200, 200, 200, 1);
 	--input-background-color-hover: rgba(180, 180, 180, 1);
@@ -25,7 +32,6 @@
 	--dialog-color: rgba(240, 240, 240, 1);
 	--header-background-color: rgba(180, 180, 180, 1);
 	--header-color: rgba(50, 50, 50, 1);
-	--icon-color-on: rgba(208, 0, 0, 1);
 	--border-color: rgba(0, 0, 0, 1);
 	--shadow-color: rgba(0, 0, 0, 0.5);
 	--scale-color: rgba(255, 255, 255, 0.66);
@@ -160,8 +166,8 @@ a {
 	margin: 3px 0px 2px 1px;
 	width:32px;
 	height: 31px;
-	color: var(--icon-color);
-	background-color: var(--icon-background-color);
+	color: var(--button-color);
+	background-color: var(--button-background-color);
 	box-sizing:border-box;
 	box-shadow: 1px 1px 2px var(--shadow-color);
 	border-radius: 4px;
@@ -174,10 +180,10 @@ a {
 }
 
 .visiomatic-control-button:after {
-	color: var(--icon-color);
+	color: var(--button-color);
 }
 .visiomatic-control-button-icon {
-	background-color: var(--icon-color);
+	background-color: var(--button-color);
 	background-position: center;
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
@@ -186,31 +192,31 @@ a {
 }
 
 .visiomatic-control-button:hover {
-	background-color: var(--icon-background-color-hover);
+	background-color: var(--button-background-color-hover);
 	border-width: 1px;
 	border-color: var(--border-color);
 }
 
 .visiomatic-control-button:hover:after {
-	color: var(--icon-color-hover) !important;
+	color: var(--button-color-hover) !important;
 }
 
 .visiomatic-control-button-icon:hover {
-	background-color: var(--icon-color-hover);
+	background-color: var(--button-color-hover);
 }
 
 .visiomatic-control-button:active  {
-	background-color: var(--icon-background-color-checked);
-	color: var(--icon-color-checked);
+	background-color: var(--button-background-color-checked);
+	color: var(--button-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 .visiomatic-control-button:active:after {
-	color: var(--icon-color-checked) !important;
+	color: var(--button-color-checked) !important;
 }
 
 .visiomatic-control-button:active > div {
-	background-color: var(--icon-color-checked);
+	background-color: var(--button-color-checked);
 }
 
 /*------------------------------- Radio button ------------------------------*/
@@ -231,7 +237,7 @@ input.visiomatic-control-radio {
 	position: relative;
 	width: inherit;
 	height: inherit;
-	background-color: var(--icon-background-color);
+	background-color: var(--button-background-color);
 	margin: 0px;
 	box-sizing:border-box;
 	box-shadow: 1px 1px 2px var(--shadow-color);
@@ -239,7 +245,7 @@ input.visiomatic-control-radio {
 }
 
 div.visiomatic-control-radio {
-    background-color: var(--icon-color);
+    background-color: var(--button-color);
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
 	position: relative;
@@ -250,20 +256,20 @@ div.visiomatic-control-radio {
 
 
 input.visiomatic-control-radio:hover {
-	background-color: var(--icon-background-color-hover);
+	background-color: var(--button-background-color-hover);
 }
 
 div.visiomatic-control-radio:hover {
-	background-color: var(--icon-color-hover);
+	background-color: var(--button-color-hover);
 }
 
 input.visiomatic-control-radio:checked,input.visiomatic-control-radio:active {
-	background-color: var(--icon-background-color-checked);
+	background-color: var(--button-background-color-checked);
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:active + div {
-	background-color: var(--icon-color-checked);
+	background-color: var(--button-color-checked);
 }
 
 /*------------------------------- Select menu -------------------------------*/
@@ -337,7 +343,7 @@ select.visiomatic-control-select:focus {
 	position: absolute;
 	top: 1px;
 	display: inline-block;
-	background-color: var(--icon-background-color);
+	background-color: var(--button-background-color);
 	box-shadow: 1px 1px 2px var(--shadow-color);
 	cursor: pointer;
 }
@@ -353,7 +359,7 @@ select.visiomatic-control-select:focus {
 	mask-image: url(../images/icon-minus.svg); -webkit-mask-image: url(../images/icon-minus.svg);
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
-	background-color: var(--icon-color);
+	background-color: var(--button-color);
 }
 
 .leaflet-spinbox-up {
@@ -367,15 +373,15 @@ select.visiomatic-control-select:focus {
 	mask-image: url(../images/icon-plus.svg); -webkit-mask-image: url(../images/icon-plus.svg);
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
-	background-color: var(--icon-color);
+	background-color: var(--button-color);
 }
 
 .leaflet-spinbox-down:hover,.leaflet-spinbox-up:hover {
-	background-color: var(--icon-background-color-hover);
+	background-color: var(--button-background-color-hover);
 }
 
 .leaflet-spinbox-down-icon:hover,.leaflet-spinbox-up-icon:hover {
-	background-color: var(--icon-color-hover);
+	background-color: var(--button-color-hover);
 }
 
 /*----------------- Flip switch widget (original proto.io) ------------------*/
@@ -410,7 +416,7 @@ label.leaflet-flipswitch {
 	padding: 0;
 	line-height: 32px;
 	font-size: 14px;
-	color: var(--icon-background-color);
+	color: var(--button-background-color);
 	font-family: Trebuchet, Arial, sans-serif;
 	font-weight: bold;
 	box-sizing: border-box;
@@ -419,7 +425,7 @@ label.leaflet-flipswitch {
 .leaflet-flipswitch-inner:before {
 	content: "ON";
 	padding-left: 15px;
-	background-color: var(--icon-color-on);
+	background-color: var(--button-color-on);
 	color: var(--input-color);
 }
 .leaflet-flipswitch-inner:after {
@@ -547,27 +553,27 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 .visiomatic-control-trash-icon {
 	width: inherit;
 	height: inherit;
-	background-color: var(--icon-color);
+	background-color: var(--button-color);
 	mask-image: url(../images/icon-trash.svg); -webkit-mask-image: url(../images/icon-trash.svg);
 	mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
 	mask-position: center; -webkit-mask-position: center;
 }
 
 .visiomatic-control-trash:hover {
-	background-color: var(--icon-background-color-hover);
+	background-color: var(--button-background-color-hover);
 }
 
 .visiomatic-control-trash-icon:hover {
-	background-color: var(--icon-color-hover);
+	background-color: var(--button-color-hover);
 }
 
 .visiomatic-control-trash:active {
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	background-color: var(--icon-background-color-checked);
+	background-color: var(--button-background-color-checked);
 }
 
 .visiomatic-control-trash-icon:active {
-	background-color: var(--icon-color-checked);
+	background-color: var(--button-color-checked);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
