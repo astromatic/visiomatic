@@ -100,7 +100,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'start',
 				'Start drawing a profile line',
-				function () {
+				() => {
 					if (this._currProfileLine) {
 						this._updateLine();
 					} else {
@@ -152,7 +152,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'spectrum',
 				'Plot a spectrum at the current map position',
-				function () {
+				() => {
 					const map = _this._map,
 						latLng = map.getCenter(),
 						zoom = map.options.crs.options.nzoom - 1,
@@ -211,11 +211,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			path = this._currProfileLine.getLatLngs(),
 			point1 = map.project(path[0], maxzoom),
 			point2 = map.project(map.getCenter(), maxzoom);
-		if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
-			point2.y = point1.y;
-		} else {
-			point2.x = point1.x;
-		}
 
 		path[1] = map.unproject(point2, maxzoom);
 		this._currProfileLine.redraw();
@@ -225,7 +220,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 * End interactive profile line definition and do the profile query. 
 	 * @private
 	 */
-	_profileEnd: function () {
+	_profileEnd: async function () {
 		const	map = this._map,
 			point = map.getCenter(),
 			line = this._profileLine = this._currProfileLine;
@@ -259,17 +254,20 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point1.y = y;
 		}
 
-		VUtil.requestURL(
+		response = await fetch(
 			this._layer._url.replace(/\&.*$/g, '') +
-				'&PFL=' + zoom.toString() + ':' +
+				'&PFL=' +
 				(point1.x - 0.5).toFixed(0) + ',' +
-				(point1.y - 0.5).toFixed(0) + '-' +
+				(point1.y - 0.5).toFixed(0) + ':' +
 				(point2.x - 0.5).toFixed(0) + ',' +
 				(point2.y - 0.5).toFixed(0),
-			'getting layer profile',
-			this._plotProfile,
-			this
 		);
+		
+		if (response.status == 200) {
+			this._plotProfile(await response);
+		} else {
+			alert('Error ' + response.status + ' while getting profile.');
+		}
 	},
 
 	/**
@@ -307,107 +305,102 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	/**
 	 * Load and plot image profile data.
 	 * @private
-	 * @param {object} self
-	   Calling control object (``this``).
-	 * @param {object} httpRequest
-	   HTTP request.
+	 * @param {object} response
+	   HTTP response object.
 	 */
-	_plotProfile: function (self, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				const	json = JSON.parse(httpRequest.responseText),
-					rawprof = json.profile,
-					layer = self._layer,
-					visio = layer.visio,
-					line = self._profileLine,
-					popdiv = document.getElementById('leaflet-profile-plot'),
-					prof = [],
-					series = [];
-				var	title, ylabel;
+	_plotProfile: async function (response) {
+		const	json = await response.json(),
+			rawprof = json.profile,
+			layer = this._layer,
+			visio = layer.visio,
+			line = this._profileLine,
+			popdiv = document.getElementById('leaflet-profile-plot'),
+			prof = [],
+			series = [];
+			var	title, ylabel;
 
-				self.addLayer(line, 'Image profile');
+		this.addLayer(line, 'Image profile');
 
-				if (visio.mode === 'mono') {
-					prof.push(self._extractProfile(
-						layer,
-						rawprof,
-						visio.channel
-					));
+		if (visio.mode === 'mono') {
+			prof.push(
+				this._extractProfile(
+					layer,
+					rawprof,
+					visio.channel
+				)
+			);
+			series.push({
+				color: 'black',
+			});
+			title = 'Image profile for ' +
+				visio.channelLabels[visio.channel];
+			ylabel = 'Pixel value in ' +
+				visio.channelUnits[visio.channel];
+		} else {
+			const rgb = visio.rgb;
+			for (let c = 0; c < visio.nChannel; c++) {
+				if (rgb[c].isOn()) {
+					prof.push(this._extractProfile(layer, rawprof, c));
 					series.push({
-						color: 'black',
+						color: rgb[c].toStr(),
+						label: visio.channelLabels[c]
 					});
-					title = 'Image profile for ' +
-						visio.channelLabels[visio.channel];
-					ylabel = 'Pixel value in ' +
-						visio.channelUnits[visio.channel];
-				} else {
-					const rgb = visio.rgb;
-					for (let c = 0; c < visio.nChannel; c++) {
-						if (rgb[c].isOn()) {
-							prof.push(self._extractProfile(layer, rawprof, c));
-							series.push({
-								color: rgb[c].toStr(),
-								label: visio.channelLabels[c]
-							});
-						}
-					}
-					title = 'Image profiles';
-					ylabel = 'Pixel value';
 				}
-
-				$(document).ready(function () {
-					$.jqplot.config.enablePlugins = true;
-					$.jqplot('leaflet-profile-plot', prof, {
-						title: title,
-						grid: {
-							backgroundColor: '#ddd',
-							gridLineColor: '#eee'
-						},
-						axes: {
-							xaxis: {
-								label: 'position along line',
-								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-								pad: 1.0
-							},
-							yaxis: {
-								label: ylabel,
-								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-								pad: 1.0
-							}
-						},
-						legend: {
-							show: (visio.mode !== 'mono'),
-							location: 'ne',
-						},
-						highlighter: {
-							show: true,
-							sizeAdjust: 2,
-							tooltipLocation: 'n',
-							tooltipAxes: 'y',
-							tooltipFormatString: '%.6g ' +
-								visio.channelUnits[visio.channel],
-							useAxesFormatters: false,
-							bringSeriesToFront: true
-						},
-						cursor: {
-							show: true,
-							zoom: true
-						},
-						series: series,
-						seriesDefaults: {
-							lineWidth: 2.0,
-							showMarker: false
-						}
-					});
-				});
-
-				popdiv.removeChild(
-					popdiv.childNodes[0]
-				);						// Remove activity spinner
-
-				line._popup.update();	// TODO: avoid private method
 			}
+			title = 'Image profiles';
+			ylabel = 'Pixel value';
 		}
+
+		$(document).ready(function () {
+			$.jqplot.config.enablePlugins = true;
+			$.jqplot('leaflet-profile-plot', prof, {
+				title: title,
+				grid: {
+					backgroundColor: '#ddd',
+					gridLineColor: '#eee'
+				},
+				axes: {
+					xaxis: {
+						label: 'position along line',
+						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+						pad: 1.0
+					},
+					yaxis: {
+						label: ylabel,
+						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+						pad: 1.0
+					}
+				},
+				legend: {
+					show: (visio.mode !== 'mono'),
+					location: 'ne',
+				},
+				highlighter: {
+					show: true,
+					sizeAdjust: 2,
+					tooltipLocation: 'n',
+					tooltipAxes: 'y',
+					tooltipFormatString: '%.6g ' +
+						visio.channelUnits[visio.channel],
+					useAxesFormatters: false,
+					bringSeriesToFront: true
+				},
+				cursor: {
+					show: true,
+					zoom: true
+				},
+				series: series,
+				seriesDefaults: {
+					lineWidth: 2.0,
+					showMarker: false
+				}
+			});
+		});
+
+		popdiv.removeChild(
+			popdiv.childNodes[0]
+		);						// Remove activity spinner
+		line._popup.update();	// TODO: avoid private method
 	},
 
 	/**
@@ -424,11 +417,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_extractProfile: function (layer, rawprof, channel) {
 		const	nchan = layer.visio.nChannel,
-			npix = rawprof.length / nchan,
+			npix = rawprof.length,
 			prof = [];
-
 		for (let i = 0; i < npix; i++) {
-			prof.push(rawprof[i * nchan + channel]);
+			prof.push(rawprof[i][2][channel]);
 		}
 
 		return prof;

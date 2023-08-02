@@ -26,7 +26,7 @@ config.settings = conf.flat_dict()
 config.config_filename = conf.config_filename
 config.image_filename = conf.image_filename
 
-from .tiled import colordict, pickledTiled, Tiled
+from .tiled import colordict, pickledTiled, ProfileModel, Tiled
 from .cache import LRUMemCache, LRUSharedRWLockCache
 
 
@@ -131,19 +131,22 @@ def create_app() -> FastAPI:
     )
 
     # Prepare the RegExps
-	# JTL
+    # JTL (tile indices)
     reg_jtl = r"^(\d+),(\d+)$"
     app.parse_jtl = re.compile(reg_jtl)
-	# MINMAX
+    # MINMAX (intensity range)
     reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
         r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
         r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
     app.parse_minmax = re.compile(reg_minmax)
-	# MIX
+    # MIX (mixing matrix)
     reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
     app.parse_mix = re.compile(reg_mix) 
-	# VAL
-    reg_val = r"^(\d+),(\d+)$"
+    # PFL (image profile(s)
+    reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
+    app.parse_pfl = re.compile(reg_pfl)
+    # VAL (pixel value(s)
+    reg_val = r"^([+-]?\d+),([+-]?\d+)$"
     app.parse_val = re.compile(reg_val)
 
     # Test endpoint
@@ -238,6 +241,13 @@ def create_app() -> FastAPI:
                 max_length=2000,
                 regex=reg_mix
                 ),
+			PFL: str = Query(
+			    None,
+			    title="Get image profile(s)", 
+                min_length=7,
+                max_length=2000,
+                regex=reg_pfl
+                ),
             VAL: str = Query(
                 None,
                 title="Pixel value(s)",
@@ -297,6 +307,20 @@ def create_app() -> FastAPI:
             return responses.JSONResponse(
             	content=jsonable_encoder(
             		tiled.get_model()
+            	)
+            )
+        elif PFL != None:
+            if share:
+                lock.release()
+            val = app.parse_pfl.findall(PFL)[0]
+            # We use the ORJSON response to properly manage NaNs
+            return responses.ORJSONResponse(
+            	content=jsonable_encoder(
+            		tiled.get_profiles(
+            			CHAN,
+                        [int(val[0]), int(val[1])],
+                        [int(val[2]), int(val[3])]
+                    )
             	)
             )
         elif VAL != None:

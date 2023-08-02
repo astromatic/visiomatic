@@ -12725,7 +12725,7 @@
             return responses[finalDataType];
           }
         }
-        function ajaxConvert(s, response, jqXHR, isSuccess) {
+        function ajaxConvert(s, response2, jqXHR, isSuccess) {
           var conv2, current, conv, tmp, prev, converters = {}, dataTypes = s.dataTypes.slice();
           if (dataTypes[1]) {
             for (conv in s.converters) {
@@ -12735,10 +12735,10 @@
           current = dataTypes.shift();
           while (current) {
             if (s.responseFields[current]) {
-              jqXHR[s.responseFields[current]] = response;
+              jqXHR[s.responseFields[current]] = response2;
             }
             if (!prev && isSuccess && s.dataFilter) {
-              response = s.dataFilter(response, s.dataType);
+              response2 = s.dataFilter(response2, s.dataType);
             }
             prev = current;
             current = dataTypes.shift();
@@ -12766,10 +12766,10 @@
                 }
                 if (conv !== true) {
                   if (conv && s["throws"]) {
-                    response = conv(response);
+                    response2 = conv(response2);
                   } else {
                     try {
-                      response = conv(response);
+                      response2 = conv(response2);
                     } catch (e) {
                       return { state: "parsererror", error: conv ? e : "No conversion from " + prev + " to " + current };
                     }
@@ -12778,7 +12778,7 @@
               }
             }
           }
-          return { state: "success", data: response };
+          return { state: "success", data: response2 };
         }
         jQuery5.extend({
           active: 0,
@@ -12968,7 +12968,7 @@
               }
             }
             function done(status, nativeStatusText, responses, headers) {
-              var isSuccess, success, error, response, modified, statusText = nativeStatusText;
+              var isSuccess, success, error, response2, modified, statusText = nativeStatusText;
               if (state === 2) {
                 return;
               }
@@ -12981,9 +12981,9 @@
               jqXHR.readyState = status > 0 ? 4 : 0;
               isSuccess = status >= 200 && status < 300 || status === 304;
               if (responses) {
-                response = ajaxHandleResponses(s, jqXHR, responses);
+                response2 = ajaxHandleResponses(s, jqXHR, responses);
               }
-              response = ajaxConvert(s, response, jqXHR, isSuccess);
+              response2 = ajaxConvert(s, response2, jqXHR, isSuccess);
               if (isSuccess) {
                 if (s.ifModified) {
                   modified = jqXHR.getResponseHeader("Last-Modified");
@@ -13000,9 +13000,9 @@
                 } else if (status === 304) {
                   statusText = "notmodified";
                 } else {
-                  statusText = response.state;
-                  success = response.data;
-                  error = response.error;
+                  statusText = response2.state;
+                  success = response2.data;
+                  error = response2.error;
                   isSuccess = !error;
                 }
               } else {
@@ -13389,7 +13389,7 @@
           if (typeof url !== "string" && _load) {
             return _load.apply(this, arguments);
           }
-          var selector, type, response, self2 = this, off = url.indexOf(" ");
+          var selector, type, response2, self2 = this, off = url.indexOf(" ");
           if (off >= 0) {
             selector = jQuery5.trim(url.slice(off));
             url = url.slice(0, off);
@@ -13407,10 +13407,10 @@
               dataType: "html",
               data: params
             }).done(function(responseText) {
-              response = arguments;
+              response2 = arguments;
               self2.html(selector ? jQuery5("<div>").append(jQuery5.parseHTML(responseText)).find(selector) : responseText);
             }).complete(callback && function(jqXHR, status) {
-              self2.each(callback, response || [jqXHR.responseText, status, jqXHR]);
+              self2.each(callback, response2 || [jqXHR.responseText, status, jqXHR]);
             });
           }
           return this;
@@ -20502,7 +20502,7 @@
             return responses[finalDataType];
           }
         }
-        function ajaxConvert(s, response, jqXHR, isSuccess) {
+        function ajaxConvert(s, response2, jqXHR, isSuccess) {
           var conv2, current, conv, tmp, prev, converters = {}, dataTypes = s.dataTypes.slice();
           if (dataTypes[1]) {
             for (conv in s.converters) {
@@ -20512,10 +20512,10 @@
           current = dataTypes.shift();
           while (current) {
             if (s.responseFields[current]) {
-              jqXHR[s.responseFields[current]] = response;
+              jqXHR[s.responseFields[current]] = response2;
             }
             if (!prev && isSuccess && s.dataFilter) {
-              response = s.dataFilter(response, s.dataType);
+              response2 = s.dataFilter(response2, s.dataType);
             }
             prev = current;
             current = dataTypes.shift();
@@ -20543,10 +20543,10 @@
                 }
                 if (conv !== true) {
                   if (conv && s.throws) {
-                    response = conv(response);
+                    response2 = conv(response2);
                   } else {
                     try {
-                      response = conv(response);
+                      response2 = conv(response2);
                     } catch (e) {
                       return {
                         state: "parsererror",
@@ -20558,7 +20558,7 @@
               }
             }
           }
-          return { state: "success", data: response };
+          return { state: "success", data: response2 };
         }
         jQuery5.extend({
           active: 0,
@@ -20758,7 +20758,7 @@
               }
             }
             function done(status, nativeStatusText, responses, headers) {
-              var isSuccess, success, error, response, modified, statusText = nativeStatusText;
+              var isSuccess, success, error, response2, modified, statusText = nativeStatusText;
               if (completed2) {
                 return;
               }
@@ -20771,13 +20771,13 @@
               jqXHR.readyState = status > 0 ? 4 : 0;
               isSuccess = status >= 200 && status < 300 || status === 304;
               if (responses) {
-                response = ajaxHandleResponses(s, jqXHR, responses);
+                response2 = ajaxHandleResponses(s, jqXHR, responses);
               }
               if (!isSuccess && jQuery5.inArray("script", s.dataTypes) > -1 && jQuery5.inArray("json", s.dataTypes) < 0) {
                 s.converters["text script"] = function() {
                 };
               }
-              response = ajaxConvert(s, response, jqXHR, isSuccess);
+              response2 = ajaxConvert(s, response2, jqXHR, isSuccess);
               if (isSuccess) {
                 if (s.ifModified) {
                   modified = jqXHR.getResponseHeader("Last-Modified");
@@ -20794,9 +20794,9 @@
                 } else if (status === 304) {
                   statusText = "notmodified";
                 } else {
-                  statusText = response.state;
-                  success = response.data;
-                  error = response.error;
+                  statusText = response2.state;
+                  success = response2.data;
+                  error = response2.error;
                   isSuccess = !error;
                 }
               } else {
@@ -20876,8 +20876,8 @@
               "text script": function() {
               }
             },
-            dataFilter: function(response) {
-              jQuery5.globalEval(response, options2, doc);
+            dataFilter: function(response2) {
+              jQuery5.globalEval(response2, options2, doc);
             }
           });
         };
@@ -21165,7 +21165,7 @@
           return jQuery5.merge([], parsed.childNodes);
         };
         jQuery5.fn.load = function(url, params, callback) {
-          var selector, type, response, self2 = this, off = url.indexOf(" ");
+          var selector, type, response2, self2 = this, off = url.indexOf(" ");
           if (off > -1) {
             selector = stripAndCollapse(url.slice(off));
             url = url.slice(0, off);
@@ -21183,11 +21183,11 @@
               dataType: "html",
               data: params
             }).done(function(responseText) {
-              response = arguments;
+              response2 = arguments;
               self2.html(selector ? jQuery5("<div>").append(jQuery5.parseHTML(responseText)).find(selector) : responseText);
             }).always(callback && function(jqXHR, status) {
               self2.each(function() {
-                callback.apply(this, response || [jqXHR.responseText, status, jqXHR]);
+                callback.apply(this, response2 || [jqXHR.responseText, status, jqXHR]);
               });
             });
           }
@@ -31112,7 +31112,7 @@
         map2.unproject(b.max, z),
         map2.unproject((0, import_leaflet11.point)(b.max.x, b.min.y), z)
       ];
-      var response, sys;
+      var response2, sys;
       if (!wcs2.equatorialFlag && this.options.nativeCelSys) {
         switch (wcs2.celSysCode) {
           case "ecliptic":
@@ -31150,7 +31150,7 @@
         if (dlng < 1e-4) {
           dlng = 1e-4;
         }
-        response = await fetch(
+        response2 = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             jd: jdmean,
@@ -31170,7 +31170,7 @@
           wcs2.distance(c2[0], center),
           wcs2.distance(c2[0], center)
         );
-        response = await fetch(
+        response2 = await fetch(
           import_leaflet11.Util.template(catalog.url, import_leaflet11.Util.extend({
             sys,
             jd: jdmean,
@@ -31183,18 +31183,18 @@
           }))
         );
       }
-      if (response.status == 200) {
-        this._loadCatalog(catalog, templayer, await response);
+      if (response2.status == 200) {
+        this._loadCatalog(catalog, templayer, await response2);
       } else {
         this.removeLayer(templayer);
-        alert("Error " + response.status + " while querying " + catalog.service + ".");
+        alert("Error " + response2.status + " while querying " + catalog.service + ".");
       }
     },
-    _loadCatalog: async function(catalog, templayer, response) {
+    _loadCatalog: async function(catalog, templayer, response2) {
       const wcs2 = this._map.options.crs;
       catalog.jd = wcs2.jd;
       const geo = catalog.toGeoJSON(
-        catalog.format == "json" ? await response.json() : await response.text()
+        catalog.format == "json" ? await response2.json() : await response2.text()
       ), geocatalog = (0, import_leaflet11.geoJson)(geo, {
         onEachFeature: function(feature, layer) {
           if (feature.properties && feature.properties.items) {
@@ -32548,7 +32548,7 @@
           elem,
           "start",
           "Start drawing a profile line",
-          function() {
+          () => {
             if (this._currProfileLine) {
               this._updateLine();
             } else {
@@ -32589,7 +32589,7 @@
           elem,
           "spectrum",
           "Plot a spectrum at the current map position",
-          function() {
+          () => {
             const map2 = _this._map, latLng11 = map2.getCenter(), zoom = map2.options.crs.options.nzoom - 1, point8 = map2.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map2.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet19.circleMarker)(rLatLng, {
               color: speccolpick.value,
               radius: 6,
@@ -32623,15 +32623,10 @@
     },
     _updateLine: function(e) {
       const map2 = this._map, latLng11 = map2.getCenter(), maxzoom = map2.options.crs.options.nzoom - 1, path = this._currProfileLine.getLatLngs(), point1 = map2.project(path[0], maxzoom), point22 = map2.project(map2.getCenter(), maxzoom);
-      if (Math.abs(point1.x - point22.x) > Math.abs(point1.y - point22.y)) {
-        point22.y = point1.y;
-      } else {
-        point22.x = point1.x;
-      }
       path[1] = map2.unproject(point22, maxzoom);
       this._currProfileLine.redraw();
     },
-    _profileEnd: function() {
+    _profileEnd: async function() {
       const map2 = this._map, point8 = map2.getCenter(), line = this._profileLine = this._currProfileLine;
       map2.off("drag", this._updateLine, this);
       this._currProfileLine = void 0;
@@ -32656,12 +32651,14 @@
         point22.y = point1.y;
         point1.y = y;
       }
-      VUtil.requestURL(
-        this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point1.x - 0.5).toFixed(0) + "," + (point1.y - 0.5).toFixed(0) + "-" + (point22.x - 0.5).toFixed(0) + "," + (point22.y - 0.5).toFixed(0),
-        "getting layer profile",
-        this._plotProfile,
-        this
+      response = await fetch(
+        this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + (point1.x - 0.5).toFixed(0) + "," + (point1.y - 0.5).toFixed(0) + ":" + (point22.x - 0.5).toFixed(0) + "," + (point22.y - 0.5).toFixed(0)
       );
+      if (response.status == 200) {
+        this._plotProfile(await response);
+      } else {
+        alert("Error " + response.status + " while getting profile.");
+      }
     },
     _getMeasurementString: function() {
       const currentLatLng = this._currentLatLng, previousLatLng = this._markers[this._markers.length - 1].getLatLng();
@@ -32684,92 +32681,90 @@
       const distanceStr = distance.toFixed(2) + unit;
       return distanceStr;
     },
-    _plotProfile: function(self2, httpRequest) {
-      if (httpRequest.readyState === 4) {
-        if (httpRequest.status === 200) {
-          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, line = self2._profileLine, popdiv = document.getElementById("leaflet-profile-plot"), prof = [], series = [];
-          var title, ylabel;
-          self2.addLayer(line, "Image profile");
-          if (visio.mode === "mono") {
-            prof.push(self2._extractProfile(
-              layer,
-              rawprof,
-              visio.channel
-            ));
+    _plotProfile: async function(response2) {
+      const json = await response2.json(), rawprof = json.profile, layer = this._layer, visio = layer.visio, line = this._profileLine, popdiv = document.getElementById("leaflet-profile-plot"), prof = [], series = [];
+      var title, ylabel;
+      this.addLayer(line, "Image profile");
+      if (visio.mode === "mono") {
+        prof.push(
+          this._extractProfile(
+            layer,
+            rawprof,
+            visio.channel
+          )
+        );
+        series.push({
+          color: "black"
+        });
+        title = "Image profile for " + visio.channelLabels[visio.channel];
+        ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
+      } else {
+        const rgb2 = visio.rgb;
+        for (let c2 = 0; c2 < visio.nChannel; c2++) {
+          if (rgb2[c2].isOn()) {
+            prof.push(this._extractProfile(layer, rawprof, c2));
             series.push({
-              color: "black"
+              color: rgb2[c2].toStr(),
+              label: visio.channelLabels[c2]
             });
-            title = "Image profile for " + visio.channelLabels[visio.channel];
-            ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
-          } else {
-            const rgb2 = visio.rgb;
-            for (let c2 = 0; c2 < visio.nChannel; c2++) {
-              if (rgb2[c2].isOn()) {
-                prof.push(self2._extractProfile(layer, rawprof, c2));
-                series.push({
-                  color: rgb2[c2].toStr(),
-                  label: visio.channelLabels[c2]
-                });
-              }
-            }
-            title = "Image profiles";
-            ylabel = "Pixel value";
           }
-          $(document).ready(function() {
-            $.jqplot.config.enablePlugins = true;
-            $.jqplot("leaflet-profile-plot", prof, {
-              title,
-              grid: {
-                backgroundColor: "#ddd",
-                gridLineColor: "#eee"
-              },
-              axes: {
-                xaxis: {
-                  label: "position along line",
-                  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                  pad: 1
-                },
-                yaxis: {
-                  label: ylabel,
-                  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                  pad: 1
-                }
-              },
-              legend: {
-                show: visio.mode !== "mono",
-                location: "ne"
-              },
-              highlighter: {
-                show: true,
-                sizeAdjust: 2,
-                tooltipLocation: "n",
-                tooltipAxes: "y",
-                tooltipFormatString: "%.6g " + visio.channelUnits[visio.channel],
-                useAxesFormatters: false,
-                bringSeriesToFront: true
-              },
-              cursor: {
-                show: true,
-                zoom: true
-              },
-              series,
-              seriesDefaults: {
-                lineWidth: 2,
-                showMarker: false
-              }
-            });
-          });
-          popdiv.removeChild(
-            popdiv.childNodes[0]
-          );
-          line._popup.update();
         }
+        title = "Image profiles";
+        ylabel = "Pixel value";
       }
+      $(document).ready(function() {
+        $.jqplot.config.enablePlugins = true;
+        $.jqplot("leaflet-profile-plot", prof, {
+          title,
+          grid: {
+            backgroundColor: "#ddd",
+            gridLineColor: "#eee"
+          },
+          axes: {
+            xaxis: {
+              label: "position along line",
+              labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+              pad: 1
+            },
+            yaxis: {
+              label: ylabel,
+              labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+              pad: 1
+            }
+          },
+          legend: {
+            show: visio.mode !== "mono",
+            location: "ne"
+          },
+          highlighter: {
+            show: true,
+            sizeAdjust: 2,
+            tooltipLocation: "n",
+            tooltipAxes: "y",
+            tooltipFormatString: "%.6g " + visio.channelUnits[visio.channel],
+            useAxesFormatters: false,
+            bringSeriesToFront: true
+          },
+          cursor: {
+            show: true,
+            zoom: true
+          },
+          series,
+          seriesDefaults: {
+            lineWidth: 2,
+            showMarker: false
+          }
+        });
+      });
+      popdiv.removeChild(
+        popdiv.childNodes[0]
+      );
+      line._popup.update();
     },
     _extractProfile: function(layer, rawprof, channel) {
-      const nchan = layer.visio.nChannel, npix = rawprof.length / nchan, prof = [];
+      const nchan = layer.visio.nChannel, npix = rawprof.length, prof = [];
       for (let i2 = 0; i2 < npix; i2++) {
-        prof.push(rawprof[i2 * nchan + channel]);
+        prof.push(rawprof[i2][2][channel]);
       }
       return prof;
     },
@@ -32934,8 +32929,8 @@
     _loadRegion: function(region, templayer, _this, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const wcs2 = _this._map.options.crs, response = httpRequest.responseText, geoRegion = (0, import_leaflet20.geoJson)(
-            JSON.parse(response),
+          const wcs2 = _this._map.options.crs, response2 = httpRequest.responseText, geoRegion = (0, import_leaflet20.geoJson)(
+            JSON.parse(response2),
             {
               onEachFeature: function(feature, layer) {
                 if (feature.properties && feature.properties.description) {
