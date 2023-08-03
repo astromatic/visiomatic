@@ -8,9 +8,7 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-import 'jqplot-exported';
+import Chart from 'chart.js/auto';
 
 import {
 	DomUtil,
@@ -222,6 +220,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_profileEnd: async function () {
 		const	map = this._map,
+			wcs = map.options.crs,
 			point = map.getCenter(),
 			line = this._profileLine = this._currProfileLine;
 
@@ -238,10 +237,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		popdiv.id = 'leaflet-profile-plot';
 		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-		const	zoom = map.options.crs.options.nzoom - 1,
+		const	zoom = wcs.options.nzoom - 1,
 			path = line.getLatLngs(),
-			point1 = map.project(path[0], zoom),
-			point2 = map.project(path[1], zoom);
+			point1 = wcs.project(path[0]),
+			point2 = wcs.project(path[1]);
 
 		if (point2.x < point1.x) {
 			const x = point2.x;
@@ -257,10 +256,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		response = await fetch(
 			this._layer._url.replace(/\&.*$/g, '') +
 				'&PFL=' +
-				(point1.x - 0.5).toFixed(0) + ',' +
-				(point1.y - 0.5).toFixed(0) + ':' +
-				(point2.x - 0.5).toFixed(0) + ',' +
-				(point2.y - 0.5).toFixed(0),
+				point1.x.toFixed(0) + ',' +
+				point1.y.toFixed(0) + ':' +
+				point2.x.toFixed(0) + ',' +
+				point2.y.toFixed(0),
 		);
 		
 		if (response.status == 200) {
@@ -350,7 +349,33 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			title = 'Image profiles';
 			ylabel = 'Pixel value';
 		}
-
+		new Chart(
+			 DomUtil.create(
+				'canvas',
+				this._className + '-canvas',
+				popdiv
+			),
+			{
+				type: 'line',
+				data: {
+					labels: rawprof.map(point => [point[0], point[1]]),
+					datasets: [{
+						label: 'profile',
+						data: rawprof.map(point => point[2][0]),
+						pointRadius: 0,
+						stepped: 'middle'
+					}]
+				},
+				options: {
+					interaction: {
+						mode: 'nearest',
+						intersect: false,
+						axis: 'x'
+					}
+				}
+			}
+		)
+		/*
 		$(document).ready(function () {
 			$.jqplot.config.enablePlugins = true;
 			$.jqplot('leaflet-profile-plot', prof, {
@@ -396,7 +421,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				}
 			});
 		});
-
+		*/
 		popdiv.removeChild(
 			popdiv.childNodes[0]
 		);						// Remove activity spinner
@@ -456,6 +481,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 						self._extractAverage(layer, rawprof, c)
 					]);
 				}
+				/*
 				$(document).ready(function () {
 					$.jqplot.config.enablePlugins = true;
 					$.jqplot('leaflet-spectrum-plot', [spec], {
@@ -497,7 +523,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 						}
 					});
 				});
-
+				*/
 				popdiv.removeChild(
 					popdiv.childNodes[0]
 				);						// Remove activity spinner
