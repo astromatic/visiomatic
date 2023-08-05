@@ -37,7 +37,7 @@
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.leaflet = {}));
       })(exports, function(exports2) {
         "use strict";
-        var version3 = "1.9.4";
+        var version3 = "1.9.3";
         function extend4(dest) {
           var i2, j, len, src;
           for (j = 1, len = arguments.length; j < len; j++) {
@@ -1431,15 +1431,15 @@
           }
           restoreOutline();
           _outlineElement = element;
-          _outlineStyle = element.style.outlineStyle;
-          element.style.outlineStyle = "none";
+          _outlineStyle = element.style.outline;
+          element.style.outline = "none";
           on(window, "keydown", restoreOutline);
         }
         function restoreOutline() {
           if (!_outlineElement) {
             return;
           }
-          _outlineElement.style.outlineStyle = _outlineStyle;
+          _outlineElement.style.outline = _outlineStyle;
           _outlineElement = void 0;
           _outlineStyle = void 0;
           off(window, "keydown", restoreOutline);
@@ -2644,7 +2644,7 @@
               return false;
             }
             requestAnimFrame2(function() {
-              this._moveStart(true, options2.noMoveStart || false)._animateZoom(center, zoom3, true);
+              this._moveStart(true, false)._animateZoom(center, zoom3, true);
             }, this);
             return true;
           },
@@ -2793,7 +2793,6 @@
             this._layers = [];
             this._lastZIndex = 0;
             this._handlingClick = false;
-            this._preventClick = false;
             for (var i2 in baseLayers) {
               this._addLayer(baseLayers[i2], i2);
             }
@@ -2980,9 +2979,6 @@
             return label;
           },
           _onInputClick: function() {
-            if (this._preventClick) {
-              return;
-            }
             var inputs = this._layerControlInputs, input, layer;
             var addedLayers = [], removedLayers = [];
             this._handlingClick = true;
@@ -3024,13 +3020,10 @@
           },
           _expandSafely: function() {
             var section = this._section;
-            this._preventClick = true;
             on(section, "click", preventDefault);
             this.expand();
-            var that = this;
             setTimeout(function() {
               off(section, "click", preventDefault);
-              that._preventClick = false;
             });
           }
         });
@@ -3445,101 +3438,16 @@
             off(document, "mouseup touchend touchcancel", this._onUp, this);
             enableImageDrag();
             enableTextSelection();
-            var fireDragend = this._moved && this._moving;
-            this._moving = false;
-            Draggable._dragging = false;
-            if (fireDragend) {
+            if (this._moved && this._moving) {
               this.fire("dragend", {
                 noInertia,
                 distance: this._newPos.distanceTo(this._startPos)
               });
             }
+            this._moving = false;
+            Draggable._dragging = false;
           }
         });
-        function clipPolygon(points, bounds3, round2) {
-          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
-          for (i2 = 0, len = points.length; i2 < len; i2++) {
-            points[i2]._code = _getBitCode(points[i2], bounds3);
-          }
-          for (k = 0; k < 4; k++) {
-            edge2 = edges[k];
-            clippedPoints = [];
-            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
-              a = points[i2];
-              b = points[j];
-              if (!(a._code & edge2)) {
-                if (b._code & edge2) {
-                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                  p._code = _getBitCode(p, bounds3);
-                  clippedPoints.push(p);
-                }
-                clippedPoints.push(a);
-              } else if (!(b._code & edge2)) {
-                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                p._code = _getBitCode(p, bounds3);
-                clippedPoints.push(p);
-              }
-            }
-            points = clippedPoints;
-          }
-          return points;
-        }
-        function polygonCenter(latlngs, crs) {
-          var i2, j, p1, p2, f, area, x, y, center;
-          if (!latlngs || latlngs.length === 0) {
-            throw new Error("latlngs not passed");
-          }
-          if (!isFlat(latlngs)) {
-            console.warn("latlngs are not flat! Only the first ring will be used");
-            latlngs = latlngs[0];
-          }
-          var centroidLatLng = toLatLng([0, 0]);
-          var bounds3 = toLatLngBounds(latlngs);
-          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
-          if (areaBounds < 1700) {
-            centroidLatLng = centroid(latlngs);
-          }
-          var len = latlngs.length;
-          var points = [];
-          for (i2 = 0; i2 < len; i2++) {
-            var latlng = toLatLng(latlngs[i2]);
-            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
-          }
-          area = x = y = 0;
-          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
-            p1 = points[i2];
-            p2 = points[j];
-            f = p1.y * p2.x - p2.y * p1.x;
-            x += (p1.x + p2.x) * f;
-            y += (p1.y + p2.y) * f;
-            area += f * 3;
-          }
-          if (area === 0) {
-            center = points[0];
-          } else {
-            center = [x / area, y / area];
-          }
-          var latlngCenter = crs.unproject(toPoint(center));
-          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
-        }
-        function centroid(coords2) {
-          var latSum = 0;
-          var lngSum = 0;
-          var len = 0;
-          for (var i2 = 0; i2 < coords2.length; i2++) {
-            var latlng = toLatLng(coords2[i2]);
-            latSum += latlng.lat;
-            lngSum += latlng.lng;
-            len++;
-          }
-          return toLatLng([latSum / len, lngSum / len]);
-        }
-        var PolyUtil = {
-          __proto__: null,
-          clipPolygon,
-          polygonCenter,
-          centroid
-        };
         function simplify(points, tolerance) {
           if (!tolerance || !points.length) {
             return points.slice();
@@ -3685,18 +3593,11 @@
             console.warn("latlngs are not flat! Only the first ring will be used");
             latlngs = latlngs[0];
           }
-          var centroidLatLng = toLatLng([0, 0]);
-          var bounds3 = toLatLngBounds(latlngs);
-          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
-          if (areaBounds < 1700) {
-            centroidLatLng = centroid(latlngs);
-          }
-          var len = latlngs.length;
           var points = [];
-          for (i2 = 0; i2 < len; i2++) {
-            var latlng = toLatLng(latlngs[i2]);
-            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+          for (var j in latlngs) {
+            points.push(crs.project(toLatLng(latlngs[j])));
           }
+          var len = points.length;
           for (i2 = 0, halfDist = 0; i2 < len - 1; i2++) {
             halfDist += points[i2].distanceTo(points[i2 + 1]) / 2;
           }
@@ -3718,8 +3619,7 @@
               }
             }
           }
-          var latlngCenter = crs.unproject(toPoint(center));
-          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
+          return crs.unproject(toPoint(center));
         }
         var LineUtil = {
           __proto__: null,
@@ -3733,6 +3633,69 @@
           isFlat,
           _flat,
           polylineCenter
+        };
+        function clipPolygon(points, bounds3, round2) {
+          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
+          for (i2 = 0, len = points.length; i2 < len; i2++) {
+            points[i2]._code = _getBitCode(points[i2], bounds3);
+          }
+          for (k = 0; k < 4; k++) {
+            edge2 = edges[k];
+            clippedPoints = [];
+            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
+              a = points[i2];
+              b = points[j];
+              if (!(a._code & edge2)) {
+                if (b._code & edge2) {
+                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                  p._code = _getBitCode(p, bounds3);
+                  clippedPoints.push(p);
+                }
+                clippedPoints.push(a);
+              } else if (!(b._code & edge2)) {
+                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                p._code = _getBitCode(p, bounds3);
+                clippedPoints.push(p);
+              }
+            }
+            points = clippedPoints;
+          }
+          return points;
+        }
+        function polygonCenter(latlngs, crs) {
+          var i2, j, p1, p2, f, area, x, y, center;
+          if (!latlngs || latlngs.length === 0) {
+            throw new Error("latlngs not passed");
+          }
+          if (!isFlat(latlngs)) {
+            console.warn("latlngs are not flat! Only the first ring will be used");
+            latlngs = latlngs[0];
+          }
+          var points = [];
+          for (var k in latlngs) {
+            points.push(crs.project(toLatLng(latlngs[k])));
+          }
+          var len = points.length;
+          area = x = y = 0;
+          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
+            p1 = points[i2];
+            p2 = points[j];
+            f = p1.y * p2.x - p2.y * p1.x;
+            x += (p1.x + p2.x) * f;
+            y += (p1.y + p2.y) * f;
+            area += f * 3;
+          }
+          if (area === 0) {
+            center = points[0];
+          } else {
+            center = [x / area, y / area];
+          }
+          return crs.unproject(toPoint(center));
+        }
+        var PolyUtil = {
+          __proto__: null,
+          clipPolygon,
+          polygonCenter
         };
         var LonLat = {
           project: function(latlng) {
@@ -4152,8 +4115,8 @@
           }
         });
         var MarkerDrag = Handler.extend({
-          initialize: function(marker3) {
-            this._marker = marker3;
+          initialize: function(marker4) {
+            this._marker = marker4;
           },
           addHooks: function() {
             var icon2 = this._marker._icon;
@@ -4183,7 +4146,7 @@
             return this._draggable && this._draggable._moved;
           },
           _adjustPan: function(e) {
-            var marker3 = this._marker, map4 = marker3._map, speed = this._marker.options.autoPanSpeed, padding = this._marker.options.autoPanPadding, iconPos = getPosition(marker3._icon), bounds3 = map4.getPixelBounds(), origin = map4.getPixelOrigin();
+            var marker4 = this._marker, map4 = marker4._map, speed = this._marker.options.autoPanSpeed, padding = this._marker.options.autoPanPadding, iconPos = getPosition(marker4._icon), bounds3 = map4.getPixelBounds(), origin = map4.getPixelOrigin();
             var panBounds = toBounds(
               bounds3.min._subtract(origin).add(padding),
               bounds3.max._subtract(origin).subtract(padding)
@@ -4196,7 +4159,7 @@
               map4.panBy(movement, { animate: false });
               this._draggable._newPos._add(movement);
               this._draggable._startPos._add(movement);
-              setPosition(marker3._icon, this._draggable._newPos);
+              setPosition(marker4._icon, this._draggable._newPos);
               this._onDrag(e);
               this._panRequest = requestAnimFrame2(this._adjustPan.bind(this, e));
             }
@@ -4213,14 +4176,14 @@
             }
           },
           _onDrag: function(e) {
-            var marker3 = this._marker, shadow = marker3._shadow, iconPos = getPosition(marker3._icon), latlng = marker3._map.layerPointToLatLng(iconPos);
+            var marker4 = this._marker, shadow = marker4._shadow, iconPos = getPosition(marker4._icon), latlng = marker4._map.layerPointToLatLng(iconPos);
             if (shadow) {
               setPosition(shadow, iconPos);
             }
-            marker3._latlng = latlng;
+            marker4._latlng = latlng;
             e.latlng = latlng;
             e.oldLatLng = this._oldLatLng;
-            marker3.fire("move", e).fire("drag", e);
+            marker4.fire("move", e).fire("drag", e);
           },
           _onDragEnd: function(e) {
             cancelAnimFrame(this._panRequest);
@@ -4465,7 +4428,7 @@
             return this.options.icon.options.tooltipAnchor;
           }
         });
-        function marker2(latlng, options2) {
+        function marker3(latlng, options2) {
           return new Marker(latlng, options2);
         }
         var Path2 = Layer.extend({
@@ -5013,7 +4976,7 @@
           for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
             coords2.push(levelsDeep ? latLngsToCoords(latlngs[i2], isFlat(latlngs[i2]) ? 0 : levelsDeep - 1, closed, precision) : latLngToCoords(latlngs[i2], precision));
           }
-          if (!levelsDeep && closed && coords2.length > 0) {
+          if (!levelsDeep && closed) {
             coords2.push(coords2[0].slice());
           }
           return coords2;
@@ -6017,7 +5980,7 @@
             }
           },
           _addFocusListenersOnLayer: function(layer) {
-            var el = typeof layer.getElement === "function" && layer.getElement();
+            var el = layer.getElement();
             if (el) {
               on(el, "focus", function() {
                 this._tooltip._source = layer;
@@ -6027,22 +5990,13 @@
             }
           },
           _setAriaDescribedByOnLayer: function(layer) {
-            var el = typeof layer.getElement === "function" && layer.getElement();
+            var el = layer.getElement();
             if (el) {
               el.setAttribute("aria-describedby", this._tooltip._container.id);
             }
           },
           _openTooltip: function(e) {
-            if (!this._tooltip || !this._map) {
-              return;
-            }
-            if (this._map.dragging && this._map.dragging.moving() && !this._openOnceFlag) {
-              this._openOnceFlag = true;
-              var that = this;
-              this._map.once("moveend", function() {
-                that._openOnceFlag = false;
-                that._openTooltip(e);
-              });
+            if (!this._tooltip || !this._map || this._map.dragging && this._map.dragging.moving()) {
               return;
             }
             this._tooltip._source = e.layer || e.target;
@@ -6084,7 +6038,7 @@
             return null;
           }
         });
-        function divIcon(options2) {
+        function divIcon2(options2) {
           return new DivIcon(options2);
         }
         Icon.Default = IconDefault;
@@ -6869,7 +6823,9 @@
           onAdd: function() {
             if (!this._container) {
               this._initContainer();
-              addClass(this._container, "leaflet-zoom-animated");
+              if (this._zoomAnimated) {
+                addClass(this._container, "leaflet-zoom-animated");
+              }
             }
             this.getPane().appendChild(this._container);
             this._update();
@@ -8157,7 +8113,7 @@
         exports2.circle = circle;
         exports2.circleMarker = circleMarker3;
         exports2.control = control;
-        exports2.divIcon = divIcon;
+        exports2.divIcon = divIcon2;
         exports2.extend = extend4;
         exports2.featureGroup = featureGroup;
         exports2.geoJSON = geoJSON;
@@ -8169,7 +8125,7 @@
         exports2.latLngBounds = toLatLngBounds;
         exports2.layerGroup = layerGroup;
         exports2.map = createMap;
-        exports2.marker = marker2;
+        exports2.marker = marker3;
         exports2.point = toPoint;
         exports2.polygon = polygon;
         exports2.polyline = polyline3;
@@ -20927,7 +20883,7 @@
       const { min, max, minDefined, maxDefined } = iScale.getUserBounds();
       if (minDefined) {
         start = _limitValue(Math.min(
-          _lookupByKey(_parsed, axis, min).lo,
+          _lookupByKey(_parsed, iScale.axis, min).lo,
           animationsDisabled ? pointCount : _lookupByKey(points, axis, iScale.getPixelForValue(min)).lo
         ), 0, pointCount - 1);
       }
@@ -25204,9 +25160,6 @@
         count = points.length;
       }
       if (this.options.showLine) {
-        if (!this.datasetElementType) {
-          this.addElements();
-        }
         const { dataset: line, _dataset } = meta;
         line._chart = this.chart;
         line._datasetIndex = this.index;
@@ -25218,9 +25171,6 @@
           animated: !animationsDisabled,
           options: options2
         }, mode);
-      } else if (this.datasetElementType) {
-        delete meta.dataset;
-        this.datasetElementType = false;
       }
       this.updateElements(points, start, count, mode);
     }
@@ -28230,7 +28180,7 @@
     }
     return false;
   }
-  var version = "4.3.3";
+  var version = "4.3.0";
   var KNOWN_POSITIONS = [
     "top",
     "bottom",
@@ -31134,7 +31084,7 @@
           cursor.x += width + padding;
         } else if (typeof legendItem.text !== "string") {
           const fontLineHeight = labelFont.lineHeight;
-          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight) + padding;
+          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight);
         } else {
           cursor.y += lineHeight;
         }
@@ -31248,7 +31198,7 @@
     return itemHeight;
   }
   function calculateLegendItemHeight(legendItem, fontLineHeight) {
-    const labelHeight = legendItem.text ? legendItem.text.length : 0;
+    const labelHeight = legendItem.text ? legendItem.text.length + 0.5 : 0;
     return fontLineHeight * labelHeight;
   }
   function isListened(type, opts) {
@@ -33501,9 +33451,7 @@
           ctx.fillRect(-width / 2 - padding.left, -offset - tickFont.size / 2 - padding.top, width + padding.width, tickFont.size + padding.height);
         }
         renderText(ctx, tick.label, 0, -offset, tickFont, {
-          color: optsAtIndex.color,
-          strokeColor: optsAtIndex.textStrokeColor,
-          strokeWidth: optsAtIndex.textStrokeWidth
+          color: optsAtIndex.color
         });
       });
       ctx.restore();
@@ -33846,7 +33794,7 @@
       if (time === max || options2.bounds === "ticks" || count === 1) {
         addTick(ticks, time, timestamps);
       }
-      return Object.keys(ticks).sort(sorter).map((x) => +x);
+      return Object.keys(ticks).sort((a, b) => a - b).map((x) => +x);
     }
     getLabelForValue(value) {
       const adapter = this._adapter;
@@ -34045,18 +33993,6 @@
         }
       }
       return table;
-    }
-    _generate() {
-      const min = this.min;
-      const max = this.max;
-      let timestamps = super.getDataTimestamps();
-      if (!timestamps.includes(min) || !timestamps.length) {
-        timestamps.splice(0, 0, min);
-      }
-      if (!timestamps.includes(max) || timestamps.length === 1) {
-        timestamps.push(max);
-      }
-      return timestamps.sort((a, b) => a - b);
     }
     _getTimestampsForTable() {
       let timestamps = this._cache.all || [];
@@ -34964,6 +34900,7 @@
     },
     _initDialog: function() {
       const _this = this, options2 = this.options, className = this._className, box = this._addDialogBox();
+      this._wcs = this._map.options.crs;
       if (options2.profile) {
         const line = this._addDialogLine("Profile:", box), elem = this._addDialogElement(line), linecolpick = this._addColorPicker(
           className + "-color",
@@ -34989,9 +34926,18 @@
                   weight: 7,
                   opacity: 0.5
                 }
+              ), licon = this._currProfileLength = (0, import_leaflet19.divIcon)(
+                {
+                  className: className + "-length",
+                  html: '<p style="font-size: 15pt; color: ' + linecolpick.value + ';">0&#34;</p>'
+                }
+              ), lmarker = this._currProfileLengthMarker = (0, import_leaflet19.marker)(
+                point8,
+                { icon: licon }
               );
               line2.nameColor = linecolpick.value;
               line2.addTo(map4);
+              lmarker.addTo(map4);
               map4.on("drag", this._updateLine, this);
             }
           }
@@ -35020,7 +34966,7 @@
           "spectrum",
           "Plot a spectrum at the current map position",
           () => {
-            const map4 = _this._map, latLng11 = map4.getCenter(), zoom2 = map4.options.crs.options.nzoom - 1, point8 = map4.project(latLng11, zoom2).floor().add([0.5, 0.5]), rLatLng = map4.unproject(point8, zoom2), marker2 = this._spectrumMarker = (0, import_leaflet19.circleMarker)(rLatLng, {
+            const map4 = _this._map, latLng11 = map4.getCenter(), zoom2 = _this._wcs.options.nzoom - 1, point8 = map4.project(latLng11, zoom2).floor().add([0.5, 0.5]), rLatLng = map4.unproject(point8, zoom2), marker3 = this._spectrumMarker = (0, import_leaflet19.circleMarker)(rLatLng, {
               color: speccolpick.value,
               radius: 6,
               title: "Spectrum"
@@ -35033,7 +34979,7 @@
               popdiv
             );
             popdiv.id = "leaflet-spectrum-plot";
-            marker2.bindPopup(
+            marker3.bindPopup(
               popdiv,
               {
                 minWidth: 16,
@@ -35052,13 +34998,23 @@
       }
     },
     _updateLine: function(e) {
-      const map4 = this._map, latLng11 = map4.getCenter(), maxzoom = map4.options.crs.options.nzoom - 1, path = this._currProfileLine.getLatLngs(), point1 = map4.project(path[0], maxzoom), point22 = map4.project(map4.getCenter(), maxzoom);
+      const map4 = this._map, maxzoom = this._wcs.options.nzoom - 1, path = this._currProfileLine.getLatLngs(), point1 = map4.project(path[0], maxzoom), point22 = map4.project(map4.getCenter(), maxzoom);
       path[1] = map4.unproject(point22, maxzoom);
+      this._currProfileLength.options.html = this._currProfileLength.options.html.replace(
+        />[\d.&#;]+</,
+        ">" + this._getDistanceString(path[0], path[1]) + "<"
+      );
+      this._currProfileLengthMarker.setLatLng(
+        this._currProfileLine.getCenter()
+      );
+      this._currProfileLengthMarker.setIcon(this._currProfileLength);
       this._currProfileLine.redraw();
     },
     _profileEnd: async function() {
-      const map4 = this._map, wcs2 = map4.options.crs, point8 = map4.getCenter(), line = this._profileLine = this._currProfileLine;
+      const map4 = this._map, wcs2 = this._wcs, point8 = map4.getCenter(), line = this._profileLine = this._currProfileLine;
       map4.off("drag", this._updateLine, this);
+      this._currProfileLengthMarker.remove();
+      this._currProfileLengthMarker = void 0;
       this._currProfileLine = void 0;
       const popdiv = import_leaflet19.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet19.DomUtil.create(
         "div",
@@ -35072,12 +35028,9 @@
       ).openPopup();
       const zoom2 = wcs2.options.nzoom - 1, path = line.getLatLngs(), point1 = wcs2.project(path[0]), point22 = wcs2.project(path[1]);
       if (point22.x < point1.x) {
-        const x = point22.x;
+        const x = point22.x, y = point22.y;
         point22.x = point1.x;
         point1.x = x;
-      }
-      if (point22.y < point1.y) {
-        const y = point22.y;
         point22.y = point1.y;
         point1.y = y;
       }
@@ -35090,13 +35043,9 @@
         alert("Error " + response.status + " while getting profile.");
       }
     },
-    _getMeasurementString: function() {
-      const currentLatLng = this._currentLatLng, previousLatLng = this._markers[this._markers.length - 1].getLatLng();
+    _getDistanceString: function(latlng1, latlng2) {
+      let distance = this._wcs.distance(latlng1, latlng2);
       var unit;
-      let distance = this._measurementRunningTotal + VUtil.distance(
-        currentLatLng,
-        previousLatLng
-      );
       if (distance >= 1) {
         unit = "&#176;";
       } else {
@@ -35210,8 +35159,8 @@
     _plotSpectrum: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker2 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title = "Image Spectrum", ylabel = "Average pixel value";
-          self2.addLayer(marker2, "Image spectrum");
+          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker3 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title = "Image Spectrum", ylabel = "Average pixel value";
+          self2.addLayer(marker3, "Image spectrum");
           for (let c2 = 0; c2 < visio.nChannel; c2++) {
             spec.push([
               visio.channelLabels[c2],
@@ -35221,7 +35170,7 @@
           popdiv.removeChild(
             popdiv.childNodes[0]
           );
-          marker2._popup.update();
+          marker3._popup.update();
         }
       }
     },
@@ -37380,8 +37329,8 @@
   globalObject.V = Visiomatic_exports;
 })();
 /* @preserve
- * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
- * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * Leaflet 1.9.3, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 /*!
  * @kurkle/color v0.3.2
@@ -37390,7 +37339,7 @@
  * Released under the MIT License
  */
 /*!
- * Chart.js v4.3.3
+ * Chart.js v4.3.0
  * https://www.chartjs.org
  * (c) 2023 Chart.js Contributors
  * Released under the MIT License

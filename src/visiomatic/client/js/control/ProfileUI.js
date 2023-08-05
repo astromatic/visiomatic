@@ -17,6 +17,8 @@ import {
 	DomUtil,
 	Util,
 	circleMarker,
+	divIcon,
+	marker,
 	polyline
 } from 'leaflet';
 
@@ -111,6 +113,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			className = this._className,
 			box = this._addDialogBox();
 
+		this._wcs = this._map.options.crs;
 		if (options.profile) {
 			const	line = this._addDialogLine('Profile:', box),
 				elem = this._addDialogElement(line),
@@ -142,9 +145,22 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 									weight: 7,
 									opacity: 0.5
 								}
+							),
+							licon = this._currProfileLength = divIcon(
+								{
+									className: className + '-length',
+									html: '<p style="font-size: 15pt; color: '
+										+ linecolpick.value +';">0&#34;</p>'
+								}
+							),
+							lmarker = this._currProfileLengthMarker = marker(
+								point,
+								{icon: licon}
 							);
+
 						line.nameColor = linecolpick.value;
 						line.addTo(map);
+						lmarker.addTo(map);						
 						map.on('drag', this._updateLine, this);
 					}
 				}
@@ -184,7 +200,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				() => {
 					const map = _this._map,
 						latLng = map.getCenter(),
-						zoom = map.options.crs.options.nzoom - 1,
+						zoom = _this._wcs.options.nzoom - 1,
 						point = map.project(latLng, zoom).floor().add([0.5, 0.5]),
 						rLatLng = map.unproject(point, zoom),
 						marker = this._spectrumMarker = circleMarker(rLatLng, {
@@ -235,13 +251,21 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_updateLine: function (e) {
 		const	map = this._map,
-			latLng = map.getCenter(),
-			maxzoom = map.options.crs.options.nzoom - 1,
+			maxzoom = this._wcs.options.nzoom - 1,
 			path = this._currProfileLine.getLatLngs(),
 			point1 = map.project(path[0], maxzoom),
 			point2 = map.project(map.getCenter(), maxzoom);
 
 		path[1] = map.unproject(point2, maxzoom);
+		this._currProfileLength.options.html =
+			this._currProfileLength.options.html.replace(
+				/>[\d.&#;]+</,
+				'>' + this._getDistanceString(path[0], path[1]) + '<'
+			);
+		this._currProfileLengthMarker.setLatLng(
+			this._currProfileLine.getCenter()
+		);
+		this._currProfileLengthMarker.setIcon(this._currProfileLength);
 		this._currProfileLine.redraw();
 	},
 
@@ -251,11 +275,13 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_profileEnd: async function () {
 		const	map = this._map,
-			wcs = map.options.crs,
+			wcs = this._wcs,
 			point = map.getCenter(),
 			line = this._profileLine = this._currProfileLine;
 
 		map.off('drag', this._updateLine, this);
+		this._currProfileLengthMarker.remove();
+		this._currProfileLengthMarker = undefined;
 		this._currProfileLine = undefined;
 
 		const	popdiv = DomUtil.create('div', this._className + '-popup'),
@@ -274,12 +300,11 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point2 = wcs.project(path[1]);
 
 		if (point2.x < point1.x) {
-			const x = point2.x;
+			const x = point2.x,
+				y = point2.y;
+
 			point2.x = point1.x;
 			point1.x = x;
-		}
-		if (point2.y < point1.y) {
-			const y = point2.y;
 			point2.y = point1.y;
 			point1.y = y;
 		}
@@ -305,17 +330,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 * @private
 	 * @returns {string} Measurement string.
 	 */
-	_getMeasurementString: function () {
-		const	currentLatLng = this._currentLatLng,
-			previousLatLng = this._markers[this._markers.length - 1].getLatLng();
+	_getDistanceString: function (latlng1, latlng2) {
+		let	distance = this._wcs.distance(latlng1, latlng2);
 		var	unit;
-
-		// calculate the distance from the last fixed point to the mouse position
-		let distance = this._measurementRunningTotal + VUtil.distance(
-			currentLatLng,
-			previousLatLng
-		);
-
+		
 		if (distance >= 1.0) {
 			unit = '&#176;';
 		} else {
@@ -347,7 +365,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			popdiv = document.getElementById('leaflet-profile-plot'),
 			prof = [],
 			series = [];
-			var	title, ylabel;
+		var	title, ylabel;
 
 		this.addLayer(line, 'Image profile');
 

@@ -900,6 +900,12 @@ a#visiomatic-profile-toggle {
 	content: 'GO';
 }
 
+/*----------------------------------- Line ----------------------------------*/
+.visiomatic-control-length {
+	justify-content: center;
+	display: flex;
+}
+
 /*---------------------------------- Plots ----------------------------------*/
 #leaflet-profile-plot {
 	width: 400px;
@@ -910,18 +916,6 @@ a#visiomatic-profile-toggle {
 	width: 400px;
 	height: 400px;
 }
-
-.jqplot-highlighter-tooltip, .jqplot-canvasOverlay-tooltip {
-	z-index: 2000;
-	background-color: var(--dialog-background-color);
-	margin-bottom: 4px;
-}
-
-table.jqplot-table-legend, table.jqplot-cursor-legend {
-	z-index: 2000;
-	background-color: var(--dialog-background-color);
-}
-
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Snapshot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
