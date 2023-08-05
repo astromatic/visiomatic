@@ -9,6 +9,9 @@
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import Chart from 'chart.js/auto';
+import zoomPlugin from 'chartjs-plugin-zoom';
+
+Chart.register(zoomPlugin);
 
 import {
 	DomUtil,
@@ -30,7 +33,31 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		spectrum: true,
 		spectrumColor: '#A000FF',
 		collapsed: true,
-		position: 'topleft'
+		position: 'topleft',
+		chartZoomOptions: {
+			zoom: {
+				wheel: {
+					enabled: true,
+				},
+				pinch: {
+					enabled: true
+				},
+				drag: {
+					enabled: true,
+					modifierKey: 'shift'
+				},
+				scaleMode: 'xy',
+				mode: 'xy',
+			},
+			pan: {
+				enabled: true,
+				scaleMode: 'xy'
+			},
+			limits: {
+				x: {min: 'original', max: 'original'},
+				y: {min: 'original', max: 'original'}
+			}
+		}
 	},
 
 	/**
@@ -55,6 +82,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 	 * @param {string} [options.spectrumColor='A000FF']
 	   Default spectrumoverlay color
+
+	 * @param {string} [options.chartZoomOptions]
+	   Default options for the chartjs-plugin-zoom Chart plug-in.
+	   @see {@link https://www.chartjs.org/chartjs-plugin-zoom/latest/guide/options.html}
 
 	 * @see {@link UI} for additional control options.
 
@@ -367,61 +398,44 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 					}]
 				},
 				options: {
+					scales: {
+						x: {
+							title: {
+								display: true,
+								text: 'position along line',
+								color: getComputedStyle(this._map._container)
+									.getPropertyValue('--dialog-color')
+							}
+						},
+						y: {
+							title: {
+								display: true,
+								text: ylabel,
+								color: getComputedStyle(this._map._container)
+									.getPropertyValue('--dialog-color')
+							}
+						}
+					},
+					maintainAspectRatio: false,
 					interaction: {
 						mode: 'nearest',
-						intersect: false,
-						axis: 'x'
+						intersect: true
+					},
+					plugins: {
+						title: {
+							display: true,
+							text: title,
+							color: getComputedStyle(this._map._container)
+								.getPropertyValue('--dialog-color')
+						},
+						legend: {
+							display: false
+						},
+						zoom: this.options.chartZoomOptions
 					}
 				}
 			}
 		)
-		/*
-		$(document).ready(function () {
-			$.jqplot.config.enablePlugins = true;
-			$.jqplot('leaflet-profile-plot', prof, {
-				title: title,
-				grid: {
-					backgroundColor: '#ddd',
-					gridLineColor: '#eee'
-				},
-				axes: {
-					xaxis: {
-						label: 'position along line',
-						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-						pad: 1.0
-					},
-					yaxis: {
-						label: ylabel,
-						labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-						pad: 1.0
-					}
-				},
-				legend: {
-					show: (visio.mode !== 'mono'),
-					location: 'ne',
-				},
-				highlighter: {
-					show: true,
-					sizeAdjust: 2,
-					tooltipLocation: 'n',
-					tooltipAxes: 'y',
-					tooltipFormatString: '%.6g ' +
-						visio.channelUnits[visio.channel],
-					useAxesFormatters: false,
-					bringSeriesToFront: true
-				},
-				cursor: {
-					show: true,
-					zoom: true
-				},
-				series: series,
-				seriesDefaults: {
-					lineWidth: 2.0,
-					showMarker: false
-				}
-			});
-		});
-		*/
 		popdiv.removeChild(
 			popdiv.childNodes[0]
 		);						// Remove activity spinner

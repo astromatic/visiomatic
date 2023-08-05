@@ -37,7 +37,7 @@
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.leaflet = {}));
       })(exports, function(exports2) {
         "use strict";
-        var version2 = "1.9.3";
+        var version3 = "1.9.4";
         function extend4(dest) {
           var i2, j, len, src;
           for (j = 1, len = arguments.length; j < len; j++) {
@@ -885,12 +885,12 @@
           return new LatLng2(a, b, c2);
         }
         var CRS2 = {
-          latLngToPoint: function(latlng, zoom2) {
-            var projectedPoint = this.projection.project(latlng), scale3 = this.scale(zoom2);
+          latLngToPoint: function(latlng, zoom3) {
+            var projectedPoint = this.projection.project(latlng), scale3 = this.scale(zoom3);
             return this.transformation._transform(projectedPoint, scale3);
           },
-          pointToLatLng: function(point8, zoom2) {
-            var scale3 = this.scale(zoom2), untransformedPoint = this.transformation.untransform(point8, scale3);
+          pointToLatLng: function(point8, zoom3) {
+            var scale3 = this.scale(zoom3), untransformedPoint = this.transformation.untransform(point8, scale3);
             return this.projection.unproject(untransformedPoint);
           },
           project: function(latlng) {
@@ -899,17 +899,17 @@
           unproject: function(point8) {
             return this.projection.unproject(point8);
           },
-          scale: function(zoom2) {
-            return 256 * Math.pow(2, zoom2);
+          scale: function(zoom3) {
+            return 256 * Math.pow(2, zoom3);
           },
           zoom: function(scale3) {
             return Math.log(scale3 / 256) / Math.LN2;
           },
-          getProjectedBounds: function(zoom2) {
+          getProjectedBounds: function(zoom3) {
             if (this.infinite) {
               return null;
             }
-            var b = this.projection.bounds, s = this.scale(zoom2), min = this.transformation.transform(b.min, s), max = this.transformation.transform(b.max, s);
+            var b = this.projection.bounds, s = this.scale(zoom3), min = this.transformation.transform(b.min, s), max = this.transformation.transform(b.max, s);
             return new Bounds2(min, max);
           },
           infinite: false,
@@ -1431,15 +1431,15 @@
           }
           restoreOutline();
           _outlineElement = element;
-          _outlineStyle = element.style.outline;
-          element.style.outline = "none";
+          _outlineStyle = element.style.outlineStyle;
+          element.style.outlineStyle = "none";
           on(window, "keydown", restoreOutline);
         }
         function restoreOutline() {
           if (!_outlineElement) {
             return;
           }
-          _outlineElement.style.outline = _outlineStyle;
+          _outlineElement.style.outlineStyle = _outlineStyle;
           _outlineElement = void 0;
           _outlineStyle = void 0;
           off(window, "keydown", restoreOutline);
@@ -1776,9 +1776,9 @@
             }
             this._addLayers(this.options.layers);
           },
-          setView: function(center, zoom2, options2) {
-            zoom2 = zoom2 === void 0 ? this._zoom : this._limitZoom(zoom2);
-            center = this._limitCenter(toLatLng(center), zoom2, this.options.maxBounds);
+          setView: function(center, zoom3, options2) {
+            zoom3 = zoom3 === void 0 ? this._zoom : this._limitZoom(zoom3);
+            center = this._limitCenter(toLatLng(center), zoom3, this.options.maxBounds);
             options2 = options2 || {};
             this._stop();
             if (this._loaded && !options2.reset && options2 !== true) {
@@ -1786,21 +1786,21 @@
                 options2.zoom = extend4({ animate: options2.animate }, options2.zoom);
                 options2.pan = extend4({ animate: options2.animate, duration: options2.duration }, options2.pan);
               }
-              var moved = this._zoom !== zoom2 ? this._tryAnimatedZoom && this._tryAnimatedZoom(center, zoom2, options2.zoom) : this._tryAnimatedPan(center, options2.pan);
+              var moved = this._zoom !== zoom3 ? this._tryAnimatedZoom && this._tryAnimatedZoom(center, zoom3, options2.zoom) : this._tryAnimatedPan(center, options2.pan);
               if (moved) {
                 clearTimeout(this._sizeTimer);
                 return this;
               }
             }
-            this._resetView(center, zoom2, options2.pan && options2.pan.noMoveStart);
+            this._resetView(center, zoom3, options2.pan && options2.pan.noMoveStart);
             return this;
           },
-          setZoom: function(zoom2, options2) {
+          setZoom: function(zoom3, options2) {
             if (!this._loaded) {
-              this._zoom = zoom2;
+              this._zoom = zoom3;
               return this;
             }
-            return this.setView(this.getCenter(), zoom2, { zoom: options2 });
+            return this.setView(this.getCenter(), zoom3, { zoom: options2 });
           },
           zoomIn: function(delta, options2) {
             delta = delta || (Browser4.any3d ? this.options.zoomDelta : 1);
@@ -1810,25 +1810,25 @@
             delta = delta || (Browser4.any3d ? this.options.zoomDelta : 1);
             return this.setZoom(this._zoom - delta, options2);
           },
-          setZoomAround: function(latlng, zoom2, options2) {
-            var scale3 = this.getZoomScale(zoom2), viewHalf = this.getSize().divideBy(2), containerPoint = latlng instanceof Point ? latlng : this.latLngToContainerPoint(latlng), centerOffset = containerPoint.subtract(viewHalf).multiplyBy(1 - 1 / scale3), newCenter = this.containerPointToLatLng(viewHalf.add(centerOffset));
-            return this.setView(newCenter, zoom2, { zoom: options2 });
+          setZoomAround: function(latlng, zoom3, options2) {
+            var scale3 = this.getZoomScale(zoom3), viewHalf = this.getSize().divideBy(2), containerPoint = latlng instanceof Point ? latlng : this.latLngToContainerPoint(latlng), centerOffset = containerPoint.subtract(viewHalf).multiplyBy(1 - 1 / scale3), newCenter = this.containerPointToLatLng(viewHalf.add(centerOffset));
+            return this.setView(newCenter, zoom3, { zoom: options2 });
           },
           _getBoundsCenterZoom: function(bounds3, options2) {
             options2 = options2 || {};
             bounds3 = bounds3.getBounds ? bounds3.getBounds() : toLatLngBounds(bounds3);
-            var paddingTL = toPoint(options2.paddingTopLeft || options2.padding || [0, 0]), paddingBR = toPoint(options2.paddingBottomRight || options2.padding || [0, 0]), zoom2 = this.getBoundsZoom(bounds3, false, paddingTL.add(paddingBR));
-            zoom2 = typeof options2.maxZoom === "number" ? Math.min(options2.maxZoom, zoom2) : zoom2;
-            if (zoom2 === Infinity) {
+            var paddingTL = toPoint(options2.paddingTopLeft || options2.padding || [0, 0]), paddingBR = toPoint(options2.paddingBottomRight || options2.padding || [0, 0]), zoom3 = this.getBoundsZoom(bounds3, false, paddingTL.add(paddingBR));
+            zoom3 = typeof options2.maxZoom === "number" ? Math.min(options2.maxZoom, zoom3) : zoom3;
+            if (zoom3 === Infinity) {
               return {
                 center: bounds3.getCenter(),
-                zoom: zoom2
+                zoom: zoom3
               };
             }
-            var paddingOffset = paddingBR.subtract(paddingTL).divideBy(2), swPoint = this.project(bounds3.getSouthWest(), zoom2), nePoint = this.project(bounds3.getNorthEast(), zoom2), center = this.unproject(swPoint.add(nePoint).divideBy(2).add(paddingOffset), zoom2);
+            var paddingOffset = paddingBR.subtract(paddingTL).divideBy(2), swPoint = this.project(bounds3.getSouthWest(), zoom3), nePoint = this.project(bounds3.getNorthEast(), zoom3), center = this.unproject(swPoint.add(nePoint).divideBy(2).add(paddingOffset), zoom3);
             return {
               center,
-              zoom: zoom2
+              zoom: zoom3
             };
           },
           fitBounds: function(bounds3, options2) {
@@ -1946,24 +1946,24 @@
             }
             return this.on("moveend", this._panInsideMaxBounds);
           },
-          setMinZoom: function(zoom2) {
+          setMinZoom: function(zoom3) {
             var oldZoom = this.options.minZoom;
-            this.options.minZoom = zoom2;
-            if (this._loaded && oldZoom !== zoom2) {
+            this.options.minZoom = zoom3;
+            if (this._loaded && oldZoom !== zoom3) {
               this.fire("zoomlevelschange");
               if (this.getZoom() < this.options.minZoom) {
-                return this.setZoom(zoom2);
+                return this.setZoom(zoom3);
               }
             }
             return this;
           },
-          setMaxZoom: function(zoom2) {
+          setMaxZoom: function(zoom3) {
             var oldZoom = this.options.maxZoom;
-            this.options.maxZoom = zoom2;
-            if (this._loaded && oldZoom !== zoom2) {
+            this.options.maxZoom = zoom3;
+            if (this._loaded && oldZoom !== zoom3) {
               this.fire("zoomlevelschange");
               if (this.getZoom() > this.options.maxZoom) {
-                return this.setZoom(zoom2);
+                return this.setZoom(zoom3);
               }
             }
             return this;
@@ -2080,8 +2080,8 @@
             }
             var lat = pos.coords.latitude, lng = pos.coords.longitude, latlng = new LatLng2(lat, lng), bounds3 = latlng.toBounds(pos.coords.accuracy * 2), options2 = this._locateOptions;
             if (options2.setView) {
-              var zoom2 = this.getBoundsZoom(bounds3);
-              this.setView(latlng, options2.maxZoom ? Math.min(zoom2, options2.maxZoom) : zoom2);
+              var zoom3 = this.getBoundsZoom(bounds3);
+              this.setView(latlng, options2.maxZoom ? Math.min(zoom3, options2.maxZoom) : zoom3);
             }
             var data = {
               latlng,
@@ -2180,13 +2180,13 @@
           getBoundsZoom: function(bounds3, inside, padding) {
             bounds3 = toLatLngBounds(bounds3);
             padding = toPoint(padding || [0, 0]);
-            var zoom2 = this.getZoom() || 0, min = this.getMinZoom(), max = this.getMaxZoom(), nw = bounds3.getNorthWest(), se = bounds3.getSouthEast(), size = this.getSize().subtract(padding), boundsSize = toBounds(this.project(se, zoom2), this.project(nw, zoom2)).getSize(), snap = Browser4.any3d ? this.options.zoomSnap : 1, scalex = size.x / boundsSize.x, scaley = size.y / boundsSize.y, scale3 = inside ? Math.max(scalex, scaley) : Math.min(scalex, scaley);
-            zoom2 = this.getScaleZoom(scale3, zoom2);
+            var zoom3 = this.getZoom() || 0, min = this.getMinZoom(), max = this.getMaxZoom(), nw = bounds3.getNorthWest(), se = bounds3.getSouthEast(), size = this.getSize().subtract(padding), boundsSize = toBounds(this.project(se, zoom3), this.project(nw, zoom3)).getSize(), snap = Browser4.any3d ? this.options.zoomSnap : 1, scalex = size.x / boundsSize.x, scaley = size.y / boundsSize.y, scale3 = inside ? Math.max(scalex, scaley) : Math.min(scalex, scaley);
+            zoom3 = this.getScaleZoom(scale3, zoom3);
             if (snap) {
-              zoom2 = Math.round(zoom2 / (snap / 100)) * (snap / 100);
-              zoom2 = inside ? Math.ceil(zoom2 / snap) * snap : Math.floor(zoom2 / snap) * snap;
+              zoom3 = Math.round(zoom3 / (snap / 100)) * (snap / 100);
+              zoom3 = inside ? Math.ceil(zoom3 / snap) * snap : Math.floor(zoom3 / snap) * snap;
             }
-            return Math.max(min, Math.min(max, zoom2));
+            return Math.max(min, Math.min(max, zoom3));
           },
           getSize: function() {
             if (!this._size || this._sizeChanged) {
@@ -2198,16 +2198,16 @@
             }
             return this._size.clone();
           },
-          getPixelBounds: function(center, zoom2) {
-            var topLeftPoint = this._getTopLeftPoint(center, zoom2);
+          getPixelBounds: function(center, zoom3) {
+            var topLeftPoint = this._getTopLeftPoint(center, zoom3);
             return new Bounds2(topLeftPoint, topLeftPoint.add(this.getSize()));
           },
           getPixelOrigin: function() {
             this._checkIfLoaded();
             return this._pixelOrigin;
           },
-          getPixelWorldBounds: function(zoom2) {
-            return this.options.crs.getProjectedBounds(zoom2 === void 0 ? this.getZoom() : zoom2);
+          getPixelWorldBounds: function(zoom3) {
+            return this.options.crs.getProjectedBounds(zoom3 === void 0 ? this.getZoom() : zoom3);
           },
           getPane: function(pane) {
             return typeof pane === "string" ? this._panes[pane] : pane;
@@ -2226,16 +2226,16 @@
           getScaleZoom: function(scale3, fromZoom) {
             var crs = this.options.crs;
             fromZoom = fromZoom === void 0 ? this._zoom : fromZoom;
-            var zoom2 = crs.zoom(scale3 * crs.scale(fromZoom));
-            return isNaN(zoom2) ? Infinity : zoom2;
+            var zoom3 = crs.zoom(scale3 * crs.scale(fromZoom));
+            return isNaN(zoom3) ? Infinity : zoom3;
           },
-          project: function(latlng, zoom2) {
-            zoom2 = zoom2 === void 0 ? this._zoom : zoom2;
-            return this.options.crs.latLngToPoint(toLatLng(latlng), zoom2);
+          project: function(latlng, zoom3) {
+            zoom3 = zoom3 === void 0 ? this._zoom : zoom3;
+            return this.options.crs.latLngToPoint(toLatLng(latlng), zoom3);
           },
-          unproject: function(point8, zoom2) {
-            zoom2 = zoom2 === void 0 ? this._zoom : zoom2;
-            return this.options.crs.pointToLatLng(toPoint(point8), zoom2);
+          unproject: function(point8, zoom3) {
+            zoom3 = zoom3 === void 0 ? this._zoom : zoom3;
+            return this.options.crs.pointToLatLng(toPoint(point8), zoom3);
           },
           layerPointToLatLng: function(point8) {
             var projectedPoint = toPoint(point8).add(this.getPixelOrigin());
@@ -2315,14 +2315,14 @@
               addClass(panes.shadowPane, "leaflet-zoom-hide");
             }
           },
-          _resetView: function(center, zoom2, noMoveStart) {
+          _resetView: function(center, zoom3, noMoveStart) {
             setPosition(this._mapPane, new Point(0, 0));
             var loading = !this._loaded;
             this._loaded = true;
-            zoom2 = this._limitZoom(zoom2);
+            zoom3 = this._limitZoom(zoom3);
             this.fire("viewprereset");
-            var zoomChanged = this._zoom !== zoom2;
-            this._moveStart(zoomChanged, noMoveStart)._move(center, zoom2)._moveEnd(zoomChanged);
+            var zoomChanged = this._zoom !== zoom3;
+            this._moveStart(zoomChanged, noMoveStart)._move(center, zoom3)._moveEnd(zoomChanged);
             this.fire("viewreset");
             if (loading) {
               this.fire("load");
@@ -2337,12 +2337,12 @@
             }
             return this;
           },
-          _move: function(center, zoom2, data, supressEvent) {
-            if (zoom2 === void 0) {
-              zoom2 = this._zoom;
+          _move: function(center, zoom3, data, supressEvent) {
+            if (zoom3 === void 0) {
+              zoom3 = this._zoom;
             }
-            var zoomChanged = this._zoom !== zoom2;
-            this._zoom = zoom2;
+            var zoomChanged = this._zoom !== zoom3;
+            this._zoom = zoom3;
             this._lastCenter = center;
             this._pixelOrigin = this._getNewPixelOrigin(center);
             if (!supressEvent) {
@@ -2525,25 +2525,25 @@
             var pos = this._getMapPanePos();
             return pos && !pos.equals([0, 0]);
           },
-          _getTopLeftPoint: function(center, zoom2) {
-            var pixelOrigin = center && zoom2 !== void 0 ? this._getNewPixelOrigin(center, zoom2) : this.getPixelOrigin();
+          _getTopLeftPoint: function(center, zoom3) {
+            var pixelOrigin = center && zoom3 !== void 0 ? this._getNewPixelOrigin(center, zoom3) : this.getPixelOrigin();
             return pixelOrigin.subtract(this._getMapPanePos());
           },
-          _getNewPixelOrigin: function(center, zoom2) {
+          _getNewPixelOrigin: function(center, zoom3) {
             var viewHalf = this.getSize()._divideBy(2);
-            return this.project(center, zoom2)._subtract(viewHalf)._add(this._getMapPanePos())._round();
+            return this.project(center, zoom3)._subtract(viewHalf)._add(this._getMapPanePos())._round();
           },
-          _latLngToNewLayerPoint: function(latlng, zoom2, center) {
-            var topLeft = this._getNewPixelOrigin(center, zoom2);
-            return this.project(latlng, zoom2)._subtract(topLeft);
+          _latLngToNewLayerPoint: function(latlng, zoom3, center) {
+            var topLeft = this._getNewPixelOrigin(center, zoom3);
+            return this.project(latlng, zoom3)._subtract(topLeft);
           },
-          _latLngBoundsToNewLayerBounds: function(latLngBounds2, zoom2, center) {
-            var topLeft = this._getNewPixelOrigin(center, zoom2);
+          _latLngBoundsToNewLayerBounds: function(latLngBounds2, zoom3, center) {
+            var topLeft = this._getNewPixelOrigin(center, zoom3);
             return toBounds([
-              this.project(latLngBounds2.getSouthWest(), zoom2)._subtract(topLeft),
-              this.project(latLngBounds2.getNorthWest(), zoom2)._subtract(topLeft),
-              this.project(latLngBounds2.getSouthEast(), zoom2)._subtract(topLeft),
-              this.project(latLngBounds2.getNorthEast(), zoom2)._subtract(topLeft)
+              this.project(latLngBounds2.getSouthWest(), zoom3)._subtract(topLeft),
+              this.project(latLngBounds2.getNorthWest(), zoom3)._subtract(topLeft),
+              this.project(latLngBounds2.getSouthEast(), zoom3)._subtract(topLeft),
+              this.project(latLngBounds2.getNorthEast(), zoom3)._subtract(topLeft)
             ]);
           },
           _getCenterLayerPoint: function() {
@@ -2552,15 +2552,15 @@
           _getCenterOffset: function(latlng) {
             return this.latLngToLayerPoint(latlng).subtract(this._getCenterLayerPoint());
           },
-          _limitCenter: function(center, zoom2, bounds3) {
+          _limitCenter: function(center, zoom3, bounds3) {
             if (!bounds3) {
               return center;
             }
-            var centerPoint = this.project(center, zoom2), viewHalf = this.getSize().divideBy(2), viewBounds = new Bounds2(centerPoint.subtract(viewHalf), centerPoint.add(viewHalf)), offset = this._getBoundsOffset(viewBounds, bounds3, zoom2);
+            var centerPoint = this.project(center, zoom3), viewHalf = this.getSize().divideBy(2), viewBounds = new Bounds2(centerPoint.subtract(viewHalf), centerPoint.add(viewHalf)), offset = this._getBoundsOffset(viewBounds, bounds3, zoom3);
             if (Math.abs(offset.x) <= 1 && Math.abs(offset.y) <= 1) {
               return center;
             }
-            return this.unproject(centerPoint.add(offset), zoom2);
+            return this.unproject(centerPoint.add(offset), zoom3);
           },
           _limitOffset: function(offset, bounds3) {
             if (!bounds3) {
@@ -2569,22 +2569,22 @@
             var viewBounds = this.getPixelBounds(), newBounds = new Bounds2(viewBounds.min.add(offset), viewBounds.max.add(offset));
             return offset.add(this._getBoundsOffset(newBounds, bounds3));
           },
-          _getBoundsOffset: function(pxBounds, maxBounds, zoom2) {
+          _getBoundsOffset: function(pxBounds, maxBounds, zoom3) {
             var projectedMaxBounds = toBounds(
-              this.project(maxBounds.getNorthEast(), zoom2),
-              this.project(maxBounds.getSouthWest(), zoom2)
+              this.project(maxBounds.getNorthEast(), zoom3),
+              this.project(maxBounds.getSouthWest(), zoom3)
             ), minOffset = projectedMaxBounds.min.subtract(pxBounds.min), maxOffset = projectedMaxBounds.max.subtract(pxBounds.max), dx = this._rebound(minOffset.x, -maxOffset.x), dy = this._rebound(minOffset.y, -maxOffset.y);
             return new Point(dx, dy);
           },
           _rebound: function(left, right) {
             return left + right > 0 ? Math.round(left - right) / 2 : Math.max(0, Math.ceil(left)) - Math.max(0, Math.floor(right));
           },
-          _limitZoom: function(zoom2) {
+          _limitZoom: function(zoom3) {
             var min = this.getMinZoom(), max = this.getMaxZoom(), snap = Browser4.any3d ? this.options.zoomSnap : 1;
             if (snap) {
-              zoom2 = Math.round(zoom2 / snap) * snap;
+              zoom3 = Math.round(zoom3 / snap) * snap;
             }
-            return Math.max(min, Math.min(max, zoom2));
+            return Math.max(min, Math.min(max, zoom3));
           },
           _onPanTransitionStep: function() {
             this.fire("move");
@@ -2631,36 +2631,36 @@
           _nothingToAnimate: function() {
             return !this._container.getElementsByClassName("leaflet-zoom-animated").length;
           },
-          _tryAnimatedZoom: function(center, zoom2, options2) {
+          _tryAnimatedZoom: function(center, zoom3, options2) {
             if (this._animatingZoom) {
               return true;
             }
             options2 = options2 || {};
-            if (!this._zoomAnimated || options2.animate === false || this._nothingToAnimate() || Math.abs(zoom2 - this._zoom) > this.options.zoomAnimationThreshold) {
+            if (!this._zoomAnimated || options2.animate === false || this._nothingToAnimate() || Math.abs(zoom3 - this._zoom) > this.options.zoomAnimationThreshold) {
               return false;
             }
-            var scale3 = this.getZoomScale(zoom2), offset = this._getCenterOffset(center)._divideBy(1 - 1 / scale3);
+            var scale3 = this.getZoomScale(zoom3), offset = this._getCenterOffset(center)._divideBy(1 - 1 / scale3);
             if (options2.animate !== true && !this.getSize().contains(offset)) {
               return false;
             }
             requestAnimFrame2(function() {
-              this._moveStart(true, false)._animateZoom(center, zoom2, true);
+              this._moveStart(true, options2.noMoveStart || false)._animateZoom(center, zoom3, true);
             }, this);
             return true;
           },
-          _animateZoom: function(center, zoom2, startAnim, noUpdate) {
+          _animateZoom: function(center, zoom3, startAnim, noUpdate) {
             if (!this._mapPane) {
               return;
             }
             if (startAnim) {
               this._animatingZoom = true;
               this._animateToCenter = center;
-              this._animateToZoom = zoom2;
+              this._animateToZoom = zoom3;
               addClass(this._mapPane, "leaflet-zoom-anim");
             }
             this.fire("zoomanim", {
               center,
-              zoom: zoom2,
+              zoom: zoom3,
               noUpdate
             });
             if (!this._tempFireZoomEvent) {
@@ -2793,6 +2793,7 @@
             this._layers = [];
             this._lastZIndex = 0;
             this._handlingClick = false;
+            this._preventClick = false;
             for (var i2 in baseLayers) {
               this._addLayer(baseLayers[i2], i2);
             }
@@ -2979,6 +2980,9 @@
             return label;
           },
           _onInputClick: function() {
+            if (this._preventClick) {
+              return;
+            }
             var inputs = this._layerControlInputs, input, layer;
             var addedLayers = [], removedLayers = [];
             this._handlingClick = true;
@@ -3005,11 +3009,11 @@
             this._refocusOnMap();
           },
           _checkDisabledLayers: function() {
-            var inputs = this._layerControlInputs, input, layer, zoom2 = this._map.getZoom();
+            var inputs = this._layerControlInputs, input, layer, zoom3 = this._map.getZoom();
             for (var i2 = inputs.length - 1; i2 >= 0; i2--) {
               input = inputs[i2];
               layer = this._getLayer(input.layerId).layer;
-              input.disabled = layer.options.minZoom !== void 0 && zoom2 < layer.options.minZoom || layer.options.maxZoom !== void 0 && zoom2 > layer.options.maxZoom;
+              input.disabled = layer.options.minZoom !== void 0 && zoom3 < layer.options.minZoom || layer.options.maxZoom !== void 0 && zoom3 > layer.options.maxZoom;
             }
           },
           _expandIfNotCollapsed: function() {
@@ -3020,10 +3024,13 @@
           },
           _expandSafely: function() {
             var section = this._section;
+            this._preventClick = true;
             on(section, "click", preventDefault);
             this.expand();
+            var that = this;
             setTimeout(function() {
               off(section, "click", preventDefault);
+              that._preventClick = false;
             });
           }
         });
@@ -3119,7 +3126,7 @@
             this.addControl(this.zoomControl);
           }
         });
-        var zoom = function(options2) {
+        var zoom2 = function(options2) {
           return new Zoom(options2);
         };
         var Scale3 = Control9.extend({
@@ -3287,7 +3294,7 @@
         Control9.Scale = Scale3;
         Control9.Attribution = Attribution;
         control.layers = layers;
-        control.zoom = zoom;
+        control.zoom = zoom2;
         control.scale = scale2;
         control.attribution = attribution;
         var Handler = Class4.extend({
@@ -3438,16 +3445,101 @@
             off(document, "mouseup touchend touchcancel", this._onUp, this);
             enableImageDrag();
             enableTextSelection();
-            if (this._moved && this._moving) {
+            var fireDragend = this._moved && this._moving;
+            this._moving = false;
+            Draggable._dragging = false;
+            if (fireDragend) {
               this.fire("dragend", {
                 noInertia,
                 distance: this._newPos.distanceTo(this._startPos)
               });
             }
-            this._moving = false;
-            Draggable._dragging = false;
           }
         });
+        function clipPolygon(points, bounds3, round2) {
+          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
+          for (i2 = 0, len = points.length; i2 < len; i2++) {
+            points[i2]._code = _getBitCode(points[i2], bounds3);
+          }
+          for (k = 0; k < 4; k++) {
+            edge2 = edges[k];
+            clippedPoints = [];
+            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
+              a = points[i2];
+              b = points[j];
+              if (!(a._code & edge2)) {
+                if (b._code & edge2) {
+                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                  p._code = _getBitCode(p, bounds3);
+                  clippedPoints.push(p);
+                }
+                clippedPoints.push(a);
+              } else if (!(b._code & edge2)) {
+                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                p._code = _getBitCode(p, bounds3);
+                clippedPoints.push(p);
+              }
+            }
+            points = clippedPoints;
+          }
+          return points;
+        }
+        function polygonCenter(latlngs, crs) {
+          var i2, j, p1, p2, f, area, x, y, center;
+          if (!latlngs || latlngs.length === 0) {
+            throw new Error("latlngs not passed");
+          }
+          if (!isFlat(latlngs)) {
+            console.warn("latlngs are not flat! Only the first ring will be used");
+            latlngs = latlngs[0];
+          }
+          var centroidLatLng = toLatLng([0, 0]);
+          var bounds3 = toLatLngBounds(latlngs);
+          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
+          if (areaBounds < 1700) {
+            centroidLatLng = centroid(latlngs);
+          }
+          var len = latlngs.length;
+          var points = [];
+          for (i2 = 0; i2 < len; i2++) {
+            var latlng = toLatLng(latlngs[i2]);
+            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+          }
+          area = x = y = 0;
+          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
+            p1 = points[i2];
+            p2 = points[j];
+            f = p1.y * p2.x - p2.y * p1.x;
+            x += (p1.x + p2.x) * f;
+            y += (p1.y + p2.y) * f;
+            area += f * 3;
+          }
+          if (area === 0) {
+            center = points[0];
+          } else {
+            center = [x / area, y / area];
+          }
+          var latlngCenter = crs.unproject(toPoint(center));
+          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
+        }
+        function centroid(coords2) {
+          var latSum = 0;
+          var lngSum = 0;
+          var len = 0;
+          for (var i2 = 0; i2 < coords2.length; i2++) {
+            var latlng = toLatLng(coords2[i2]);
+            latSum += latlng.lat;
+            lngSum += latlng.lng;
+            len++;
+          }
+          return toLatLng([latSum / len, lngSum / len]);
+        }
+        var PolyUtil = {
+          __proto__: null,
+          clipPolygon,
+          polygonCenter,
+          centroid
+        };
         function simplify(points, tolerance) {
           if (!tolerance || !points.length) {
             return points.slice();
@@ -3593,11 +3685,18 @@
             console.warn("latlngs are not flat! Only the first ring will be used");
             latlngs = latlngs[0];
           }
-          var points = [];
-          for (var j in latlngs) {
-            points.push(crs.project(toLatLng(latlngs[j])));
+          var centroidLatLng = toLatLng([0, 0]);
+          var bounds3 = toLatLngBounds(latlngs);
+          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
+          if (areaBounds < 1700) {
+            centroidLatLng = centroid(latlngs);
           }
-          var len = points.length;
+          var len = latlngs.length;
+          var points = [];
+          for (i2 = 0; i2 < len; i2++) {
+            var latlng = toLatLng(latlngs[i2]);
+            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+          }
           for (i2 = 0, halfDist = 0; i2 < len - 1; i2++) {
             halfDist += points[i2].distanceTo(points[i2 + 1]) / 2;
           }
@@ -3619,7 +3718,8 @@
               }
             }
           }
-          return crs.unproject(toPoint(center));
+          var latlngCenter = crs.unproject(toPoint(center));
+          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
         }
         var LineUtil = {
           __proto__: null,
@@ -3633,69 +3733,6 @@
           isFlat,
           _flat,
           polylineCenter
-        };
-        function clipPolygon(points, bounds3, round2) {
-          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
-          for (i2 = 0, len = points.length; i2 < len; i2++) {
-            points[i2]._code = _getBitCode(points[i2], bounds3);
-          }
-          for (k = 0; k < 4; k++) {
-            edge2 = edges[k];
-            clippedPoints = [];
-            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
-              a = points[i2];
-              b = points[j];
-              if (!(a._code & edge2)) {
-                if (b._code & edge2) {
-                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                  p._code = _getBitCode(p, bounds3);
-                  clippedPoints.push(p);
-                }
-                clippedPoints.push(a);
-              } else if (!(b._code & edge2)) {
-                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                p._code = _getBitCode(p, bounds3);
-                clippedPoints.push(p);
-              }
-            }
-            points = clippedPoints;
-          }
-          return points;
-        }
-        function polygonCenter(latlngs, crs) {
-          var i2, j, p1, p2, f, area, x, y, center;
-          if (!latlngs || latlngs.length === 0) {
-            throw new Error("latlngs not passed");
-          }
-          if (!isFlat(latlngs)) {
-            console.warn("latlngs are not flat! Only the first ring will be used");
-            latlngs = latlngs[0];
-          }
-          var points = [];
-          for (var k in latlngs) {
-            points.push(crs.project(toLatLng(latlngs[k])));
-          }
-          var len = points.length;
-          area = x = y = 0;
-          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
-            p1 = points[i2];
-            p2 = points[j];
-            f = p1.y * p2.x - p2.y * p1.x;
-            x += (p1.x + p2.x) * f;
-            y += (p1.y + p2.y) * f;
-            area += f * 3;
-          }
-          if (area === 0) {
-            center = points[0];
-          } else {
-            center = [x / area, y / area];
-          }
-          return crs.unproject(toPoint(center));
-        }
-        var PolyUtil = {
-          __proto__: null,
-          clipPolygon,
-          polygonCenter
         };
         var LonLat = {
           project: function(latlng) {
@@ -3749,8 +3786,8 @@
         var Simple = extend4({}, CRS2, {
           projection: LonLat,
           transformation: toTransformation(1, 0, -1, 0),
-          scale: function(zoom2) {
-            return Math.pow(2, zoom2);
+          scale: function(zoom3) {
+            return Math.pow(2, zoom3);
           },
           zoom: function(scale3) {
             return Math.log(scale3) / Math.LN2;
@@ -4976,7 +5013,7 @@
           for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
             coords2.push(levelsDeep ? latLngsToCoords(latlngs[i2], isFlat(latlngs[i2]) ? 0 : levelsDeep - 1, closed, precision) : latLngToCoords(latlngs[i2], precision));
           }
-          if (!levelsDeep && closed) {
+          if (!levelsDeep && closed && coords2.length > 0) {
             coords2.push(coords2[0].slice());
           }
           return coords2;
@@ -5980,7 +6017,7 @@
             }
           },
           _addFocusListenersOnLayer: function(layer) {
-            var el = layer.getElement();
+            var el = typeof layer.getElement === "function" && layer.getElement();
             if (el) {
               on(el, "focus", function() {
                 this._tooltip._source = layer;
@@ -5990,13 +6027,22 @@
             }
           },
           _setAriaDescribedByOnLayer: function(layer) {
-            var el = layer.getElement();
+            var el = typeof layer.getElement === "function" && layer.getElement();
             if (el) {
               el.setAttribute("aria-describedby", this._tooltip._container.id);
             }
           },
           _openTooltip: function(e) {
-            if (!this._tooltip || !this._map || this._map.dragging && this._map.dragging.moving()) {
+            if (!this._tooltip || !this._map) {
+              return;
+            }
+            if (this._map.dragging && this._map.dragging.moving() && !this._openOnceFlag) {
+              this._openOnceFlag = true;
+              var that = this;
+              this._map.once("moveend", function() {
+                that._openOnceFlag = false;
+                that._openTooltip(e);
+              });
               return;
             }
             this._tooltip._source = e.layer || e.target;
@@ -6212,14 +6258,14 @@
             this.getPane().appendChild(this._container);
           },
           _updateLevels: function() {
-            var zoom2 = this._tileZoom, maxZoom = this.options.maxZoom;
-            if (zoom2 === void 0) {
+            var zoom3 = this._tileZoom, maxZoom = this.options.maxZoom;
+            if (zoom3 === void 0) {
               return void 0;
             }
             for (var z in this._levels) {
               z = Number(z);
-              if (this._levels[z].el.children.length || z === zoom2) {
-                this._levels[z].el.style.zIndex = maxZoom - Math.abs(zoom2 - z);
+              if (this._levels[z].el.children.length || z === zoom3) {
+                this._levels[z].el.style.zIndex = maxZoom - Math.abs(zoom3 - z);
                 this._onUpdateLevel(z);
               } else {
                 remove(this._levels[z].el);
@@ -6228,13 +6274,13 @@
                 delete this._levels[z];
               }
             }
-            var level = this._levels[zoom2], map4 = this._map;
+            var level = this._levels[zoom3], map4 = this._map;
             if (!level) {
-              level = this._levels[zoom2] = {};
+              level = this._levels[zoom3] = {};
               level.el = create$1("div", "leaflet-tile-container leaflet-zoom-animated", this._container);
               level.el.style.zIndex = maxZoom;
-              level.origin = map4.project(map4.unproject(map4.getPixelOrigin()), zoom2).round();
-              level.zoom = zoom2;
+              level.origin = map4.project(map4.unproject(map4.getPixelOrigin()), zoom3).round();
+              level.zoom = zoom3;
               this._setZoomTransform(level, map4.getCenter(), map4.getZoom());
               falseFn(level.el.offsetWidth);
               this._onCreateLevel(level);
@@ -6250,8 +6296,8 @@
               return;
             }
             var key, tile2;
-            var zoom2 = this._map.getZoom();
-            if (zoom2 > this.options.maxZoom || zoom2 < this.options.minZoom) {
+            var zoom3 = this._map.getZoom();
+            if (zoom3 > this.options.maxZoom || zoom3 < this.options.minZoom) {
               this._removeAllTiles();
               return;
             }
@@ -6274,9 +6320,9 @@
               }
             }
           },
-          _removeTilesAtZoom: function(zoom2) {
+          _removeTilesAtZoom: function(zoom3) {
             for (var key in this._tiles) {
-              if (this._tiles[key].coords.z !== zoom2) {
+              if (this._tiles[key].coords.z !== zoom3) {
                 continue;
               }
               this._removeTile(key);
@@ -6336,18 +6382,18 @@
           _animateZoom: function(e) {
             this._setView(e.center, e.zoom, true, e.noUpdate);
           },
-          _clampZoom: function(zoom2) {
+          _clampZoom: function(zoom3) {
             var options2 = this.options;
-            if (void 0 !== options2.minNativeZoom && zoom2 < options2.minNativeZoom) {
+            if (void 0 !== options2.minNativeZoom && zoom3 < options2.minNativeZoom) {
               return options2.minNativeZoom;
             }
-            if (void 0 !== options2.maxNativeZoom && options2.maxNativeZoom < zoom2) {
+            if (void 0 !== options2.maxNativeZoom && options2.maxNativeZoom < zoom3) {
               return options2.maxNativeZoom;
             }
-            return zoom2;
+            return zoom3;
           },
-          _setView: function(center, zoom2, noPrune, noUpdate) {
-            var tileZoom = Math.round(zoom2);
+          _setView: function(center, zoom3, noPrune, noUpdate) {
+            var tileZoom = Math.round(zoom3);
             if (this.options.maxZoom !== void 0 && tileZoom > this.options.maxZoom || this.options.minZoom !== void 0 && tileZoom < this.options.minZoom) {
               tileZoom = void 0;
             } else {
@@ -6369,15 +6415,15 @@
               }
               this._noPrune = !!noPrune;
             }
-            this._setZoomTransforms(center, zoom2);
+            this._setZoomTransforms(center, zoom3);
           },
-          _setZoomTransforms: function(center, zoom2) {
+          _setZoomTransforms: function(center, zoom3) {
             for (var i2 in this._levels) {
-              this._setZoomTransform(this._levels[i2], center, zoom2);
+              this._setZoomTransform(this._levels[i2], center, zoom3);
             }
           },
-          _setZoomTransform: function(level, center, zoom2) {
-            var scale3 = this._map.getZoomScale(zoom2, level.zoom), translate = level.origin.multiplyBy(scale3).subtract(this._map._getNewPixelOrigin(center, zoom2)).round();
+          _setZoomTransform: function(level, center, zoom3) {
+            var scale3 = this._map.getZoomScale(zoom3, level.zoom), translate = level.origin.multiplyBy(scale3).subtract(this._map._getNewPixelOrigin(center, zoom3)).round();
             if (Browser4.any3d) {
               setTransform(level.el, translate, scale3);
             } else {
@@ -6414,7 +6460,7 @@
             if (!map4) {
               return;
             }
-            var zoom2 = this._clampZoom(map4.getZoom());
+            var zoom3 = this._clampZoom(map4.getZoom());
             if (center === void 0) {
               center = map4.getCenter();
             }
@@ -6434,8 +6480,8 @@
                 this._tiles[key].current = false;
               }
             }
-            if (Math.abs(zoom2 - this._tileZoom) > 1) {
-              this._setView(center, zoom2);
+            if (Math.abs(zoom3 - this._tileZoom) > 1) {
+              this._setView(center, zoom3);
               return;
             }
             for (var j = tileRange.min.y; j <= tileRange.max.y; j++) {
@@ -6710,11 +6756,11 @@
             e.tile.onload = null;
           },
           _getZoomForUrl: function() {
-            var zoom2 = this._tileZoom, maxZoom = this.options.maxZoom, zoomReverse = this.options.zoomReverse, zoomOffset = this.options.zoomOffset;
+            var zoom3 = this._tileZoom, maxZoom = this.options.maxZoom, zoomReverse = this.options.zoomReverse, zoomOffset = this.options.zoomOffset;
             if (zoomReverse) {
-              zoom2 = maxZoom - zoom2;
+              zoom3 = maxZoom - zoom3;
             }
-            return zoom2 + zoomOffset;
+            return zoom3 + zoomOffset;
           },
           _getSubdomain: function(tilePoint) {
             var index3 = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
@@ -6823,9 +6869,7 @@
           onAdd: function() {
             if (!this._container) {
               this._initContainer();
-              if (this._zoomAnimated) {
-                addClass(this._container, "leaflet-zoom-animated");
-              }
+              addClass(this._container, "leaflet-zoom-animated");
             }
             this.getPane().appendChild(this._container);
             this._update();
@@ -6853,8 +6897,8 @@
           _onZoom: function() {
             this._updateTransform(this._map.getCenter(), this._map.getZoom());
           },
-          _updateTransform: function(center, zoom2) {
-            var scale3 = this._map.getZoomScale(zoom2, this._zoom), viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding), currentCenterPoint = this._map.project(this._center, zoom2), topLeftOffset = viewHalf.multiplyBy(-scale3).add(currentCenterPoint).subtract(this._map._getNewPixelOrigin(center, zoom2));
+          _updateTransform: function(center, zoom3) {
+            var scale3 = this._map.getZoomScale(zoom3, this._zoom), viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding), currentCenterPoint = this._map.project(this._center, zoom3), topLeftOffset = viewHalf.multiplyBy(-scale3).add(currentCenterPoint).subtract(this._map._getNewPixelOrigin(center, zoom3));
             if (Browser4.any3d) {
               setTransform(this._container, topLeftOffset, scale3);
             } else {
@@ -7604,11 +7648,11 @@
             this._map.off("dblclick", this._onDoubleClick, this);
           },
           _onDoubleClick: function(e) {
-            var map4 = this._map, oldZoom = map4.getZoom(), delta = map4.options.zoomDelta, zoom2 = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
+            var map4 = this._map, oldZoom = map4.getZoom(), delta = map4.options.zoomDelta, zoom3 = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
             if (map4.options.doubleClickZoom === "center") {
-              map4.setZoom(zoom2);
+              map4.setZoom(zoom3);
             } else {
-              map4.setZoomAround(e.containerPoint, zoom2);
+              map4.setZoomAround(e.containerPoint, zoom3);
             }
           }
         });
@@ -7823,13 +7867,13 @@
               keys[codes.up[i2]] = [0, -1 * panDelta];
             }
           },
-          _setZoomDelta: function(zoomDelta) {
+          _setZoomDelta: function(zoomDelta2) {
             var keys = this._zoomKeys = {}, codes = this.keyCodes, i2, len;
             for (i2 = 0, len = codes.zoomIn.length; i2 < len; i2++) {
-              keys[codes.zoomIn[i2]] = zoomDelta;
+              keys[codes.zoomIn[i2]] = zoomDelta2;
             }
             for (i2 = 0, len = codes.zoomOut.length; i2 < len; i2++) {
-              keys[codes.zoomOut[i2]] = -zoomDelta;
+              keys[codes.zoomOut[i2]] = -zoomDelta2;
             }
           },
           _addHooks: function() {
@@ -7885,30 +7929,30 @@
           },
           _onWheelScroll: function(e) {
             var delta = getWheelDelta(e);
-            var debounce2 = this._map.options.wheelDebounceTime;
+            var debounce3 = this._map.options.wheelDebounceTime;
             this._delta += delta;
             this._lastMousePos = this._map.mouseEventToContainerPoint(e);
             if (!this._startTime) {
               this._startTime = +new Date();
             }
-            var left = Math.max(debounce2 - (+new Date() - this._startTime), 0);
+            var left = Math.max(debounce3 - (+new Date() - this._startTime), 0);
             clearTimeout(this._timer);
             this._timer = setTimeout(bind(this._performZoom, this), left);
             stop(e);
           },
           _performZoom: function() {
-            var map4 = this._map, zoom2 = map4.getZoom(), snap = this._map.options.zoomSnap || 0;
+            var map4 = this._map, zoom3 = map4.getZoom(), snap = this._map.options.zoomSnap || 0;
             map4._stop();
-            var d2 = this._delta / (this._map.options.wheelPxPerZoomLevel * 4), d3 = 4 * Math.log(2 / (1 + Math.exp(-Math.abs(d2)))) / Math.LN2, d4 = snap ? Math.ceil(d3 / snap) * snap : d3, delta = map4._limitZoom(zoom2 + (this._delta > 0 ? d4 : -d4)) - zoom2;
+            var d2 = this._delta / (this._map.options.wheelPxPerZoomLevel * 4), d3 = 4 * Math.log(2 / (1 + Math.exp(-Math.abs(d2)))) / Math.LN2, d4 = snap ? Math.ceil(d3 / snap) * snap : d3, delta = map4._limitZoom(zoom3 + (this._delta > 0 ? d4 : -d4)) - zoom3;
             this._delta = 0;
             this._startTime = null;
             if (!delta) {
               return;
             }
             if (map4.options.scrollWheelZoom === "center") {
-              map4.setZoom(zoom2 + delta);
+              map4.setZoom(zoom3 + delta);
             } else {
-              map4.setZoomAround(this._lastMousePos, zoom2 + delta);
+              map4.setZoomAround(this._lastMousePos, zoom3 + delta);
             }
           }
         });
@@ -8138,7 +8182,7 @@
         exports2.tileLayer = tileLayer;
         exports2.tooltip = tooltip;
         exports2.transformation = toTransformation;
-        exports2.version = version2;
+        exports2.version = version3;
         exports2.videoOverlay = videoOverlay;
         var oldL = window.L;
         exports2.noConflict = function() {
@@ -8174,13 +8218,13 @@
         var toString = class2type.toString;
         var hasOwn = class2type.hasOwnProperty;
         var support = {};
-        var document2 = window2.document, version2 = "2.1.4", jQuery4 = function(selector, context) {
+        var document2 = window2.document, version3 = "2.1.4", jQuery4 = function(selector, context) {
           return new jQuery4.fn.init(selector, context);
         }, rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, rmsPrefix = /^-ms-/, rdashAlpha = /-([\da-z])/gi, fcamelCase = function(all, letter) {
           return letter.toUpperCase();
         };
         jQuery4.fn = jQuery4.prototype = {
-          jquery: version2,
+          jquery: version3,
           constructor: jQuery4,
           selector: "",
           length: 0,
@@ -8263,7 +8307,7 @@
           return target;
         };
         jQuery4.extend({
-          expando: "jQuery" + (version2 + Math.random()).replace(/\D/g, ""),
+          expando: "jQuery" + (version3 + Math.random()).replace(/\D/g, ""),
           isReady: true,
           error: function(msg) {
             throw new Error(msg);
@@ -14431,7 +14475,7 @@
           }
           $2(element).on("touchstart mousedown", start);
         }
-        function throttle(func, wait, debounce2) {
+        function throttle(func, wait, debounce3) {
           var timeout;
           return function() {
             var context = this, args = arguments;
@@ -14439,9 +14483,9 @@
               timeout = null;
               func.apply(context, args);
             };
-            if (debounce2)
+            if (debounce3)
               clearTimeout(timeout);
-            if (debounce2 || !timeout)
+            if (debounce3 || !timeout)
               timeout = setTimeout(throttler, wait);
           };
         }
@@ -15346,6 +15390,1501 @@
           }
         });
       });
+    }
+  });
+
+  // node_modules/hammerjs/hammer.js
+  var require_hammer = __commonJS({
+    "node_modules/hammerjs/hammer.js"(exports, module) {
+      (function(window2, document2, exportName, undefined2) {
+        "use strict";
+        var VENDOR_PREFIXES = ["", "webkit", "Moz", "MS", "ms", "o"];
+        var TEST_ELEMENT = document2.createElement("div");
+        var TYPE_FUNCTION = "function";
+        var round2 = Math.round;
+        var abs = Math.abs;
+        var now = Date.now;
+        function setTimeoutContext(fn, timeout, context) {
+          return setTimeout(bindFn(fn, context), timeout);
+        }
+        function invokeArrayArg(arg, fn, context) {
+          if (Array.isArray(arg)) {
+            each2(arg, context[fn], context);
+            return true;
+          }
+          return false;
+        }
+        function each2(obj, iterator, context) {
+          var i2;
+          if (!obj) {
+            return;
+          }
+          if (obj.forEach) {
+            obj.forEach(iterator, context);
+          } else if (obj.length !== undefined2) {
+            i2 = 0;
+            while (i2 < obj.length) {
+              iterator.call(context, obj[i2], i2, obj);
+              i2++;
+            }
+          } else {
+            for (i2 in obj) {
+              obj.hasOwnProperty(i2) && iterator.call(context, obj[i2], i2, obj);
+            }
+          }
+        }
+        function deprecate(method, name, message) {
+          var deprecationMessage = "DEPRECATED METHOD: " + name + "\n" + message + " AT \n";
+          return function() {
+            var e = new Error("get-stack-trace");
+            var stack = e && e.stack ? e.stack.replace(/^[^\(]+?[\n$]/gm, "").replace(/^\s+at\s+/gm, "").replace(/^Object.<anonymous>\s*\(/gm, "{anonymous}()@") : "Unknown Stack Trace";
+            var log = window2.console && (window2.console.warn || window2.console.log);
+            if (log) {
+              log.call(window2.console, deprecationMessage, stack);
+            }
+            return method.apply(this, arguments);
+          };
+        }
+        var assign;
+        if (typeof Object.assign !== "function") {
+          assign = function assign2(target) {
+            if (target === undefined2 || target === null) {
+              throw new TypeError("Cannot convert undefined or null to object");
+            }
+            var output = Object(target);
+            for (var index2 = 1; index2 < arguments.length; index2++) {
+              var source = arguments[index2];
+              if (source !== undefined2 && source !== null) {
+                for (var nextKey in source) {
+                  if (source.hasOwnProperty(nextKey)) {
+                    output[nextKey] = source[nextKey];
+                  }
+                }
+              }
+            }
+            return output;
+          };
+        } else {
+          assign = Object.assign;
+        }
+        var extend4 = deprecate(function extend5(dest, src, merge3) {
+          var keys = Object.keys(src);
+          var i2 = 0;
+          while (i2 < keys.length) {
+            if (!merge3 || merge3 && dest[keys[i2]] === undefined2) {
+              dest[keys[i2]] = src[keys[i2]];
+            }
+            i2++;
+          }
+          return dest;
+        }, "extend", "Use `assign`.");
+        var merge2 = deprecate(function merge3(dest, src) {
+          return extend4(dest, src, true);
+        }, "merge", "Use `assign`.");
+        function inherit(child, base, properties) {
+          var baseP = base.prototype, childP;
+          childP = child.prototype = Object.create(baseP);
+          childP.constructor = child;
+          childP._super = baseP;
+          if (properties) {
+            assign(childP, properties);
+          }
+        }
+        function bindFn(fn, context) {
+          return function boundFn() {
+            return fn.apply(context, arguments);
+          };
+        }
+        function boolOrFn(val, args) {
+          if (typeof val == TYPE_FUNCTION) {
+            return val.apply(args ? args[0] || undefined2 : undefined2, args);
+          }
+          return val;
+        }
+        function ifUndefined(val1, val2) {
+          return val1 === undefined2 ? val2 : val1;
+        }
+        function addEventListeners(target, types, handler) {
+          each2(splitStr(types), function(type) {
+            target.addEventListener(type, handler, false);
+          });
+        }
+        function removeEventListeners(target, types, handler) {
+          each2(splitStr(types), function(type) {
+            target.removeEventListener(type, handler, false);
+          });
+        }
+        function hasParent(node, parent) {
+          while (node) {
+            if (node == parent) {
+              return true;
+            }
+            node = node.parentNode;
+          }
+          return false;
+        }
+        function inStr(str2, find) {
+          return str2.indexOf(find) > -1;
+        }
+        function splitStr(str2) {
+          return str2.trim().split(/\s+/g);
+        }
+        function inArray(src, find, findByKey) {
+          if (src.indexOf && !findByKey) {
+            return src.indexOf(find);
+          } else {
+            var i2 = 0;
+            while (i2 < src.length) {
+              if (findByKey && src[i2][findByKey] == find || !findByKey && src[i2] === find) {
+                return i2;
+              }
+              i2++;
+            }
+            return -1;
+          }
+        }
+        function toArray(obj) {
+          return Array.prototype.slice.call(obj, 0);
+        }
+        function uniqueArray(src, key, sort) {
+          var results = [];
+          var values = [];
+          var i2 = 0;
+          while (i2 < src.length) {
+            var val = key ? src[i2][key] : src[i2];
+            if (inArray(values, val) < 0) {
+              results.push(src[i2]);
+            }
+            values[i2] = val;
+            i2++;
+          }
+          if (sort) {
+            if (!key) {
+              results = results.sort();
+            } else {
+              results = results.sort(function sortUniqueArray(a, b) {
+                return a[key] > b[key];
+              });
+            }
+          }
+          return results;
+        }
+        function prefixed(obj, property) {
+          var prefix, prop;
+          var camelProp = property[0].toUpperCase() + property.slice(1);
+          var i2 = 0;
+          while (i2 < VENDOR_PREFIXES.length) {
+            prefix = VENDOR_PREFIXES[i2];
+            prop = prefix ? prefix + camelProp : property;
+            if (prop in obj) {
+              return prop;
+            }
+            i2++;
+          }
+          return undefined2;
+        }
+        var _uniqueId = 1;
+        function uniqueId() {
+          return _uniqueId++;
+        }
+        function getWindowForElement(element) {
+          var doc = element.ownerDocument || element;
+          return doc.defaultView || doc.parentWindow || window2;
+        }
+        var MOBILE_REGEX = /mobile|tablet|ip(ad|hone|od)|android/i;
+        var SUPPORT_TOUCH = "ontouchstart" in window2;
+        var SUPPORT_POINTER_EVENTS = prefixed(window2, "PointerEvent") !== undefined2;
+        var SUPPORT_ONLY_TOUCH = SUPPORT_TOUCH && MOBILE_REGEX.test(navigator.userAgent);
+        var INPUT_TYPE_TOUCH = "touch";
+        var INPUT_TYPE_PEN = "pen";
+        var INPUT_TYPE_MOUSE = "mouse";
+        var INPUT_TYPE_KINECT = "kinect";
+        var COMPUTE_INTERVAL = 25;
+        var INPUT_START = 1;
+        var INPUT_MOVE = 2;
+        var INPUT_END = 4;
+        var INPUT_CANCEL = 8;
+        var DIRECTION_NONE = 1;
+        var DIRECTION_LEFT = 2;
+        var DIRECTION_RIGHT = 4;
+        var DIRECTION_UP = 8;
+        var DIRECTION_DOWN = 16;
+        var DIRECTION_HORIZONTAL = DIRECTION_LEFT | DIRECTION_RIGHT;
+        var DIRECTION_VERTICAL = DIRECTION_UP | DIRECTION_DOWN;
+        var DIRECTION_ALL = DIRECTION_HORIZONTAL | DIRECTION_VERTICAL;
+        var PROPS_XY = ["x", "y"];
+        var PROPS_CLIENT_XY = ["clientX", "clientY"];
+        function Input(manager, callback2) {
+          var self2 = this;
+          this.manager = manager;
+          this.callback = callback2;
+          this.element = manager.element;
+          this.target = manager.options.inputTarget;
+          this.domHandler = function(ev) {
+            if (boolOrFn(manager.options.enable, [manager])) {
+              self2.handler(ev);
+            }
+          };
+          this.init();
+        }
+        Input.prototype = {
+          handler: function() {
+          },
+          init: function() {
+            this.evEl && addEventListeners(this.element, this.evEl, this.domHandler);
+            this.evTarget && addEventListeners(this.target, this.evTarget, this.domHandler);
+            this.evWin && addEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
+          },
+          destroy: function() {
+            this.evEl && removeEventListeners(this.element, this.evEl, this.domHandler);
+            this.evTarget && removeEventListeners(this.target, this.evTarget, this.domHandler);
+            this.evWin && removeEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
+          }
+        };
+        function createInputInstance(manager) {
+          var Type;
+          var inputClass = manager.options.inputClass;
+          if (inputClass) {
+            Type = inputClass;
+          } else if (SUPPORT_POINTER_EVENTS) {
+            Type = PointerEventInput;
+          } else if (SUPPORT_ONLY_TOUCH) {
+            Type = TouchInput;
+          } else if (!SUPPORT_TOUCH) {
+            Type = MouseInput;
+          } else {
+            Type = TouchMouseInput;
+          }
+          return new Type(manager, inputHandler);
+        }
+        function inputHandler(manager, eventType, input) {
+          var pointersLen = input.pointers.length;
+          var changedPointersLen = input.changedPointers.length;
+          var isFirst = eventType & INPUT_START && pointersLen - changedPointersLen === 0;
+          var isFinal = eventType & (INPUT_END | INPUT_CANCEL) && pointersLen - changedPointersLen === 0;
+          input.isFirst = !!isFirst;
+          input.isFinal = !!isFinal;
+          if (isFirst) {
+            manager.session = {};
+          }
+          input.eventType = eventType;
+          computeInputData(manager, input);
+          manager.emit("hammer.input", input);
+          manager.recognize(input);
+          manager.session.prevInput = input;
+        }
+        function computeInputData(manager, input) {
+          var session = manager.session;
+          var pointers = input.pointers;
+          var pointersLength = pointers.length;
+          if (!session.firstInput) {
+            session.firstInput = simpleCloneInputData(input);
+          }
+          if (pointersLength > 1 && !session.firstMultiple) {
+            session.firstMultiple = simpleCloneInputData(input);
+          } else if (pointersLength === 1) {
+            session.firstMultiple = false;
+          }
+          var firstInput = session.firstInput;
+          var firstMultiple = session.firstMultiple;
+          var offsetCenter = firstMultiple ? firstMultiple.center : firstInput.center;
+          var center = input.center = getCenter2(pointers);
+          input.timeStamp = now();
+          input.deltaTime = input.timeStamp - firstInput.timeStamp;
+          input.angle = getAngle(offsetCenter, center);
+          input.distance = getDistance(offsetCenter, center);
+          computeDeltaXY(session, input);
+          input.offsetDirection = getDirection(input.deltaX, input.deltaY);
+          var overallVelocity = getVelocity(input.deltaTime, input.deltaX, input.deltaY);
+          input.overallVelocityX = overallVelocity.x;
+          input.overallVelocityY = overallVelocity.y;
+          input.overallVelocity = abs(overallVelocity.x) > abs(overallVelocity.y) ? overallVelocity.x : overallVelocity.y;
+          input.scale = firstMultiple ? getScale(firstMultiple.pointers, pointers) : 1;
+          input.rotation = firstMultiple ? getRotation(firstMultiple.pointers, pointers) : 0;
+          input.maxPointers = !session.prevInput ? input.pointers.length : input.pointers.length > session.prevInput.maxPointers ? input.pointers.length : session.prevInput.maxPointers;
+          computeIntervalInputData(session, input);
+          var target = manager.element;
+          if (hasParent(input.srcEvent.target, target)) {
+            target = input.srcEvent.target;
+          }
+          input.target = target;
+        }
+        function computeDeltaXY(session, input) {
+          var center = input.center;
+          var offset = session.offsetDelta || {};
+          var prevDelta = session.prevDelta || {};
+          var prevInput = session.prevInput || {};
+          if (input.eventType === INPUT_START || prevInput.eventType === INPUT_END) {
+            prevDelta = session.prevDelta = {
+              x: prevInput.deltaX || 0,
+              y: prevInput.deltaY || 0
+            };
+            offset = session.offsetDelta = {
+              x: center.x,
+              y: center.y
+            };
+          }
+          input.deltaX = prevDelta.x + (center.x - offset.x);
+          input.deltaY = prevDelta.y + (center.y - offset.y);
+        }
+        function computeIntervalInputData(session, input) {
+          var last = session.lastInterval || input, deltaTime = input.timeStamp - last.timeStamp, velocity, velocityX, velocityY, direction;
+          if (input.eventType != INPUT_CANCEL && (deltaTime > COMPUTE_INTERVAL || last.velocity === undefined2)) {
+            var deltaX = input.deltaX - last.deltaX;
+            var deltaY = input.deltaY - last.deltaY;
+            var v = getVelocity(deltaTime, deltaX, deltaY);
+            velocityX = v.x;
+            velocityY = v.y;
+            velocity = abs(v.x) > abs(v.y) ? v.x : v.y;
+            direction = getDirection(deltaX, deltaY);
+            session.lastInterval = input;
+          } else {
+            velocity = last.velocity;
+            velocityX = last.velocityX;
+            velocityY = last.velocityY;
+            direction = last.direction;
+          }
+          input.velocity = velocity;
+          input.velocityX = velocityX;
+          input.velocityY = velocityY;
+          input.direction = direction;
+        }
+        function simpleCloneInputData(input) {
+          var pointers = [];
+          var i2 = 0;
+          while (i2 < input.pointers.length) {
+            pointers[i2] = {
+              clientX: round2(input.pointers[i2].clientX),
+              clientY: round2(input.pointers[i2].clientY)
+            };
+            i2++;
+          }
+          return {
+            timeStamp: now(),
+            pointers,
+            center: getCenter2(pointers),
+            deltaX: input.deltaX,
+            deltaY: input.deltaY
+          };
+        }
+        function getCenter2(pointers) {
+          var pointersLength = pointers.length;
+          if (pointersLength === 1) {
+            return {
+              x: round2(pointers[0].clientX),
+              y: round2(pointers[0].clientY)
+            };
+          }
+          var x = 0, y = 0, i2 = 0;
+          while (i2 < pointersLength) {
+            x += pointers[i2].clientX;
+            y += pointers[i2].clientY;
+            i2++;
+          }
+          return {
+            x: round2(x / pointersLength),
+            y: round2(y / pointersLength)
+          };
+        }
+        function getVelocity(deltaTime, x, y) {
+          return {
+            x: x / deltaTime || 0,
+            y: y / deltaTime || 0
+          };
+        }
+        function getDirection(x, y) {
+          if (x === y) {
+            return DIRECTION_NONE;
+          }
+          if (abs(x) >= abs(y)) {
+            return x < 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+          }
+          return y < 0 ? DIRECTION_UP : DIRECTION_DOWN;
+        }
+        function getDistance(p1, p2, props) {
+          if (!props) {
+            props = PROPS_XY;
+          }
+          var x = p2[props[0]] - p1[props[0]], y = p2[props[1]] - p1[props[1]];
+          return Math.sqrt(x * x + y * y);
+        }
+        function getAngle(p1, p2, props) {
+          if (!props) {
+            props = PROPS_XY;
+          }
+          var x = p2[props[0]] - p1[props[0]], y = p2[props[1]] - p1[props[1]];
+          return Math.atan2(y, x) * 180 / Math.PI;
+        }
+        function getRotation(start, end) {
+          return getAngle(end[1], end[0], PROPS_CLIENT_XY) + getAngle(start[1], start[0], PROPS_CLIENT_XY);
+        }
+        function getScale(start, end) {
+          return getDistance(end[0], end[1], PROPS_CLIENT_XY) / getDistance(start[0], start[1], PROPS_CLIENT_XY);
+        }
+        var MOUSE_INPUT_MAP = {
+          mousedown: INPUT_START,
+          mousemove: INPUT_MOVE,
+          mouseup: INPUT_END
+        };
+        var MOUSE_ELEMENT_EVENTS = "mousedown";
+        var MOUSE_WINDOW_EVENTS = "mousemove mouseup";
+        function MouseInput() {
+          this.evEl = MOUSE_ELEMENT_EVENTS;
+          this.evWin = MOUSE_WINDOW_EVENTS;
+          this.pressed = false;
+          Input.apply(this, arguments);
+        }
+        inherit(MouseInput, Input, {
+          handler: function MEhandler(ev) {
+            var eventType = MOUSE_INPUT_MAP[ev.type];
+            if (eventType & INPUT_START && ev.button === 0) {
+              this.pressed = true;
+            }
+            if (eventType & INPUT_MOVE && ev.which !== 1) {
+              eventType = INPUT_END;
+            }
+            if (!this.pressed) {
+              return;
+            }
+            if (eventType & INPUT_END) {
+              this.pressed = false;
+            }
+            this.callback(this.manager, eventType, {
+              pointers: [ev],
+              changedPointers: [ev],
+              pointerType: INPUT_TYPE_MOUSE,
+              srcEvent: ev
+            });
+          }
+        });
+        var POINTER_INPUT_MAP = {
+          pointerdown: INPUT_START,
+          pointermove: INPUT_MOVE,
+          pointerup: INPUT_END,
+          pointercancel: INPUT_CANCEL,
+          pointerout: INPUT_CANCEL
+        };
+        var IE10_POINTER_TYPE_ENUM = {
+          2: INPUT_TYPE_TOUCH,
+          3: INPUT_TYPE_PEN,
+          4: INPUT_TYPE_MOUSE,
+          5: INPUT_TYPE_KINECT
+        };
+        var POINTER_ELEMENT_EVENTS = "pointerdown";
+        var POINTER_WINDOW_EVENTS = "pointermove pointerup pointercancel";
+        if (window2.MSPointerEvent && !window2.PointerEvent) {
+          POINTER_ELEMENT_EVENTS = "MSPointerDown";
+          POINTER_WINDOW_EVENTS = "MSPointerMove MSPointerUp MSPointerCancel";
+        }
+        function PointerEventInput() {
+          this.evEl = POINTER_ELEMENT_EVENTS;
+          this.evWin = POINTER_WINDOW_EVENTS;
+          Input.apply(this, arguments);
+          this.store = this.manager.session.pointerEvents = [];
+        }
+        inherit(PointerEventInput, Input, {
+          handler: function PEhandler(ev) {
+            var store = this.store;
+            var removePointer = false;
+            var eventTypeNormalized = ev.type.toLowerCase().replace("ms", "");
+            var eventType = POINTER_INPUT_MAP[eventTypeNormalized];
+            var pointerType = IE10_POINTER_TYPE_ENUM[ev.pointerType] || ev.pointerType;
+            var isTouch = pointerType == INPUT_TYPE_TOUCH;
+            var storeIndex = inArray(store, ev.pointerId, "pointerId");
+            if (eventType & INPUT_START && (ev.button === 0 || isTouch)) {
+              if (storeIndex < 0) {
+                store.push(ev);
+                storeIndex = store.length - 1;
+              }
+            } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
+              removePointer = true;
+            }
+            if (storeIndex < 0) {
+              return;
+            }
+            store[storeIndex] = ev;
+            this.callback(this.manager, eventType, {
+              pointers: store,
+              changedPointers: [ev],
+              pointerType,
+              srcEvent: ev
+            });
+            if (removePointer) {
+              store.splice(storeIndex, 1);
+            }
+          }
+        });
+        var SINGLE_TOUCH_INPUT_MAP = {
+          touchstart: INPUT_START,
+          touchmove: INPUT_MOVE,
+          touchend: INPUT_END,
+          touchcancel: INPUT_CANCEL
+        };
+        var SINGLE_TOUCH_TARGET_EVENTS = "touchstart";
+        var SINGLE_TOUCH_WINDOW_EVENTS = "touchstart touchmove touchend touchcancel";
+        function SingleTouchInput() {
+          this.evTarget = SINGLE_TOUCH_TARGET_EVENTS;
+          this.evWin = SINGLE_TOUCH_WINDOW_EVENTS;
+          this.started = false;
+          Input.apply(this, arguments);
+        }
+        inherit(SingleTouchInput, Input, {
+          handler: function TEhandler(ev) {
+            var type = SINGLE_TOUCH_INPUT_MAP[ev.type];
+            if (type === INPUT_START) {
+              this.started = true;
+            }
+            if (!this.started) {
+              return;
+            }
+            var touches = normalizeSingleTouches.call(this, ev, type);
+            if (type & (INPUT_END | INPUT_CANCEL) && touches[0].length - touches[1].length === 0) {
+              this.started = false;
+            }
+            this.callback(this.manager, type, {
+              pointers: touches[0],
+              changedPointers: touches[1],
+              pointerType: INPUT_TYPE_TOUCH,
+              srcEvent: ev
+            });
+          }
+        });
+        function normalizeSingleTouches(ev, type) {
+          var all = toArray(ev.touches);
+          var changed = toArray(ev.changedTouches);
+          if (type & (INPUT_END | INPUT_CANCEL)) {
+            all = uniqueArray(all.concat(changed), "identifier", true);
+          }
+          return [all, changed];
+        }
+        var TOUCH_INPUT_MAP = {
+          touchstart: INPUT_START,
+          touchmove: INPUT_MOVE,
+          touchend: INPUT_END,
+          touchcancel: INPUT_CANCEL
+        };
+        var TOUCH_TARGET_EVENTS = "touchstart touchmove touchend touchcancel";
+        function TouchInput() {
+          this.evTarget = TOUCH_TARGET_EVENTS;
+          this.targetIds = {};
+          Input.apply(this, arguments);
+        }
+        inherit(TouchInput, Input, {
+          handler: function MTEhandler(ev) {
+            var type = TOUCH_INPUT_MAP[ev.type];
+            var touches = getTouches.call(this, ev, type);
+            if (!touches) {
+              return;
+            }
+            this.callback(this.manager, type, {
+              pointers: touches[0],
+              changedPointers: touches[1],
+              pointerType: INPUT_TYPE_TOUCH,
+              srcEvent: ev
+            });
+          }
+        });
+        function getTouches(ev, type) {
+          var allTouches = toArray(ev.touches);
+          var targetIds = this.targetIds;
+          if (type & (INPUT_START | INPUT_MOVE) && allTouches.length === 1) {
+            targetIds[allTouches[0].identifier] = true;
+            return [allTouches, allTouches];
+          }
+          var i2, targetTouches, changedTouches = toArray(ev.changedTouches), changedTargetTouches = [], target = this.target;
+          targetTouches = allTouches.filter(function(touch) {
+            return hasParent(touch.target, target);
+          });
+          if (type === INPUT_START) {
+            i2 = 0;
+            while (i2 < targetTouches.length) {
+              targetIds[targetTouches[i2].identifier] = true;
+              i2++;
+            }
+          }
+          i2 = 0;
+          while (i2 < changedTouches.length) {
+            if (targetIds[changedTouches[i2].identifier]) {
+              changedTargetTouches.push(changedTouches[i2]);
+            }
+            if (type & (INPUT_END | INPUT_CANCEL)) {
+              delete targetIds[changedTouches[i2].identifier];
+            }
+            i2++;
+          }
+          if (!changedTargetTouches.length) {
+            return;
+          }
+          return [
+            uniqueArray(targetTouches.concat(changedTargetTouches), "identifier", true),
+            changedTargetTouches
+          ];
+        }
+        var DEDUP_TIMEOUT = 2500;
+        var DEDUP_DISTANCE = 25;
+        function TouchMouseInput() {
+          Input.apply(this, arguments);
+          var handler = bindFn(this.handler, this);
+          this.touch = new TouchInput(this.manager, handler);
+          this.mouse = new MouseInput(this.manager, handler);
+          this.primaryTouch = null;
+          this.lastTouches = [];
+        }
+        inherit(TouchMouseInput, Input, {
+          handler: function TMEhandler(manager, inputEvent, inputData) {
+            var isTouch = inputData.pointerType == INPUT_TYPE_TOUCH, isMouse = inputData.pointerType == INPUT_TYPE_MOUSE;
+            if (isMouse && inputData.sourceCapabilities && inputData.sourceCapabilities.firesTouchEvents) {
+              return;
+            }
+            if (isTouch) {
+              recordTouches.call(this, inputEvent, inputData);
+            } else if (isMouse && isSyntheticEvent.call(this, inputData)) {
+              return;
+            }
+            this.callback(manager, inputEvent, inputData);
+          },
+          destroy: function destroy() {
+            this.touch.destroy();
+            this.mouse.destroy();
+          }
+        });
+        function recordTouches(eventType, eventData) {
+          if (eventType & INPUT_START) {
+            this.primaryTouch = eventData.changedPointers[0].identifier;
+            setLastTouch.call(this, eventData);
+          } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
+            setLastTouch.call(this, eventData);
+          }
+        }
+        function setLastTouch(eventData) {
+          var touch = eventData.changedPointers[0];
+          if (touch.identifier === this.primaryTouch) {
+            var lastTouch = { x: touch.clientX, y: touch.clientY };
+            this.lastTouches.push(lastTouch);
+            var lts = this.lastTouches;
+            var removeLastTouch = function() {
+              var i2 = lts.indexOf(lastTouch);
+              if (i2 > -1) {
+                lts.splice(i2, 1);
+              }
+            };
+            setTimeout(removeLastTouch, DEDUP_TIMEOUT);
+          }
+        }
+        function isSyntheticEvent(eventData) {
+          var x = eventData.srcEvent.clientX, y = eventData.srcEvent.clientY;
+          for (var i2 = 0; i2 < this.lastTouches.length; i2++) {
+            var t = this.lastTouches[i2];
+            var dx = Math.abs(x - t.x), dy = Math.abs(y - t.y);
+            if (dx <= DEDUP_DISTANCE && dy <= DEDUP_DISTANCE) {
+              return true;
+            }
+          }
+          return false;
+        }
+        var PREFIXED_TOUCH_ACTION = prefixed(TEST_ELEMENT.style, "touchAction");
+        var NATIVE_TOUCH_ACTION = PREFIXED_TOUCH_ACTION !== undefined2;
+        var TOUCH_ACTION_COMPUTE = "compute";
+        var TOUCH_ACTION_AUTO = "auto";
+        var TOUCH_ACTION_MANIPULATION = "manipulation";
+        var TOUCH_ACTION_NONE = "none";
+        var TOUCH_ACTION_PAN_X = "pan-x";
+        var TOUCH_ACTION_PAN_Y = "pan-y";
+        var TOUCH_ACTION_MAP = getTouchActionProps();
+        function TouchAction(manager, value) {
+          this.manager = manager;
+          this.set(value);
+        }
+        TouchAction.prototype = {
+          set: function(value) {
+            if (value == TOUCH_ACTION_COMPUTE) {
+              value = this.compute();
+            }
+            if (NATIVE_TOUCH_ACTION && this.manager.element.style && TOUCH_ACTION_MAP[value]) {
+              this.manager.element.style[PREFIXED_TOUCH_ACTION] = value;
+            }
+            this.actions = value.toLowerCase().trim();
+          },
+          update: function() {
+            this.set(this.manager.options.touchAction);
+          },
+          compute: function() {
+            var actions = [];
+            each2(this.manager.recognizers, function(recognizer) {
+              if (boolOrFn(recognizer.options.enable, [recognizer])) {
+                actions = actions.concat(recognizer.getTouchAction());
+              }
+            });
+            return cleanTouchActions(actions.join(" "));
+          },
+          preventDefaults: function(input) {
+            var srcEvent = input.srcEvent;
+            var direction = input.offsetDirection;
+            if (this.manager.session.prevented) {
+              srcEvent.preventDefault();
+              return;
+            }
+            var actions = this.actions;
+            var hasNone = inStr(actions, TOUCH_ACTION_NONE) && !TOUCH_ACTION_MAP[TOUCH_ACTION_NONE];
+            var hasPanY = inStr(actions, TOUCH_ACTION_PAN_Y) && !TOUCH_ACTION_MAP[TOUCH_ACTION_PAN_Y];
+            var hasPanX = inStr(actions, TOUCH_ACTION_PAN_X) && !TOUCH_ACTION_MAP[TOUCH_ACTION_PAN_X];
+            if (hasNone) {
+              var isTapPointer = input.pointers.length === 1;
+              var isTapMovement = input.distance < 2;
+              var isTapTouchTime = input.deltaTime < 250;
+              if (isTapPointer && isTapMovement && isTapTouchTime) {
+                return;
+              }
+            }
+            if (hasPanX && hasPanY) {
+              return;
+            }
+            if (hasNone || hasPanY && direction & DIRECTION_HORIZONTAL || hasPanX && direction & DIRECTION_VERTICAL) {
+              return this.preventSrc(srcEvent);
+            }
+          },
+          preventSrc: function(srcEvent) {
+            this.manager.session.prevented = true;
+            srcEvent.preventDefault();
+          }
+        };
+        function cleanTouchActions(actions) {
+          if (inStr(actions, TOUCH_ACTION_NONE)) {
+            return TOUCH_ACTION_NONE;
+          }
+          var hasPanX = inStr(actions, TOUCH_ACTION_PAN_X);
+          var hasPanY = inStr(actions, TOUCH_ACTION_PAN_Y);
+          if (hasPanX && hasPanY) {
+            return TOUCH_ACTION_NONE;
+          }
+          if (hasPanX || hasPanY) {
+            return hasPanX ? TOUCH_ACTION_PAN_X : TOUCH_ACTION_PAN_Y;
+          }
+          if (inStr(actions, TOUCH_ACTION_MANIPULATION)) {
+            return TOUCH_ACTION_MANIPULATION;
+          }
+          return TOUCH_ACTION_AUTO;
+        }
+        function getTouchActionProps() {
+          if (!NATIVE_TOUCH_ACTION) {
+            return false;
+          }
+          var touchMap = {};
+          var cssSupports = window2.CSS && window2.CSS.supports;
+          ["auto", "manipulation", "pan-y", "pan-x", "pan-x pan-y", "none"].forEach(function(val) {
+            touchMap[val] = cssSupports ? window2.CSS.supports("touch-action", val) : true;
+          });
+          return touchMap;
+        }
+        var STATE_POSSIBLE = 1;
+        var STATE_BEGAN = 2;
+        var STATE_CHANGED = 4;
+        var STATE_ENDED = 8;
+        var STATE_RECOGNIZED = STATE_ENDED;
+        var STATE_CANCELLED = 16;
+        var STATE_FAILED = 32;
+        function Recognizer(options2) {
+          this.options = assign({}, this.defaults, options2 || {});
+          this.id = uniqueId();
+          this.manager = null;
+          this.options.enable = ifUndefined(this.options.enable, true);
+          this.state = STATE_POSSIBLE;
+          this.simultaneous = {};
+          this.requireFail = [];
+        }
+        Recognizer.prototype = {
+          defaults: {},
+          set: function(options2) {
+            assign(this.options, options2);
+            this.manager && this.manager.touchAction.update();
+            return this;
+          },
+          recognizeWith: function(otherRecognizer) {
+            if (invokeArrayArg(otherRecognizer, "recognizeWith", this)) {
+              return this;
+            }
+            var simultaneous = this.simultaneous;
+            otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+            if (!simultaneous[otherRecognizer.id]) {
+              simultaneous[otherRecognizer.id] = otherRecognizer;
+              otherRecognizer.recognizeWith(this);
+            }
+            return this;
+          },
+          dropRecognizeWith: function(otherRecognizer) {
+            if (invokeArrayArg(otherRecognizer, "dropRecognizeWith", this)) {
+              return this;
+            }
+            otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+            delete this.simultaneous[otherRecognizer.id];
+            return this;
+          },
+          requireFailure: function(otherRecognizer) {
+            if (invokeArrayArg(otherRecognizer, "requireFailure", this)) {
+              return this;
+            }
+            var requireFail = this.requireFail;
+            otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+            if (inArray(requireFail, otherRecognizer) === -1) {
+              requireFail.push(otherRecognizer);
+              otherRecognizer.requireFailure(this);
+            }
+            return this;
+          },
+          dropRequireFailure: function(otherRecognizer) {
+            if (invokeArrayArg(otherRecognizer, "dropRequireFailure", this)) {
+              return this;
+            }
+            otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+            var index2 = inArray(this.requireFail, otherRecognizer);
+            if (index2 > -1) {
+              this.requireFail.splice(index2, 1);
+            }
+            return this;
+          },
+          hasRequireFailures: function() {
+            return this.requireFail.length > 0;
+          },
+          canRecognizeWith: function(otherRecognizer) {
+            return !!this.simultaneous[otherRecognizer.id];
+          },
+          emit: function(input) {
+            var self2 = this;
+            var state = this.state;
+            function emit(event) {
+              self2.manager.emit(event, input);
+            }
+            if (state < STATE_ENDED) {
+              emit(self2.options.event + stateStr(state));
+            }
+            emit(self2.options.event);
+            if (input.additionalEvent) {
+              emit(input.additionalEvent);
+            }
+            if (state >= STATE_ENDED) {
+              emit(self2.options.event + stateStr(state));
+            }
+          },
+          tryEmit: function(input) {
+            if (this.canEmit()) {
+              return this.emit(input);
+            }
+            this.state = STATE_FAILED;
+          },
+          canEmit: function() {
+            var i2 = 0;
+            while (i2 < this.requireFail.length) {
+              if (!(this.requireFail[i2].state & (STATE_FAILED | STATE_POSSIBLE))) {
+                return false;
+              }
+              i2++;
+            }
+            return true;
+          },
+          recognize: function(inputData) {
+            var inputDataClone = assign({}, inputData);
+            if (!boolOrFn(this.options.enable, [this, inputDataClone])) {
+              this.reset();
+              this.state = STATE_FAILED;
+              return;
+            }
+            if (this.state & (STATE_RECOGNIZED | STATE_CANCELLED | STATE_FAILED)) {
+              this.state = STATE_POSSIBLE;
+            }
+            this.state = this.process(inputDataClone);
+            if (this.state & (STATE_BEGAN | STATE_CHANGED | STATE_ENDED | STATE_CANCELLED)) {
+              this.tryEmit(inputDataClone);
+            }
+          },
+          process: function(inputData) {
+          },
+          getTouchAction: function() {
+          },
+          reset: function() {
+          }
+        };
+        function stateStr(state) {
+          if (state & STATE_CANCELLED) {
+            return "cancel";
+          } else if (state & STATE_ENDED) {
+            return "end";
+          } else if (state & STATE_CHANGED) {
+            return "move";
+          } else if (state & STATE_BEGAN) {
+            return "start";
+          }
+          return "";
+        }
+        function directionStr(direction) {
+          if (direction == DIRECTION_DOWN) {
+            return "down";
+          } else if (direction == DIRECTION_UP) {
+            return "up";
+          } else if (direction == DIRECTION_LEFT) {
+            return "left";
+          } else if (direction == DIRECTION_RIGHT) {
+            return "right";
+          }
+          return "";
+        }
+        function getRecognizerByNameIfManager(otherRecognizer, recognizer) {
+          var manager = recognizer.manager;
+          if (manager) {
+            return manager.get(otherRecognizer);
+          }
+          return otherRecognizer;
+        }
+        function AttrRecognizer() {
+          Recognizer.apply(this, arguments);
+        }
+        inherit(AttrRecognizer, Recognizer, {
+          defaults: {
+            pointers: 1
+          },
+          attrTest: function(input) {
+            var optionPointers = this.options.pointers;
+            return optionPointers === 0 || input.pointers.length === optionPointers;
+          },
+          process: function(input) {
+            var state = this.state;
+            var eventType = input.eventType;
+            var isRecognized = state & (STATE_BEGAN | STATE_CHANGED);
+            var isValid = this.attrTest(input);
+            if (isRecognized && (eventType & INPUT_CANCEL || !isValid)) {
+              return state | STATE_CANCELLED;
+            } else if (isRecognized || isValid) {
+              if (eventType & INPUT_END) {
+                return state | STATE_ENDED;
+              } else if (!(state & STATE_BEGAN)) {
+                return STATE_BEGAN;
+              }
+              return state | STATE_CHANGED;
+            }
+            return STATE_FAILED;
+          }
+        });
+        function PanRecognizer() {
+          AttrRecognizer.apply(this, arguments);
+          this.pX = null;
+          this.pY = null;
+        }
+        inherit(PanRecognizer, AttrRecognizer, {
+          defaults: {
+            event: "pan",
+            threshold: 10,
+            pointers: 1,
+            direction: DIRECTION_ALL
+          },
+          getTouchAction: function() {
+            var direction = this.options.direction;
+            var actions = [];
+            if (direction & DIRECTION_HORIZONTAL) {
+              actions.push(TOUCH_ACTION_PAN_Y);
+            }
+            if (direction & DIRECTION_VERTICAL) {
+              actions.push(TOUCH_ACTION_PAN_X);
+            }
+            return actions;
+          },
+          directionTest: function(input) {
+            var options2 = this.options;
+            var hasMoved = true;
+            var distance = input.distance;
+            var direction = input.direction;
+            var x = input.deltaX;
+            var y = input.deltaY;
+            if (!(direction & options2.direction)) {
+              if (options2.direction & DIRECTION_HORIZONTAL) {
+                direction = x === 0 ? DIRECTION_NONE : x < 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                hasMoved = x != this.pX;
+                distance = Math.abs(input.deltaX);
+              } else {
+                direction = y === 0 ? DIRECTION_NONE : y < 0 ? DIRECTION_UP : DIRECTION_DOWN;
+                hasMoved = y != this.pY;
+                distance = Math.abs(input.deltaY);
+              }
+            }
+            input.direction = direction;
+            return hasMoved && distance > options2.threshold && direction & options2.direction;
+          },
+          attrTest: function(input) {
+            return AttrRecognizer.prototype.attrTest.call(this, input) && (this.state & STATE_BEGAN || !(this.state & STATE_BEGAN) && this.directionTest(input));
+          },
+          emit: function(input) {
+            this.pX = input.deltaX;
+            this.pY = input.deltaY;
+            var direction = directionStr(input.direction);
+            if (direction) {
+              input.additionalEvent = this.options.event + direction;
+            }
+            this._super.emit.call(this, input);
+          }
+        });
+        function PinchRecognizer() {
+          AttrRecognizer.apply(this, arguments);
+        }
+        inherit(PinchRecognizer, AttrRecognizer, {
+          defaults: {
+            event: "pinch",
+            threshold: 0,
+            pointers: 2
+          },
+          getTouchAction: function() {
+            return [TOUCH_ACTION_NONE];
+          },
+          attrTest: function(input) {
+            return this._super.attrTest.call(this, input) && (Math.abs(input.scale - 1) > this.options.threshold || this.state & STATE_BEGAN);
+          },
+          emit: function(input) {
+            if (input.scale !== 1) {
+              var inOut = input.scale < 1 ? "in" : "out";
+              input.additionalEvent = this.options.event + inOut;
+            }
+            this._super.emit.call(this, input);
+          }
+        });
+        function PressRecognizer() {
+          Recognizer.apply(this, arguments);
+          this._timer = null;
+          this._input = null;
+        }
+        inherit(PressRecognizer, Recognizer, {
+          defaults: {
+            event: "press",
+            pointers: 1,
+            time: 251,
+            threshold: 9
+          },
+          getTouchAction: function() {
+            return [TOUCH_ACTION_AUTO];
+          },
+          process: function(input) {
+            var options2 = this.options;
+            var validPointers = input.pointers.length === options2.pointers;
+            var validMovement = input.distance < options2.threshold;
+            var validTime = input.deltaTime > options2.time;
+            this._input = input;
+            if (!validMovement || !validPointers || input.eventType & (INPUT_END | INPUT_CANCEL) && !validTime) {
+              this.reset();
+            } else if (input.eventType & INPUT_START) {
+              this.reset();
+              this._timer = setTimeoutContext(function() {
+                this.state = STATE_RECOGNIZED;
+                this.tryEmit();
+              }, options2.time, this);
+            } else if (input.eventType & INPUT_END) {
+              return STATE_RECOGNIZED;
+            }
+            return STATE_FAILED;
+          },
+          reset: function() {
+            clearTimeout(this._timer);
+          },
+          emit: function(input) {
+            if (this.state !== STATE_RECOGNIZED) {
+              return;
+            }
+            if (input && input.eventType & INPUT_END) {
+              this.manager.emit(this.options.event + "up", input);
+            } else {
+              this._input.timeStamp = now();
+              this.manager.emit(this.options.event, this._input);
+            }
+          }
+        });
+        function RotateRecognizer() {
+          AttrRecognizer.apply(this, arguments);
+        }
+        inherit(RotateRecognizer, AttrRecognizer, {
+          defaults: {
+            event: "rotate",
+            threshold: 0,
+            pointers: 2
+          },
+          getTouchAction: function() {
+            return [TOUCH_ACTION_NONE];
+          },
+          attrTest: function(input) {
+            return this._super.attrTest.call(this, input) && (Math.abs(input.rotation) > this.options.threshold || this.state & STATE_BEGAN);
+          }
+        });
+        function SwipeRecognizer() {
+          AttrRecognizer.apply(this, arguments);
+        }
+        inherit(SwipeRecognizer, AttrRecognizer, {
+          defaults: {
+            event: "swipe",
+            threshold: 10,
+            velocity: 0.3,
+            direction: DIRECTION_HORIZONTAL | DIRECTION_VERTICAL,
+            pointers: 1
+          },
+          getTouchAction: function() {
+            return PanRecognizer.prototype.getTouchAction.call(this);
+          },
+          attrTest: function(input) {
+            var direction = this.options.direction;
+            var velocity;
+            if (direction & (DIRECTION_HORIZONTAL | DIRECTION_VERTICAL)) {
+              velocity = input.overallVelocity;
+            } else if (direction & DIRECTION_HORIZONTAL) {
+              velocity = input.overallVelocityX;
+            } else if (direction & DIRECTION_VERTICAL) {
+              velocity = input.overallVelocityY;
+            }
+            return this._super.attrTest.call(this, input) && direction & input.offsetDirection && input.distance > this.options.threshold && input.maxPointers == this.options.pointers && abs(velocity) > this.options.velocity && input.eventType & INPUT_END;
+          },
+          emit: function(input) {
+            var direction = directionStr(input.offsetDirection);
+            if (direction) {
+              this.manager.emit(this.options.event + direction, input);
+            }
+            this.manager.emit(this.options.event, input);
+          }
+        });
+        function TapRecognizer() {
+          Recognizer.apply(this, arguments);
+          this.pTime = false;
+          this.pCenter = false;
+          this._timer = null;
+          this._input = null;
+          this.count = 0;
+        }
+        inherit(TapRecognizer, Recognizer, {
+          defaults: {
+            event: "tap",
+            pointers: 1,
+            taps: 1,
+            interval: 300,
+            time: 250,
+            threshold: 9,
+            posThreshold: 10
+          },
+          getTouchAction: function() {
+            return [TOUCH_ACTION_MANIPULATION];
+          },
+          process: function(input) {
+            var options2 = this.options;
+            var validPointers = input.pointers.length === options2.pointers;
+            var validMovement = input.distance < options2.threshold;
+            var validTouchTime = input.deltaTime < options2.time;
+            this.reset();
+            if (input.eventType & INPUT_START && this.count === 0) {
+              return this.failTimeout();
+            }
+            if (validMovement && validTouchTime && validPointers) {
+              if (input.eventType != INPUT_END) {
+                return this.failTimeout();
+              }
+              var validInterval = this.pTime ? input.timeStamp - this.pTime < options2.interval : true;
+              var validMultiTap = !this.pCenter || getDistance(this.pCenter, input.center) < options2.posThreshold;
+              this.pTime = input.timeStamp;
+              this.pCenter = input.center;
+              if (!validMultiTap || !validInterval) {
+                this.count = 1;
+              } else {
+                this.count += 1;
+              }
+              this._input = input;
+              var tapCount = this.count % options2.taps;
+              if (tapCount === 0) {
+                if (!this.hasRequireFailures()) {
+                  return STATE_RECOGNIZED;
+                } else {
+                  this._timer = setTimeoutContext(function() {
+                    this.state = STATE_RECOGNIZED;
+                    this.tryEmit();
+                  }, options2.interval, this);
+                  return STATE_BEGAN;
+                }
+              }
+            }
+            return STATE_FAILED;
+          },
+          failTimeout: function() {
+            this._timer = setTimeoutContext(function() {
+              this.state = STATE_FAILED;
+            }, this.options.interval, this);
+            return STATE_FAILED;
+          },
+          reset: function() {
+            clearTimeout(this._timer);
+          },
+          emit: function() {
+            if (this.state == STATE_RECOGNIZED) {
+              this._input.tapCount = this.count;
+              this.manager.emit(this.options.event, this._input);
+            }
+          }
+        });
+        function Hammer2(element, options2) {
+          options2 = options2 || {};
+          options2.recognizers = ifUndefined(options2.recognizers, Hammer2.defaults.preset);
+          return new Manager(element, options2);
+        }
+        Hammer2.VERSION = "2.0.7";
+        Hammer2.defaults = {
+          domEvents: false,
+          touchAction: TOUCH_ACTION_COMPUTE,
+          enable: true,
+          inputTarget: null,
+          inputClass: null,
+          preset: [
+            [RotateRecognizer, { enable: false }],
+            [PinchRecognizer, { enable: false }, ["rotate"]],
+            [SwipeRecognizer, { direction: DIRECTION_HORIZONTAL }],
+            [PanRecognizer, { direction: DIRECTION_HORIZONTAL }, ["swipe"]],
+            [TapRecognizer],
+            [TapRecognizer, { event: "doubletap", taps: 2 }, ["tap"]],
+            [PressRecognizer]
+          ],
+          cssProps: {
+            userSelect: "none",
+            touchSelect: "none",
+            touchCallout: "none",
+            contentZooming: "none",
+            userDrag: "none",
+            tapHighlightColor: "rgba(0,0,0,0)"
+          }
+        };
+        var STOP = 1;
+        var FORCED_STOP = 2;
+        function Manager(element, options2) {
+          this.options = assign({}, Hammer2.defaults, options2 || {});
+          this.options.inputTarget = this.options.inputTarget || element;
+          this.handlers = {};
+          this.session = {};
+          this.recognizers = [];
+          this.oldCssProps = {};
+          this.element = element;
+          this.input = createInputInstance(this);
+          this.touchAction = new TouchAction(this, this.options.touchAction);
+          toggleCssProps(this, true);
+          each2(this.options.recognizers, function(item) {
+            var recognizer = this.add(new item[0](item[1]));
+            item[2] && recognizer.recognizeWith(item[2]);
+            item[3] && recognizer.requireFailure(item[3]);
+          }, this);
+        }
+        Manager.prototype = {
+          set: function(options2) {
+            assign(this.options, options2);
+            if (options2.touchAction) {
+              this.touchAction.update();
+            }
+            if (options2.inputTarget) {
+              this.input.destroy();
+              this.input.target = options2.inputTarget;
+              this.input.init();
+            }
+            return this;
+          },
+          stop: function(force) {
+            this.session.stopped = force ? FORCED_STOP : STOP;
+          },
+          recognize: function(inputData) {
+            var session = this.session;
+            if (session.stopped) {
+              return;
+            }
+            this.touchAction.preventDefaults(inputData);
+            var recognizer;
+            var recognizers = this.recognizers;
+            var curRecognizer = session.curRecognizer;
+            if (!curRecognizer || curRecognizer && curRecognizer.state & STATE_RECOGNIZED) {
+              curRecognizer = session.curRecognizer = null;
+            }
+            var i2 = 0;
+            while (i2 < recognizers.length) {
+              recognizer = recognizers[i2];
+              if (session.stopped !== FORCED_STOP && (!curRecognizer || recognizer == curRecognizer || recognizer.canRecognizeWith(curRecognizer))) {
+                recognizer.recognize(inputData);
+              } else {
+                recognizer.reset();
+              }
+              if (!curRecognizer && recognizer.state & (STATE_BEGAN | STATE_CHANGED | STATE_ENDED)) {
+                curRecognizer = session.curRecognizer = recognizer;
+              }
+              i2++;
+            }
+          },
+          get: function(recognizer) {
+            if (recognizer instanceof Recognizer) {
+              return recognizer;
+            }
+            var recognizers = this.recognizers;
+            for (var i2 = 0; i2 < recognizers.length; i2++) {
+              if (recognizers[i2].options.event == recognizer) {
+                return recognizers[i2];
+              }
+            }
+            return null;
+          },
+          add: function(recognizer) {
+            if (invokeArrayArg(recognizer, "add", this)) {
+              return this;
+            }
+            var existing = this.get(recognizer.options.event);
+            if (existing) {
+              this.remove(existing);
+            }
+            this.recognizers.push(recognizer);
+            recognizer.manager = this;
+            this.touchAction.update();
+            return recognizer;
+          },
+          remove: function(recognizer) {
+            if (invokeArrayArg(recognizer, "remove", this)) {
+              return this;
+            }
+            recognizer = this.get(recognizer);
+            if (recognizer) {
+              var recognizers = this.recognizers;
+              var index2 = inArray(recognizers, recognizer);
+              if (index2 !== -1) {
+                recognizers.splice(index2, 1);
+                this.touchAction.update();
+              }
+            }
+            return this;
+          },
+          on: function(events, handler) {
+            if (events === undefined2) {
+              return;
+            }
+            if (handler === undefined2) {
+              return;
+            }
+            var handlers = this.handlers;
+            each2(splitStr(events), function(event) {
+              handlers[event] = handlers[event] || [];
+              handlers[event].push(handler);
+            });
+            return this;
+          },
+          off: function(events, handler) {
+            if (events === undefined2) {
+              return;
+            }
+            var handlers = this.handlers;
+            each2(splitStr(events), function(event) {
+              if (!handler) {
+                delete handlers[event];
+              } else {
+                handlers[event] && handlers[event].splice(inArray(handlers[event], handler), 1);
+              }
+            });
+            return this;
+          },
+          emit: function(event, data) {
+            if (this.options.domEvents) {
+              triggerDomEvent(event, data);
+            }
+            var handlers = this.handlers[event] && this.handlers[event].slice();
+            if (!handlers || !handlers.length) {
+              return;
+            }
+            data.type = event;
+            data.preventDefault = function() {
+              data.srcEvent.preventDefault();
+            };
+            var i2 = 0;
+            while (i2 < handlers.length) {
+              handlers[i2](data);
+              i2++;
+            }
+          },
+          destroy: function() {
+            this.element && toggleCssProps(this, false);
+            this.handlers = {};
+            this.session = {};
+            this.input.destroy();
+            this.element = null;
+          }
+        };
+        function toggleCssProps(manager, add) {
+          var element = manager.element;
+          if (!element.style) {
+            return;
+          }
+          var prop;
+          each2(manager.options.cssProps, function(value, name) {
+            prop = prefixed(element.style, name);
+            if (add) {
+              manager.oldCssProps[prop] = element.style[prop];
+              element.style[prop] = value;
+            } else {
+              element.style[prop] = manager.oldCssProps[prop] || "";
+            }
+          });
+          if (!add) {
+            manager.oldCssProps = {};
+          }
+        }
+        function triggerDomEvent(event, data) {
+          var gestureEvent = document2.createEvent("Event");
+          gestureEvent.initEvent(event, true, true);
+          gestureEvent.gesture = data;
+          data.target.dispatchEvent(gestureEvent);
+        }
+        assign(Hammer2, {
+          INPUT_START,
+          INPUT_MOVE,
+          INPUT_END,
+          INPUT_CANCEL,
+          STATE_POSSIBLE,
+          STATE_BEGAN,
+          STATE_CHANGED,
+          STATE_ENDED,
+          STATE_RECOGNIZED,
+          STATE_CANCELLED,
+          STATE_FAILED,
+          DIRECTION_NONE,
+          DIRECTION_LEFT,
+          DIRECTION_RIGHT,
+          DIRECTION_UP,
+          DIRECTION_DOWN,
+          DIRECTION_HORIZONTAL,
+          DIRECTION_VERTICAL,
+          DIRECTION_ALL,
+          Manager,
+          Input,
+          TouchAction,
+          TouchInput,
+          MouseInput,
+          PointerEventInput,
+          TouchMouseInput,
+          SingleTouchInput,
+          Recognizer,
+          AttrRecognizer,
+          Tap: TapRecognizer,
+          Pan: PanRecognizer,
+          Swipe: SwipeRecognizer,
+          Pinch: PinchRecognizer,
+          Rotate: RotateRecognizer,
+          Press: PressRecognizer,
+          on: addEventListeners,
+          off: removeEventListeners,
+          each: each2,
+          merge: merge2,
+          extend: extend4,
+          assign,
+          inherit,
+          bindFn,
+          prefixed
+        });
+        var freeGlobal = typeof window2 !== "undefined" ? window2 : typeof self !== "undefined" ? self : {};
+        freeGlobal.Hammer = Hammer2;
+        if (typeof define === "function" && define.amd) {
+          define(function() {
+            return Hammer2;
+          });
+        } else if (typeof module != "undefined" && module.exports) {
+          module.exports = Hammer2;
+        } else {
+          window2[exportName] = Hammer2;
+        }
+      })(window, document, "Hammer");
     }
   });
 
@@ -21274,7 +22813,7 @@
         }
         const items = anims.items;
         let i2 = items.length - 1;
-        let draw2 = false;
+        let draw3 = false;
         let item;
         for (; i2 >= 0; --i2) {
           item = items[i2];
@@ -21283,13 +22822,13 @@
               anims.duration = item._total;
             }
             item.tick(date);
-            draw2 = true;
+            draw3 = true;
           } else {
             items[i2] = items[items.length - 1];
             items.pop();
           }
         }
-        if (draw2) {
+        if (draw3) {
           chart.draw();
           this._notify(chart, anims, date, "progress");
         }
@@ -23292,7 +24831,7 @@
       line._chart = this.chart;
       line._datasetIndex = this.index;
       line._decimated = !!_dataset._decimated;
-      line.points = points.slice(Math.max(this._drawStart - 1, 0), this._drawStart + this._drawCount);
+      line.points = points;
       const options2 = this.resolveDatasetElementOptions(mode);
       if (!this.options.showLine) {
         options2.borderWidth = 0;
@@ -25365,12 +26904,12 @@
       const increment = Math.floor(length / getTicksLimit(length, maxTicksLimit));
       let widestLabelSize = 0;
       let highestLabelSize = 0;
-      let i2, j, jlen, label, tickFont, fontString, cache, lineHeight, width, height, nestedLabel;
+      let i2, j, jlen, label, tickFont, fontString2, cache, lineHeight, width, height, nestedLabel;
       for (i2 = 0; i2 < length; i2 += increment) {
         label = ticks[i2].label;
         tickFont = this._resolveTickFontOptions(i2);
-        ctx.font = fontString = tickFont.string;
-        cache = caches[fontString] = caches[fontString] || {
+        ctx.font = fontString2 = tickFont.string;
+        cache = caches[fontString2] = caches[fontString2] || {
           data: {},
           gc: []
         };
@@ -26257,14 +27796,14 @@
     _notify(descriptors2, chart, hook, args) {
       args = args || {};
       for (const descriptor of descriptors2) {
-        const plugin = descriptor.plugin;
-        const method = plugin[hook];
+        const plugin2 = descriptor.plugin;
+        const method = plugin2[hook];
         const params = [
           chart,
           args,
           descriptor.options
         ];
-        if (callback(method, params, plugin) === false && args.cancelable) {
+        if (callback(method, params, plugin2) === false && args.cancelable) {
           return false;
         }
       }
@@ -26307,10 +27846,10 @@
     }
     const local = config.plugins || [];
     for (let i2 = 0; i2 < local.length; i2++) {
-      const plugin = local[i2];
-      if (plugins2.indexOf(plugin) === -1) {
-        plugins2.push(plugin);
-        localIds[plugin.id] = true;
+      const plugin2 = local[i2];
+      if (plugins2.indexOf(plugin2) === -1) {
+        plugins2.push(plugin2);
+        localIds[plugin2.id] = true;
       }
     }
     return {
@@ -26330,27 +27869,27 @@
   function createDescriptors(chart, { plugins: plugins2, localIds }, options2, all) {
     const result = [];
     const context = chart.getContext();
-    for (const plugin of plugins2) {
-      const id = plugin.id;
+    for (const plugin2 of plugins2) {
+      const id = plugin2.id;
       const opts = getOpts(options2[id], all);
       if (opts === null) {
         continue;
       }
       result.push({
-        plugin,
+        plugin: plugin2,
         options: pluginOpts(chart.config, {
-          plugin,
+          plugin: plugin2,
           local: localIds[id]
         }, opts, context)
       });
     }
     return result;
   }
-  function pluginOpts(config, { plugin, local }, opts, context) {
-    const keys = config.pluginScopeKeys(plugin);
+  function pluginOpts(config, { plugin: plugin2, local }, opts, context) {
+    const keys = config.pluginScopeKeys(plugin2);
     const scopes = config.getOptionScopes(opts, keys);
-    if (local && plugin.defaults) {
-      scopes.push(plugin.defaults);
+    if (local && plugin2.defaults) {
+      scopes.push(plugin2.defaults);
     }
     return config.createResolver(scopes, context, [
       ""
@@ -26575,13 +28114,13 @@
         ]
       ]);
     }
-    pluginScopeKeys(plugin) {
-      const id = plugin.id;
+    pluginScopeKeys(plugin2) {
+      const id = plugin2.id;
       const type = this.type;
       return cachedKeys(`${type}-plugin-${id}`, () => [
         [
           `plugins.${id}`,
-          ...plugin.additionalOptionScopes || []
+          ...plugin2.additionalOptionScopes || []
         ]
       ]);
     }
@@ -26691,7 +28230,7 @@
     }
     return false;
   }
-  var version = "4.3.2";
+  var version = "4.3.3";
   var KNOWN_POSITIONS = [
     "top",
     "bottom",
@@ -27540,7 +29079,7 @@
         cancelable: true,
         inChartArea: this.isPointInArea(e)
       };
-      const eventFilter = (plugin) => (plugin.options.events || this.options.events).includes(e.native.type);
+      const eventFilter = (plugin2) => (plugin2.options.events || this.options.events).includes(e.native.type);
       if (this.notifyPlugins("beforeEvent", args, eventFilter) === false) {
         return;
       }
@@ -29232,7 +30771,7 @@
       }
     },
     beforeDraw(chart, _args, options2) {
-      const draw2 = options2.drawTime === "beforeDraw";
+      const draw3 = options2.drawTime === "beforeDraw";
       const metasets = chart.getSortedVisibleDatasetMetas();
       const area = chart.chartArea;
       for (let i2 = metasets.length - 1; i2 >= 0; --i2) {
@@ -29241,7 +30780,7 @@
           continue;
         }
         source.line.updateControlPoints(area, source.axis);
-        if (draw2 && source.fill) {
+        if (draw3 && source.fill) {
           _drawfill(chart.ctx, source, area);
         }
       }
@@ -32565,8 +34104,822 @@
   Chart.register(...registerables);
   var auto_default = Chart;
 
+  // node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.esm.js
+  var import_hammerjs = __toESM(require_hammer());
+  var getModifierKey = (opts) => opts && opts.enabled && opts.modifierKey;
+  var keyPressed = (key, event) => key && event[key + "Key"];
+  var keyNotPressed = (key, event) => key && !event[key + "Key"];
+  function directionEnabled(mode, dir, chart) {
+    if (mode === void 0) {
+      return true;
+    } else if (typeof mode === "string") {
+      return mode.indexOf(dir) !== -1;
+    } else if (typeof mode === "function") {
+      return mode({ chart }).indexOf(dir) !== -1;
+    }
+    return false;
+  }
+  function directionsEnabled(mode, chart) {
+    if (typeof mode === "function") {
+      mode = mode({ chart });
+    }
+    if (typeof mode === "string") {
+      return { x: mode.indexOf("x") !== -1, y: mode.indexOf("y") !== -1 };
+    }
+    return { x: false, y: false };
+  }
+  function debounce2(fn, delay) {
+    let timeout;
+    return function() {
+      clearTimeout(timeout);
+      timeout = setTimeout(fn, delay);
+      return delay;
+    };
+  }
+  function getScaleUnderPoint({ x, y }, chart) {
+    const scales2 = chart.scales;
+    const scaleIds = Object.keys(scales2);
+    for (let i2 = 0; i2 < scaleIds.length; i2++) {
+      const scale2 = scales2[scaleIds[i2]];
+      if (y >= scale2.top && y <= scale2.bottom && x >= scale2.left && x <= scale2.right) {
+        return scale2;
+      }
+    }
+    return null;
+  }
+  function getEnabledScalesByPoint(options2, point8, chart) {
+    const { mode = "xy", scaleMode, overScaleMode } = options2 || {};
+    const scale2 = getScaleUnderPoint(point8, chart);
+    const enabled = directionsEnabled(mode, chart);
+    const scaleEnabled = directionsEnabled(scaleMode, chart);
+    if (overScaleMode) {
+      const overScaleEnabled = directionsEnabled(overScaleMode, chart);
+      for (const axis of ["x", "y"]) {
+        if (overScaleEnabled[axis]) {
+          scaleEnabled[axis] = enabled[axis];
+          enabled[axis] = false;
+        }
+      }
+    }
+    if (scale2 && scaleEnabled[scale2.axis]) {
+      return [scale2];
+    }
+    const enabledScales = [];
+    each(chart.scales, function(scaleItem) {
+      if (enabled[scaleItem.axis]) {
+        enabledScales.push(scaleItem);
+      }
+    });
+    return enabledScales;
+  }
+  var chartStates = /* @__PURE__ */ new WeakMap();
+  function getState(chart) {
+    let state = chartStates.get(chart);
+    if (!state) {
+      state = {
+        originalScaleLimits: {},
+        updatedScaleLimits: {},
+        handlers: {},
+        panDelta: {}
+      };
+      chartStates.set(chart, state);
+    }
+    return state;
+  }
+  function removeState(chart) {
+    chartStates.delete(chart);
+  }
+  function zoomDelta(scale2, zoom2, center) {
+    const range = scale2.max - scale2.min;
+    const newRange = range * (zoom2 - 1);
+    const centerPoint = scale2.isHorizontal() ? center.x : center.y;
+    const minPercent = Math.max(0, Math.min(
+      1,
+      (scale2.getValueForPixel(centerPoint) - scale2.min) / range || 0
+    ));
+    const maxPercent = 1 - minPercent;
+    return {
+      min: newRange * minPercent,
+      max: newRange * maxPercent
+    };
+  }
+  function getLimit(state, scale2, scaleLimits, prop, fallback) {
+    let limit = scaleLimits[prop];
+    if (limit === "original") {
+      const original = state.originalScaleLimits[scale2.id][prop];
+      limit = valueOrDefault(original.options, original.scale);
+    }
+    return valueOrDefault(limit, fallback);
+  }
+  function getRange(scale2, pixel0, pixel1) {
+    const v0 = scale2.getValueForPixel(pixel0);
+    const v1 = scale2.getValueForPixel(pixel1);
+    return {
+      min: Math.min(v0, v1),
+      max: Math.max(v0, v1)
+    };
+  }
+  function updateRange(scale2, { min, max }, limits, zoom2 = false) {
+    const state = getState(scale2.chart);
+    const { id, axis, options: scaleOpts } = scale2;
+    const scaleLimits = limits && (limits[id] || limits[axis]) || {};
+    const { minRange = 0 } = scaleLimits;
+    const minLimit = getLimit(state, scale2, scaleLimits, "min", -Infinity);
+    const maxLimit = getLimit(state, scale2, scaleLimits, "max", Infinity);
+    const range = zoom2 ? Math.max(max - min, minRange) : scale2.max - scale2.min;
+    const offset = (range - max + min) / 2;
+    min -= offset;
+    max += offset;
+    if (min < minLimit) {
+      min = minLimit;
+      max = Math.min(minLimit + range, maxLimit);
+    } else if (max > maxLimit) {
+      max = maxLimit;
+      min = Math.max(maxLimit - range, minLimit);
+    }
+    scaleOpts.min = min;
+    scaleOpts.max = max;
+    state.updatedScaleLimits[scale2.id] = { min, max };
+    return scale2.parse(min) !== scale2.min || scale2.parse(max) !== scale2.max;
+  }
+  function zoomNumericalScale(scale2, zoom2, center, limits) {
+    const delta = zoomDelta(scale2, zoom2, center);
+    const newRange = { min: scale2.min + delta.min, max: scale2.max - delta.max };
+    return updateRange(scale2, newRange, limits, true);
+  }
+  function zoomRectNumericalScale(scale2, from2, to2, limits) {
+    updateRange(scale2, getRange(scale2, from2, to2), limits, true);
+  }
+  var integerChange = (v) => v === 0 || isNaN(v) ? 0 : v < 0 ? Math.min(Math.round(v), -1) : Math.max(Math.round(v), 1);
+  function existCategoryFromMaxZoom(scale2) {
+    const labels = scale2.getLabels();
+    const maxIndex = labels.length - 1;
+    if (scale2.min > 0) {
+      scale2.min -= 1;
+    }
+    if (scale2.max < maxIndex) {
+      scale2.max += 1;
+    }
+  }
+  function zoomCategoryScale(scale2, zoom2, center, limits) {
+    const delta = zoomDelta(scale2, zoom2, center);
+    if (scale2.min === scale2.max && zoom2 < 1) {
+      existCategoryFromMaxZoom(scale2);
+    }
+    const newRange = { min: scale2.min + integerChange(delta.min), max: scale2.max - integerChange(delta.max) };
+    return updateRange(scale2, newRange, limits, true);
+  }
+  function scaleLength(scale2) {
+    return scale2.isHorizontal() ? scale2.width : scale2.height;
+  }
+  function panCategoryScale(scale2, delta, limits) {
+    const labels = scale2.getLabels();
+    const lastLabelIndex = labels.length - 1;
+    let { min, max } = scale2;
+    const range = Math.max(max - min, 1);
+    const stepDelta = Math.round(scaleLength(scale2) / Math.max(range, 10));
+    const stepSize = Math.round(Math.abs(delta / stepDelta));
+    let applied;
+    if (delta < -stepDelta) {
+      max = Math.min(max + stepSize, lastLabelIndex);
+      min = range === 1 ? max : max - range;
+      applied = max === lastLabelIndex;
+    } else if (delta > stepDelta) {
+      min = Math.max(0, min - stepSize);
+      max = range === 1 ? min : min + range;
+      applied = min === 0;
+    }
+    return updateRange(scale2, { min, max }, limits) || applied;
+  }
+  var OFFSETS = {
+    second: 500,
+    minute: 30 * 1e3,
+    hour: 30 * 60 * 1e3,
+    day: 12 * 60 * 60 * 1e3,
+    week: 3.5 * 24 * 60 * 60 * 1e3,
+    month: 15 * 24 * 60 * 60 * 1e3,
+    quarter: 60 * 24 * 60 * 60 * 1e3,
+    year: 182 * 24 * 60 * 60 * 1e3
+  };
+  function panNumericalScale(scale2, delta, limits, canZoom = false) {
+    const { min: prevStart, max: prevEnd, options: options2 } = scale2;
+    const round2 = options2.time && options2.time.round;
+    const offset = OFFSETS[round2] || 0;
+    const newMin = scale2.getValueForPixel(scale2.getPixelForValue(prevStart + offset) - delta);
+    const newMax = scale2.getValueForPixel(scale2.getPixelForValue(prevEnd + offset) - delta);
+    const { min: minLimit = -Infinity, max: maxLimit = Infinity } = canZoom && limits && limits[scale2.axis] || {};
+    if (isNaN(newMin) || isNaN(newMax) || newMin < minLimit || newMax > maxLimit) {
+      return true;
+    }
+    return updateRange(scale2, { min: newMin, max: newMax }, limits, canZoom);
+  }
+  function panNonLinearScale(scale2, delta, limits) {
+    return panNumericalScale(scale2, delta, limits, true);
+  }
+  var zoomFunctions = {
+    category: zoomCategoryScale,
+    default: zoomNumericalScale
+  };
+  var zoomRectFunctions = {
+    default: zoomRectNumericalScale
+  };
+  var panFunctions = {
+    category: panCategoryScale,
+    default: panNumericalScale,
+    logarithmic: panNonLinearScale,
+    timeseries: panNonLinearScale
+  };
+  function shouldUpdateScaleLimits(scale2, originalScaleLimits, updatedScaleLimits) {
+    const { id, options: { min, max } } = scale2;
+    if (!originalScaleLimits[id] || !updatedScaleLimits[id]) {
+      return true;
+    }
+    const previous = updatedScaleLimits[id];
+    return previous.min !== min || previous.max !== max;
+  }
+  function removeMissingScales(limits, scales2) {
+    each(limits, (opt, key) => {
+      if (!scales2[key]) {
+        delete limits[key];
+      }
+    });
+  }
+  function storeOriginalScaleLimits(chart, state) {
+    const { scales: scales2 } = chart;
+    const { originalScaleLimits, updatedScaleLimits } = state;
+    each(scales2, function(scale2) {
+      if (shouldUpdateScaleLimits(scale2, originalScaleLimits, updatedScaleLimits)) {
+        originalScaleLimits[scale2.id] = {
+          min: { scale: scale2.min, options: scale2.options.min },
+          max: { scale: scale2.max, options: scale2.options.max }
+        };
+      }
+    });
+    removeMissingScales(originalScaleLimits, scales2);
+    removeMissingScales(updatedScaleLimits, scales2);
+    return originalScaleLimits;
+  }
+  function doZoom(scale2, amount, center, limits) {
+    const fn = zoomFunctions[scale2.type] || zoomFunctions.default;
+    callback(fn, [scale2, amount, center, limits]);
+  }
+  function doZoomRect(scale2, amount, from2, to2, limits) {
+    const fn = zoomRectFunctions[scale2.type] || zoomRectFunctions.default;
+    callback(fn, [scale2, amount, from2, to2, limits]);
+  }
+  function getCenter(chart) {
+    const ca = chart.chartArea;
+    return {
+      x: (ca.left + ca.right) / 2,
+      y: (ca.top + ca.bottom) / 2
+    };
+  }
+  function zoom(chart, amount, transition = "none") {
+    const { x = 1, y = 1, focalPoint = getCenter(chart) } = typeof amount === "number" ? { x: amount, y: amount } : amount;
+    const state = getState(chart);
+    const { options: { limits, zoom: zoomOptions } } = state;
+    storeOriginalScaleLimits(chart, state);
+    const xEnabled = x !== 1;
+    const yEnabled = y !== 1;
+    const enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint, chart);
+    each(enabledScales || chart.scales, function(scale2) {
+      if (scale2.isHorizontal() && xEnabled) {
+        doZoom(scale2, x, focalPoint, limits);
+      } else if (!scale2.isHorizontal() && yEnabled) {
+        doZoom(scale2, y, focalPoint, limits);
+      }
+    });
+    chart.update(transition);
+    callback(zoomOptions.onZoom, [{ chart }]);
+  }
+  function zoomRect(chart, p0, p1, transition = "none") {
+    const state = getState(chart);
+    const { options: { limits, zoom: zoomOptions } } = state;
+    const { mode = "xy" } = zoomOptions;
+    storeOriginalScaleLimits(chart, state);
+    const xEnabled = directionEnabled(mode, "x", chart);
+    const yEnabled = directionEnabled(mode, "y", chart);
+    each(chart.scales, function(scale2) {
+      if (scale2.isHorizontal() && xEnabled) {
+        doZoomRect(scale2, p0.x, p1.x, limits);
+      } else if (!scale2.isHorizontal() && yEnabled) {
+        doZoomRect(scale2, p0.y, p1.y, limits);
+      }
+    });
+    chart.update(transition);
+    callback(zoomOptions.onZoom, [{ chart }]);
+  }
+  function zoomScale(chart, scaleId, range, transition = "none") {
+    storeOriginalScaleLimits(chart, getState(chart));
+    const scale2 = chart.scales[scaleId];
+    updateRange(scale2, range, void 0, true);
+    chart.update(transition);
+  }
+  function resetZoom(chart, transition = "default") {
+    const state = getState(chart);
+    const originalScaleLimits = storeOriginalScaleLimits(chart, state);
+    each(chart.scales, function(scale2) {
+      const scaleOptions = scale2.options;
+      if (originalScaleLimits[scale2.id]) {
+        scaleOptions.min = originalScaleLimits[scale2.id].min.options;
+        scaleOptions.max = originalScaleLimits[scale2.id].max.options;
+      } else {
+        delete scaleOptions.min;
+        delete scaleOptions.max;
+      }
+    });
+    chart.update(transition);
+    callback(state.options.zoom.onZoomComplete, [{ chart }]);
+  }
+  function getOriginalRange(state, scaleId) {
+    const original = state.originalScaleLimits[scaleId];
+    if (!original) {
+      return;
+    }
+    const { min, max } = original;
+    return valueOrDefault(max.options, max.scale) - valueOrDefault(min.options, min.scale);
+  }
+  function getZoomLevel(chart) {
+    const state = getState(chart);
+    let min = 1;
+    let max = 1;
+    each(chart.scales, function(scale2) {
+      const origRange = getOriginalRange(state, scale2.id);
+      if (origRange) {
+        const level = Math.round(origRange / (scale2.max - scale2.min) * 100) / 100;
+        min = Math.min(min, level);
+        max = Math.max(max, level);
+      }
+    });
+    return min < 1 ? min : max;
+  }
+  function panScale(scale2, delta, limits, state) {
+    const { panDelta } = state;
+    const storedDelta = panDelta[scale2.id] || 0;
+    if (sign(storedDelta) === sign(delta)) {
+      delta += storedDelta;
+    }
+    const fn = panFunctions[scale2.type] || panFunctions.default;
+    if (callback(fn, [scale2, delta, limits])) {
+      panDelta[scale2.id] = 0;
+    } else {
+      panDelta[scale2.id] = delta;
+    }
+  }
+  function pan(chart, delta, enabledScales, transition = "none") {
+    const { x = 0, y = 0 } = typeof delta === "number" ? { x: delta, y: delta } : delta;
+    const state = getState(chart);
+    const { options: { pan: panOptions, limits } } = state;
+    const { onPan } = panOptions || {};
+    storeOriginalScaleLimits(chart, state);
+    const xEnabled = x !== 0;
+    const yEnabled = y !== 0;
+    each(enabledScales || chart.scales, function(scale2) {
+      if (scale2.isHorizontal() && xEnabled) {
+        panScale(scale2, x, limits, state);
+      } else if (!scale2.isHorizontal() && yEnabled) {
+        panScale(scale2, y, limits, state);
+      }
+    });
+    chart.update(transition);
+    callback(onPan, [{ chart }]);
+  }
+  function getInitialScaleBounds(chart) {
+    const state = getState(chart);
+    storeOriginalScaleLimits(chart, state);
+    const scaleBounds = {};
+    for (const scaleId of Object.keys(chart.scales)) {
+      const { min, max } = state.originalScaleLimits[scaleId] || { min: {}, max: {} };
+      scaleBounds[scaleId] = { min: min.scale, max: max.scale };
+    }
+    return scaleBounds;
+  }
+  function isZoomedOrPanned(chart) {
+    const scaleBounds = getInitialScaleBounds(chart);
+    for (const scaleId of Object.keys(chart.scales)) {
+      const { min: originalMin, max: originalMax } = scaleBounds[scaleId];
+      if (originalMin !== void 0 && chart.scales[scaleId].min !== originalMin) {
+        return true;
+      }
+      if (originalMax !== void 0 && chart.scales[scaleId].max !== originalMax) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function removeHandler(chart, type) {
+    const { handlers } = getState(chart);
+    const handler = handlers[type];
+    if (handler && handler.target) {
+      handler.target.removeEventListener(type, handler);
+      delete handlers[type];
+    }
+  }
+  function addHandler(chart, target, type, handler) {
+    const { handlers, options: options2 } = getState(chart);
+    const oldHandler = handlers[type];
+    if (oldHandler && oldHandler.target === target) {
+      return;
+    }
+    removeHandler(chart, type);
+    handlers[type] = (event) => handler(chart, event, options2);
+    handlers[type].target = target;
+    target.addEventListener(type, handlers[type]);
+  }
+  function mouseMove(chart, event) {
+    const state = getState(chart);
+    if (state.dragStart) {
+      state.dragging = true;
+      state.dragEnd = event;
+      chart.update("none");
+    }
+  }
+  function keyDown(chart, event) {
+    const state = getState(chart);
+    if (!state.dragStart || event.key !== "Escape") {
+      return;
+    }
+    removeHandler(chart, "keydown");
+    state.dragging = false;
+    state.dragStart = state.dragEnd = null;
+    chart.update("none");
+  }
+  function zoomStart(chart, event, zoomOptions) {
+    const { onZoomStart, onZoomRejected } = zoomOptions;
+    if (onZoomStart) {
+      const point8 = getRelativePosition(event, chart);
+      if (callback(onZoomStart, [{ chart, event, point: point8 }]) === false) {
+        callback(onZoomRejected, [{ chart, event }]);
+        return false;
+      }
+    }
+  }
+  function mouseDown(chart, event) {
+    const state = getState(chart);
+    const { pan: panOptions, zoom: zoomOptions = {} } = state.options;
+    if (event.button !== 0 || keyPressed(getModifierKey(panOptions), event) || keyNotPressed(getModifierKey(zoomOptions.drag), event)) {
+      return callback(zoomOptions.onZoomRejected, [{ chart, event }]);
+    }
+    if (zoomStart(chart, event, zoomOptions) === false) {
+      return;
+    }
+    state.dragStart = event;
+    addHandler(chart, chart.canvas, "mousemove", mouseMove);
+    addHandler(chart, window.document, "keydown", keyDown);
+  }
+  function computeDragRect(chart, mode, beginPointEvent, endPointEvent) {
+    const xEnabled = directionEnabled(mode, "x", chart);
+    const yEnabled = directionEnabled(mode, "y", chart);
+    let { top, left, right, bottom, width: chartWidth, height: chartHeight } = chart.chartArea;
+    const beginPoint = getRelativePosition(beginPointEvent, chart);
+    const endPoint = getRelativePosition(endPointEvent, chart);
+    if (xEnabled) {
+      left = Math.min(beginPoint.x, endPoint.x);
+      right = Math.max(beginPoint.x, endPoint.x);
+    }
+    if (yEnabled) {
+      top = Math.min(beginPoint.y, endPoint.y);
+      bottom = Math.max(beginPoint.y, endPoint.y);
+    }
+    const width = right - left;
+    const height = bottom - top;
+    return {
+      left,
+      top,
+      right,
+      bottom,
+      width,
+      height,
+      zoomX: xEnabled && width ? 1 + (chartWidth - width) / chartWidth : 1,
+      zoomY: yEnabled && height ? 1 + (chartHeight - height) / chartHeight : 1
+    };
+  }
+  function mouseUp(chart, event) {
+    const state = getState(chart);
+    if (!state.dragStart) {
+      return;
+    }
+    removeHandler(chart, "mousemove");
+    const { mode, onZoomComplete, drag: { threshold = 0 } } = state.options.zoom;
+    const rect = computeDragRect(chart, mode, state.dragStart, event);
+    const distanceX = directionEnabled(mode, "x", chart) ? rect.width : 0;
+    const distanceY = directionEnabled(mode, "y", chart) ? rect.height : 0;
+    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    state.dragStart = state.dragEnd = null;
+    if (distance <= threshold) {
+      state.dragging = false;
+      chart.update("none");
+      return;
+    }
+    zoomRect(chart, { x: rect.left, y: rect.top }, { x: rect.right, y: rect.bottom }, "zoom");
+    setTimeout(() => state.dragging = false, 500);
+    callback(onZoomComplete, [{ chart }]);
+  }
+  function wheelPreconditions(chart, event, zoomOptions) {
+    if (keyNotPressed(getModifierKey(zoomOptions.wheel), event)) {
+      callback(zoomOptions.onZoomRejected, [{ chart, event }]);
+      return;
+    }
+    if (zoomStart(chart, event, zoomOptions) === false) {
+      return;
+    }
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+    if (event.deltaY === void 0) {
+      return;
+    }
+    return true;
+  }
+  function wheel(chart, event) {
+    const { handlers: { onZoomComplete }, options: { zoom: zoomOptions } } = getState(chart);
+    if (!wheelPreconditions(chart, event, zoomOptions)) {
+      return;
+    }
+    const rect = event.target.getBoundingClientRect();
+    const speed = 1 + (event.deltaY >= 0 ? -zoomOptions.wheel.speed : zoomOptions.wheel.speed);
+    const amount = {
+      x: speed,
+      y: speed,
+      focalPoint: {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      }
+    };
+    zoom(chart, amount);
+    if (onZoomComplete) {
+      onZoomComplete();
+    }
+  }
+  function addDebouncedHandler(chart, name, handler, delay) {
+    if (handler) {
+      getState(chart).handlers[name] = debounce2(() => callback(handler, [{ chart }]), delay);
+    }
+  }
+  function addListeners(chart, options2) {
+    const canvas = chart.canvas;
+    const { wheel: wheelOptions, drag: dragOptions, onZoomComplete } = options2.zoom;
+    if (wheelOptions.enabled) {
+      addHandler(chart, canvas, "wheel", wheel);
+      addDebouncedHandler(chart, "onZoomComplete", onZoomComplete, 250);
+    } else {
+      removeHandler(chart, "wheel");
+    }
+    if (dragOptions.enabled) {
+      addHandler(chart, canvas, "mousedown", mouseDown);
+      addHandler(chart, canvas.ownerDocument, "mouseup", mouseUp);
+    } else {
+      removeHandler(chart, "mousedown");
+      removeHandler(chart, "mousemove");
+      removeHandler(chart, "mouseup");
+      removeHandler(chart, "keydown");
+    }
+  }
+  function removeListeners(chart) {
+    removeHandler(chart, "mousedown");
+    removeHandler(chart, "mousemove");
+    removeHandler(chart, "mouseup");
+    removeHandler(chart, "wheel");
+    removeHandler(chart, "click");
+    removeHandler(chart, "keydown");
+  }
+  function createEnabler(chart, state) {
+    return function(recognizer, event) {
+      const { pan: panOptions, zoom: zoomOptions = {} } = state.options;
+      if (!panOptions || !panOptions.enabled) {
+        return false;
+      }
+      const srcEvent = event && event.srcEvent;
+      if (!srcEvent) {
+        return true;
+      }
+      if (!state.panning && event.pointerType === "mouse" && (keyNotPressed(getModifierKey(panOptions), srcEvent) || keyPressed(getModifierKey(zoomOptions.drag), srcEvent))) {
+        callback(panOptions.onPanRejected, [{ chart, event }]);
+        return false;
+      }
+      return true;
+    };
+  }
+  function pinchAxes(p0, p1) {
+    const pinchX = Math.abs(p0.clientX - p1.clientX);
+    const pinchY = Math.abs(p0.clientY - p1.clientY);
+    const p = pinchX / pinchY;
+    let x, y;
+    if (p > 0.3 && p < 1.7) {
+      x = y = true;
+    } else if (pinchX > pinchY) {
+      x = true;
+    } else {
+      y = true;
+    }
+    return { x, y };
+  }
+  function handlePinch(chart, state, e) {
+    if (state.scale) {
+      const { center, pointers } = e;
+      const zoomPercent = 1 / state.scale * e.scale;
+      const rect = e.target.getBoundingClientRect();
+      const pinch = pinchAxes(pointers[0], pointers[1]);
+      const mode = state.options.zoom.mode;
+      const amount = {
+        x: pinch.x && directionEnabled(mode, "x", chart) ? zoomPercent : 1,
+        y: pinch.y && directionEnabled(mode, "y", chart) ? zoomPercent : 1,
+        focalPoint: {
+          x: center.x - rect.left,
+          y: center.y - rect.top
+        }
+      };
+      zoom(chart, amount);
+      state.scale = e.scale;
+    }
+  }
+  function startPinch(chart, state) {
+    if (state.options.zoom.pinch.enabled) {
+      state.scale = 1;
+    }
+  }
+  function endPinch(chart, state, e) {
+    if (state.scale) {
+      handlePinch(chart, state, e);
+      state.scale = null;
+      callback(state.options.zoom.onZoomComplete, [{ chart }]);
+    }
+  }
+  function handlePan(chart, state, e) {
+    const delta = state.delta;
+    if (delta) {
+      state.panning = true;
+      pan(chart, { x: e.deltaX - delta.x, y: e.deltaY - delta.y }, state.panScales);
+      state.delta = { x: e.deltaX, y: e.deltaY };
+    }
+  }
+  function startPan(chart, state, event) {
+    const { enabled, onPanStart, onPanRejected } = state.options.pan;
+    if (!enabled) {
+      return;
+    }
+    const rect = event.target.getBoundingClientRect();
+    const point8 = {
+      x: event.center.x - rect.left,
+      y: event.center.y - rect.top
+    };
+    if (callback(onPanStart, [{ chart, event, point: point8 }]) === false) {
+      return callback(onPanRejected, [{ chart, event }]);
+    }
+    state.panScales = getEnabledScalesByPoint(state.options.pan, point8, chart);
+    state.delta = { x: 0, y: 0 };
+    clearTimeout(state.panEndTimeout);
+    handlePan(chart, state, event);
+  }
+  function endPan(chart, state) {
+    state.delta = null;
+    if (state.panning) {
+      state.panEndTimeout = setTimeout(() => state.panning = false, 500);
+      callback(state.options.pan.onPanComplete, [{ chart }]);
+    }
+  }
+  var hammers = /* @__PURE__ */ new WeakMap();
+  function startHammer(chart, options2) {
+    const state = getState(chart);
+    const canvas = chart.canvas;
+    const { pan: panOptions, zoom: zoomOptions } = options2;
+    const mc = new import_hammerjs.default.Manager(canvas);
+    if (zoomOptions && zoomOptions.pinch.enabled) {
+      mc.add(new import_hammerjs.default.Pinch());
+      mc.on("pinchstart", () => startPinch(chart, state));
+      mc.on("pinch", (e) => handlePinch(chart, state, e));
+      mc.on("pinchend", (e) => endPinch(chart, state, e));
+    }
+    if (panOptions && panOptions.enabled) {
+      mc.add(new import_hammerjs.default.Pan({
+        threshold: panOptions.threshold,
+        enable: createEnabler(chart, state)
+      }));
+      mc.on("panstart", (e) => startPan(chart, state, e));
+      mc.on("panmove", (e) => handlePan(chart, state, e));
+      mc.on("panend", () => endPan(chart, state));
+    }
+    hammers.set(chart, mc);
+  }
+  function stopHammer(chart) {
+    const mc = hammers.get(chart);
+    if (mc) {
+      mc.remove("pinchstart");
+      mc.remove("pinch");
+      mc.remove("pinchend");
+      mc.remove("panstart");
+      mc.remove("pan");
+      mc.remove("panend");
+      mc.destroy();
+      hammers.delete(chart);
+    }
+  }
+  var version2 = "2.0.1";
+  function draw2(chart, caller, options2) {
+    const dragOptions = options2.zoom.drag;
+    const { dragStart, dragEnd } = getState(chart);
+    if (dragOptions.drawTime !== caller || !dragEnd) {
+      return;
+    }
+    const { left, top, width, height } = computeDragRect(chart, options2.zoom.mode, dragStart, dragEnd);
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = dragOptions.backgroundColor || "rgba(225,225,225,0.3)";
+    ctx.fillRect(left, top, width, height);
+    if (dragOptions.borderWidth > 0) {
+      ctx.lineWidth = dragOptions.borderWidth;
+      ctx.strokeStyle = dragOptions.borderColor || "rgba(225,225,225)";
+      ctx.strokeRect(left, top, width, height);
+    }
+    ctx.restore();
+  }
+  var plugin = {
+    id: "zoom",
+    version: version2,
+    defaults: {
+      pan: {
+        enabled: false,
+        mode: "xy",
+        threshold: 10,
+        modifierKey: null
+      },
+      zoom: {
+        wheel: {
+          enabled: false,
+          speed: 0.1,
+          modifierKey: null
+        },
+        drag: {
+          enabled: false,
+          drawTime: "beforeDatasetsDraw",
+          modifierKey: null
+        },
+        pinch: {
+          enabled: false
+        },
+        mode: "xy"
+      }
+    },
+    start: function(chart, _args, options2) {
+      const state = getState(chart);
+      state.options = options2;
+      if (Object.prototype.hasOwnProperty.call(options2.zoom, "enabled")) {
+        console.warn("The option `zoom.enabled` is no longer supported. Please use `zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.");
+      }
+      if (Object.prototype.hasOwnProperty.call(options2.zoom, "overScaleMode") || Object.prototype.hasOwnProperty.call(options2.pan, "overScaleMode")) {
+        console.warn("The option `overScaleMode` is deprecated. Please use `scaleMode` instead (and update `mode` as desired).");
+      }
+      if (import_hammerjs.default) {
+        startHammer(chart, options2);
+      }
+      chart.pan = (delta, panScales, transition) => pan(chart, delta, panScales, transition);
+      chart.zoom = (args, transition) => zoom(chart, args, transition);
+      chart.zoomRect = (p0, p1, transition) => zoomRect(chart, p0, p1, transition);
+      chart.zoomScale = (id, range, transition) => zoomScale(chart, id, range, transition);
+      chart.resetZoom = (transition) => resetZoom(chart, transition);
+      chart.getZoomLevel = () => getZoomLevel(chart);
+      chart.getInitialScaleBounds = () => getInitialScaleBounds(chart);
+      chart.isZoomedOrPanned = () => isZoomedOrPanned(chart);
+    },
+    beforeEvent(chart) {
+      const state = getState(chart);
+      if (state.panning || state.dragging) {
+        return false;
+      }
+    },
+    beforeUpdate: function(chart, args, options2) {
+      const state = getState(chart);
+      state.options = options2;
+      addListeners(chart, options2);
+    },
+    beforeDatasetsDraw(chart, _args, options2) {
+      draw2(chart, "beforeDatasetsDraw", options2);
+    },
+    afterDatasetsDraw(chart, _args, options2) {
+      draw2(chart, "afterDatasetsDraw", options2);
+    },
+    beforeDraw(chart, _args, options2) {
+      draw2(chart, "beforeDraw", options2);
+    },
+    afterDraw(chart, _args, options2) {
+      draw2(chart, "afterDraw", options2);
+    },
+    stop: function(chart) {
+      removeListeners(chart);
+      if (import_hammerjs.default) {
+        stopHammer(chart);
+      }
+      removeState(chart);
+    },
+    panFunctions,
+    zoomFunctions,
+    zoomRectFunctions
+  };
+
   // js/control/ProfileUI.js
   var import_leaflet19 = __toESM(require_leaflet_src());
+  auto_default.register(plugin);
   var ProfileUI = UI.extend({
     options: {
       title: "Profile overlays",
@@ -32575,7 +34928,31 @@
       spectrum: true,
       spectrumColor: "#A000FF",
       collapsed: true,
-      position: "topleft"
+      position: "topleft",
+      chartZoomOptions: {
+        zoom: {
+          wheel: {
+            enabled: true
+          },
+          pinch: {
+            enabled: true
+          },
+          drag: {
+            enabled: true,
+            modifierKey: "shift"
+          },
+          scaleMode: "xy",
+          mode: "xy"
+        },
+        pan: {
+          enabled: true,
+          scaleMode: "xy"
+        },
+        limits: {
+          x: { min: "original", max: "original" },
+          y: { min: "original", max: "original" }
+        }
+      }
     },
     initialize: function(options2) {
       import_leaflet19.Util.setOptions(this, options2);
@@ -32643,7 +35020,7 @@
           "spectrum",
           "Plot a spectrum at the current map position",
           () => {
-            const map4 = _this._map, latLng11 = map4.getCenter(), zoom = map4.options.crs.options.nzoom - 1, point8 = map4.project(latLng11, zoom).floor().add([0.5, 0.5]), rLatLng = map4.unproject(point8, zoom), marker2 = this._spectrumMarker = (0, import_leaflet19.circleMarker)(rLatLng, {
+            const map4 = _this._map, latLng11 = map4.getCenter(), zoom2 = map4.options.crs.options.nzoom - 1, point8 = map4.project(latLng11, zoom2).floor().add([0.5, 0.5]), rLatLng = map4.unproject(point8, zoom2), marker2 = this._spectrumMarker = (0, import_leaflet19.circleMarker)(rLatLng, {
               color: speccolpick.value,
               radius: 6,
               title: "Spectrum"
@@ -32665,7 +35042,7 @@
               }
             ).openPopup();
             VUtil.requestURL(
-              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
+              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom2.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
               "getting layer spectrum",
               this._plotSpectrum,
               this
@@ -32693,7 +35070,7 @@
         popdiv,
         { minWidth: 16, maxWidth: 1024, closeOnClick: false }
       ).openPopup();
-      const zoom = wcs2.options.nzoom - 1, path = line.getLatLngs(), point1 = wcs2.project(path[0]), point22 = wcs2.project(path[1]);
+      const zoom2 = wcs2.options.nzoom - 1, path = line.getLatLngs(), point1 = wcs2.project(path[0]), point22 = wcs2.project(path[1]);
       if (point22.x < point1.x) {
         const x = point22.x;
         point22.x = point1.x;
@@ -32783,10 +35160,37 @@
             }]
           },
           options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "position along line",
+                  color: getComputedStyle(this._map._container).getPropertyValue("--dialog-color")
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: ylabel,
+                  color: getComputedStyle(this._map._container).getPropertyValue("--dialog-color")
+                }
+              }
+            },
+            maintainAspectRatio: false,
             interaction: {
               mode: "nearest",
-              intersect: false,
-              axis: "x"
+              intersect: true
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: title,
+                color: getComputedStyle(this._map._container).getPropertyValue("--dialog-color")
+              },
+              legend: {
+                display: false
+              },
+              zoom: this.options.chartZoomOptions
             }
           }
         }
@@ -34309,17 +36713,17 @@
       this.jd = merged_proj.projparam.jd;
       this.obslatlng = merged_proj.projparam.obslatlng;
     },
-    transform(pnt, zoom) {
-      return this.transformation._transform(pnt, this.scale(zoom));
+    transform(pnt, zoom2) {
+      return this.transformation._transform(pnt, this.scale(zoom2));
     },
-    untransform(layerpnt, zoom) {
-      return this.transformation.untransform(layerpnt, this.scale(zoom));
+    untransform(layerpnt, zoom2) {
+      return this.transformation.untransform(layerpnt, this.scale(zoom2));
     },
-    multiLatLngToPoint(latlng, zoom) {
-      return this.transform(this.multiProject(latlng), zoom);
+    multiLatLngToPoint(latlng, zoom2) {
+      return this.transform(this.multiProject(latlng), zoom2);
     },
-    multiPointToLatLng(pnt, zoom) {
-      return this.multiUnproject(this.untransform(pnt, zoom));
+    multiPointToLatLng(pnt, zoom2) {
+      return this.multiUnproject(this.untransform(pnt, zoom2));
     },
     multiProject(latlng) {
       const proj1 = this.projections[this.multiLatLngToIndex(latlng)], pnt = proj1._pixToMulti(proj1.project(latlng)), proj2 = this.projections[this.multiPntToIndex(pnt)];
@@ -34370,8 +36774,8 @@
       }
       return proj;
     },
-    scale: function(zoom) {
-      return Math.pow(2, zoom - this.nzoom + 1);
+    scale: function(zoom2) {
+      return Math.pow(2, zoom2 - this.nzoom + 1);
     },
     zoom: function(scale2) {
       return Math.log(scale2) / Math.LN2 + this.nzoom - 1;
@@ -34391,8 +36795,8 @@
       }
       return 0.1 * Math.sqrt(Math.abs(dlngdx * (latlngdy.lat - latlng.lat) - dlngdy * (latlngdx.lat - latlng.lat)) * Math.cos(latlng.lat * Math.PI / 180));
     },
-    pixelScale: function(zoom, latlng) {
-      return this.rawPixelScale(latlng) / this.scale(zoom);
+    pixelScale: function(zoom2, latlng) {
+      return this.rawPixelScale(latlng) / this.scale(zoom2);
     },
     fovToZoom: function(map4, fov, latlng) {
       const size = map4.getSize();
@@ -34403,8 +36807,8 @@
       scale2 *= Math.sqrt(size.x * size.x + size.y * size.y);
       return fov > 0 ? this.zoom(scale2 / fov) : this.nzoom - 1;
     },
-    zoomToFov: function(map4, zoom, latlng) {
-      const size = map4.getSize(), scale2 = this.rawPixelScale(latlng) * Math.sqrt(size.x * size.x + size.y * size.y), zscale = this.scale(zoom);
+    zoomToFov: function(map4, zoom2, latlng) {
+      const size = map4.getSize(), scale2 = this.rawPixelScale(latlng) * Math.sqrt(size.x * size.x + size.y * size.y), zscale = this.scale(zoom2);
       return zscale > 0 ? scale2 / zscale : scale2;
     },
     distance: function(latlng1, latlng2) {
@@ -34763,7 +37167,7 @@
     },
     _addToMap: function(map4) {
       const newcrs = this.wcs, curcrs = map4.options.crs, prevcrs = map4._prevcrs, maploadedflag = map4._loaded;
-      var zoom, center;
+      var zoom2, center;
       if (maploadedflag) {
         curcrs._prevLatLng = map4.getCenter();
         curcrs._prevZoom = map4.getZoom();
@@ -34772,21 +37176,21 @@
       import_leaflet31.TileLayer.prototype.addTo.call(this, map4);
       if (prevcrs && newcrs !== curcrs && maploadedflag && newcrs.pixelFlag === curcrs.pixelFlag) {
         center = curcrs._prevLatLng;
-        zoom = curcrs._prevZoom;
-        const prevpixscale = prevcrs.pixelScale(zoom, center), newpixscale = newcrs.pixelScale(zoom, center);
+        zoom2 = curcrs._prevZoom;
+        const prevpixscale = prevcrs.pixelScale(zoom2, center), newpixscale = newcrs.pixelScale(zoom2, center);
         if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
-          zoom += Math.round(Math.LOG2E * Math.log(newpixscale / prevpixscale));
+          zoom2 += Math.round(Math.LOG2E * Math.log(newpixscale / prevpixscale));
         }
       } else if (newcrs._prevLatLng) {
         center = newcrs._prevLatLng;
-        zoom = newcrs._prevZoom;
+        zoom2 = newcrs._prevZoom;
       } else if (this.options.center) {
         const latlng = typeof this.options.center === "string" ? newcrs.parseCoords(decodeURI(this.options.center)) : this.options.center;
         if (latlng) {
           if (this.options.fov) {
-            zoom = newcrs.fovToZoom(map4, this.options.fov, latlng);
+            zoom2 = newcrs.fovToZoom(map4, this.options.fov, latlng);
           }
-          map4.setView(latlng, zoom, { reset: true, animate: false });
+          map4.setView(latlng, zoom2, { reset: true, animate: false });
         } else {
           VUtil.requestURL(
             this.options.sesameURL + "/-oI/A?" + this.options.center,
@@ -34797,7 +37201,7 @@
                   const str2 = httpRequest.responseText, newLatlng = newcrs.parseCoords(str2);
                   if (newLatlng) {
                     if (_this.options.fov) {
-                      zoom = newcrs.fovToZoom(
+                      zoom2 = newcrs.fovToZoom(
                         map4,
                         _this.options.fov,
                         newLatlng
@@ -34805,13 +37209,13 @@
                     }
                     map4.setView(
                       newLatlng,
-                      zoom,
+                      zoom2,
                       { reset: true, animate: false }
                     );
                   } else {
                     map4.setView(
                       newcrs.crval,
-                      zoom,
+                      zoom2,
                       { reset: true, animate: false }
                     );
                     alert(str2 + ": Unknown location");
@@ -34819,7 +37223,7 @@
                 } else {
                   map4.setView(
                     newcrs.crval,
-                    zoom,
+                    zoom2,
                     { reset: true, animate: false }
                   );
                   alert("There was a problem with the request to the Sesame service at CDS");
@@ -34833,7 +37237,7 @@
       } else {
         map4.setView(
           newcrs.centerLatLng,
-          zoom,
+          zoom2,
           { reset: true, animate: false }
         );
       }
@@ -34976,8 +37380,8 @@
   globalObject.V = Visiomatic_exports;
 })();
 /* @preserve
- * Leaflet 1.9.3, a JS library for interactive maps. https://leafletjs.com
- * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 /*!
  * @kurkle/color v0.3.2
@@ -34986,7 +37390,7 @@
  * Released under the MIT License
  */
 /*!
- * Chart.js v4.3.2
+ * Chart.js v4.3.3
  * https://www.chartjs.org
  * (c) 2023 Chart.js Contributors
  * Released under the MIT License
@@ -35004,3 +37408,14 @@
  *
  * Date: 2015-04-28T16:01Z
  */
+/*!
+* chartjs-plugin-zoom v2.0.1
+* undefined
+ * (c) 2016-2023 chartjs-plugin-zoom Contributors
+ * Released under the MIT License
+ */
+/*! Hammer.JS - v2.0.7 - 2016-04-22
+ * http://hammerjs.github.io/
+ *
+ * Copyright (c) 2016 Jorik Tangelder;
+ * Licensed under the MIT license */
