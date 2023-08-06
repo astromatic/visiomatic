@@ -35150,7 +35150,7 @@
       this._map.on(
         "themeChange",
         () => {
-          chart.options.scales.x.title.color = getComputedStyle(
+          chart.options.scales.x.title.color = chart.options.scales.y.title.color = getComputedStyle(
             this._map._container
           ).getPropertyValue("--dialog-color");
           chart.options.plugins.title.color = getComputedStyle(
