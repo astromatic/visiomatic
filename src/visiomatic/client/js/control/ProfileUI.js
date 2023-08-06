@@ -400,7 +400,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			title = 'Image profiles';
 			ylabel = 'Pixel value';
 		}
-		new Chart(
+		const	chart = new Chart(
 			 DomUtil.create(
 				'canvas',
 				this._className + '-canvas',
@@ -456,6 +456,19 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				}
 			}
 		)
+		// Update chart colors on theme change.
+		this._map.on(
+			'themeChange',
+			() => {
+				chart.options.scales.x.title.color = getComputedStyle(
+					this._map._container
+				).getPropertyValue('--dialog-color');
+				chart.options.plugins.title.color = getComputedStyle(
+					this._map._container
+				).getPropertyValue('--dialog-color');
+				chart.update();
+			}
+		);
 		popdiv.removeChild(
 			popdiv.childNodes[0]
 		);						// Remove activity spinner

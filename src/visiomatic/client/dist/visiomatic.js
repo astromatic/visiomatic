@@ -19815,7 +19815,7 @@
       this._sideClass = "preferences";
     },
     _initDialog: function() {
-      const _this = this, className = this._className, line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), prefix = "visiomatic-theme-", defaultTheme = localStorage.getItem("visiomaticDefaultTheme");
+      const className = this._className, line = this._addDialogLine("Theme:", this._dialog), elem = this._addDialogElement(line), prefix = "visiomatic-theme-", defaultTheme = localStorage.getItem("visiomaticDefaultTheme");
       this._themeList = getComputedStyle(document.documentElement).getPropertyValue("--visiomatic-theme-names").split(/\s+/);
       this._themeClassList = this._themeList.map(
         (theme) => prefix + theme.toLowerCase()
@@ -19825,8 +19825,8 @@
         (theme) => theme === this._defaultTheme
       );
       import_leaflet18.DomUtil.addClass(
-        _this._map._container,
-        _this._themeClassList[this._themeIndex]
+        this._map._container,
+        this._themeClassList[this._themeIndex]
       );
       this._themeSelect = this._addSelectMenu(
         this._className + "-select",
@@ -19837,22 +19837,23 @@
         "Select theme",
         () => {
           const index2 = parseInt(
-            _this._themeSelect.selectedIndex - 1,
+            this._themeSelect.selectedIndex - 1,
             10
           );
           import_leaflet18.DomUtil.removeClass(
-            _this._map._container,
-            _this._themeClassList[_this._themeIndex]
+            this._map._container,
+            this._themeClassList[this._themeIndex]
           );
           import_leaflet18.DomUtil.addClass(
-            _this._map._container,
-            _this._themeClassList[index2]
+            this._map._container,
+            this._themeClassList[index2]
           );
           this._themeIndex = index2;
           localStorage.setItem(
             "visiomaticDefaultTheme",
             this._themeList[index2]
           );
+          this._map.fire("themeChange");
         }
       );
     }
@@ -35093,7 +35094,7 @@
         title = "Image profiles";
         ylabel = "Pixel value";
       }
-      new auto_default(
+      const chart = new auto_default(
         import_leaflet19.DomUtil.create(
           "canvas",
           this._className + "-canvas",
@@ -35144,6 +35145,18 @@
               zoom: this.options.chartZoomOptions
             }
           }
+        }
+      );
+      this._map.on(
+        "themeChange",
+        () => {
+          chart.options.scales.x.title.color = getComputedStyle(
+            this._map._container
+          ).getPropertyValue("--dialog-color");
+          chart.options.plugins.title.color = getComputedStyle(
+            this._map._container
+          ).getPropertyValue("--dialog-color");
+          chart.update();
         }
       );
       popdiv.removeChild(
