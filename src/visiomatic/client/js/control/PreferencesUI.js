@@ -51,8 +51,7 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 	 * @private
 	 */
 	_initDialog: function () {
-		const _this = this,
-			className = this._className,
+		const	className = this._className,
 			line = this._addDialogLine('Theme:', this._dialog),
 			elem = this._addDialogElement(line),
 			prefix = 'visiomatic-theme-',
@@ -74,8 +73,8 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 			theme => theme === this._defaultTheme
 		);
 		DomUtil.addClass(
-			_this._map._container,
-			_this._themeClassList[this._themeIndex]
+			this._map._container,
+			this._themeClassList[this._themeIndex]
 		);
 
 		this._themeSelect = this._addSelectMenu(
@@ -87,17 +86,17 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 			'Select theme',
 			() => {
 				const	index = parseInt(
-					_this._themeSelect.selectedIndex - 1,
+					this._themeSelect.selectedIndex - 1,
 					10
 				);				
 				// Remove pre-existing theme
 				DomUtil.removeClass(
-					_this._map._container,
-					_this._themeClassList[_this._themeIndex]
+					this._map._container,
+					this._themeClassList[this._themeIndex]
 				);
 				DomUtil.addClass(
-					_this._map._container,
-					_this._themeClassList[index]
+					this._map._container,
+					this._themeClassList[index]
 				);
 				this._themeIndex = index;
 				// Set as default theme in local stage
@@ -105,6 +104,8 @@ export const PreferencesUI = UI.extend( /** @lends PreferencesUI */ {
 					'visiomaticDefaultTheme',
 					this._themeList[index]
 				);
+				// Fire change to notify non-DOM stuff such as canvas content.
+				this._map.fire('themeChange');
 			}
 		);
 	}

@@ -8,14 +8,17 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-import 'jqplot-exported';
+import Chart from 'chart.js/auto';
+import zoomPlugin from 'chartjs-plugin-zoom';
+
+Chart.register(zoomPlugin);
 
 import {
 	DomUtil,
 	Util,
 	circleMarker,
+	divIcon,
+	marker,
 	polyline
 } from 'leaflet';
 
@@ -32,7 +35,31 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		spectrum: true,
 		spectrumColor: '#A000FF',
 		collapsed: true,
-		position: 'topleft'
+		position: 'topleft',
+		chartZoomOptions: {
+			zoom: {
+				wheel: {
+					enabled: true,
+				},
+				pinch: {
+					enabled: true
+				},
+				drag: {
+					enabled: true,
+					modifierKey: 'shift'
+				},
+				scaleMode: 'xy',
+				mode: 'xy',
+			},
+			pan: {
+				enabled: true,
+				scaleMode: 'xy'
+			},
+			limits: {
+				x: {min: 'original', max: 'original'},
+				y: {min: 'original', max: 'original'}
+			}
+		}
 	},
 
 	/**
@@ -58,6 +85,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 * @param {string} [options.spectrumColor='A000FF']
 	   Default spectrumoverlay color
 
+	 * @param {string} [options.chartZoomOptions]
+	   Default options for the chartjs-plugin-zoom Chart plug-in.
+	   @see {@link https://www.chartjs.org/chartjs-plugin-zoom/latest/guide/options.html}
+
 	 * @see {@link UI} for additional control options.
 
 	 * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
@@ -82,6 +113,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			className = this._className,
 			box = this._addDialogBox();
 
+		this._wcs = this._map.options.crs;
 		if (options.profile) {
 			const	line = this._addDialogLine('Profile:', box),
 				elem = this._addDialogElement(line),
@@ -100,7 +132,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'start',
 				'Start drawing a profile line',
-				function () {
+				() => {
 					if (this._currProfileLine) {
 						this._updateLine();
 					} else {
@@ -113,9 +145,22 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 									weight: 7,
 									opacity: 0.5
 								}
+							),
+							licon = this._currProfileLength = divIcon(
+								{
+									className: className + '-length',
+									html: '<p style="font-size: 15pt; color: '
+										+ linecolpick.value +';">0&#34;</p>'
+								}
+							),
+							lmarker = this._currProfileLengthMarker = marker(
+								point,
+								{icon: licon}
 							);
+
 						line.nameColor = linecolpick.value;
 						line.addTo(map);
+						lmarker.addTo(map);						
 						map.on('drag', this._updateLine, this);
 					}
 				}
@@ -152,10 +197,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'spectrum',
 				'Plot a spectrum at the current map position',
-				function () {
+				() => {
 					const map = _this._map,
 						latLng = map.getCenter(),
-						zoom = map.options.crs.options.nzoom - 1,
+						zoom = _this._wcs.options.nzoom - 1,
 						point = map.project(latLng, zoom).floor().add([0.5, 0.5]),
 						rLatLng = map.unproject(point, zoom),
 						marker = this._spectrumMarker = circleMarker(rLatLng, {
@@ -206,18 +251,21 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_updateLine: function (e) {
 		const	map = this._map,
-			latLng = map.getCenter(),
-			maxzoom = map.options.crs.options.nzoom - 1,
+			maxzoom = this._wcs.options.nzoom - 1,
 			path = this._currProfileLine.getLatLngs(),
 			point1 = map.project(path[0], maxzoom),
 			point2 = map.project(map.getCenter(), maxzoom);
-		if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
-			point2.y = point1.y;
-		} else {
-			point2.x = point1.x;
-		}
 
 		path[1] = map.unproject(point2, maxzoom);
+		this._currProfileLength.options.html =
+			this._currProfileLength.options.html.replace(
+				/>[\d.&#;]+</,
+				'>' + this._getDistanceString(path[0], path[1]) + '<'
+			);
+		this._currProfileLengthMarker.setLatLng(
+			this._currProfileLine.getCenter()
+		);
+		this._currProfileLengthMarker.setIcon(this._currProfileLength);
 		this._currProfileLine.redraw();
 	},
 
@@ -225,51 +273,58 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 * End interactive profile line definition and do the profile query. 
 	 * @private
 	 */
-	_profileEnd: function () {
+	_profileEnd: async function () {
 		const	map = this._map,
+			wcs = this._wcs,
 			point = map.getCenter(),
 			line = this._profileLine = this._currProfileLine;
 
 		map.off('drag', this._updateLine, this);
+		this._currProfileLengthMarker.remove();
+		this._currProfileLengthMarker = undefined;
 		this._currProfileLine = undefined;
 
-		const	popdiv = DomUtil.create('div', this._className + '-popup'),
+		const	popdiv = this._popDiv = DomUtil.create(
+				'div',
+				'visiomatic-profile-plot'
+			),
 			activity = DomUtil.create(
 				'div',
 				this._className + '-activity',
 				popdiv
 			);
 
-		popdiv.id = 'leaflet-profile-plot';
 		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
-		const	zoom = map.options.crs.options.nzoom - 1,
+		const	zoom = wcs.options.nzoom - 1,
 			path = line.getLatLngs(),
-			point1 = map.project(path[0], zoom),
-			point2 = map.project(path[1], zoom);
+			point1 = wcs.project(path[0]),
+			point2 = wcs.project(path[1]);
 
 		if (point2.x < point1.x) {
-			const x = point2.x;
+			const x = point2.x,
+				y = point2.y;
+
 			point2.x = point1.x;
 			point1.x = x;
-		}
-		if (point2.y < point1.y) {
-			const y = point2.y;
 			point2.y = point1.y;
 			point1.y = y;
 		}
 
-		VUtil.requestURL(
+		response = await fetch(
 			this._layer._url.replace(/\&.*$/g, '') +
-				'&PFL=' + zoom.toString() + ':' +
-				(point1.x - 0.5).toFixed(0) + ',' +
-				(point1.y - 0.5).toFixed(0) + '-' +
-				(point2.x - 0.5).toFixed(0) + ',' +
-				(point2.y - 0.5).toFixed(0),
-			'getting layer profile',
-			this._plotProfile,
-			this
+				'&PFL=' +
+				point1.x.toFixed(0) + ',' +
+				point1.y.toFixed(0) + ':' +
+				point2.x.toFixed(0) + ',' +
+				point2.y.toFixed(0),
 		);
+		
+		if (response.status == 200) {
+			this._plotProfile(await response);
+		} else {
+			alert('Error ' + response.status + ' while getting profile.');
+		}
 	},
 
 	/**
@@ -277,17 +332,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 * @private
 	 * @returns {string} Measurement string.
 	 */
-	_getMeasurementString: function () {
-		const	currentLatLng = this._currentLatLng,
-			previousLatLng = this._markers[this._markers.length - 1].getLatLng();
+	_getDistanceString: function (latlng1, latlng2) {
+		let	distance = this._wcs.distance(latlng1, latlng2);
 		var	unit;
-
-		// calculate the distance from the last fixed point to the mouse position
-		let distance = this._measurementRunningTotal + VUtil.distance(
-			currentLatLng,
-			previousLatLng
-		);
-
+		
 		if (distance >= 1.0) {
 			unit = '&#176;';
 		} else {
@@ -307,107 +355,125 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	/**
 	 * Load and plot image profile data.
 	 * @private
-	 * @param {object} self
-	   Calling control object (``this``).
-	 * @param {object} httpRequest
-	   HTTP request.
+	 * @param {object} response
+	   HTTP response object.
 	 */
-	_plotProfile: function (self, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				const	json = JSON.parse(httpRequest.responseText),
-					rawprof = json.profile,
-					layer = self._layer,
-					visio = layer.visio,
-					line = self._profileLine,
-					popdiv = document.getElementById('leaflet-profile-plot'),
-					prof = [],
-					series = [];
-				var	title, ylabel;
+	_plotProfile: async function (response) {
+		const	json = await response.json(),
+			rawprof = json.profile,
+			layer = this._layer,
+			visio = layer.visio,
+			line = this._profileLine,
+			popdiv = this._popDiv,
+			prof = [],
+			series = [];
+		var	title, ylabel;
 
-				self.addLayer(line, 'Image profile');
+		this.addLayer(line, 'Image profile');
 
-				if (visio.mode === 'mono') {
-					prof.push(self._extractProfile(
-						layer,
-						rawprof,
-						visio.channel
-					));
+		if (visio.mode === 'mono') {
+			prof.push(
+				this._extractProfile(
+					layer,
+					rawprof,
+					visio.channel
+				)
+			);
+			series.push({
+				color: 'black',
+			});
+			title = 'Image profile for ' +
+				visio.channelLabels[visio.channel];
+			ylabel = 'Pixel value in ' +
+				visio.channelUnits[visio.channel];
+		} else {
+			const rgb = visio.rgb;
+			for (let c = 0; c < visio.nChannel; c++) {
+				if (rgb[c].isOn()) {
+					prof.push(this._extractProfile(layer, rawprof, c));
 					series.push({
-						color: 'black',
+						color: rgb[c].toStr(),
+						label: visio.channelLabels[c]
 					});
-					title = 'Image profile for ' +
-						visio.channelLabels[visio.channel];
-					ylabel = 'Pixel value in ' +
-						visio.channelUnits[visio.channel];
-				} else {
-					const rgb = visio.rgb;
-					for (let c = 0; c < visio.nChannel; c++) {
-						if (rgb[c].isOn()) {
-							prof.push(self._extractProfile(layer, rawprof, c));
-							series.push({
-								color: rgb[c].toStr(),
-								label: visio.channelLabels[c]
-							});
-						}
-					}
-					title = 'Image profiles';
-					ylabel = 'Pixel value';
 				}
-
-				$(document).ready(function () {
-					$.jqplot.config.enablePlugins = true;
-					$.jqplot('leaflet-profile-plot', prof, {
-						title: title,
-						grid: {
-							backgroundColor: '#ddd',
-							gridLineColor: '#eee'
-						},
-						axes: {
-							xaxis: {
-								label: 'position along line',
-								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-								pad: 1.0
-							},
-							yaxis: {
-								label: ylabel,
-								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-								pad: 1.0
+			}
+			title = 'Image profiles';
+			ylabel = 'Pixel value';
+		}
+		const	chart = new Chart(
+			 DomUtil.create(
+				'canvas',
+				this._className + '-canvas',
+				popdiv
+			),
+			{
+				type: 'line',
+				data: {
+					labels: rawprof.map(point => [point[0], point[1]]),
+					datasets: [{
+						label: 'profile',
+						data: rawprof.map(point => point[2][0]),
+						pointRadius: 0,
+						stepped: 'middle'
+					}]
+				},
+				options: {
+					scales: {
+						x: {
+							title: {
+								display: true,
+								text: 'position along line',
+								color: getComputedStyle(this._map._container)
+									.getPropertyValue('--dialog-color')
 							}
 						},
-						legend: {
-							show: (visio.mode !== 'mono'),
-							location: 'ne',
-						},
-						highlighter: {
-							show: true,
-							sizeAdjust: 2,
-							tooltipLocation: 'n',
-							tooltipAxes: 'y',
-							tooltipFormatString: '%.6g ' +
-								visio.channelUnits[visio.channel],
-							useAxesFormatters: false,
-							bringSeriesToFront: true
-						},
-						cursor: {
-							show: true,
-							zoom: true
-						},
-						series: series,
-						seriesDefaults: {
-							lineWidth: 2.0,
-							showMarker: false
+						y: {
+							title: {
+								display: true,
+								text: ylabel,
+								color: getComputedStyle(this._map._container)
+									.getPropertyValue('--dialog-color')
+							}
 						}
-					});
-				});
-
-				popdiv.removeChild(
-					popdiv.childNodes[0]
-				);						// Remove activity spinner
-
-				line._popup.update();	// TODO: avoid private method
+					},
+					maintainAspectRatio: false,
+					interaction: {
+						mode: 'nearest',
+						intersect: true
+					},
+					plugins: {
+						title: {
+							display: true,
+							text: title,
+							color: getComputedStyle(this._map._container)
+								.getPropertyValue('--dialog-color')
+						},
+						legend: {
+							display: false
+						},
+						zoom: this.options.chartZoomOptions
+					}
+				}
 			}
-		}
+		)
+		// Update chart colors on theme change.
+		this._map.on(
+			'themeChange',
+			() => {
+				chart.options.scales.x.title.color
+					= chart.options.scales.y.title.color = getComputedStyle(
+						this._map._container
+					).getPropertyValue('--dialog-color');
+				chart.options.plugins.title.color = getComputedStyle(
+					this._map._container
+				).getPropertyValue('--dialog-color');
+				chart.update();
+			}
+		);
+		popdiv.removeChild(
+			popdiv.childNodes[0]
+		);						// Remove activity spinner
+		line._popup.update();	// TODO: avoid private method
 	},
 
 	/**
@@ -424,11 +490,10 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 	 */
 	_extractProfile: function (layer, rawprof, channel) {
 		const	nchan = layer.visio.nChannel,
-			npix = rawprof.length / nchan,
+			npix = rawprof.length,
 			prof = [];
-
 		for (let i = 0; i < npix; i++) {
-			prof.push(rawprof[i * nchan + channel]);
+			prof.push(rawprof[i][2][channel]);
 		}
 
 		return prof;
@@ -464,6 +529,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 						self._extractAverage(layer, rawprof, c)
 					]);
 				}
+				/*
 				$(document).ready(function () {
 					$.jqplot.config.enablePlugins = true;
 					$.jqplot('leaflet-spectrum-plot', [spec], {
@@ -505,7 +571,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 						}
 					});
 				});
-
+				*/
 				popdiv.removeChild(
 					popdiv.childNodes[0]
 				);						// Remove activity spinner
