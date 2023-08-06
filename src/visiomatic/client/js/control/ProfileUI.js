@@ -284,14 +284,16 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		this._currProfileLengthMarker = undefined;
 		this._currProfileLine = undefined;
 
-		const	popdiv = DomUtil.create('div', this._className + '-popup'),
+		const	popdiv = this._popDiv = DomUtil.create(
+				'div',
+				'visiomatic-profile-plot'
+			),
 			activity = DomUtil.create(
 				'div',
 				this._className + '-activity',
 				popdiv
 			);
 
-		popdiv.id = 'leaflet-profile-plot';
 		line.bindPopup(popdiv,
 			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
 		const	zoom = wcs.options.nzoom - 1,
@@ -362,7 +364,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			layer = this._layer,
 			visio = layer.visio,
 			line = this._profileLine,
-			popdiv = document.getElementById('leaflet-profile-plot'),
+			popdiv = this._popDiv,
 			prof = [],
 			series = [];
 		var	title, ylabel;

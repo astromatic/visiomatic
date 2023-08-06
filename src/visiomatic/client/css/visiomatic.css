@@ -907,12 +907,12 @@ a#visiomatic-profile-toggle {
 }
 
 /*---------------------------------- Plots ----------------------------------*/
-#leaflet-profile-plot {
+.visiomatic-profile-plot {
 	width: 400px;
 	height: 300px;
 }
 
-#leaflet-spectrum-plot {
+.visiomatic-spectrum-plot {
 	width: 400px;
 	height: 400px;
 }

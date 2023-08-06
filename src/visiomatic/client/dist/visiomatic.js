@@ -35016,12 +35016,14 @@
       this._currProfileLengthMarker.remove();
       this._currProfileLengthMarker = void 0;
       this._currProfileLine = void 0;
-      const popdiv = import_leaflet19.DomUtil.create("div", this._className + "-popup"), activity = import_leaflet19.DomUtil.create(
+      const popdiv = this._popDiv = import_leaflet19.DomUtil.create(
+        "div",
+        "visiomatic-profile-plot"
+      ), activity = import_leaflet19.DomUtil.create(
         "div",
         this._className + "-activity",
         popdiv
       );
-      popdiv.id = "leaflet-profile-plot";
       line.bindPopup(
         popdiv,
         { minWidth: 16, maxWidth: 1024, closeOnClick: false }
@@ -35061,7 +35063,7 @@
       return distanceStr;
     },
     _plotProfile: async function(response2) {
-      const json = await response2.json(), rawprof = json.profile, layer = this._layer, visio = layer.visio, line = this._profileLine, popdiv = document.getElementById("leaflet-profile-plot"), prof = [], series = [];
+      const json = await response2.json(), rawprof = json.profile, layer = this._layer, visio = layer.visio, line = this._profileLine, popdiv = this._popDiv, prof = [], series = [];
       var title, ylabel;
       this.addLayer(line, "Image profile");
       if (visio.mode === "mono") {
