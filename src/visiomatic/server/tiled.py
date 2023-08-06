@@ -704,8 +704,11 @@ class Tiled(object):
         values = np.full((x.size, self.nchannels), np.nan, dtype=np.float32)
         valid = (x>=0) & (x<shape[2]) & (y>=0) & (y<shape[1])
         values[valid] = self.get_data()[..., y[valid], x[valid]].transpose()
-
-        return ProfileModel(profile=tuple(zip(x, y, tuple(map(tuple, values)))))
+        return ProfileModel(
+            profile=tuple(zip(x, y, tuple(map(tuple,
+                values if channel is None else values[:, channel-1: channel]
+            ))))
+        )
 
 
     def get_data(self):

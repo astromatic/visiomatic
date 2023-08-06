@@ -313,6 +313,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 		response = await fetch(
 			this._layer._url.replace(/\&.*$/g, '') +
+				'&CHAN=' + (this._layer.visio.channel + 1).toString() +
 				'&PFL=' +
 				point1.x.toFixed(0) + ',' +
 				point1.y.toFixed(0) + ':' +
