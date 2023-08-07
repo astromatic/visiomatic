@@ -37,7 +37,7 @@
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.leaflet = {}));
       })(exports, function(exports2) {
         "use strict";
-        var version3 = "1.9.3";
+        var version3 = "1.9.4";
         function extend4(dest) {
           var i2, j, len, src;
           for (j = 1, len = arguments.length; j < len; j++) {
@@ -1431,15 +1431,15 @@
           }
           restoreOutline();
           _outlineElement = element;
-          _outlineStyle = element.style.outline;
-          element.style.outline = "none";
+          _outlineStyle = element.style.outlineStyle;
+          element.style.outlineStyle = "none";
           on(window, "keydown", restoreOutline);
         }
         function restoreOutline() {
           if (!_outlineElement) {
             return;
           }
-          _outlineElement.style.outline = _outlineStyle;
+          _outlineElement.style.outlineStyle = _outlineStyle;
           _outlineElement = void 0;
           _outlineStyle = void 0;
           off(window, "keydown", restoreOutline);
@@ -2644,7 +2644,7 @@
               return false;
             }
             requestAnimFrame2(function() {
-              this._moveStart(true, false)._animateZoom(center, zoom3, true);
+              this._moveStart(true, options2.noMoveStart || false)._animateZoom(center, zoom3, true);
             }, this);
             return true;
           },
@@ -2793,6 +2793,7 @@
             this._layers = [];
             this._lastZIndex = 0;
             this._handlingClick = false;
+            this._preventClick = false;
             for (var i2 in baseLayers) {
               this._addLayer(baseLayers[i2], i2);
             }
@@ -2979,6 +2980,9 @@
             return label;
           },
           _onInputClick: function() {
+            if (this._preventClick) {
+              return;
+            }
             var inputs = this._layerControlInputs, input, layer;
             var addedLayers = [], removedLayers = [];
             this._handlingClick = true;
@@ -3020,10 +3024,13 @@
           },
           _expandSafely: function() {
             var section = this._section;
+            this._preventClick = true;
             on(section, "click", preventDefault);
             this.expand();
+            var that = this;
             setTimeout(function() {
               off(section, "click", preventDefault);
+              that._preventClick = false;
             });
           }
         });
@@ -3438,16 +3445,101 @@
             off(document, "mouseup touchend touchcancel", this._onUp, this);
             enableImageDrag();
             enableTextSelection();
-            if (this._moved && this._moving) {
+            var fireDragend = this._moved && this._moving;
+            this._moving = false;
+            Draggable._dragging = false;
+            if (fireDragend) {
               this.fire("dragend", {
                 noInertia,
                 distance: this._newPos.distanceTo(this._startPos)
               });
             }
-            this._moving = false;
-            Draggable._dragging = false;
           }
         });
+        function clipPolygon(points, bounds3, round2) {
+          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
+          for (i2 = 0, len = points.length; i2 < len; i2++) {
+            points[i2]._code = _getBitCode(points[i2], bounds3);
+          }
+          for (k = 0; k < 4; k++) {
+            edge2 = edges[k];
+            clippedPoints = [];
+            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
+              a = points[i2];
+              b = points[j];
+              if (!(a._code & edge2)) {
+                if (b._code & edge2) {
+                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                  p._code = _getBitCode(p, bounds3);
+                  clippedPoints.push(p);
+                }
+                clippedPoints.push(a);
+              } else if (!(b._code & edge2)) {
+                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
+                p._code = _getBitCode(p, bounds3);
+                clippedPoints.push(p);
+              }
+            }
+            points = clippedPoints;
+          }
+          return points;
+        }
+        function polygonCenter(latlngs, crs) {
+          var i2, j, p1, p2, f, area, x, y, center;
+          if (!latlngs || latlngs.length === 0) {
+            throw new Error("latlngs not passed");
+          }
+          if (!isFlat(latlngs)) {
+            console.warn("latlngs are not flat! Only the first ring will be used");
+            latlngs = latlngs[0];
+          }
+          var centroidLatLng = toLatLng([0, 0]);
+          var bounds3 = toLatLngBounds(latlngs);
+          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
+          if (areaBounds < 1700) {
+            centroidLatLng = centroid(latlngs);
+          }
+          var len = latlngs.length;
+          var points = [];
+          for (i2 = 0; i2 < len; i2++) {
+            var latlng = toLatLng(latlngs[i2]);
+            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+          }
+          area = x = y = 0;
+          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
+            p1 = points[i2];
+            p2 = points[j];
+            f = p1.y * p2.x - p2.y * p1.x;
+            x += (p1.x + p2.x) * f;
+            y += (p1.y + p2.y) * f;
+            area += f * 3;
+          }
+          if (area === 0) {
+            center = points[0];
+          } else {
+            center = [x / area, y / area];
+          }
+          var latlngCenter = crs.unproject(toPoint(center));
+          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
+        }
+        function centroid(coords2) {
+          var latSum = 0;
+          var lngSum = 0;
+          var len = 0;
+          for (var i2 = 0; i2 < coords2.length; i2++) {
+            var latlng = toLatLng(coords2[i2]);
+            latSum += latlng.lat;
+            lngSum += latlng.lng;
+            len++;
+          }
+          return toLatLng([latSum / len, lngSum / len]);
+        }
+        var PolyUtil = {
+          __proto__: null,
+          clipPolygon,
+          polygonCenter,
+          centroid
+        };
         function simplify(points, tolerance) {
           if (!tolerance || !points.length) {
             return points.slice();
@@ -3593,11 +3685,18 @@
             console.warn("latlngs are not flat! Only the first ring will be used");
             latlngs = latlngs[0];
           }
-          var points = [];
-          for (var j in latlngs) {
-            points.push(crs.project(toLatLng(latlngs[j])));
+          var centroidLatLng = toLatLng([0, 0]);
+          var bounds3 = toLatLngBounds(latlngs);
+          var areaBounds = bounds3.getNorthWest().distanceTo(bounds3.getSouthWest()) * bounds3.getNorthEast().distanceTo(bounds3.getNorthWest());
+          if (areaBounds < 1700) {
+            centroidLatLng = centroid(latlngs);
           }
-          var len = points.length;
+          var len = latlngs.length;
+          var points = [];
+          for (i2 = 0; i2 < len; i2++) {
+            var latlng = toLatLng(latlngs[i2]);
+            points.push(crs.project(toLatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+          }
           for (i2 = 0, halfDist = 0; i2 < len - 1; i2++) {
             halfDist += points[i2].distanceTo(points[i2 + 1]) / 2;
           }
@@ -3619,7 +3718,8 @@
               }
             }
           }
-          return crs.unproject(toPoint(center));
+          var latlngCenter = crs.unproject(toPoint(center));
+          return toLatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
         }
         var LineUtil = {
           __proto__: null,
@@ -3633,69 +3733,6 @@
           isFlat,
           _flat,
           polylineCenter
-        };
-        function clipPolygon(points, bounds3, round2) {
-          var clippedPoints, edges = [1, 4, 2, 8], i2, j, k, a, b, len, edge2, p;
-          for (i2 = 0, len = points.length; i2 < len; i2++) {
-            points[i2]._code = _getBitCode(points[i2], bounds3);
-          }
-          for (k = 0; k < 4; k++) {
-            edge2 = edges[k];
-            clippedPoints = [];
-            for (i2 = 0, len = points.length, j = len - 1; i2 < len; j = i2++) {
-              a = points[i2];
-              b = points[j];
-              if (!(a._code & edge2)) {
-                if (b._code & edge2) {
-                  p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                  p._code = _getBitCode(p, bounds3);
-                  clippedPoints.push(p);
-                }
-                clippedPoints.push(a);
-              } else if (!(b._code & edge2)) {
-                p = _getEdgeIntersection(b, a, edge2, bounds3, round2);
-                p._code = _getBitCode(p, bounds3);
-                clippedPoints.push(p);
-              }
-            }
-            points = clippedPoints;
-          }
-          return points;
-        }
-        function polygonCenter(latlngs, crs) {
-          var i2, j, p1, p2, f, area, x, y, center;
-          if (!latlngs || latlngs.length === 0) {
-            throw new Error("latlngs not passed");
-          }
-          if (!isFlat(latlngs)) {
-            console.warn("latlngs are not flat! Only the first ring will be used");
-            latlngs = latlngs[0];
-          }
-          var points = [];
-          for (var k in latlngs) {
-            points.push(crs.project(toLatLng(latlngs[k])));
-          }
-          var len = points.length;
-          area = x = y = 0;
-          for (i2 = 0, j = len - 1; i2 < len; j = i2++) {
-            p1 = points[i2];
-            p2 = points[j];
-            f = p1.y * p2.x - p2.y * p1.x;
-            x += (p1.x + p2.x) * f;
-            y += (p1.y + p2.y) * f;
-            area += f * 3;
-          }
-          if (area === 0) {
-            center = points[0];
-          } else {
-            center = [x / area, y / area];
-          }
-          return crs.unproject(toPoint(center));
-        }
-        var PolyUtil = {
-          __proto__: null,
-          clipPolygon,
-          polygonCenter
         };
         var LonLat = {
           project: function(latlng) {
@@ -4976,7 +5013,7 @@
           for (var i2 = 0, len = latlngs.length; i2 < len; i2++) {
             coords2.push(levelsDeep ? latLngsToCoords(latlngs[i2], isFlat(latlngs[i2]) ? 0 : levelsDeep - 1, closed, precision) : latLngToCoords(latlngs[i2], precision));
           }
-          if (!levelsDeep && closed) {
+          if (!levelsDeep && closed && coords2.length > 0) {
             coords2.push(coords2[0].slice());
           }
           return coords2;
@@ -5980,7 +6017,7 @@
             }
           },
           _addFocusListenersOnLayer: function(layer) {
-            var el = layer.getElement();
+            var el = typeof layer.getElement === "function" && layer.getElement();
             if (el) {
               on(el, "focus", function() {
                 this._tooltip._source = layer;
@@ -5990,13 +6027,22 @@
             }
           },
           _setAriaDescribedByOnLayer: function(layer) {
-            var el = layer.getElement();
+            var el = typeof layer.getElement === "function" && layer.getElement();
             if (el) {
               el.setAttribute("aria-describedby", this._tooltip._container.id);
             }
           },
           _openTooltip: function(e) {
-            if (!this._tooltip || !this._map || this._map.dragging && this._map.dragging.moving()) {
+            if (!this._tooltip || !this._map) {
+              return;
+            }
+            if (this._map.dragging && this._map.dragging.moving() && !this._openOnceFlag) {
+              this._openOnceFlag = true;
+              var that = this;
+              this._map.once("moveend", function() {
+                that._openOnceFlag = false;
+                that._openTooltip(e);
+              });
               return;
             }
             this._tooltip._source = e.layer || e.target;
@@ -6823,9 +6869,7 @@
           onAdd: function() {
             if (!this._container) {
               this._initContainer();
-              if (this._zoomAnimated) {
-                addClass(this._container, "leaflet-zoom-animated");
-              }
+              addClass(this._container, "leaflet-zoom-animated");
             }
             this.getPane().appendChild(this._container);
             this._update();
@@ -18319,6 +18363,14 @@
       );
       layerName.innerHTML = " " + obj.name;
       layerName.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
+      import_leaflet10.DomEvent.on(
+        layerName,
+        "click touch",
+        () => {
+          obj.layer.bringToFront();
+        },
+        this
+      );
       this._addButton(
         "visiomatic-control-trash",
         layerItem,
@@ -20884,7 +20936,7 @@
       const { min, max, minDefined, maxDefined } = iScale.getUserBounds();
       if (minDefined) {
         start = _limitValue(Math.min(
-          _lookupByKey(_parsed, iScale.axis, min).lo,
+          _lookupByKey(_parsed, axis, min).lo,
           animationsDisabled ? pointCount : _lookupByKey(points, axis, iScale.getPixelForValue(min)).lo
         ), 0, pointCount - 1);
       }
@@ -25161,6 +25213,9 @@
         count = points.length;
       }
       if (this.options.showLine) {
+        if (!this.datasetElementType) {
+          this.addElements();
+        }
         const { dataset: line, _dataset } = meta;
         line._chart = this.chart;
         line._datasetIndex = this.index;
@@ -25172,6 +25227,9 @@
           animated: !animationsDisabled,
           options: options2
         }, mode);
+      } else if (this.datasetElementType) {
+        delete meta.dataset;
+        this.datasetElementType = false;
       }
       this.updateElements(points, start, count, mode);
     }
@@ -28181,7 +28239,7 @@
     }
     return false;
   }
-  var version = "4.3.0";
+  var version = "4.3.3";
   var KNOWN_POSITIONS = [
     "top",
     "bottom",
@@ -31085,7 +31143,7 @@
           cursor.x += width + padding;
         } else if (typeof legendItem.text !== "string") {
           const fontLineHeight = labelFont.lineHeight;
-          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight);
+          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight) + padding;
         } else {
           cursor.y += lineHeight;
         }
@@ -31199,7 +31257,7 @@
     return itemHeight;
   }
   function calculateLegendItemHeight(legendItem, fontLineHeight) {
-    const labelHeight = legendItem.text ? legendItem.text.length + 0.5 : 0;
+    const labelHeight = legendItem.text ? legendItem.text.length : 0;
     return fontLineHeight * labelHeight;
   }
   function isListened(type, opts) {
@@ -33452,7 +33510,9 @@
           ctx.fillRect(-width / 2 - padding.left, -offset - tickFont.size / 2 - padding.top, width + padding.width, tickFont.size + padding.height);
         }
         renderText(ctx, tick.label, 0, -offset, tickFont, {
-          color: optsAtIndex.color
+          color: optsAtIndex.color,
+          strokeColor: optsAtIndex.textStrokeColor,
+          strokeWidth: optsAtIndex.textStrokeWidth
         });
       });
       ctx.restore();
@@ -33795,7 +33855,7 @@
       if (time === max || options2.bounds === "ticks" || count === 1) {
         addTick(ticks, time, timestamps);
       }
-      return Object.keys(ticks).sort((a, b) => a - b).map((x) => +x);
+      return Object.keys(ticks).sort(sorter).map((x) => +x);
     }
     getLabelForValue(value) {
       const adapter = this._adapter;
@@ -33994,6 +34054,18 @@
         }
       }
       return table;
+    }
+    _generate() {
+      const min = this.min;
+      const max = this.max;
+      let timestamps = super.getDataTimestamps();
+      if (!timestamps.includes(min) || !timestamps.length) {
+        timestamps.splice(0, 0, min);
+      }
+      if (!timestamps.includes(max) || timestamps.length === 1) {
+        timestamps.push(max);
+      }
+      return timestamps.sort((a, b) => a - b);
     }
     _getTimestampsForTable() {
       let timestamps = this._cache.all || [];
@@ -37344,8 +37416,8 @@
   globalObject.V = Visiomatic_exports;
 })();
 /* @preserve
- * Leaflet 1.9.3, a JS library for interactive maps. https://leafletjs.com
- * (c) 2010-2022 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 /*!
  * @kurkle/color v0.3.2
@@ -37354,7 +37426,7 @@
  * Released under the MIT License
  */
 /*!
- * Chart.js v4.3.0
+ * Chart.js v4.3.3
  * https://www.chartjs.org
  * (c) 2023 Chart.js Contributors
  * Released under the MIT License

@@ -787,6 +787,12 @@ export const UI = Control.extend( /** @lends UI */ {
 		);
 		layerName.innerHTML = ' ' + obj.name;
 		layerName.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
+		// Bring layer to front by clicking on the layer name.
+		DomEvent.on(layerName,
+			'click touch',
+			() => {obj.layer.bringToFront()},
+			this
+		);
 
 		this._addButton('visiomatic-control-trash',
 			layerItem,
