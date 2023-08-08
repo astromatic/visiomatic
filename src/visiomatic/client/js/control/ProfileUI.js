@@ -301,6 +301,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point1 = wcs.project(path[0]),
 			point2 = wcs.project(path[1]);
 
+		// Check if line is drawn from left-to-right; if not, swap endpoints.
 		if (point2.x < point1.x) {
 			const x = point2.x,
 				y = point2.y;
@@ -309,6 +310,9 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point1.x = x;
 			point2.y = point1.y;
 			point1.y = y;
+			line.lr = false;
+		} else {
+			line.lr = true;
 		}
 
 		response = await fetch(
