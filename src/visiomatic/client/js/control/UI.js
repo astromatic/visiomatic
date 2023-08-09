@@ -63,7 +63,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	   removed.
 
 	 * @param {boolean} [options.collapsed=true]
-	   Start dialog in the collapsed state?.
+	   Start dialog in the collapsed state?
 
 	 * @param {boolean} [options.position='topleft']
 	   Position of the dialog on the map.
@@ -496,6 +496,8 @@ export const UI = Control.extend( /** @lends UI */ {
 	   Default color picked by default.
 	 * @param {string} storageKey
 	   String to be used as a local browser storage key.
+	 * @param {boolean} [allowEmpty]
+	   Allow "empty" input colors?
 	 * @param {string} [title]
 	   Title of the color picker (for, e.g., display as a tooltip).
 	 * @param {UI~colorCallback} [fn]
@@ -508,25 +510,26 @@ export const UI = Control.extend( /** @lends UI */ {
 		subClassName,
 		defaultColor,
 	    storageKey,
+		allowEmpty=False,
 	    title=undefined,
 	    fn=undefined
 	) {
 		const	_this = this,
 			colpick = DomUtil.create('input', className, parent);
 
-		colpick.type = 'color';
+		colpick.type = 'text';
 		colpick.value = defaultColor;
 		colpick.id = className + '-' + subClassName;
-
 		$(document).ready(function () {
 			$(colpick).spectrum({
 				showInput: true,
+				allowEmpty: allowEmpty,
 				appendTo: '#' + _this._id,
 				showPaletteOnly: true,
 				togglePaletteOnly: true,
 				localStorageKey: storageKey,
 				change: function (color) {
-					colpick.value = color.toHexString();
+					colpick.value = color? color.toHexString() : '';
 				}
 			}).on('show.spectrum', function () {
 				if (_this._container) {

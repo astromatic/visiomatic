@@ -138,7 +138,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			visio.colorSat,
 			0.05,
 			0.0, 5.0,
-			this._updateMix
+			layer.updateMix
 		);
 
 		// Gamma
@@ -181,20 +181,6 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			}
 		);
 
-	},
-
-	/**
-	   Update the color mixing matrix of a VisiOmatic layer.
-	 * @private
-	 * @param {VTileLayer} layer
-	   VisiOmatic layer.
-	 */
-	_updateMix: function (layer) {
-		const	colors = layer.visio.rgb;
-		for (const c in colors) { 
-			layer.rgbToMix(c);
-		}
-		return;
 	}
 
 });

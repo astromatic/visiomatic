@@ -283,15 +283,10 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				className + '-color',
 				elem,
 				'channel',
-				visio.rgb[visio.channel].toStr(),
+				layer.getChannelColor(visio.channel),
+				true,
 				'visiomaticChannel',
-				'Click to set channel color',
-				function () {
-					const	chan = visio.channel,
-				    hex = $(colpick).val();
-					_this._updateMix(layer, chan, rgb(hex));
-					_this.collapsedOff = true;
-				}
+				'Click to set channel color'
 			);
 
 		layer._setAttr('cMap', 'grey');
@@ -425,12 +420,19 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				visio.maxValue[channel]);
 		_this._chanSelect.selectedIndex = channel + 1;
 		if (colorElem) {
-			$(colorElem).spectrum('set', visio.rgb[channel].toStr());
+			const	rgbStr = layer.getChannelColor(channel);
+
+			$(colorElem).spectrum('set', rgbStr);
 			$(colorElem)
-				.val(visio.rgb[channel].toStr())
+				.val(rgbStr)
 				.off('change')
 				.on('change', function () {
-					_this._updateMix(layer, channel, rgb($(colorElem).val()));
+					const	color = $(colorElem).val();
+					_this._updateChannelMix(
+						layer,
+						channel,
+						color ? rgb(color) : false
+					);
 				});
 		}
 
@@ -450,8 +452,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			.step(step)
 			.off('change')
 			.on('change', function () {
-				_this._setAttr(
-					layer, 'maxValue[' + channel + ']',
+				layer._setAttr(
+					'maxValue[' + channel + ']',
 					_this._maxElem.spinbox.value()
 				);
 			}, this);
@@ -468,7 +470,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 * @param {RGB} channel_rgb
 	   RGB color.
 	 */
-	_updateMix: function (layer, channel, channel_rgb) {
+	_updateChannelMix: function (layer, channel, channel_rgb) {
 		layer.rgbToMix(channel, channel_rgb);
 		this._updateChannelList(layer);
 		layer.redraw();
@@ -546,9 +548,9 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	   VisiOmatic layer.
 	 */
 	_updateColPick: function (layer) {
-		const	visio = layer.visio;
-		$(this._chanColPick).spectrum('set', visio.rgb[visio.channel].toStr());
-		$(this._chanColPick).val(visio.rgb[visio.channel].toStr());
+		const	rgbStr = layer.getChannelColor(layer.visio.channel);
+		$(this._chanColPick).spectrum('set', rgbStr);
+		$(this._chanColPick).val(rgbStr);
 	},
 
 	/**
@@ -564,7 +566,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 */
 	_activateTrashElem: function (trashElem, layer, channel) {
 		DomEvent.on(trashElem, 'click touch', function () {
-			this._updateMix(layer, channel, false);
+			this._updateChannelMix(layer, channel, false);
 			if (layer === this._layer && channel === layer.visio.channel) {
 				this._updateColPick(layer);
 			}

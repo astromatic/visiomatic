@@ -102,6 +102,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				elem,
 				'catalog',
 				this.options.color,
+				false,
 				'visiomaticCatalog',
 				'Click to set catalog color'
 			);

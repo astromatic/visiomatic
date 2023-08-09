@@ -523,6 +523,16 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
+	 * Get color for the given channel.
+	 * @param {number} channel - Input channel.
+	 * @return {string} color string.
+	 */
+	getChannelColor: function(channel) {
+		const	rgb = this.visio.rgb
+		return channel in rgb ? this.visio.rgb[channel].toStr() : '';
+	},
+
+	/**
 	 * Update the color mixing matrix with the RGB contribution of a given
 	   channel.
 	 * @param {number} channel - Input channel.
@@ -574,12 +584,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   ``'color'`` mode
 	 */
 	updateMix: function () {
-		const	visio = this.visio,
-			nchannel = visio.nChannel;
+		const	visio = this.visio;
 
 		visio.mode = 'color';
 		for (const c in visio.rgb) {
-			this.rgbToMix(c, visio.rgb[c]);
+			this.rgbToMix(c);
 		}
 	},
 

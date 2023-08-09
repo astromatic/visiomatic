@@ -18186,20 +18186,21 @@
       }
       return select;
     },
-    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, title = void 0, fn = void 0) {
+    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title = void 0, fn = void 0) {
       const _this = this, colpick = import_leaflet10.DomUtil.create("input", className, parent);
-      colpick.type = "color";
+      colpick.type = "text";
       colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
       $(document).ready(function() {
         $(colpick).spectrum({
           showInput: true,
+          allowEmpty,
           appendTo: "#" + _this._id,
           showPaletteOnly: true,
           togglePaletteOnly: true,
           localStorageKey: storageKey,
           change: function(color2) {
-            colpick.value = color2.toHexString();
+            colpick.value = color2 ? color2.toHexString() : "";
           }
         }).on("show.spectrum", function() {
           if (_this._container) {
@@ -18390,6 +18391,7 @@
         elem,
         "catalog",
         this.options.color,
+        false,
         "visiomaticCatalog",
         "Click to set catalog color"
       );
@@ -18732,14 +18734,10 @@
         className + "-color",
         elem,
         "channel",
-        visio.rgb[visio.channel].toStr(),
+        layer.getChannelColor(visio.channel),
+        true,
         "visiomaticChannel",
-        "Click to set channel color",
-        function() {
-          const chan = visio.channel, hex2 = $(colpick).val();
-          _this._updateMix(layer, chan, rgb(hex2));
-          _this.collapsedOff = true;
-        }
+        "Click to set channel color"
       );
       layer._setAttr("cMap", "grey");
       layer.updateMix();
@@ -18830,9 +18828,15 @@
       );
       _this._chanSelect.selectedIndex = channel + 1;
       if (colorElem) {
-        $(colorElem).spectrum("set", visio.rgb[channel].toStr());
-        $(colorElem).val(visio.rgb[channel].toStr()).off("change").on("change", function() {
-          _this._updateMix(layer, channel, rgb($(colorElem).val()));
+        const rgbStr = layer.getChannelColor(channel);
+        $(colorElem).spectrum("set", rgbStr);
+        $(colorElem).val(rgbStr).off("change").on("change", function() {
+          const color2 = $(colorElem).val();
+          _this._updateChannelMix(
+            layer,
+            channel,
+            color2 ? rgb(color2) : false
+          );
         });
       }
       this._minElem.spinbox.value(visio.minValue[channel]).step(step).off("change").on("change", function() {
@@ -18842,14 +18846,13 @@
         );
       }, this);
       this._maxElem.spinbox.value(visio.maxValue[channel]).step(step).off("change").on("change", function() {
-        _this._setAttr(
-          layer,
+        layer._setAttr(
           "maxValue[" + channel + "]",
           _this._maxElem.spinbox.value()
         );
       }, this);
     },
-    _updateMix: function(layer, channel, channel_rgb) {
+    _updateChannelMix: function(layer, channel, channel_rgb) {
       layer.rgbToMix(channel, channel_rgb);
       this._updateChannelList(layer);
       layer.redraw();
@@ -18899,13 +18902,13 @@
       }
     },
     _updateColPick: function(layer) {
-      const visio = layer.visio;
-      $(this._chanColPick).spectrum("set", visio.rgb[visio.channel].toStr());
-      $(this._chanColPick).val(visio.rgb[visio.channel].toStr());
+      const rgbStr = layer.getChannelColor(layer.visio.channel);
+      $(this._chanColPick).spectrum("set", rgbStr);
+      $(this._chanColPick).val(rgbStr);
     },
     _activateTrashElem: function(trashElem, layer, channel) {
       import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
-        this._updateMix(layer, channel, false);
+        this._updateChannelMix(layer, channel, false);
         if (layer === this._layer && channel === layer.visio.channel) {
           this._updateColPick(layer);
         }
@@ -19747,7 +19750,7 @@
         0.05,
         0,
         5,
-        this._updateMix
+        layer.updateMix
       );
       this._input.gamma = this._addNumericalInput(
         layer,
@@ -19783,13 +19786,6 @@
           layer.redraw();
         }
       );
-    },
-    _updateMix: function(layer) {
-      const colors2 = layer.visio.rgb;
-      for (const c2 in colors2) {
-        layer.rgbToMix(c2);
-      }
-      return;
     }
   });
   var imageUI = function(options2) {
@@ -34904,6 +34900,7 @@
           elem,
           "profile",
           options2.profileColor,
+          false,
           "visiomaticProfile",
           "Click to set line color"
         );
@@ -34954,6 +34951,7 @@
           elem,
           "spectrum",
           options2.spectrumColor,
+          false,
           "visiomaticSpectra",
           "Click to set marker color"
         );
@@ -35230,6 +35228,7 @@
         elem,
         "region",
         this.options.color,
+        false,
         "visiomaticRegion",
         "Click to set region color"
       );
@@ -37077,6 +37076,10 @@
         alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
+    getChannelColor: function(channel) {
+      const rgb2 = this.visio.rgb;
+      return channel in rgb2 ? this.visio.rgb[channel].toStr() : "";
+    },
     rgbToMix: function(channel, rgb2) {
       const visio = this.visio;
       if (rgb2) {
@@ -37099,10 +37102,10 @@
       this.visio.mode = "mono";
     },
     updateMix: function() {
-      const visio = this.visio, nchannel2 = visio.nChannel;
+      const visio = this.visio;
       visio.mode = "color";
       for (const c2 in visio.rgb) {
-        this.rgbToMix(c2, visio.rgb[c2]);
+        this.rgbToMix(c2);
       }
     },
     _gammaCorr: function(val) {
