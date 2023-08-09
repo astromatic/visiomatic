@@ -436,6 +436,7 @@ export const UI = Control.extend( /** @lends UI */ {
 			var	index = parseInt(i, 10);
 			opt[index] = document.createElement('option');
 			opt[index].text = items[index];
+			opt[index].style['background-color'] = 'orange';
 			opt[index].value = index;
 			if (disabled && disabled[index]) {
 				opt[index].disabled = true;
@@ -577,7 +578,7 @@ export const UI = Control.extend( /** @lends UI */ {
 			});
 
 		flip.on('change', function () {
-			this._onInputChange(layer, attr, flip.value());
+			layer._setAttr(attr, flip.value());
 		}, this);
 
 		return elem;
@@ -633,7 +634,7 @@ export const UI = Control.extend( /** @lends UI */ {
 
 		spinbox.on('change', function () {
 			VUtil.flashElement(spinbox._input);
-			this._onInputChange(layer, attr, spinbox.value(), fn);
+			layer._setAttr(attr, spinbox.value(), fn);
 		}, this);
 
 		return elem;
@@ -670,37 +671,6 @@ export const UI = Control.extend( /** @lends UI */ {
 			         0.001).toPrecision(1));
 
 		return step === 0.0 ? 1.0 : step;
-	},
-
-	/**
-	 * Action performed on a layer attribute when a widget value is modified.
-	 * @private
-	 * @param {VTileLayer} layer
-	   Layer affected by the update.
-	 * @param {string} attr
-	   Name of the (numerical) layer attribute to be updated.
-	 * @param {*} value
-	   New value.
-	 * @param {UI~layerCallback} [fn]
-	   Optional additional callback function.
-	 */
-	_onInputChange:	function (
-		layer,
-		attr,
-		value,
-		fn=undefined
-	) {
-
-		const	attrarr = attr.split(/\[|\]/);
-		if (attrarr[1]) {
-			layer.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
-		}	else {
-			layer.visio[attrarr[0]] = value;
-		}
-		if (fn) {
-			fn(layer);
-		}
-		layer.redraw();
 	},
 
 	/**

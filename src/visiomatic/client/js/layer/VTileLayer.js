@@ -608,6 +608,34 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
+	 * Update layer attribute and redraw layer content.
+	 * @private
+	 * @param {string} attr
+	   Name of the (numerical) layer attribute to be updated.
+	 * @param {*} value
+	   New value.
+	 * @param {UI~layerCallback} [fn]
+	   Optional additional callback function.
+	 */
+	_setAttr:	function (
+		attr,
+		value,
+		fn=undefined
+	) {
+
+		const	attrarr = attr.split(/\[|\]/);
+		if (attrarr[1]) {
+			this.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
+		}	else {
+			this.visio[attrarr[0]] = value;
+		}
+		if (fn) {
+			fn(this);
+		}
+		this.redraw();
+	},
+
+	/**
 	 * Add the layer to the map.
 	 * @override
 	 * @param {object} map - Leaflet map to add the layer to.

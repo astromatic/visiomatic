@@ -244,7 +244,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function (value) {
-				_this._onInputChange(layer, 'cMap', value);
+				layer._setAttr('cMap', value);
 			};
 
 		for (let c in cmaps) {
@@ -294,7 +294,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				}
 			);
 
-		this._onInputChange(layer, 'cMap', 'grey');
+		layer._setAttr('cMap', 'grey');
 		layer.updateMix();
 
 		this._chanSelect = this._addSelectMenu(
@@ -439,8 +439,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			.step(step)
 			.off('change')
 			.on('change', function () {
-				_this._onInputChange(
-					layer, 'minValue[' + channel + ']',
+				layer._setAttr(
+					'minValue[' + channel + ']',
 					_this._minElem.spinbox.value()
 				);
 			}, this);
@@ -450,7 +450,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			.step(step)
 			.off('change')
 			.on('change', function () {
-				_this._onInputChange(
+				_this._setAttr(
 					layer, 'maxValue[' + channel + ']',
 					_this._maxElem.spinbox.value()
 				);
