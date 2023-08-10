@@ -678,7 +678,7 @@ class Tiled(object):
 
     def get_profiles(
             self,
-            channel: Union[int, None],
+            channels: Union[Tuple[int, ...], None],
             pos1: Tuple[int, int],
             pos2: Tuple[int, int]) -> np.ndarray:
         """
@@ -687,8 +687,8 @@ class Tiled(object):
         
         Parameters
         ----------
-        channel: int or None
-            Data channel (first channel is 1) or None for all channels.
+        channels: tuple[int, ...] or None
+            List of channels or None for all channels.
         pos1:  tuple[int, int]
             Start pixel coordinates.
         pos2:  tuple[int, int]
@@ -700,14 +700,18 @@ class Tiled(object):
             Profile pydantic model of pixel value(s) along the line.
         """
         shape = self.shape
+        channels = np.array(channels) - 1 if channels \
+            else np.arange(self.nchannels)
         y, x = line(pos1[1] - 1, pos1[0] - 1, pos2[1] - 1, pos2[0] - 1)
-        values = np.full((x.size, self.nchannels), np.nan, dtype=np.float32)
+        values = np.full((x.size, channels.size), np.nan, dtype=np.float32)
         valid = (x>=0) & (x<shape[2]) & (y>=0) & (y<shape[1])
-        values[valid] = self.get_data()[..., y[valid], x[valid]].transpose()
+        values[valid] = self.get_data()[
+        	channels[:, np.newaxis],
+        	y[valid],
+        	x[valid]
+        ].transpose()
         return ProfileModel(
-            profile=tuple(zip(x, y, tuple(map(tuple,
-                values if channel is None else values[:, channel-1: channel]
-            ))))
+            profile=tuple(zip(x, y, tuple(map(tuple, values))))
         )
 
 

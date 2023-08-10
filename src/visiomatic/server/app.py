@@ -185,9 +185,9 @@ def create_app() -> FastAPI:
                 None,
                 title="Get image information instead of a tile"
                 ),
-            CHAN: int =  Query(
+            CHAN: list[int] =  Query(
                 None,
-                title="Channel index (mono-channel mode)",
+                title="Channel index (mono-channel mode) or indices (measurements)",
                 ge=0
                 ),
             CMP: Literal[tuple(colordict.keys())] = Query(
@@ -366,7 +366,7 @@ def create_app() -> FastAPI:
         pix = tiled.get_tile_cached(
             tl,
             ti,
-            channel=CHAN,
+            channel=CHAN[0] if CHAN else CHAN,
             minmax=minmax,
             mix=mix,
             contrast=CNT,
