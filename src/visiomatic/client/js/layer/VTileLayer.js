@@ -523,6 +523,16 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
+	 * Get color for the given channel.
+	 * @param {number} channel - Input channel.
+	 * @return {string} color string.
+	 */
+	getChannelColor: function(channel) {
+		const	rgb = this.visio.rgb
+		return channel in rgb ? this.visio.rgb[channel].toStr() : '';
+	},
+
+	/**
 	 * Update the color mixing matrix with the RGB contribution of a given
 	   channel.
 	 * @param {number} channel - Input channel.
@@ -574,12 +584,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   ``'color'`` mode
 	 */
 	updateMix: function () {
-		const	visio = this.visio,
-			nchannel = visio.nChannel;
+		const	visio = this.visio;
 
 		visio.mode = 'color';
 		for (const c in visio.rgb) {
-			this.rgbToMix(c, visio.rgb[c]);
+			this.rgbToMix(c);
 		}
 	},
 
@@ -605,6 +614,34 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	_readVisioKey: function (str, keyword, regexp) {
 		const reg = new RegExp(keyword + ':' + regexp);
 		return reg.exec(str);
+	},
+
+	/**
+	 * Update layer attribute and redraw layer content.
+	 * @private
+	 * @param {string} attr
+	   Name of the (numerical) layer attribute to be updated.
+	 * @param {*} value
+	   New value.
+	 * @param {UI~layerCallback} [fn]
+	   Optional additional callback function.
+	 */
+	_setAttr:	function (
+		attr,
+		value,
+		fn=undefined
+	) {
+
+		const	attrarr = attr.split(/\[|\]/);
+		if (attrarr[1]) {
+			this.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
+		}	else {
+			this.visio[attrarr[0]] = value;
+		}
+		if (fn) {
+			fn(this);
+		}
+		this.redraw();
 	},
 
 	/**

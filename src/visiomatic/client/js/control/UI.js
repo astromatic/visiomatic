@@ -63,7 +63,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	   removed.
 
 	 * @param {boolean} [options.collapsed=true]
-	   Start dialog in the collapsed state?.
+	   Start dialog in the collapsed state?
 
 	 * @param {boolean} [options.position='topleft']
 	   Position of the dialog on the map.
@@ -436,6 +436,7 @@ export const UI = Control.extend( /** @lends UI */ {
 			var	index = parseInt(i, 10);
 			opt[index] = document.createElement('option');
 			opt[index].text = items[index];
+			opt[index].style['background-color'] = 'orange';
 			opt[index].value = index;
 			if (disabled && disabled[index]) {
 				opt[index].disabled = true;
@@ -495,6 +496,8 @@ export const UI = Control.extend( /** @lends UI */ {
 	   Default color picked by default.
 	 * @param {string} storageKey
 	   String to be used as a local browser storage key.
+	 * @param {boolean} [allowEmpty]
+	   Allow "empty" input colors?
 	 * @param {string} [title]
 	   Title of the color picker (for, e.g., display as a tooltip).
 	 * @param {UI~colorCallback} [fn]
@@ -507,25 +510,26 @@ export const UI = Control.extend( /** @lends UI */ {
 		subClassName,
 		defaultColor,
 	    storageKey,
+		allowEmpty=False,
 	    title=undefined,
 	    fn=undefined
 	) {
 		const	_this = this,
 			colpick = DomUtil.create('input', className, parent);
 
-		colpick.type = 'color';
+		colpick.type = 'text';
 		colpick.value = defaultColor;
 		colpick.id = className + '-' + subClassName;
-
 		$(document).ready(function () {
 			$(colpick).spectrum({
 				showInput: true,
+				allowEmpty: allowEmpty,
 				appendTo: '#' + _this._id,
 				showPaletteOnly: true,
 				togglePaletteOnly: true,
 				localStorageKey: storageKey,
 				change: function (color) {
-					colpick.value = color.toHexString();
+					colpick.value = color? color.toHexString() : '';
 				}
 			}).on('show.spectrum', function () {
 				if (_this._container) {
@@ -577,7 +581,7 @@ export const UI = Control.extend( /** @lends UI */ {
 			});
 
 		flip.on('change', function () {
-			this._onInputChange(layer, attr, flip.value());
+			layer._setAttr(attr, flip.value());
 		}, this);
 
 		return elem;
@@ -633,7 +637,7 @@ export const UI = Control.extend( /** @lends UI */ {
 
 		spinbox.on('change', function () {
 			VUtil.flashElement(spinbox._input);
-			this._onInputChange(layer, attr, spinbox.value(), fn);
+			layer._setAttr(attr, spinbox.value(), fn);
 		}, this);
 
 		return elem;
@@ -670,37 +674,6 @@ export const UI = Control.extend( /** @lends UI */ {
 			         0.001).toPrecision(1));
 
 		return step === 0.0 ? 1.0 : step;
-	},
-
-	/**
-	 * Action performed on a layer attribute when a widget value is modified.
-	 * @private
-	 * @param {VTileLayer} layer
-	   Layer affected by the update.
-	 * @param {string} attr
-	   Name of the (numerical) layer attribute to be updated.
-	 * @param {*} value
-	   New value.
-	 * @param {UI~layerCallback} [fn]
-	   Optional additional callback function.
-	 */
-	_onInputChange:	function (
-		layer,
-		attr,
-		value,
-		fn=undefined
-	) {
-
-		const	attrarr = attr.split(/\[|\]/);
-		if (attrarr[1]) {
-			layer.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
-		}	else {
-			layer.visio[attrarr[0]] = value;
-		}
-		if (fn) {
-			fn(layer);
-		}
-		layer.redraw();
 	},
 
 	/**
@@ -787,6 +760,12 @@ export const UI = Control.extend( /** @lends UI */ {
 		);
 		layerName.innerHTML = ' ' + obj.name;
 		layerName.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
+		// Bring layer to front by clicking on the layer name.
+		DomEvent.on(layerName,
+			'click touch',
+			() => {obj.layer.bringToFront()},
+			this
+		);
 
 		this._addButton('visiomatic-control-trash',
 			layerItem,

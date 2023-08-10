@@ -512,6 +512,7 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 }
 
 .visiomatic-control-layername {
+	cursor: pointer;
 	display: table-cell;
 	vertical-align: middle;
 	padding-left: 4px;

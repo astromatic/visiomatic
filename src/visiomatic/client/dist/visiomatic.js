@@ -18147,6 +18147,7 @@
         var index2 = parseInt(i2, 10);
         opt[index2] = document.createElement("option");
         opt[index2].text = items[index2];
+        opt[index2].style["background-color"] = "orange";
         opt[index2].value = index2;
         if (disabled && disabled[index2]) {
           opt[index2].disabled = true;
@@ -18185,20 +18186,21 @@
       }
       return select;
     },
-    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, title = void 0, fn = void 0) {
+    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title = void 0, fn = void 0) {
       const _this = this, colpick = import_leaflet10.DomUtil.create("input", className, parent);
-      colpick.type = "color";
+      colpick.type = "text";
       colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
       $(document).ready(function() {
         $(colpick).spectrum({
           showInput: true,
+          allowEmpty,
           appendTo: "#" + _this._id,
           showPaletteOnly: true,
           togglePaletteOnly: true,
           localStorageKey: storageKey,
           change: function(color2) {
-            colpick.value = color2.toHexString();
+            colpick.value = color2 ? color2.toHexString() : "";
           }
         }).on("show.spectrum", function() {
           if (_this._container) {
@@ -18220,7 +18222,7 @@
         title
       });
       flip.on("change", function() {
-        this._onInputChange(layer, attr, flip.value());
+        layer._setAttr(attr, flip.value());
       }, this);
       return elem;
     },
@@ -18234,7 +18236,7 @@
       });
       spinbox.on("change", function() {
         VUtil.flashElement(spinbox._input);
-        this._onInputChange(layer, attr, spinbox.value(), fn);
+        layer._setAttr(attr, spinbox.value(), fn);
       }, this);
       return elem;
     },
@@ -18248,18 +18250,6 @@
     _spinboxStep: function(min, max) {
       const step = parseFloat((Math.abs(max === min ? max : max - min) * 1e-3).toPrecision(1));
       return step === 0 ? 1 : step;
-    },
-    _onInputChange: function(layer, attr, value, fn = void 0) {
-      const attrarr = attr.split(/\[|\]/);
-      if (attrarr[1]) {
-        layer.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
-      } else {
-        layer.visio[attrarr[0]] = value;
-      }
-      if (fn) {
-        fn(layer);
-      }
-      layer.redraw();
     },
     _updateLayerList: function() {
       if (!this._dialog) {
@@ -18319,6 +18309,14 @@
       );
       layerName.innerHTML = " " + obj.name;
       layerName.style.textShadow = "0px 0px 5px " + obj.layer.nameColor;
+      import_leaflet10.DomEvent.on(
+        layerName,
+        "click touch",
+        () => {
+          obj.layer.bringToFront();
+        },
+        this
+      );
       this._addButton(
         "visiomatic-control-trash",
         layerItem,
@@ -18393,6 +18391,7 @@
         elem,
         "catalog",
         this.options.color,
+        false,
         "visiomaticCatalog",
         "Click to set catalog color"
       );
@@ -18715,7 +18714,7 @@
       );
       const line2 = this._addDialogLine("LUT:", box), elem2 = this._addDialogElement(line2);
       const cmapinput = import_leaflet12.DomUtil.create("div", className + "-cmaps", elem2), cbutton = [], cmaps = ["grey", "jet", "cold", "hot"], _changeMap = function(value) {
-        _this._onInputChange(layer, "cMap", value);
+        layer._setAttr("cMap", value);
       };
       for (let c2 in cmaps) {
         cbutton[c2] = this._addRadioButton(
@@ -18735,16 +18734,12 @@
         className + "-color",
         elem,
         "channel",
-        visio.rgb[visio.channel].toStr(),
+        layer.getChannelColor(visio.channel),
+        true,
         "visiomaticChannel",
-        "Click to set channel color",
-        function() {
-          const chan = visio.channel, hex2 = $(colpick).val();
-          _this._updateMix(layer, chan, rgb(hex2));
-          _this.collapsedOff = true;
-        }
+        "Click to set channel color"
       );
-      this._onInputChange(layer, "cMap", "grey");
+      layer._setAttr("cMap", "grey");
       layer.updateMix();
       this._chanSelect = this._addSelectMenu(
         this._className + "-select",
@@ -18833,27 +18828,31 @@
       );
       _this._chanSelect.selectedIndex = channel + 1;
       if (colorElem) {
-        $(colorElem).spectrum("set", visio.rgb[channel].toStr());
-        $(colorElem).val(visio.rgb[channel].toStr()).off("change").on("change", function() {
-          _this._updateMix(layer, channel, rgb($(colorElem).val()));
+        const rgbStr = layer.getChannelColor(channel);
+        $(colorElem).spectrum("set", rgbStr);
+        $(colorElem).val(rgbStr).off("change").on("change", function() {
+          const color2 = $(colorElem).val();
+          _this._updateChannelMix(
+            layer,
+            channel,
+            color2 ? rgb(color2) : false
+          );
         });
       }
       this._minElem.spinbox.value(visio.minValue[channel]).step(step).off("change").on("change", function() {
-        _this._onInputChange(
-          layer,
+        layer._setAttr(
           "minValue[" + channel + "]",
           _this._minElem.spinbox.value()
         );
       }, this);
       this._maxElem.spinbox.value(visio.maxValue[channel]).step(step).off("change").on("change", function() {
-        _this._onInputChange(
-          layer,
+        layer._setAttr(
           "maxValue[" + channel + "]",
           _this._maxElem.spinbox.value()
         );
       }, this);
     },
-    _updateMix: function(layer, channel, channel_rgb) {
+    _updateChannelMix: function(layer, channel, channel_rgb) {
       layer.rgbToMix(channel, channel_rgb);
       this._updateChannelList(layer);
       layer.redraw();
@@ -18903,13 +18902,13 @@
       }
     },
     _updateColPick: function(layer) {
-      const visio = layer.visio;
-      $(this._chanColPick).spectrum("set", visio.rgb[visio.channel].toStr());
-      $(this._chanColPick).val(visio.rgb[visio.channel].toStr());
+      const rgbStr = layer.getChannelColor(layer.visio.channel);
+      $(this._chanColPick).spectrum("set", rgbStr);
+      $(this._chanColPick).val(rgbStr);
     },
     _activateTrashElem: function(trashElem, layer, channel) {
       import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
-        this._updateMix(layer, channel, false);
+        this._updateChannelMix(layer, channel, false);
         if (layer === this._layer && channel === layer.visio.channel) {
           this._updateColPick(layer);
         }
@@ -19751,7 +19750,7 @@
         0.05,
         0,
         5,
-        this._updateMix
+        layer.updateMix
       );
       this._input.gamma = this._addNumericalInput(
         layer,
@@ -19787,13 +19786,6 @@
           layer.redraw();
         }
       );
-    },
-    _updateMix: function(layer) {
-      const colors2 = layer.visio.rgb;
-      for (const c2 in colors2) {
-        layer.rgbToMix(c2);
-      }
-      return;
     }
   });
   var imageUI = function(options2) {
@@ -34908,6 +34900,7 @@
           elem,
           "profile",
           options2.profileColor,
+          false,
           "visiomaticProfile",
           "Click to set line color"
         );
@@ -34958,6 +34951,7 @@
           elem,
           "spectrum",
           options2.spectrumColor,
+          false,
           "visiomaticSpectra",
           "Click to set marker color"
         );
@@ -35036,9 +35030,13 @@
         point1.x = x;
         point22.y = point1.y;
         point1.y = y;
+        line.lr = false;
+      } else {
+        line.lr = true;
       }
+      const layer = this._layer, visio = layer.visio;
       response = await fetch(
-        this._layer._url.replace(/\&.*$/g, "") + "&CHAN=" + (this._layer.visio.channel + 1).toString() + "&PFL=" + point1.x.toFixed(0) + "," + point1.y.toFixed(0) + ":" + point22.x.toFixed(0) + "," + point22.y.toFixed(0)
+        layer._url.replace(/\&.*$/g, "") + (visio.mode === "mono" ? `&CHAN=${visio.channel + 1}` : visio.rgb.map((rgb2, c2) => `&CHAN=${c2 + 1}`).join("")) + "&PFL=" + point1.x.toFixed(0) + "," + point1.y.toFixed(0) + ":" + point22.x.toFixed(0) + "," + point22.y.toFixed(0)
       );
       if (response.status == 200) {
         this._plotProfile(await response);
@@ -35065,36 +35063,8 @@
     },
     _plotProfile: async function(response2) {
       const json = await response2.json(), rawprof = json.profile, layer = this._layer, visio = layer.visio, line = this._profileLine, popdiv = this._popDiv, prof = [], series = [];
-      var title, ylabel;
       this.addLayer(line, "Image profile");
-      if (visio.mode === "mono") {
-        prof.push(
-          this._extractProfile(
-            layer,
-            rawprof,
-            visio.channel
-          )
-        );
-        series.push({
-          color: "black"
-        });
-        title = "Image profile for " + visio.channelLabels[visio.channel];
-        ylabel = "Pixel value in " + visio.channelUnits[visio.channel];
-      } else {
-        const rgb2 = visio.rgb;
-        for (let c2 = 0; c2 < visio.nChannel; c2++) {
-          if (rgb2[c2].isOn()) {
-            prof.push(this._extractProfile(layer, rawprof, c2));
-            series.push({
-              color: rgb2[c2].toStr(),
-              label: visio.channelLabels[c2]
-            });
-          }
-        }
-        title = "Image profiles";
-        ylabel = "Pixel value";
-      }
-      const chart = new auto_default(
+      const monoflag = visio.mode === "mono", chart = new auto_default(
         import_leaflet19.DomUtil.create(
           "canvas",
           this._className + "-canvas",
@@ -35104,14 +35074,24 @@
           type: "line",
           data: {
             labels: rawprof.map((point8) => [point8[0], point8[1]]),
-            datasets: [{
+            datasets: monoflag ? [{
               label: "profile",
-              data: rawprof.map((point8) => point8[2][0]),
-              pointRadius: 0,
-              stepped: "middle"
-            }]
+              data: rawprof.map((point8) => point8[2][0])
+            }] : visio.rgb.map(
+              (rgb2, c2) => ({
+                label: visio.channelLabels[c2],
+                borderColor: rgb2.toStr()
+              })
+            ).filter(Boolean).map(
+              (dataset, i2) => ({
+                ...dataset,
+                ...{ data: rawprof.map((point8) => point8[2][i2]) }
+              })
+            )
           },
           options: {
+            pointRadius: 0,
+            stepped: "middle",
             scales: {
               x: {
                 title: {
@@ -35123,7 +35103,7 @@
               y: {
                 title: {
                   display: true,
-                  text: ylabel,
+                  text: "Pixel value",
                   color: getComputedStyle(this._map._container).getPropertyValue("--dialog-color")
                 }
               }
@@ -35136,11 +35116,11 @@
             plugins: {
               title: {
                 display: true,
-                text: title,
+                text: monoflag ? "Image profile for " + visio.channelLabels[visio.channel] : "Image profiles",
                 color: getComputedStyle(this._map._container).getPropertyValue("--dialog-color")
               },
               legend: {
-                display: false
+                display: !monoflag
               },
               zoom: this.options.chartZoomOptions
             }
@@ -35231,6 +35211,7 @@
         elem,
         "region",
         this.options.color,
+        false,
         "visiomaticRegion",
         "Click to set region color"
       );
@@ -37078,6 +37059,10 @@
         alert("There was a problem with the VisiOmatic metadata request.");
       }
     },
+    getChannelColor: function(channel) {
+      const rgb2 = this.visio.rgb;
+      return channel in rgb2 ? this.visio.rgb[channel].toStr() : "";
+    },
     rgbToMix: function(channel, rgb2) {
       const visio = this.visio;
       if (rgb2) {
@@ -37100,10 +37085,10 @@
       this.visio.mode = "mono";
     },
     updateMix: function() {
-      const visio = this.visio, nchannel2 = visio.nChannel;
+      const visio = this.visio;
       visio.mode = "color";
       for (const c2 in visio.rgb) {
-        this.rgbToMix(c2, visio.rgb[c2]);
+        this.rgbToMix(c2);
       }
     },
     _gammaCorr: function(val) {
@@ -37112,6 +37097,18 @@
     _readVisioKey: function(str2, keyword, regexp) {
       const reg = new RegExp(keyword + ":" + regexp);
       return reg.exec(str2);
+    },
+    _setAttr: function(attr, value, fn = void 0) {
+      const attrarr = attr.split(/\[|\]/);
+      if (attrarr[1]) {
+        this.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
+      } else {
+        this.visio[attrarr[0]] = value;
+      }
+      if (fn) {
+        fn(this);
+      }
+      this.redraw();
     },
     addTo: function(map4) {
       if (this.visio.metaReady) {

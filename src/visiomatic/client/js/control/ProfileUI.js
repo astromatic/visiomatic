@@ -122,6 +122,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 					elem,
 					'profile',
 					options.profileColor,
+					false,
 					'visiomaticProfile',
 					'Click to set line color'
 				);
@@ -187,6 +188,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'spectrum',
 				options.spectrumColor,
+				false,
 				'visiomaticSpectra',
 				'Click to set marker color'
 			);
@@ -301,6 +303,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point1 = wcs.project(path[0]),
 			point2 = wcs.project(path[1]);
 
+		// Check if line is drawn from left-to-right; if not, swap endpoints.
 		if (point2.x < point1.x) {
 			const x = point2.x,
 				y = point2.y;
@@ -309,11 +312,21 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			point1.x = x;
 			point2.y = point1.y;
 			point1.y = y;
+			line.lr = false;
+		} else {
+			line.lr = true;
 		}
 
+		const	layer = this._layer,
+			visio = layer.visio;
+
 		response = await fetch(
-			this._layer._url.replace(/\&.*$/g, '') +
-				'&CHAN=' + (this._layer.visio.channel + 1).toString() +
+			layer._url.replace(/\&.*$/g, '') +
+				(
+					visio.mode === 'mono' ?
+						`&CHAN=${visio.channel + 1}` :
+						visio.rgb.map((rgb, c) => `&CHAN=${c+1}`).join('')
+				) +
 				'&PFL=' +
 				point1.x.toFixed(0) + ',' +
 				point1.y.toFixed(0) + ':' +
@@ -368,95 +381,83 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 			popdiv = this._popDiv,
 			prof = [],
 			series = [];
-		var	title, ylabel;
 
 		this.addLayer(line, 'Image profile');
 
-		if (visio.mode === 'mono') {
-			prof.push(
-				this._extractProfile(
-					layer,
-					rawprof,
-					visio.channel
-				)
-			);
-			series.push({
-				color: 'black',
-			});
-			title = 'Image profile for ' +
-				visio.channelLabels[visio.channel];
-			ylabel = 'Pixel value in ' +
-				visio.channelUnits[visio.channel];
-		} else {
-			const rgb = visio.rgb;
-			for (let c = 0; c < visio.nChannel; c++) {
-				if (rgb[c].isOn()) {
-					prof.push(this._extractProfile(layer, rawprof, c));
-					series.push({
-						color: rgb[c].toStr(),
-						label: visio.channelLabels[c]
-					});
-				}
-			}
-			title = 'Image profiles';
-			ylabel = 'Pixel value';
-		}
-		const	chart = new Chart(
-			 DomUtil.create(
-				'canvas',
-				this._className + '-canvas',
-				popdiv
-			),
-			{
-				type: 'line',
-				data: {
-					labels: rawprof.map(point => [point[0], point[1]]),
-					datasets: [{
-						label: 'profile',
-						data: rawprof.map(point => point[2][0]),
+		const	monoflag = visio.mode === 'mono',
+			chart = new Chart(
+				DomUtil.create(
+					'canvas',
+					this._className + '-canvas',
+					popdiv
+				),
+				{
+					type: 'line',
+					data: {
+						labels: rawprof.map((point) => [point[0], point[1]]),
+						datasets: monoflag ?
+							// Mono channel mode: plot a single line
+							[{
+								label: 'profile',
+								data: rawprof.map((point) => point[2][0]),
+							}] :
+							// Color mode: plot one line per non-blank channel
+							visio.rgb.map(
+								(rgb, c) => ({
+									label: visio.channelLabels[c],
+									borderColor: rgb.toStr()
+								})
+							).filter(Boolean).map(
+								(dataset, i) => ({
+									...dataset,
+									...{data: rawprof.map(point => point[2][i])}
+								})
+							)
+					},
+					options: {
 						pointRadius: 0,
-						stepped: 'middle'
-					}]
-				},
-				options: {
-					scales: {
-						x: {
-							title: {
-								display: true,
-								text: 'position along line',
-								color: getComputedStyle(this._map._container)
-									.getPropertyValue('--dialog-color')
+						stepped: 'middle',
+						scales: {
+							x: {
+								title: {
+									display: true,
+									text: 'position along line',
+									color: getComputedStyle(this._map._container)
+										.getPropertyValue('--dialog-color')
+								}
+							},
+							y: {
+								title: {
+									display: true,
+									text: 'Pixel value',
+									color: getComputedStyle(this._map._container)
+										.getPropertyValue('--dialog-color')
+								}
 							}
 						},
-						y: {
+						maintainAspectRatio: false,
+						interaction: {
+							mode: 'nearest',
+							intersect: true
+						},
+						plugins: {
 							title: {
 								display: true,
-								text: ylabel,
+								text: monoflag ?
+									'Image profile for ' +
+										visio.channelLabels[visio.channel] :
+									'Image profiles',
 								color: getComputedStyle(this._map._container)
 									.getPropertyValue('--dialog-color')
-							}
+							},
+							legend: {
+								display: !monoflag
+							},
+							zoom: this.options.chartZoomOptions
 						}
-					},
-					maintainAspectRatio: false,
-					interaction: {
-						mode: 'nearest',
-						intersect: true
-					},
-					plugins: {
-						title: {
-							display: true,
-							text: title,
-							color: getComputedStyle(this._map._container)
-								.getPropertyValue('--dialog-color')
-						},
-						legend: {
-							display: false
-						},
-						zoom: this.options.chartZoomOptions
 					}
 				}
-			}
-		)
+			);
 		// Update chart colors on theme change.
 		this._map.on(
 			'themeChange',
