@@ -478,7 +478,10 @@ class Tiled(object):
        	    if invert:
                 tile = 255 - tile
             if (colormap != 'grey'):
-                tile = cv2.applyColorMap(tile, colordict[colormap])
+                tile = cv2.cvtColor(
+                	cv2.applyColorMap(tile, colordict[colormap]),
+                	cv2.COLOR_BGR2RGB
+                )
         else:
             cminmax = self.minmax
             if minmax:
