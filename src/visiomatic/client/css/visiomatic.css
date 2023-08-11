@@ -1417,7 +1417,8 @@ UL.filetree A:hover {
 }
 
 #logo-visiomatic {
-	background: url(../images/visiomatic.png) no-repeat;
+	background-image: url(../images/visiomatic.png);
+	background-repeat: no-repeat;
 	background-size: 2.1em;
 	background-position: center;
 }

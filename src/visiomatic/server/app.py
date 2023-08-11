@@ -50,7 +50,10 @@ def create_app() -> FastAPI:
         maxsize=config.settings["max_mem_cache_image_count"]
     )
 
-    banner = config.settings["banner"]
+    banner_template = config.settings["banner_template"]
+    base_template = config.settings["base_template"]
+    template_dir = os.path.abspath(config.settings["template_dir"])
+    client_dir = os.path.abspath(config.settings["client_dir"])
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
@@ -107,7 +110,7 @@ def create_app() -> FastAPI:
     # Provide an endpoint for static files (such as js and css)
     app.mount(
         "/client",
-        StaticFiles(directory=os.path.join(package.src_dir, "client")),
+        StaticFiles(directory=client_dir),
         name="client"
     )
 
@@ -127,7 +130,7 @@ def create_app() -> FastAPI:
 
     # Instantiate templates
     templates = Jinja2Templates(
-        directory=os.path.join(package.src_dir, "templates")
+        directory=os.path.join(package.src_dir, template_dir)
     )
 
     # Prepare the RegExps
@@ -268,7 +271,7 @@ def create_app() -> FastAPI:
         if FIF == None:
 			# Just return the banner describing the service
             return templates.TemplateResponse(
-                banner,
+                banner_template,
                 {
                     "request": request,
                     "root_path": request.scope.get("root_path"),
@@ -389,7 +392,7 @@ def create_app() -> FastAPI:
         Main web user interface.
         """
         return templates.TemplateResponse(
-            "base.html",
+            base_template,
             {
                 "request": request,
                 "root_path": request.scope.get("root_path"),
