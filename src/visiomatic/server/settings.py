@@ -120,6 +120,10 @@ class ServerSettings(BaseSettings):
         default="/manual",
         description="Endpoint URL for the root of the HTML documentation"
         )
+    extra_dir: str = Field(
+        default=".",
+        description="Extra data root directory"
+        )
     no_browser: bool = Field(
         short='n',
         default=False,

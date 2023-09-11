@@ -107,11 +107,18 @@ def create_app() -> FastAPI:
     )
     """
 
-    # Provide an endpoint for static files (such as js and css)
+    # Provide a direct endpoint for static files (such as js and css)
     app.mount(
         "/client",
         StaticFiles(directory=client_dir),
         name="client"
+    )
+
+    # Provide a direct endpoint for extra static data files (such as json files)
+    app.mount(
+        "/extra",
+        StaticFiles(directory=extra_dir),
+        name="extra"
     )
 
     # Provide an endpoint for the user's manual (if it exists)
