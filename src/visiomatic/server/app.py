@@ -54,6 +54,7 @@ def create_app() -> FastAPI:
     base_template = config.settings["base_template"]
     template_dir = os.path.abspath(config.settings["template_dir"])
     client_dir = os.path.abspath(config.settings["client_dir"])
+    extra_dir = os.path.abspath(config.settings["extra_dir"])
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]

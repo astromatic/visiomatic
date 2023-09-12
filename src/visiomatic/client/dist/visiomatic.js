@@ -20920,7 +20920,7 @@
       const { min, max, minDefined, maxDefined } = iScale.getUserBounds();
       if (minDefined) {
         start = _limitValue(Math.min(
-          _lookupByKey(_parsed, axis, min).lo,
+          _lookupByKey(_parsed, iScale.axis, min).lo,
           animationsDisabled ? pointCount : _lookupByKey(points, axis, iScale.getPixelForValue(min)).lo
         ), 0, pointCount - 1);
       }
@@ -25197,9 +25197,6 @@
         count = points.length;
       }
       if (this.options.showLine) {
-        if (!this.datasetElementType) {
-          this.addElements();
-        }
         const { dataset: line, _dataset } = meta;
         line._chart = this.chart;
         line._datasetIndex = this.index;
@@ -25211,9 +25208,6 @@
           animated: !animationsDisabled,
           options: options2
         }, mode);
-      } else if (this.datasetElementType) {
-        delete meta.dataset;
-        this.datasetElementType = false;
       }
       this.updateElements(points, start, count, mode);
     }
@@ -28223,7 +28217,7 @@
     }
     return false;
   }
-  var version = "4.3.3";
+  var version = "4.3.0";
   var KNOWN_POSITIONS = [
     "top",
     "bottom",
@@ -31127,7 +31121,7 @@
           cursor.x += width + padding;
         } else if (typeof legendItem.text !== "string") {
           const fontLineHeight = labelFont.lineHeight;
-          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight) + padding;
+          cursor.y += calculateLegendItemHeight(legendItem, fontLineHeight);
         } else {
           cursor.y += lineHeight;
         }
@@ -31241,7 +31235,7 @@
     return itemHeight;
   }
   function calculateLegendItemHeight(legendItem, fontLineHeight) {
-    const labelHeight = legendItem.text ? legendItem.text.length : 0;
+    const labelHeight = legendItem.text ? legendItem.text.length + 0.5 : 0;
     return fontLineHeight * labelHeight;
   }
   function isListened(type, opts) {
@@ -33494,9 +33488,7 @@
           ctx.fillRect(-width / 2 - padding.left, -offset - tickFont.size / 2 - padding.top, width + padding.width, tickFont.size + padding.height);
         }
         renderText(ctx, tick.label, 0, -offset, tickFont, {
-          color: optsAtIndex.color,
-          strokeColor: optsAtIndex.textStrokeColor,
-          strokeWidth: optsAtIndex.textStrokeWidth
+          color: optsAtIndex.color
         });
       });
       ctx.restore();
@@ -33839,7 +33831,7 @@
       if (time === max || options2.bounds === "ticks" || count === 1) {
         addTick(ticks, time, timestamps);
       }
-      return Object.keys(ticks).sort(sorter).map((x) => +x);
+      return Object.keys(ticks).sort((a, b) => a - b).map((x) => +x);
     }
     getLabelForValue(value) {
       const adapter = this._adapter;
@@ -34038,18 +34030,6 @@
         }
       }
       return table;
-    }
-    _generate() {
-      const min = this.min;
-      const max = this.max;
-      let timestamps = super.getDataTimestamps();
-      if (!timestamps.includes(min) || !timestamps.length) {
-        timestamps.splice(0, 0, min);
-      }
-      if (!timestamps.includes(max) || timestamps.length === 1) {
-        timestamps.push(max);
-      }
-      return timestamps.sort((a, b) => a - b);
     }
     _getTimestampsForTable() {
       let timestamps = this._cache.all || [];
@@ -37415,7 +37395,7 @@
  * Released under the MIT License
  */
 /*!
- * Chart.js v4.3.3
+ * Chart.js v4.3.0
  * https://www.chartjs.org
  * (c) 2023 Chart.js Contributors
  * Released under the MIT License
