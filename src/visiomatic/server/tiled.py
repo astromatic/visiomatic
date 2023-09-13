@@ -471,15 +471,15 @@ class Tiled(object):
                 minmax = self.minmax[chan]
             fac = minmax[1] - minmax[0]
             fac = contrast / fac if fac > 0.0 else self.maxfac
-            tile = (tile[chan] - minmax[0]) * fac
-            tile[tile < 0.0] = 0.0
-            tile[tile > 1.0] = 1.0
-            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+            ctile = np.nan_to_num(tile[chan] - minmax[0], nan=0., copy=False) * fac
+            ctile[ctile < 0.0] = 0.0
+            ctile[ctile > 1.0] = 1.0
+            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
        	    if invert:
-                tile = 255 - tile
+                ctile = 255 - ctile
             if (colormap != 'grey'):
-                tile = cv2.cvtColor(
-                	cv2.applyColorMap(tile, colordict[colormap]),
+                ctile = cv2.cvtColor(
+                	cv2.applyColorMap(ctile, colordict[colormap]),
                 	cv2.COLOR_BGR2RGB
                 )
         else:
@@ -491,7 +491,7 @@ class Tiled(object):
             fac = cminmax[:,1] - cminmax[:,0]
        	    fac[fac <= 0] = self.maxfac
             fac = (contrast / fac).reshape(self.nchannels, 1, 1)
-            tile = (tile - cminmax[:,0].reshape(self.nchannels, 1, 1)) * fac
+            ctile = np.nan_to_num(tile - cminmax[:,0].reshape(self.nchannels, 1, 1), nan=0., copy=False) * fac
             cmix = self.cmix
             if mix:
                 imix = np.array(mix, dtype=int)[:, 0] - 1
@@ -500,18 +500,18 @@ class Tiled(object):
                 cmix[0] = np.interp(indices, imix, mix[:, 0]) * 3 / self.nchannels
                 cmix[1] = np.interp(indices, imix, mix[:, 1]) * 3 / self.nchannels
                 cmix[2] = np.interp(indices, imix, mix[:, 2]) * 3 / self.nchannels
-            tile = (
-                cmix @ tile.reshape(
-                    tile.shape[0],
-                    tile.shape[1]*tile.shape[2]
+            ctile = (
+                cmix @ ctile.reshape(
+                    ctile.shape[0],
+                    ctile.shape[1] * ctile.shape[2]
                 )
-            ).T.reshape(tile.shape[1], tile.shape[2], 3).copy()
-            tile[tile < 0.0] = 0.0
-            tile[tile > 1.0] = 1.0
-            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+            ).T.reshape(tile.shape[1], ctile.shape[2], 3).copy()
+            ctile[ctile < 0.0] = 0.0
+            ctile[ctile > 1.0] = 1.0
+            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
        	    if invert:
-                tile = 255 - tile
-        return tile
+                ctile = 255 - ctile
+        return ctile
 
 
     def make_tiles(self) -> None:
