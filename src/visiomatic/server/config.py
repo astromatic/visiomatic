@@ -58,7 +58,6 @@ class Config(object):
         else:
             sys.exit(f"*Error*: {image_filename} not found!")
 
-
     def dict(self) -> dict:
         """
         Return a dictionary of all settings, organized in groups.
@@ -236,7 +235,9 @@ class Config(object):
                     gdictg[setting] = tuple(
                         type(settings[setting][i])(val.strip()) \
                             for i, val in enumerate(value[1:-1].split(','))
-                    )  if stype == tuple else stype(value)
+                    )  if stype == tuple \
+                        else value.lower() in ("yes", "true", "t", "1") if stype == bool \
+                        else stype(value)
         return gdict
 
 
