@@ -92,9 +92,21 @@ class ImageSettings(BaseSettings):
 
 
 class ServerSettings(BaseSettings):
-    banner: str = Field(
+    api_path : str = Field(
+        default="/api",
+        description="Endpoint URL for the webservice API"
+        )
+    banner_template: str = Field(
         default="banner.html",
-        description="Name of the HTML file with the service banner"
+        description="Name of the HTML template file for the service banner"
+        )
+    base_template: str = Field(
+        default="base.html",
+        description="Name of the HTML template file for the web client"
+        )
+    client_dir: str = Field(
+        default=path.join(package.src_dir, "client"),
+        description="Directory containing the web client code, style and media"
         )
     data_dir: str = Field(
         default=".",
@@ -108,14 +120,18 @@ class ServerSettings(BaseSettings):
         default="/manual",
         description="Endpoint URL for the root of the HTML documentation"
         )
+    extra_dir: str = Field(
+        default=".",
+        description="Extra data root directory"
+        )
     no_browser: bool = Field(
         short='n',
         default=False,
         description="Do not start browser when providing image file"
         )
-    api_path : str = Field(
-        default="/api",
-        description="Endpoint URL for the webservice API"
+    template_dir: str = Field(
+        default=path.join(package.src_dir, "templates"),
+        description="Directory containing templates"
         )
     userdoc_url: str = Field(
         default=doc_path.default + "/interface.html",

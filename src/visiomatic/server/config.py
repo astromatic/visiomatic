@@ -7,7 +7,7 @@ Configure application.
 import os, sys, time
 from pathlib import Path
 from typing import Tuple
-from argparse import ArgumentParser
+from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
 from pydantic import validate_model
 
@@ -28,35 +28,35 @@ class Config(object):
         self.image_filename = None
 
        # Skip argument parsing and stuff if Sphinx is involved
-        if not 'sphinx' in sys.modules:
-            # Parse command line
-            args_dict = self.parse_args()
-            if args_dict['version']:
-                print(f"{package.title} {package.version}")
-                exit(0)
-            if args_dict['save_config']:
-                # Create config dir if it does not exist
-                os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
-                self.save_config(package.config_file)
-                exit(0)
+        if 'sphinx' in sys.modules:
+            return
+        # Parse command line
+        args_dict = self.parse_args()
+        if args_dict['version']:
+            print(f"{package.title} {package.version}")
+            exit(0)
+        if args_dict['save_config']:
+            # Create config dir if it does not exist
+            os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
+            self.save_config(package.config_file)
+            exit(0)
 
-            # Parse configuration file
-            self.config_filename = args_dict['config']
-            if Path(self.config_filename).exists():
-                config_dict = self.parse_config(self.config_filename)
-                # Update settings from the config file
-                self.update_from_dict(config_dict) 
+        # Parse configuration file
+        self.config_filename = args_dict['config']
+        if Path(self.config_filename).exists():
+            config_dict = self.parse_config(self.config_filename)
+            # Update settings from the config file
+            self.update_from_dict(config_dict) 
 
-            # Update settings from the command line
-            self.update_from_dict(args_dict)
+        # Update settings from the command line
+        self.update_from_dict(args_dict)
 
-            # Save configuration file if requested
-            image_filename = args_dict['file']
-            if Path(image_filename).exists():
-                self.image_filename = image_filename
-            else:
-                sys.exit(f"*Error*: {image_filename} not found!")
-
+        # Save configuration file if requested
+        image_filename = args_dict['file']
+        if Path(image_filename).exists():
+            self.image_filename = image_filename
+        else:
+            sys.exit(f"*Error*: {image_filename} not found!")
 
     def dict(self) -> dict:
         """
@@ -168,7 +168,7 @@ class Config(object):
                 if props['type']=='boolean':
                     args_group.add_argument(
                         *arg,
-                        default=default,
+                        default=SUPPRESS,
                         help=props['description'], 
                         action='store_true'
                     )
@@ -176,14 +176,14 @@ class Config(object):
                     deftype = type(default[0])
                     args_group.add_argument(
                         *arg,
-                        default=default,
+                        default=SUPPRESS,
                         type=lambda s: [deftype(val) for val in s.split(',')],
                         help=f"{props['description']} (default={props['default']})"
                     )
                 else:
                     args_group.add_argument(
                         *arg,
-                        default=default,
+                        default=SUPPRESS,
                         type=type(default),
                         help=f"{props['description']} (default={props['default']})"
                     )  
@@ -200,7 +200,8 @@ class Config(object):
             gdictg = gdict[group]
             settings = getattr(self.settings, group).dict()
             for setting in settings:
-                gdictg[setting] = fdict[setting]
+                if setting in fdict:
+                    gdictg[setting] = fdict[setting]
         return gdict
 
 
@@ -230,9 +231,13 @@ class Config(object):
             settings = getattr(self.settings, group).dict()
             for setting in settings:
                 if (value := config.get(group, setting, fallback=None)) != None:
+                    stype = type(settings[setting])
                     gdictg[setting] = tuple(
-                        e.strip() for e in value[1:-1].split(',')
-                    )  if type(settings[setting]) == tuple else value
+                        type(settings[setting][i])(val.strip()) \
+                            for i, val in enumerate(value[1:-1].split(','))
+                    )  if stype == tuple \
+                        else value.lower() in ("yes", "true", "t", "1") if stype == bool \
+                        else stype(value)
         return gdict
 
 

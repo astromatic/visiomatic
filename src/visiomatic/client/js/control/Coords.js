@@ -213,10 +213,15 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		}, this);
 
 		const	clipboardbutton = DomUtil.create(
-			'div',
-			className + '-clipboard',
-			dialog
-		);
+				'div',
+				className + '-clipboard',
+				dialog
+			),
+			clipboardicon = DomUtil.create(
+				'div',
+				className + '-clipboard-icon',
+				clipboardbutton
+			);
 		clipboardbutton.title = 'Copy to clipboard';
 		DomEvent.on(clipboardbutton, 'click', function () {
 			const	stateObj = {},

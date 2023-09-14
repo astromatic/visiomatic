@@ -13,6 +13,7 @@ from astropy.io import fits
 
 from .. import package
 
+
 class ImageModel(BaseModel):
     """
     Pydantic image model class.

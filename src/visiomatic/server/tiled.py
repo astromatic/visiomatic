@@ -6,19 +6,22 @@ Image tiling module
 
 import glob, os, math, pickle
 from methodtools import lru_cache
-from typing import List, Tuple, Union
+from typing import List, NamedTuple, Tuple, Union
 from joblib import Parallel, delayed
 from pydantic import BaseModel
 
 import numpy as np
 import cv2
-from simplejpeg import encode_jpeg
+
 from astropy.io import fits
+from simplejpeg import encode_jpeg
+from skimage.draw import line
 from tiler import Tiler
 
 from .. import package
-from .image import Image , ImageModel
+from .image import Image, ImageModel
 from . import config
+
 
 colordict = {
     'grey': None,
@@ -27,6 +30,37 @@ colordict = {
     'cool': cv2.COLORMAP_COOL,
     'hot': cv2.COLORMAP_HOT
 }
+
+
+class Pixel(NamedTuple):
+    """
+    Pydantic model class for pixels.
+
+    Parameters
+    ----------
+    x: int
+        x coordinate of the pixel.
+    y: int
+        y coordinate of the pixel.
+    value: tuple[float]
+        Pixel values.
+    """
+    x: int
+    y: int
+    values: Tuple[float, ...]
+
+
+class ProfileModel(BaseModel):
+    """
+    Pydantic model class for VisiOmatic profiles.
+
+    Parameters
+    ----------
+    profile: List[List[float]]
+        List
+    """
+    profile: Tuple[Pixel, ...]
+
 
 class TiledModel(BaseModel):
     """
@@ -437,14 +471,17 @@ class Tiled(object):
                 minmax = self.minmax[chan]
             fac = minmax[1] - minmax[0]
             fac = contrast / fac if fac > 0.0 else self.maxfac
-            tile = (tile[chan] - minmax[0]) * fac
-            tile[tile < 0.0] = 0.0
-            tile[tile > 1.0] = 1.0
-            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+            ctile = np.nan_to_num(tile[chan] - minmax[0], nan=0., copy=False) * fac
+            ctile[ctile < 0.0] = 0.0
+            ctile[ctile > 1.0] = 1.0
+            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
        	    if invert:
-                tile = 255 - tile
+                ctile = 255 - ctile
             if (colormap != 'grey'):
-                tile = cv2.applyColorMap(tile, colordict[colormap])
+                ctile = cv2.cvtColor(
+                	cv2.applyColorMap(ctile, colordict[colormap]),
+                	cv2.COLOR_BGR2RGB
+                )
         else:
             cminmax = self.minmax
             if minmax:
@@ -454,7 +491,7 @@ class Tiled(object):
             fac = cminmax[:,1] - cminmax[:,0]
        	    fac[fac <= 0] = self.maxfac
             fac = (contrast / fac).reshape(self.nchannels, 1, 1)
-            tile = (tile - cminmax[:,0].reshape(self.nchannels, 1, 1)) * fac
+            ctile = np.nan_to_num(tile - cminmax[:,0].reshape(self.nchannels, 1, 1), nan=0., copy=False) * fac
             cmix = self.cmix
             if mix:
                 imix = np.array(mix, dtype=int)[:, 0] - 1
@@ -463,18 +500,18 @@ class Tiled(object):
                 cmix[0] = np.interp(indices, imix, mix[:, 0]) * 3 / self.nchannels
                 cmix[1] = np.interp(indices, imix, mix[:, 1]) * 3 / self.nchannels
                 cmix[2] = np.interp(indices, imix, mix[:, 2]) * 3 / self.nchannels
-            tile = (
-                cmix @ tile.reshape(
-                    tile.shape[0],
-                    tile.shape[1]*tile.shape[2]
+            ctile = (
+                cmix @ ctile.reshape(
+                    ctile.shape[0],
+                    ctile.shape[1] * ctile.shape[2]
                 )
-            ).T.reshape(tile.shape[1], tile.shape[2], 3).copy()
-            tile[tile < 0.0] = 0.0
-            tile[tile > 1.0] = 1.0
-            tile = (255.49 * np.power(tile, gamma)).astype(np.uint8)
+            ).T.reshape(tile.shape[1], ctile.shape[2], 3).copy()
+            ctile[ctile < 0.0] = 0.0
+            ctile[ctile > 1.0] = 1.0
+            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
        	    if invert:
-                tile = 255 - tile
-        return tile
+                ctile = 255 - ctile
+        return ctile
 
 
     def make_tiles(self) -> None:
@@ -571,18 +608,6 @@ class Tiled(object):
         """
         if channel and channel > self.nchannels:
             channel = 1
-        if not hasattr(self, 'tiles'):
-            self.tiles = np.memmap(
-                self.tiles_filename,
-                dtype=np.float32,
-                mode='r',
-                shape=(
-                    self.ntiles,
-                    self.tile_shape[0],
-                    self.tile_shape[1],
-                    self.tile_shape[2]
-                )
-            )
         shape = [
             self.tile_shape[0],
             self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1 \
@@ -593,7 +618,10 @@ class Tiled(object):
         ]
         return encode_jpeg(
             self.convert_tile(
-                self.tiles[self.tiles_start[tilelevel] + tileindex][:,0:shape[1], 0:shape[2]],
+                self.get_tiles()[
+                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
+                    0:shape[2]
+                ],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
@@ -605,7 +633,10 @@ class Tiled(object):
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
-                self.tiles[self.tiles_start[tilelevel] + tileindex][:,0:shape[1], 0:shape[2]],
+                self.get_tiles()[
+                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
+                    0:shape[2]
+                ],
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
@@ -627,34 +658,107 @@ class Tiled(object):
         return self.get_tile(*args, **kwargs)
 
 
-    def get_pixel_values(self, x: int, y: int):
+    def get_pixel_values(self, pos: Tuple[int, int]) -> np.ndarray:
         """
         Get pixel values at the given pixel coordinates in merged frame.
         
         Parameters
         ----------
-        x:  int
-            X coordinate.
-        y:  int
-            Y coordinate.
+        pos:  tuple[int, int]
+            pixel coordinates.
 
         Returns
         -------
-        values: np.ndarray
+        values: numpy.ndarray
             Pixel value(s) at the given position, or NaN(s) outside of the
             frame boundaries.
         """
         shape = self.shape
+        return self.get_data()[:, pos[1], pos[0]] \
+        	if 0 < pos[0] < shape[2] and 0 < pos[1] < shape[1] \
+        	else np.full(shape[0], 0., dtype=np.float32)
+
+
+    def get_profiles(
+            self,
+            channels: Union[Tuple[int, ...], None],
+            pos1: Tuple[int, int],
+            pos2: Tuple[int, int]) -> np.ndarray:
+        """
+        Get image profile(s) between the given pixel coordinates in the merged
+        frame.
+        
+        Parameters
+        ----------
+        channels: tuple[int, ...] or None
+            List of channels or None for all channels.
+        pos1:  tuple[int, int]
+            Start pixel coordinates.
+        pos2:  tuple[int, int]
+            End pixel coordinates.
+
+        Returns
+        -------
+        profile: ProfileModel
+            Profile pydantic model of pixel value(s) along the line.
+        """
+        shape = self.shape
+        channels = np.array(channels) - 1 if channels \
+            else np.arange(self.nchannels)
+        y, x = line(pos1[1] - 1, pos1[0] - 1, pos2[1] - 1, pos2[0] - 1)
+        values = np.full((x.size, channels.size), np.nan, dtype=np.float32)
+        valid = (x>=0) & (x<shape[2]) & (y>=0) & (y<shape[1])
+        values[valid] = self.get_data()[
+        	channels[:, np.newaxis],
+        	y[valid],
+        	x[valid]
+        ].transpose()
+        return ProfileModel(
+            profile=tuple(zip(x, y, tuple(map(tuple, values))))
+        )
+
+
+    def get_data(self):
+        """
+        Get current memory-mapped image data.
+        
+        Returns
+        -------
+        data: numpy.ndarray
+            Image data.
+        """
         if not hasattr(self, 'data'):
             self.data = np.memmap(
                 self.data_filename,
                 dtype=np.float32,
                 mode='r',
-                shape=shape
+                shape=self.shape
             )
-        return self.data[:, y, x] if 0 < x < shape[2] and 0 < y < shape[1] \
-        	else np.full(shape[0], 0., dtype=np.float32)
+        return self.data
 
+
+    def get_tiles(self):
+        """
+        Get current memory-mapped tile data.
+        
+        Returns
+        -------
+        data: numpy.ndarray
+            Tile data.
+        """
+        if not hasattr(self, 'tiles'):
+            self.tiles = np.memmap(
+                self.tiles_filename,
+                dtype=np.float32,
+                mode='r',
+                shape=(
+                    self.ntiles,
+                    self.tile_shape[0],
+                    self.tile_shape[1],
+                    self.tile_shape[2]
+                )
+            )
+        return self.tiles
 
 
 def pickledTiled(

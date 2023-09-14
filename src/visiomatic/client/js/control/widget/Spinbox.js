@@ -99,10 +99,20 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 				options.className + '-down',
 				wrap
 			),
+			downIcon = this._downIcon = DomUtil.create(
+				'div',
+				options.className + '-down-icon',
+				down
+			),
 			up = this._up = DomUtil.create(
 				'div',
 				options.className + '-up',
 				wrap
+			),
+			upIcon = this._upIcon = DomUtil.create(
+				'div',
+				options.className + '-up-icon',
+				up
 			);
 
 		input.type = 'number';
@@ -222,7 +232,7 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 			return parseFloat(this._input.value);
 		}
 		else {
-			this._input.value = val;
+			this._input.value = Number(val.toPrecision(10));
 			return this;
 		}
 	},

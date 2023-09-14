@@ -1,0 +1,169 @@
+/*
+#	CSS definitions for themes
+#
+#	This file part of: VisiOmatic
+#
+#	Copyright: (C) 2014-2022 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	                            Chiara Marmo - Paris-Saclay,
+#	                            Ruven Pillay - C2RMF/CNRS
+*/
+
+:root {
+	/* List of available VisiOmatic themes */
+	/* Add name to the list here if including a new theme */
+	/* It will lowercased and prefixed with visiomatic-theme- */
+	--visiomatic-theme-names: Auto Light Dark CFHT;
+	--visiomatic-theme-default: Auto;
+}
+
+
+/* "Auto" theme is light by default */
+.visiomatic-theme-auto {
+	--icon-background-color: rgba(240, 240, 240, 1);
+	--icon-color: rgba(50, 50, 50, 1);
+	--icon-background-color-hover: rgba(180, 180, 180, 1);
+	--icon-color-hover: rgba(0, 0, 0, 1);
+	--icon-background-color-checked: rgba(180, 180, 180, 1);
+	--icon-color-checked: rgba(0, 0, 0, 1);
+	--input-background-color: rgba(240, 240, 240, 1);
+	--input-color: rgba(50, 50, 50, 1);
+	--input-background-color-hover: rgba(255, 255, 255, 1);
+	--input-color-hover: rgba(0, 0, 0, 1);
+	--input-background-color-focus: rgba(255, 255, 255, 1);
+	--input-color-focus: rgba(0, 0, 0, 1);
+	--dialog-background-color: rgba(220, 220, 220, 1);
+	--dialog-color: rgba(50, 50, 50, 1);
+	--header-background-color: rgba(180, 180, 180, 1);
+	--header-color: rgba(50, 50, 50, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.2);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+}
+
+/* "Auto" theme becomes dark depending on browser setting */
+@media (prefers-color-scheme: dark) {
+	.visiomatic-theme-auto {
+		--icon-background-color: rgba(50, 50, 50, 1);
+		--icon-color: rgba(180, 180, 180, 1);
+		--icon-background-color-hover: rgba(60, 60, 60, 1);
+		--icon-color-hover: rgba(240, 240, 240, 1);
+		--icon-background-color-checked: rgba(180, 180, 180, 1);
+		--icon-color-checked: rgba(50, 50, 50, 1);
+		--input-background-color: rgba(60, 60, 60, 1);
+		--input-color: rgba(200, 200, 200, 1);
+		--input-background-color-hover: rgba(180, 180, 180, 1);
+		--input-color-hover: rgba(50, 50, 50, 1);
+		--input-background-color-focus: rgba(180, 180, 180, 1);
+		--input-color-focus: rgba(50, 50, 50, 1);
+		--dialog-background-color: rgba(40, 40, 40, 1);
+		--dialog-color: rgba(240, 240, 240, 1);
+		--header-background-color: rgba(180, 180, 180, 1);
+		--header-color: rgba(50, 50, 50, 1);
+		--icon-color-on: rgba(208, 0, 0, 1);
+		--border-color: rgba(0, 0, 0, 1);
+		--shadow-color: rgba(0, 0, 0, 0.5);
+		--scale-color: rgba(255, 255, 255, 0.66);
+		--extramap-border-color: rgba(255, 255, 255, 1);
+		--extramap-fill-color: rgba(15, 15, 15, 1);
+	}
+}
+
+.visiomatic-theme-dark {
+	--icon-background-color: rgba(50, 50, 50, 1);
+	--icon-color: rgba(180, 180, 180, 1);
+	--icon-background-color-hover: rgba(60, 60, 60, 1);
+	--icon-color-hover: rgba(240, 240, 240, 1);
+	--icon-background-color-checked: rgba(180, 180, 180, 1);
+	--icon-color-checked: rgba(50, 50, 50, 1);
+	--button-background-color: rgba(50, 50, 50, 1);
+	--button-color: rgba(180, 180, 180, 1);
+	--button-background-color-hover: rgba(60, 60, 60, 1);
+	--button-color-hover: rgba(240, 240, 240, 1);
+	--button-background-color-checked: rgba(180, 180, 180, 1);
+	--button-color-checked: rgba(50, 50, 50, 1);
+	--button-color-on: rgba(208, 0, 0, 1);
+	--input-background-color: rgba(60, 60, 60, 1);
+	--input-color: rgba(200, 200, 200, 1);
+	--input-background-color-hover: rgba(180, 180, 180, 1);
+	--input-color-hover: rgba(50, 50, 50, 1);
+	--input-background-color-focus: rgba(180, 180, 180, 1);
+	--input-color-focus: rgba(50, 50, 50, 1);
+	--dialog-background-color: rgba(40, 40, 40, 1);
+	--dialog-color: rgba(240, 240, 240, 1);
+	--header-background-color: rgba(180, 180, 180, 1);
+	--header-color: rgba(50, 50, 50, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.5);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+}
+
+.visiomatic-theme-light {
+	--icon-background-color: rgba(240, 240, 240, 1);
+	--icon-color: rgba(50, 50, 50, 1);
+	--icon-background-color-hover: rgba(180, 180, 180, 1);
+	--icon-color-hover: rgba(0, 0, 0, 1);
+	--icon-background-color-checked: rgba(180, 180, 180, 1);
+	--icon-color-checked: rgba(0, 0, 0, 1);
+	--input-background-color: rgba(240, 240, 240, 1);
+	--input-color: rgba(50, 50, 50, 1);
+	--button-background-color: rgba(240, 240, 240, 1);
+	--button-color: rgba(50, 50, 50, 1);
+	--button-background-color-hover: rgba(180, 180, 180, 1);
+	--button-color-hover: rgba(0, 0, 0, 1);
+	--button-background-color-checked: rgba(180, 180, 180, 1);
+	--button-color-checked: rgba(0, 0, 0, 1);
+	--button-color-on: rgba(208, 0, 0, 1);
+	--input-background-color: rgba(240, 240, 240, 1);
+	--input-color: rgba(50, 50, 50, 1);
+	--input-background-color-hover: rgba(255, 255, 255, 1);
+	--input-color-hover: rgba(0, 0, 0, 1);
+	--input-background-color-focus: rgba(255, 255, 255, 1);
+	--input-color-focus: rgba(0, 0, 0, 1);
+	--dialog-background-color: rgba(220, 220, 220, 1);
+	--dialog-color: rgba(50, 50, 50, 1);
+	--header-background-color: rgba(180, 180, 180, 1);
+	--header-color: rgba(50, 50, 50, 1);
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.2);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+}
+
+.visiomatic-theme-cfht {
+	--icon-background-color: rgba(64, 87, 106, 1);
+	--icon-color: rgba(237, 227, 222, 1);
+	--icon-background-color-hover: rgba(222, 232, 237, 1);
+	--icon-color-hover: rgba(0, 0, 0, 1);
+	--icon-background-color-checked: rgba(222, 232, 237, 1);
+	--icon-color-checked: rgba(0, 0, 0, 1);
+	--button-background-color: rgba(64, 148, 193, 1);
+	--button-color: rgba(237, 227, 222, 1);
+	--button-background-color-hover: rgba(222, 232, 237, 1);
+	--button-color-hover: rgba(64, 87, 106, 1);
+	--button-background-color-checked: rgba(222, 232, 237, 1);
+	--button-color-checked: rgba(64, 87, 106, 1);
+	--button-color-on: rgba(30, 143, 230, 1);
+	--input-background-color: rgba(240, 240, 240, 1);
+	--input-color: rgba(50, 50, 50, 1);
+	--input-background-color-hover: rgba(255, 255, 255, 1);
+	--input-color-hover: rgba(0, 0, 0, 1);
+	--input-background-color-focus: rgba(255, 255, 255, 1);
+	--input-color-focus: rgba(0, 0, 0, 1);
+	--dialog-background-color: rgba(237, 227, 222, 1);
+	--dialog-color: rgba(50, 50, 50, 1);
+	--header-background-color: rgba(64, 87, 106, 1);
+	--header-color: #dedddb;
+	--border-color: rgba(0, 0, 0, 1);
+	--shadow-color: rgba(0, 0, 0, 0.2);
+	--scale-color: rgba(255, 255, 255, 0.66);
+	--extramap-border-color: rgba(255, 255, 255, 1);
+	--extramap-fill-color: rgba(15, 15, 15, 1);
+}
+
+

@@ -52,6 +52,16 @@ Image UI
 .. js:autofunction:: imageUI
 
 
+Preferences UI
+--------------
+
+.. js:autoclass:: PreferencesUI
+   :members:
+   :private-members:
+
+.. js:autofunction:: preferencesUI
+
+
 Profile UI
 ----------
 
