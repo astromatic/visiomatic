@@ -86,6 +86,7 @@ class LRUSharedRWLockCache:
         with Semaphore(self._lock_name) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
         self.maxsize = maxsize
+        # Delete semaphores when process is aborted.
         for sig in (
             SIGABRT,
             SIGILL,
@@ -114,13 +115,16 @@ class LRUSharedRWLockCache:
         hargs = hex(0xffffffffffffffff & hash(args))
         with self.cache.lock:
             if hargs in self.cache:
+                # Reference already in cache: lock in read mode
                 lock, time = self.cache[hargs]
                 lock.acquire_read()
             else:
-                # Test if we're reaching the cache limit
+                # Reference not in cache: lock in write mode
+                # after testing if we're reaching the cache limit
                 if len(self.cache) >= self.maxsize:
                     # Find least recently used
                     oldest = min(self.cache, key=lambda k: self.cache[k][1])
+                    print(oldest)
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
             # Finally update the shared version
