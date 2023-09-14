@@ -180,7 +180,13 @@ class Tiled(object):
             dtype=np.int32
         )
         self.make_tiles()
-        # Delete mosaic data (will be remapped on-demand)
+        # Delete tiles reference (tiles buffer has been memory mapped)
+        # after measuring size
+        self.nbytes = self.tiles.nbytes
+        del self.tiles
+        # Delete mosaic reference (mosaic data have been memory mapped)
+        # after measuring size
+        self.nbytes += self.data.nbytes
         del self.data
         # Delete individual image data (no longer needed)
         for image in self.images:
@@ -188,6 +194,7 @@ class Tiled(object):
         # Pickle-save current object
         with open(self.get_object_filename(self.prefix), "wb") as f:
             pickle.dump(self, f, protocol=5)
+            self.nbytes += f.tell()
 
 
     def compute_nlevels(self) -> int:
@@ -560,9 +567,8 @@ class Tiled(object):
                 interpolation=cv2.INTER_AREA
             )[None,:,:]
         del ima, tiler
+        # Make sure that memory has been completely mapped before exiting
         self.tiles.flush()
-        # No longer needed (tiles buffer will be remapped on demand)
-        del self.tiles
 
 
     def get_tile(
