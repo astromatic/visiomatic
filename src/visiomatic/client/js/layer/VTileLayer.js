@@ -336,8 +336,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			if (!options.maxZoom) {
 				options.maxZoom = visio.maxZoom + 6;
 			}
-			options.maxNativeZoom = visio.maxZoom;
-
+			if (options.maxNativeZoom > visio.maxZoom) {
+				options.maxNativeZoom = visio.maxZoom;
+			}
 			// Set grid sizes
 			for (let z = 0; z <= visio.maxZoom; z++) {
 				visio.imageSize[z] = {
@@ -903,7 +904,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		DomUtil.addClass(tile, 'leaflet-tile');
 
 		// Force pixels to be visible at high zoom factos whenever possible
-		if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
+		if (this._tileZoom >= this.options.maxNativeZoom) {
 			tile.style.imageRendering = 'pixelated';
 		}
 

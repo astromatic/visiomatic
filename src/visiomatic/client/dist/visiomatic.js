@@ -36939,7 +36939,9 @@
         if (!options.maxZoom) {
           options.maxZoom = visio.maxZoom + 6;
         }
-        options.maxNativeZoom = visio.maxZoom;
+        if (options.maxNativeZoom > visio.maxZoom) {
+          options.maxNativeZoom = visio.maxZoom;
+        }
         for (let z = 0; z <= visio.maxZoom; z++) {
           visio.imageSize[z] = {
             x: Math.floor(maxsize.x / Math.pow(2, visio.maxZoom - z)),
@@ -37277,7 +37279,7 @@
     },
     _initTile: function(tile2) {
       import_leaflet31.DomUtil.addClass(tile2, "leaflet-tile");
-      if (this.options.maxNativeZoom && this._tileZoom >= this.options.maxNativeZoom) {
+      if (this._tileZoom >= this.options.maxNativeZoom) {
         tile2.style.imageRendering = "pixelated";
       }
       tile2.onselectstart = import_leaflet31.Util.falseFn;
