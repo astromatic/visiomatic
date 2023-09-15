@@ -207,8 +207,8 @@ class Tiled(object):
             Number of image resolution levels in the pyramid.
         """
         return max(
-            (self.shape[1] // (self.tile_shape[1] + 1) + 1).bit_length() + 1,
-            (self.shape[2] // (self.tile_shape[2] + 1) + 1).bit_length() + 1
+            ((self.shape[1] - 1) // self.tile_shape[1]).bit_length() + 1,
+            ((self.shape[2] - 1) // self.tile_shape[2]).bit_length() + 1
         )
 
 
@@ -239,8 +239,8 @@ class Tiled(object):
         """
         return [
             self.tile_shape[0],
-            (self.shape[1] >> level) % self.tile_shape[1],
-            (self.shape[2] >> level) % self.tile_shape[2]
+            ((self.shape[1] - 1) >> level) % self.tile_shape[1] + 1,
+            ((self.shape[2] - 1) >> level) % self.tile_shape[2] + 1
         ]
 
 
@@ -619,9 +619,11 @@ class Tiled(object):
         """
         if channel and channel > self.nchannels:
             channel = 1
+        # Compute final tile shape depending on position in grid
+        # Note that tileindex increases first with x (Numpy index #2)
         shape = [
             self.tile_shape[0],
-            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1 \
+            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] \
                     < self.shapes[tilelevel][1] \
                 else self.border_shapes[tilelevel][1],
             self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
