@@ -38,21 +38,11 @@ def create_app() -> FastAPI:
     """
 
     worker_id = os.getpid()
-    # Get shared lock dictionary if processing in parallel
-    if share:
-        sharedLock = LRUSharedRWLockCache(
-            name=f"{package.title}.{os.getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"]
-        )
-
-    memCachedTiled = LRUMemCache(
-        pickledTiled,
-        maxsize=config.settings["max_mem_cache_image_count"]
-    )
 
     banner_template = config.settings["banner_template"]
     base_template = config.settings["base_template"]
     template_dir = os.path.abspath(config.settings["template_dir"])
+    cache_dir = os.path.abspath(config.settings["cache_dir"])
     client_dir = os.path.abspath(config.settings["client_dir"])
     extra_dir = os.path.abspath(config.settings["extra_dir"])
     doc_dir = config.settings["doc_dir"]
@@ -65,6 +55,19 @@ def create_app() -> FastAPI:
     quality = config.settings["quality"]
     tile_size = config.settings["tile_size"]
     image = config.image_filename
+
+    # Get shared lock dictionary if processing in parallel
+    if share:
+        sharedLock = LRUSharedRWLockCache(
+            name=f"{package.title}.{os.getppid()}",
+            maxsize=config.settings["max_disk_cache_image_count"]
+        )
+
+    memCachedTiled = LRUMemCache(
+        pickledTiled,
+        maxsize=config.settings["max_mem_cache_image_count"]
+    )
+
 
     logger = logging.getLogger("uvicorn.error")
 
