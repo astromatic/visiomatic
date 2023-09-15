@@ -373,9 +373,9 @@ class Tiled(object):
         crpix1 = header.get("CRPIX1", 1)
         crpix2 = header.get("CRPIX2", 1)
         header["CRPIX1"] = detinfo[0][0] \
-            + detinfo[0][2] * (header["CRPIX1"] - datainfo[0][0]);
+            + detinfo[0][2] * (crpix1 - datainfo[0][0]);
         header["CRPIX2"] = detinfo[1][0] \
-            + detinfo[1][2] * (header["CRPIX2"] - datainfo[1][0]);
+            + detinfo[1][2] * (crpix2 - datainfo[1][0]);
         # Recover CD matrix, possibly from obsolete WCS parameters
         if "CD1_1" in header:
             cd1_1 = header.get("CD1_1", 1.0)
@@ -403,6 +403,11 @@ class Tiled(object):
                 cd1_2 = -cdelt1 * scrota2
                 cd2_1 = cdelt2 * scrota2
                 cd2_2 = cdelt2 * ccrota2
+            else:
+                cd1_1 = cdelt1
+                cd1_2 = 0.
+                cd2_1 = 0.
+                cd2_2 = cdelt2
         header["CD1_1"] = detinfo[0][2] * cd1_1;
         header["CD1_2"] = detinfo[1][2] * cd1_2;
         header["CD2_1"] = detinfo[0][2] * cd2_1;
