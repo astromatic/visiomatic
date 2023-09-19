@@ -1,13 +1,13 @@
 [build-system]
-requires = ["pdm-backend>=1.0.0"]
+requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
 name = "visiomatic"
 version = "3.0"
-description = "A web application for visualizing astronomical images."
+description = "A web application for visualizing astronomical images"
 authors = [
-    {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"}
+    {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
 ]
 keywords = ["astronomy", "CFHT", "imaging"]
 readme = "README.md"
@@ -23,7 +23,7 @@ dependencies = [
     "methodtools >= 0.4.7",
     "numpy >= 1.19",
     "opencv-python >= 4.5",
-	"orjson >= 3.9.0",
+    "orjson >= 3.9.0",
     "platformdirs >= 3.4.0",
     "posix_ipc >= 1.1.0",
     "pydantic == 1.*",
@@ -31,7 +31,7 @@ dependencies = [
     "simplejpeg >= 1.6",
     "tiler >= 0.5",
     "ultradict >= 0.0.6",
-    "uvicorn[standard] >= 0.18"
+    "uvicorn[standard] >= 0.18",
 ]
 requires-python = ">=3.8"
 classifiers = [
