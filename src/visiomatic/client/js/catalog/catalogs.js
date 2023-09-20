@@ -328,7 +328,7 @@ export const twomass = new Catalog({
 
 /**
  * unWISE catalog.
- * @name allWISE
+ * @name unWISE
  * @type {Catalog}
  * @memberof catalogs
  */
