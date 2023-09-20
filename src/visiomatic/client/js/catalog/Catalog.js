@@ -26,6 +26,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 		units: [''],
 		magLim: 20.0,
 		magIndex: 0,
+		magScaleType: 'mag',
 		regionType: 'box',
 		service: 'Vizier@CDS',
 		className: 'logo-catalog-vizier',
@@ -69,6 +70,9 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 
 	 * @param {number} [options.magIndex=0]
 	   Index of the property member that stores the reference magnitude.
+
+	 * @param {'mag' | 'log' | 'linear'} [options.magScaleType='mag']
+	   Scale type for the reference "magnitude".
 
 	 * @param {'box'|'cone'} [options.regionType='box']
 	   Geometry of the query region.
@@ -228,7 +232,13 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	draw: function (feature, latlng) {
 		var refmag = feature.properties.items[this.magIndex];
 		return circleMarker(latlng, {
-			radius: refmag ? this.magLim + 5 - refmag : 8
+			radius: refmag ? 5. + (
+				this.magScaleType === 'mag' ?
+					this.magLim - refmag : 2.5 * (
+						this.magScaleType === 'log' ? refmag - this.magLim :
+							Math.log(refmag / this.magLim + 1.)
+					)
+			) : 8.
 		});
 	},
 

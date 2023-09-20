@@ -16874,6 +16874,7 @@
       units: [""],
       magLim: 20,
       magIndex: 0,
+      magScaleType: "mag",
       regionType: "box",
       service: "Vizier@CDS",
       className: "logo-catalog-vizier",
@@ -16961,7 +16962,7 @@
     draw: function(feature, latlng) {
       var refmag = feature.properties.items[this.magIndex];
       return (0, import_leaflet.circleMarker)(latlng, {
-        radius: refmag ? this.magLim + 5 - refmag : 8
+        radius: refmag ? 5 + (this.magScaleType === "mag" ? this.magLim - refmag : 2.5 * (this.magScaleType === "log" ? refmag - this.magLim : Math.log(refmag / this.magLim + 1))) : 8
       });
     },
     style: function(feature) {
@@ -16988,6 +16989,7 @@
     skybot: () => skybot,
     tgss: () => tgss,
     twomass: () => twomass,
+    unWISE: () => unWISE,
     urat1: () => urat1
   });
   var import_leaflet4 = __toESM(require_leaflet_src());
@@ -17372,6 +17374,22 @@
     properties: ["J", "H", "K"],
     units: ["", "", ""],
     objectURL: "/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.1"
+  });
+  var unWISE = new Catalog({
+    service: "Vizier@CDS",
+    name: "UnWISE",
+    attribution: "The band-merged unWISE Catalog (Schlafly et al. 2019)",
+    color: "red",
+    magLim: 40,
+    magScaleType: "linear",
+    regionType: "box",
+    catalogURL: "/asu-tsv?&-mime=csv&-source=II/363/unwise&-out=objID,_RAJ2000,_DEJ2000,FW1,FW2&-out.meta=&-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-FW1",
+    properties: ["F<sub>W1</sub> (3.4\xB5m)", "F<sub>W2</sub> (4.6\xB5m)"],
+    units: [
+      '<a href="https://vizier.cds.unistra.fr/viz-bin/VizieR?-6N&-out.form=H0&//*&-5N&<&quot;Label&quot;&catid%3D2363&tabid%3D1&colid%3D8" target=\u201D_blank\u201D>nMgy (Vega)</a>',
+      '<a href="https://vizier.cds.unistra.fr/viz-bin/VizieR?-6N&-out.form=H0&//*&-5N&<&quot;Label&quot;&catid%3D2363&tabid%3D1&colid%3D9" target=\u201D_blank\u201D>nMgy (Vega)</a>'
+    ],
+    objectURL: "/VizieR-5?-source=II/363/unwise&-c={ra},{dec},eq=J2000&-c.rs=0.2"
   });
   var urat1 = new Catalog({
     service: "Vizier@CDS",
@@ -18365,6 +18383,7 @@
       twomass,
       sdss,
       panstarrs1,
+      unWISE,
       skybot
     ],
     options: {

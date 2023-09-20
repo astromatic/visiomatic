@@ -327,6 +327,36 @@ export const twomass = new Catalog({
 
 
 /**
+ * unWISE catalog.
+ * @name allWISE
+ * @type {Catalog}
+ * @memberof catalogs
+ */
+export const unWISE = new Catalog({
+	service: 'Vizier@CDS',
+	name: 'UnWISE',
+	attribution: 'The band-merged unWISE Catalog (Schlafly et al. 2019)',
+	color: 'red',
+	magLim: 40.0,
+	magScaleType: 'linear',
+	regionType: 'box',
+	catalogURL: '/asu-tsv?&-mime=csv&-source=II/363/unwise&' +
+	 '-out=objID,_RAJ2000,_DEJ2000,FW1,FW2&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-FW1',
+	properties: ['F<sub>W1</sub> (3.4µm)', 'F<sub>W2</sub> (4.6µm)'],
+	units: [
+		'<a href="https://vizier.cds.unistra.fr/viz-bin/VizieR?-6N&' +
+		 '-out.form=H0&//*&-5N&<&quot;Label&quot;&catid%3D2363&tabid%3D1&' +
+		 'colid%3D8" target=”_blank”>nMgy (Vega)</a>',
+		'<a href="https://vizier.cds.unistra.fr/viz-bin/VizieR?-6N&' +
+		 '-out.form=H0&//*&-5N&<&quot;Label&quot;&catid%3D2363&tabid%3D1&' +
+		 'colid%3D9" target=”_blank”>nMgy (Vega)</a>'
+	],
+	objectURL: '/VizieR-5?-source=II/363/unwise&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+
+/**
  * URAT1 catalog.
  * @name urat1
  * @type {Catalog}
