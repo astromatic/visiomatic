@@ -20,7 +20,14 @@ import {
 
 import {VUtil} from '../util';
 import {UI} from './UI';
-import {gaiaDR3, panstarrs1, skybot, sdss, twomass} from '../catalog/catalogs';
+import {
+	gaiaDR3,
+	panstarrs1,
+	skybot,
+	sdss,
+	twomass,
+	unWISE
+} from '../catalog/catalogs';
 
 
 export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
@@ -35,6 +42,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		twomass,
 		sdss,
 		panstarrs1,
+		unWISE,
 		skybot
 	],
 

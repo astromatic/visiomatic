@@ -4,8 +4,9 @@ Custom caches and utilities
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import os
 from collections import OrderedDict
+from glob import glob
+from os import getppid, path
 from signal import (
     signal,
     SIGABRT,
@@ -16,7 +17,7 @@ from signal import (
     SIGTERM
 )
 from time import time_ns
-from typing import Union
+from typing import Callable, Union
 
 from posix_ipc import Semaphore, O_CREAT
 from UltraDict import UltraDict
@@ -34,12 +35,12 @@ class LRUMemCache:
     maxsize: int, optional
         Maximum size of the cache.
     """
-    def __init__(self, func, maxsize: int=8):
+    def __init__(self, func: Callable, maxsize: int=8):
         self.cache = OrderedDict()
         self.func = func
         self.maxsize = maxsize
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> any:
         """
         Cache or recover earlier cached result/object.
         If the number of cached items exceeds maxsize then the least recently
@@ -80,12 +81,13 @@ class LRUSharedRWLockCache:
         Maximum size of the cache.
     """
     def __init__(self, name: Union[str, None]=None, maxsize: int=8):
-        self.name = name if name else f"lrucache_{os.getppid()}"
+        self.name = name if name else f"lrucache_{getppid()}"
         self._lock_name = self.name + ".lock"
         lock = Semaphore(self._lock_name, O_CREAT, initial_value=1)
         with Semaphore(self._lock_name) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
         self.maxsize = maxsize
+        # Delete semaphores when process is aborted.
         for sig in (
             SIGABRT,
             SIGILL,
@@ -95,7 +97,7 @@ class LRUSharedRWLockCache:
             signal(sig, self.remove)
 
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> 'SharedRWLock':
         """
         Create or recover a shared reader-writer lock (e.g., Raynal 2012).
 
@@ -114,20 +116,24 @@ class LRUSharedRWLockCache:
         hargs = hex(0xffffffffffffffff & hash(args))
         with self.cache.lock:
             if hargs in self.cache:
+                # Reference already in cache: lock in read mode
                 lock, time = self.cache[hargs]
                 lock.acquire_read()
             else:
-                # Test if we're reaching the cache limit
+                # Reference not in cache: lock in write mode
+                # after testing if we're reaching the cache limit
                 if len(self.cache) >= self.maxsize:
                     # Find least recently used
                     oldest = min(self.cache, key=lambda k: self.cache[k][1])
+                    print(oldest)
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
             # Finally update the shared version
             self.cache[hargs] = lock, time_ns()
             return lock
 
-    def remove(self, *args):
+
+    def remove(self, *args) -> None:
         """
         Remove semaphores.
         """
@@ -135,6 +141,12 @@ class LRUSharedRWLockCache:
             Semaphore(self._lock_name).unlink()
         except:
             pass
+
+
+    def scan_cachedir(self, dir : str, ext : str=".pkl") -> None:
+        for file in glob(path.join(dir, "*" + ext)):
+            self.__call__(path.splitext(file)[0])
+        return
 
 
 class SharedRWLock:
@@ -166,7 +178,7 @@ class SharedRWLock:
             signal(sig, self.remove)
 
 
-    def acquire_read(self):
+    def acquire_read(self) -> None:
         """
         Acquire lock in read mode.
         """
@@ -177,7 +189,7 @@ class SharedRWLock:
         self.write = False
 
 
-    def acquire_write(self):
+    def acquire_write(self) -> None:
         """
         Acquire lock in write mode.
         """
@@ -185,7 +197,7 @@ class SharedRWLock:
         self.write = True
 
 
-    def release(self):
+    def release(self) -> None:
         """
         Release acquired lock.
         """
@@ -199,7 +211,7 @@ class SharedRWLock:
                     glock.release()
 
 
-    def __delete__(self, instance):
+    def __delete__(self, instance) -> None:
         """
         Clean up leftovers from the RW lock.
 
@@ -208,7 +220,7 @@ class SharedRWLock:
         self.remove()
 
 
-    def remove(self, *args):
+    def remove(self, *args) -> None:
         """
         Remove files used by the RW lock semaphores.
         """

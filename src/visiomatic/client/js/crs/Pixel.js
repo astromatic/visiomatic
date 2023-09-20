@@ -39,7 +39,7 @@ export const Pixel = Projection.extend( /** @lends PIX */ {
 		const	projparam = this.projparam;
 
 		// Center on image
-		if (!options.crval) {
+		if (!this.options.crval) {
 			projparam.crval = latLng(
 				(projparam.naxis.y + 1.0) / 2.0,
 				(projparam.naxis.x + 1.0) / 2.0

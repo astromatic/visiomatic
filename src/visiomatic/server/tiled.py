@@ -180,7 +180,13 @@ class Tiled(object):
             dtype=np.int32
         )
         self.make_tiles()
-        # Delete mosaic data (will be remapped on-demand)
+        # Delete tiles reference (tiles buffer has been memory mapped)
+        # after measuring size
+        self.nbytes = self.tiles.nbytes
+        del self.tiles
+        # Delete mosaic reference (mosaic data have been memory mapped)
+        # after measuring size
+        self.nbytes += self.data.nbytes
         del self.data
         # Delete individual image data (no longer needed)
         for image in self.images:
@@ -188,6 +194,7 @@ class Tiled(object):
         # Pickle-save current object
         with open(self.get_object_filename(self.prefix), "wb") as f:
             pickle.dump(self, f, protocol=5)
+            self.nbytes += f.tell()
 
 
     def compute_nlevels(self) -> int:
@@ -200,8 +207,8 @@ class Tiled(object):
             Number of image resolution levels in the pyramid.
         """
         return max(
-            (self.shape[1] // (self.tile_shape[1] + 1) + 1).bit_length() + 1,
-            (self.shape[2] // (self.tile_shape[2] + 1) + 1).bit_length() + 1
+            ((self.shape[1] - 1) // self.tile_shape[1]).bit_length() + 1,
+            ((self.shape[2] - 1) // self.tile_shape[2]).bit_length() + 1
         )
 
 
@@ -232,8 +239,8 @@ class Tiled(object):
         """
         return [
             self.tile_shape[0],
-            (self.shape[1] >> level) % self.tile_shape[1],
-            (self.shape[2] >> level) % self.tile_shape[2]
+            ((self.shape[1] - 1) >> level) % self.tile_shape[1] + 1,
+            ((self.shape[2] - 1) >> level) % self.tile_shape[2] + 1
         ]
 
 
@@ -366,9 +373,9 @@ class Tiled(object):
         crpix1 = header.get("CRPIX1", 1)
         crpix2 = header.get("CRPIX2", 1)
         header["CRPIX1"] = detinfo[0][0] \
-            + detinfo[0][2] * (header["CRPIX1"] - datainfo[0][0]);
+            + detinfo[0][2] * (crpix1 - datainfo[0][0]);
         header["CRPIX2"] = detinfo[1][0] \
-            + detinfo[1][2] * (header["CRPIX2"] - datainfo[1][0]);
+            + detinfo[1][2] * (crpix2 - datainfo[1][0]);
         # Recover CD matrix, possibly from obsolete WCS parameters
         if "CD1_1" in header:
             cd1_1 = header.get("CD1_1", 1.0)
@@ -396,6 +403,11 @@ class Tiled(object):
                 cd1_2 = -cdelt1 * scrota2
                 cd2_1 = cdelt2 * scrota2
                 cd2_2 = cdelt2 * ccrota2
+            else:
+                cd1_1 = cdelt1
+                cd1_2 = 0.
+                cd2_1 = 0.
+                cd2_2 = cdelt2
         header["CD1_1"] = detinfo[0][2] * cd1_1;
         header["CD1_2"] = detinfo[1][2] * cd1_2;
         header["CD2_1"] = detinfo[0][2] * cd2_1;
@@ -560,9 +572,8 @@ class Tiled(object):
                 interpolation=cv2.INTER_AREA
             )[None,:,:]
         del ima, tiler
+        # Make sure that memory has been completely mapped before exiting
         self.tiles.flush()
-        # No longer needed (tiles buffer will be remapped on demand)
-        del self.tiles
 
 
     def get_tile(
@@ -608,9 +619,11 @@ class Tiled(object):
         """
         if channel and channel > self.nchannels:
             channel = 1
+        # Compute final tile shape depending on position in grid
+        # Note that tileindex increases first with x (Numpy index #2)
         shape = [
             self.tile_shape[0],
-            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1 \
+            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1\
                     < self.shapes[tilelevel][1] \
                 else self.border_shapes[tilelevel][1],
             self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
