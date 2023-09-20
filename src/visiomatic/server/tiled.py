@@ -623,7 +623,7 @@ class Tiled(object):
         # Note that tileindex increases first with x (Numpy index #2)
         shape = [
             self.tile_shape[0],
-            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] \
+            self.tile_shape[1] if tileindex // self.shapes[tilelevel][2] + 1\
                     < self.shapes[tilelevel][1] \
                 else self.border_shapes[tilelevel][1],
             self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
