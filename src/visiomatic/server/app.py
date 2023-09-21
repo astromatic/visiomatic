@@ -4,7 +4,8 @@ Application module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import io, logging, os, pickle, re
+import io, logging, pickle, re
+from os import getpid, getppid, path
 from typing import List, Literal, Optional, Union
 
 import cv2
@@ -37,14 +38,15 @@ def create_app() -> FastAPI:
     Create FASTAPI application
     """
 
-    worker_id = os.getpid()
+    worker_id = getpid()
 
     banner_template = config.settings["banner_template"]
     base_template = config.settings["base_template"]
-    template_dir = os.path.abspath(config.settings["template_dir"])
-    cache_dir = os.path.abspath(config.settings["cache_dir"])
-    client_dir = os.path.abspath(config.settings["client_dir"])
-    extra_dir = os.path.abspath(config.settings["extra_dir"])
+    template_dir = path.abspath(config.settings["template_dir"])
+    cache_dir = path.abspath(config.settings["cache_dir"])
+    client_dir = path.abspath(config.settings["client_dir"])
+    data_dir = path.abspath(config.settings["data_dir"])
+    extra_dir = path.abspath(config.settings["extra_dir"])
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
@@ -54,12 +56,12 @@ def create_app() -> FastAPI:
     gamma = config.settings["gamma"]
     quality = config.settings["quality"]
     tile_size = config.settings["tile_size"]
-    image = config.image_filename
+    image_argname = config.image_filename
 
     # Get shared lock dictionary if processing in parallel
     if share:
         sharedLock = LRUSharedRWLockCache(
-            name=f"{package.title}.{os.getppid()}",
+            name=f"{package.title}.{getppid()}",
             maxsize=config.settings["max_disk_cache_image_count"]
         )
 
@@ -126,7 +128,7 @@ def create_app() -> FastAPI:
     )
 
     # Provide an endpoint for the user's manual (if it exists)
-    if os.path.exists(doc_dir):
+    if path.exists(doc_dir):
         logger.info(f"Default documentation found at {doc_dir}.")
         app.mount(
             doc_path,
@@ -141,7 +143,7 @@ def create_app() -> FastAPI:
 
     # Instantiate templates
     templates = Jinja2Templates(
-        directory=os.path.join(package.src_dir, template_dir)
+        directory=path.join(package.src_dir, template_dir)
     )
 
     # Prepare the RegExps
@@ -289,28 +291,21 @@ def create_app() -> FastAPI:
                 }
             )
 
+        image_filename = path.abspath(
+            image_argname if image_argname \
+               else path.join(data_dir, FIF)
+        )
         if share:
-            lock = sharedLock(FIF)
+            lock = sharedLock(image_filename)
 
-        if (image):
-            tiled = memCachedTiled(
-                os.path.basename(image),
-                data_dir=os.path.dirname(image),
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
-            )
-        else:
-            tiled = memCachedTiled(
-                FIF,
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
-            )
+        tiled = memCachedTiled(
+            image_filename,
+            contrast=contrast,
+            color_saturation=color_saturation,
+            gamma=gamma,
+            quality=quality,
+            tilesize=tile_size
+        )
         if obj != None:
             if share:
                 lock.release()

@@ -4,16 +4,19 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import glob, os, math, pickle
+import glob, math, pickle
+
 from methodtools import lru_cache
+from os import path
 from typing import List, NamedTuple, Tuple, Union
-from joblib import Parallel, delayed
-from pydantic import BaseModel
+from urllib.parse import quote
 
 import numpy as np
 import cv2
 
 from astropy.io import fits
+from joblib import Parallel, delayed
+from pydantic import BaseModel
 from simplejpeg import encode_jpeg
 from skimage.draw import line
 from tiler import Tiler
@@ -108,8 +111,6 @@ class Tiled(object):
     ----------
     filename: str | ~pathlib.Path,
         Path to the image.
-    data_dir: str | ~pathlib.Path, optional
-        Data root directory.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
     tilesize: tuple[int, int], optional
@@ -128,7 +129,6 @@ class Tiled(object):
     def __init__(
             self,
             filename: str,
-            data_dir: str = config.settings["data_dir"],
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
@@ -138,8 +138,8 @@ class Tiled(object):
             quality: int = 90,
             nthreads : int = config.settings["thread_count"]):
 
-        self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        self.filename = os.path.join(data_dir, filename)
+        self.filename = path.abspath(filename)
+        self.prefix = path.splitext(self.filename)[0]
         # Otherwise, create it
         self.nthreads = nthreads
         hdus = fits.open(self.filename)
@@ -279,7 +279,10 @@ class Tiled(object):
         filename: str
             Pickled object filename.
         """
-        return os.path.join(config.settings["cache_dir"], prefix + ".pkl")
+        return path.join(
+            config.settings["cache_dir"],
+            quote(prefix, safe='') + ".pkl"
+        )
 
 
     def get_data_filename(self):
@@ -291,9 +294,9 @@ class Tiled(object):
         filename: str
             Filename of the memory-mapped image data.
         """
-        return os.path.join(
+        return path.join(
             config.settings["cache_dir"],
-            self.prefix + ".data.np"
+            quote(self.prefix, safe='') + ".data.np"
         )
 
 
@@ -306,9 +309,9 @@ class Tiled(object):
         filename: str
             Filename of the memory mapped tile datacube.
         """
-        return os.path.join(
+        return path.join(
             config.settings["cache_dir"],
-            self.prefix + ".tiles.np"
+            quote(self.prefix, safe='') + ".tiles.np"
         )
 
 
@@ -776,7 +779,6 @@ class Tiled(object):
 
 def pickledTiled(
         filename: str,
-        data_dir: str = config.settings["data_dir"],
         **kwargs) -> Tiled:
     """
     Return pickled version of object if available.
@@ -785,8 +787,6 @@ def pickledTiled(
     ----------
     filename: str | ~pathlib.Path
         Path to the image.
-    data_dir: str | ~pathlib.Path, optional
-        Data root directory.
     **kwargs: dict
         Additional keyword arguments.
 
@@ -795,17 +795,16 @@ def pickledTiled(
     tiled: object
         Tiled object pickled from file if available, or initialized otherwise).
     """
-    prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(data_dir, filename)
+    afilename = path.abspath(filename)
+    prefix = quote(path.splitext(afilename)[0])
     # Check if a recent cached object is available
-    if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
-            os.path.getmtime(oname) > os.path.getmtime(fname):
+    if path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
+            path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
             return pickle.load(f)
     else:
         return Tiled(
             filename,
-            data_dir=data_dir,
             **kwargs
         )
 
