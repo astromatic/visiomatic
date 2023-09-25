@@ -6,6 +6,7 @@ Custom caches and utilities
 
 from collections import OrderedDict
 from glob import glob
+from hashlib import md5
 from os import getppid, path
 from signal import (
     signal,
@@ -79,13 +80,20 @@ class LRUSharedRWLockCache:
         Name of the lock cache.
     maxsize: int, optional
         Maximum size of the cache.
+    removecall: func, optional
+        Callback function for removing cached data.
     """
-    def __init__(self, name: Union[str, None]=None, maxsize: int=8):
+    def __init__(
+            self,
+            name: Union[str, None]=None,
+            removecall: Callable=None,
+            maxsize: int=8):
         self.name = name if name else f"lrucache_{getppid()}"
         self._lock_name = self.name + ".lock"
         lock = Semaphore(self._lock_name, O_CREAT, initial_value=1)
         with Semaphore(self._lock_name) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        self.removecall = removecall
         self.maxsize = maxsize
         # Delete semaphores when process is aborted.
         for sig in (
@@ -113,23 +121,32 @@ class LRUSharedRWLockCache:
 
         :meta public:
         """
-        hargs = hex(0xffffffffffffffff & hash(args))
+        # We use MD5 instead of hash() as output is consistent across processes
+        m = md5()
+        for s in args:
+            m.update(s.encode())
+        hargs = m.hexdigest()
         with self.cache.lock:
             if hargs in self.cache:
                 # Reference already in cache: lock in read mode
-                lock, time = self.cache[hargs]
+                lock, firstarg, time = self.cache[hargs]
                 lock.acquire_read()
             else:
                 # Reference not in cache: lock in write mode
                 # after testing if we're reaching the cache limit
-                if len(self.cache) >= self.maxsize:
-                    # Find least recently used
-                    oldest = min(self.cache, key=lambda k: self.cache[k][1])
-                    print(oldest)
+                if len(self.cache) >= self.maxsize and self.removecall:
+                    # Find LRU cache entry
+                    oldest = min(self.cache, key=lambda k: self.cache[k][2])
+                    lock = SharedRWLock(oldest)
+                    lock.acquire_write()
+                    # Apply remove callback to first argument stored in cache
+                    self.removecall(self.cache[oldest][1])
+                    lock.release()
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
+                firstarg = args[0]
             # Finally update the shared version
-            self.cache[hargs] = lock, time_ns()
+            self.cache[hargs] = lock, firstarg, time_ns()
             return lock
 
 
