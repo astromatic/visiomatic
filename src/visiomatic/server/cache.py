@@ -129,9 +129,11 @@ class LRUSharedRWLockCache:
     """
     def __init__(
             self,
+            func: Callable,
             name: Union[str, None]=None,
             maxsize: int=8,
             removecall: Callable=None):
+        self.func = func
         self.name = name if name else f"rwlockcache_{getppid()}"
         self._lock_name = self.name + ".lock"
         lock = Semaphore(self._lock_name, O_CREAT, initial_value=1)
@@ -149,7 +151,7 @@ class LRUSharedRWLockCache:
         self.maxsize = maxsize
 
 
-    def __call__(self, *args) -> 'SharedRWLock':
+    def __call__(self, *args, **kwargs):
         """
         Create or recover a shared reader-writer lock (e.g., Raynal 2012).
 
@@ -170,29 +172,43 @@ class LRUSharedRWLockCache:
         for s in args:
             m.update(s.encode())
         hargs = m.hexdigest()
+        write = False
+        remove = False
         with self.cache.lock:
             if hargs in self.cache:
                 # Reference already in cache: lock in read mode
-                lock, firstarg, time = self.cache[hargs]
+                result, lock, firstarg, time = self.cache[hargs]
                 lock.acquire_read()
             else:
                 # Reference not in cache: lock in write mode
                 # after testing if we're reaching the cache limit
-                if len(self.cache) >= self.maxsize and self.removecall:
+                if len(self.cache) >= self.maxsize:
                     # Find LRU cache entry
                     oldest = min(self.cache, key=lambda k: self.cache[k][2])
-                    lock = SharedRWLock(oldest)
-                    lock.acquire_write()
-                    # Apply remove callback to first argument stored in cache
-                    self.removecall(self.cache[oldest][1])
+                    olock = SharedRWLock(oldest)
+                    oref = self.cache[oldest][1]
                     del self.cache[oldest]
-                    lock.release()
+                    olock.acquire_write()
+                    # Apply remove callback to first argument stored in cache
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
                 firstarg = args[0]
-            # Finally update the shared version
-            self.cache[hargs] = lock, firstarg, time_ns()
-            return lock
+                write = self.removecall
+        if remove:
+            self.removecall(oref)
+            olock.release()
+            del olock
+        # Finally update the shared version
+        if write:
+            print("Writing...")
+            result = self.func(*args, **kwargs)
+            print("Writing done!")
+        with self.cache.lock:
+            print("Caching...")
+            self.cache[hargs] = result, lock, firstarg, time_ns()
+            print("Caching done!")
+
+        return result, lock
 
 
     def remove(self, *args) -> None:

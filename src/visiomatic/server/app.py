@@ -62,6 +62,7 @@ def create_app() -> FastAPI:
     # Get shared lock dictionary if processing in parallel
     if share:
         sharedLock = LRUSharedRWLockCache(
+            pickledTiled,
             name=f"{package.title}.{getppid()}",
             maxsize=config.settings["max_disk_cache_image_count"],
             removecall=delTiled
@@ -72,12 +73,6 @@ def create_app() -> FastAPI:
                 Tiled.get_image_filename(None, path.splitext(filename)[0])
             )
             lock.release()
-
-    memCachedTiled = LRUCache(
-        pickledTiled,
-        maxsize=config.settings["max_mem_cache_image_count"]
-    )
-
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -303,10 +298,8 @@ def create_app() -> FastAPI:
             image_argname if image_argname \
                else path.join(data_dir, FIF)
         )
-        if share:
-            lock = sharedLock(image_filename)
 
-        tiled = memCachedTiled(
+        tiled, lock = sharedLock(
             image_filename,
             contrast=contrast,
             color_saturation=color_saturation,
