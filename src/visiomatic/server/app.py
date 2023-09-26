@@ -5,6 +5,7 @@ Application module
 # Licensed under the MIT licence
 
 import io, logging, pickle, re
+from glob import glob
 from os import getpid, getppid, path
 from typing import List, Literal, Optional, Union
 
@@ -27,8 +28,8 @@ config.settings = conf.flat_dict()
 config.config_filename = conf.config_filename
 config.image_filename = conf.image_filename
 
-from .tiled import colordict, pickledTiled, ProfileModel, Tiled
-from .cache import LRUMemCache, LRUSharedRWLockCache
+from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
+from .cache import LRUCache, LRUSharedRWLockCache
 
 
 share = config.settings["workers"] > 1 and not config.settings["reload"]
@@ -62,10 +63,17 @@ def create_app() -> FastAPI:
     if share:
         sharedLock = LRUSharedRWLockCache(
             name=f"{package.title}.{getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"]
+            maxsize=config.settings["max_disk_cache_image_count"],
+            removecall=delTiled
         )
+        # Scan and register images cached during previous sessions
+        for filename in glob(path.join(cache_dir, "*" + ".pkl")):
+            lock = sharedLock(
+                Tiled.get_image_filename(None, path.splitext(filename)[0])
+            )
+            lock.release()
 
-    memCachedTiled = LRUMemCache(
+    memCachedTiled = LRUCache(
         pickledTiled,
         maxsize=config.settings["max_mem_cache_image_count"]
     )

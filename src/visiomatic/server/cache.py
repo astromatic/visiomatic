@@ -5,9 +5,8 @@ Custom caches and utilities
 # Licensed under the MIT licence
 
 from collections import OrderedDict
-from glob import glob
 from hashlib import md5
-from os import getppid, path
+from os import getppid
 from signal import (
     signal,
     SIGABRT,
@@ -25,7 +24,8 @@ from UltraDict import UltraDict
 
 from .. import package
 
-class LRUMemCache:
+
+class LRUCache:
     """
     Custom Least Recently Used (LRU) memory cache.
 
@@ -59,6 +59,52 @@ class LRUMemCache:
 
         :meta public:
         """
+        print(args)
+        if args in self.cache:
+            self.cache.move_to_end(args)
+            return self.cache[args]
+        if len(self.cache) > self.maxsize:
+            self.cache.popitem(0)
+        result = self.func(*args, **kwargs)
+        self.cache[args] = result
+        return result
+
+
+class LRUSharedCache:
+    """
+    Custom Least Recently Used (LRU) memory cache shareable across processes.
+
+    Parameters
+    ----------
+    func: class or func
+        Function result or class instantiation to be cached.
+    maxsize: int, optional
+        Maximum size of the cache.
+    """
+    def __init__(self, func: Callable, maxsize: int=8):
+        self.cache = OrderedDict()
+        self.func = func
+        self.maxsize = maxsize
+
+    def __call__(self, *args, **kwargs) -> any:
+        """
+        Cache or recover earlier cached result/object.
+        If the number of cached items exceeds maxsize then the least recently
+        used item is dropped from the cache.
+
+        Parameters
+        ----------
+        args: any
+            Hashable arguments to the function/constructor.
+
+        Returns
+        -------
+        result: any
+            Cached item.
+
+        :meta public:
+        """
+        print(args)
         if args in self.cache:
             self.cache.move_to_end(args)
             return self.cache[args]
@@ -86,15 +132,13 @@ class LRUSharedRWLockCache:
     def __init__(
             self,
             name: Union[str, None]=None,
-            removecall: Callable=None,
-            maxsize: int=8):
-        self.name = name if name else f"lrucache_{getppid()}"
+            maxsize: int=8,
+            removecall: Callable=None):
+        self.name = name if name else f"rwlockcache_{getppid()}"
         self._lock_name = self.name + ".lock"
         lock = Semaphore(self._lock_name, O_CREAT, initial_value=1)
         with Semaphore(self._lock_name) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
-        self.removecall = removecall
-        self.maxsize = maxsize
         # Delete semaphores when process is aborted.
         for sig in (
             SIGABRT,
@@ -103,6 +147,8 @@ class LRUSharedRWLockCache:
             SIGSEGV,
             SIGTERM):
             signal(sig, self.remove)
+        self.removecall = removecall
+        self.maxsize = maxsize
 
 
     def __call__(self, *args) -> 'SharedRWLock':
@@ -141,6 +187,7 @@ class LRUSharedRWLockCache:
                     lock.acquire_write()
                     # Apply remove callback to first argument stored in cache
                     self.removecall(self.cache[oldest][1])
+                    del self.cache[oldest]
                     lock.release()
                 lock = SharedRWLock(hargs)
                 lock.acquire_write()
@@ -159,11 +206,6 @@ class LRUSharedRWLockCache:
         except:
             pass
 
-
-    def scan_cachedir(self, dir : str, ext : str=".pkl") -> None:
-        for file in glob(path.join(dir, "*" + ext)):
-            self.__call__(path.splitext(file)[0])
-        return
 
 
 class SharedRWLock:
