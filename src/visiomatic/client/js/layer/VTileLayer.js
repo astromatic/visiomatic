@@ -660,7 +660,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Wait for metadata request to complete
 			this._loadActivity = DomUtil.create(
 				'div',
-				'visiomatic-layer-activity-',
+				'visiomatic-layer-activity',
 				map._controlContainer
 			);
 			this.once('metaload', function () {

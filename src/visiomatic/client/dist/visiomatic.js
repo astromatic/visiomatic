@@ -37137,7 +37137,7 @@
       } else {
         this._loadActivity = import_leaflet31.DomUtil.create(
           "div",
-          "visiomatic-layer-activity-",
+          "visiomatic-layer-activity",
           map4._controlContainer
         );
         this.once("metaload", function() {
