@@ -59,7 +59,6 @@ class LRUCache:
 
         :meta public:
         """
-        print(args)
         if args in self.cache:
             self.cache.move_to_end(args)
             return self.cache[args]
@@ -104,7 +103,6 @@ class LRUSharedCache:
 
         :meta public:
         """
-        print(args)
         if args in self.cache:
             self.cache.move_to_end(args)
             return self.cache[args]
