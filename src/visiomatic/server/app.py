@@ -69,10 +69,11 @@ def create_app() -> FastAPI:
         )
         # Scan and register images cached during previous sessions
         for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-            lock = sharedLock(
+            tiled, lock = sharedLock(
                 Tiled.get_image_filename(None, path.splitext(filename)[0])
             )
-            lock.release()
+            if lock:
+                lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -308,20 +309,20 @@ def create_app() -> FastAPI:
             tilesize=tile_size
         )
         if obj != None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             return responses.PlainTextResponse(tiled.get_iipheaderstr())
         elif INFO != None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             return responses.JSONResponse(
             	content=jsonable_encoder(
             		tiled.get_model()
             	)
             )
         elif PFL != None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             val = app.parse_pfl.findall(PFL)[0]
             # We use the ORJSON response to properly manage NaNs
             return responses.ORJSONResponse(
@@ -334,8 +335,8 @@ def create_app() -> FastAPI:
             	)
             )
         elif VAL != None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             val = app.parse_val.findall(VAL)[0]
             return responses.JSONResponse(
             	content=jsonable_encoder(
@@ -343,8 +344,8 @@ def create_app() -> FastAPI:
             	)
             )
         if JTL == None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
@@ -385,8 +386,8 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
-        if share:
-            lock.release()
+        if lock:
+            lock.release_read()
         return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
 
 
