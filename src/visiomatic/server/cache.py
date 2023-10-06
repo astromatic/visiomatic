@@ -6,6 +6,7 @@ Custom caches and utilities
 
 from collections import OrderedDict
 from hashlib import md5
+from multiprocessing.shared_memory import SharedMemory
 from os import getpid, getppid
 from signal import (
     signal,
@@ -19,6 +20,7 @@ from signal import (
 from time import time_ns
 from typing import Callable, Union
 
+import numpy as np
 from posix_ipc import Semaphore, O_CREAT
 from UltraDict import UltraDict
 
@@ -28,50 +30,6 @@ from .. import package
 class LRUCache:
     """
     Custom Least Recently Used (LRU) memory cache.
-
-    Parameters
-    ----------
-    func: class or func
-        Function result or class instantiation to be cached.
-    maxsize: int, optional
-        Maximum size of the cache.
-    """
-    def __init__(self, func: Callable, maxsize: int=8):
-        self.cache = OrderedDict()
-        self.func = func
-        self.maxsize = maxsize
-
-    def __call__(self, *args, **kwargs) -> any:
-        """
-        Cache or recover earlier cached result/object.
-        If the number of cached items exceeds maxsize then the least recently
-        used item is dropped from the cache.
-
-        Parameters
-        ----------
-        args: any
-            Hashable arguments to the function/constructor.
-
-        Returns
-        -------
-        result: any
-            Cached item.
-
-        :meta public:
-        """
-        if args in self.cache:
-            self.cache.move_to_end(args)
-            return self.cache[args]
-        if len(self.cache) > self.maxsize:
-            self.cache.popitem(0)
-        result = self.func(*args, **kwargs)
-        self.cache[args] = result
-        return result
-
-
-class LRUSharedCache:
-    """
-    Custom Least Recently Used (LRU) memory cache shareable across processes.
 
     Parameters
     ----------
@@ -138,6 +96,7 @@ class LRUSharedRWLockCache:
         self._lock_name = self.name + ".lock"
         with Semaphore(self._lock_name, O_CREAT, initial_value=1) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        self.locks = LRUCache(func=SharedRWLock, maxsize=maxsize)
         # Delete semaphores when process is aborted.
         for sig in (
             SIGABRT,
@@ -173,31 +132,31 @@ class LRUSharedRWLockCache:
         hargs = m.hexdigest()
         write = False
         remove = False
+        lock = self.locks(hargs)
         with self.cache.lock:
             print(getpid(), ": Entering dict lock ......")
             if hargs in self.cache:
                 # Reference already in cache: lock in read mode
                 print(getpid(), ": Reading cached data")
-                result, lock, firstarg, time = self.cache[hargs]
-                self.cache[hargs] = result, lock, firstarg, time
+                result = self.cache[hargs][0]
+                self.cache[hargs][2] = time_ns()
                 print(getpid(), ": Done reading cached data")
             else:
                 # Reference not in cache: lock in write mode
                 # after testing if we're reaching the cache limit
                 print(getpid(), ": Acquiring write lock")
-                lock = SharedRWLock(hargs)
                 lock.acquire_write()
                 print(getpid(), ": Entering write lock ......")
                 # Cache an empty content just to mark territory
                 firstarg = args[0]
-                self.cache[hargs] = None, lock, firstarg, time_ns()
+                self.cache[hargs] = [None, firstarg, time_ns()]
                 write = True
                 if len(self.cache) >= self.maxsize:
                     # Find LRU cache entry
                     print(getpid(), ": Managing cache limit")
                     oldest = min(self.cache, key=lambda k: self.cache[k][2])
-                    olock = SharedRWLock(oldest)
-                    oref = self.cache[oldest][1]
+                    olock = oldest[1]
+                    ofirstarg = self.cache[oldest][1]
                     # Delete cache entry
                     del self.cache[oldest]
                     # Acquire write lock on (now defunct) LRU cache entry
@@ -211,6 +170,7 @@ class LRUSharedRWLockCache:
             # Apply remove callback to first argument stored in cache (filename)
             self.removecall(oref)
             olock.release_write()
+            del self.locks[oldest]
             del olock
         # Finally update the shared version
         if write:
@@ -220,8 +180,7 @@ class LRUSharedRWLockCache:
             with self.cache.lock:
                 print(getpid(), ": Re-entering dict lock ......")
                 print(getpid(), ": Caching...")
-                print(result, lock, firstarg, time_ns())
-                self.cache[hargs] = result, lock, firstarg, time_ns()
+                self.cache[hargs] = [result, firstarg, time_ns()]
                 print(getpid(), ": Caching done!")
             print(getpid(), ": ...... Re-leaving dict lock")
             lock.release_write()
@@ -235,10 +194,9 @@ class LRUSharedRWLockCache:
                 with self.cache.lock:
                     print(getpid(), ": Re-entering dict lock ......")
                     print(getpid(), ": Re-reading cache")
-                    result, lock, firstarg, time = self.cache[hargs]
-                    self.cache[hargs] = result, lock, firstarg, time_ns()                  
+                    result, firstarg, time = self.cache[hargs]
+                    self.cache[hargs][2] = time_ns()                
                 print(getpid(), ": ...... Re-leaving dict lock")
-            print(getpid(), ": ...... Re-releasing read lock")
 
         return result, lock
 
@@ -248,10 +206,13 @@ class LRUSharedRWLockCache:
         Remove semaphores.
         """
         try:
+            Semaphore(self._lock_name).close()
+        except:
+            pass
+        try:
             Semaphore(self._lock_name).unlink()
         except:
             pass
-
 
 
 class SharedRWLock:
@@ -272,7 +233,33 @@ class SharedRWLock:
         self._glock_name = f"{package.name}_{name}.g.lock"
         rlock = Semaphore(self._rlock_name, O_CREAT, initial_value=1)
         glock = Semaphore(self._glock_name, O_CREAT, initial_value=1)
-        self.b = 0
+        with Semaphore(self._rlock_name) as rlock:
+            # We use a try block and SharedMemory flags O_CREX
+            # to initialize the shared variable only once
+            try:
+                self.shared_mem = SharedMemory(
+                    name=f"{package.name}_{name}.b.shm",
+                    create=True,
+                    size=np.array([0], dtype=np.int32).nbytes
+                )
+                self.b = np.ndarray(
+                    [1],
+                    dtype=np.int32,
+                    buffer=self.shared_mem.buf
+                )
+                b.fill(0)
+            except:
+                self.shared_mem = SharedMemory(
+                    name=f"{package.name}_{name}.b.shm",
+                    create=False,
+                    size=np.array([0], dtype=np.int32).nbytes
+                )
+                self.b = np.ndarray(
+                    [1],
+                    dtype=np.int32,
+                    buffer=self.shared_mem.buf
+                )
+
         for sig in (
             SIGABRT,
             SIGILL,
@@ -286,18 +273,18 @@ class SharedRWLock:
         """
         Acquire lock in read mode.
         """
+        print(getpid(), ": ...... Acquiring read lock with b = ", self.b[0])
         with Semaphore(self._rlock_name) as rlock:
-            glock = Semaphore(self._glock_name)
-            print("Semaphore read value:", glock.value)
-            if glock.value == 0:
-                glock.acquire()
+            self.b[0] += 1
+            print(getpid(), ": ...... Acquired read lock with b = ", self.b[0])
+            if self.b[0] == 1:
+                Semaphore(self._glock_name).acquire()
 
 
     def acquire_write(self) -> None:
         """
         Acquire lock in write mode.
         """
-        print("Semaphore write value:", Semaphore(self._glock_name).value)
         Semaphore(self._glock_name).acquire()
 
 
@@ -305,18 +292,18 @@ class SharedRWLock:
         """
         Release acquired read lock.
         """
+        print(getpid(), ": ...... Releasing read lock with b = ", self.b[0])
         with Semaphore(self._rlock_name) as rlock:
-            glock = Semaphore(self._glock_name)
-            print("Semaphore read release value:", glock.value)
-            if glock.value == 0:
-                glock.release()
+            print(getpid(), self.b[0])
+            self.b[0] -= 1
+            if self.b[0] == 0:
+                Semaphore(self._glock_name).release()
 
 
     def release_write(self) -> None:
         """
         Release acquired write lock.
         """
-        print("Semaphore write release value:", Semaphore(self._glock_name).value)
         Semaphore(self._glock_name).release()
 
 
@@ -331,11 +318,20 @@ class SharedRWLock:
 
     def remove(self, *args) -> None:
         """
-        Remove files used by the RW lock semaphores.
+        Remove files used by the RW lock semaphores and shared memory.
         """
         try:
             Semaphore(self._glock_name).unlink()
             Semaphore(self._rlock_name).unlink()
+            self.shared_mem.close()
+            self.shared_me
         except:
             pass
+        try:
+            self.shared_mem.close()
+            self.shared_mem.unlink()
+        except:
+            pass
+
+
 
