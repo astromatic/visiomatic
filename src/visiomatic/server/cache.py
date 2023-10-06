@@ -96,6 +96,7 @@ class LRUSharedRWLockCache:
         self._lock_name = self.name + ".lock"
         with Semaphore(self._lock_name, O_CREAT, initial_value=1) as lock:
             self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        self.results = LRUCache(func=func, maxsize=maxsize)
         self.locks = LRUCache(func=SharedRWLock, maxsize=maxsize)
         # Delete semaphores when process is aborted.
         for sig in (
@@ -134,69 +135,48 @@ class LRUSharedRWLockCache:
         remove = False
         lock = self.locks(hargs)
         with self.cache.lock:
-            print(getpid(), ": Entering dict lock ......")
             if hargs in self.cache:
                 # Reference already in cache: lock in read mode
-                print(getpid(), ": Reading cached data")
-                result = self.cache[hargs][0]
-                self.cache[hargs][2] = time_ns()
-                print(getpid(), ": Done reading cached data")
+                self.cache[hargs][1] = time_ns()
             else:
                 # Reference not in cache: lock in write mode
                 # after testing if we're reaching the cache limit
-                print(getpid(), ": Acquiring write lock")
                 lock.acquire_write()
-                print(getpid(), ": Entering write lock ......")
                 # Cache an empty content just to mark territory
                 firstarg = args[0]
-                self.cache[hargs] = [None, firstarg, time_ns()]
+                self.cache[hargs] = [firstarg, time_ns()]
                 write = True
                 if len(self.cache) >= self.maxsize:
                     # Find LRU cache entry
-                    print(getpid(), ": Managing cache limit")
                     oldest = min(self.cache, key=lambda k: self.cache[k][2])
                     olock = oldest[1]
-                    ofirstarg = self.cache[oldest][1]
+                    ofirstarg = self.cache[oldest][0]
                     # Delete cache entry
                     del self.cache[oldest]
                     # Acquire write lock on (now defunct) LRU cache entry
                     olock.acquire_write()
                     # Will have to do remove call if callback function available
                     remove = self.removecall
-                    print(getpid(), ": Done managing cache limit")
                 # Prepare write operation on new data
-            print(getpid(), ": ...... Leaving dict lock")
         if remove:
             # Apply remove callback to first argument stored in cache (filename)
-            self.removecall(oref)
+            self.removecall(ofirstarg)
             olock.release_write()
             del self.locks[oldest]
             del olock
         # Finally update the shared version
         if write:
-            print(getpid(), ": Writing...")
             result = self.func(*args, **kwargs)
-            print(getpid(), ": Writing done!")
             with self.cache.lock:
-                print(getpid(), ": Re-entering dict lock ......")
-                print(getpid(), ": Caching...")
-                self.cache[hargs] = [result, firstarg, time_ns()]
-                print(getpid(), ": Caching done!")
-            print(getpid(), ": ...... Re-leaving dict lock")
+                self.cache[hargs] = [firstarg, time_ns()]
             lock.release_write()
-            print(getpid(), ": ...... Leaving write lock")
             lock.acquire_read()
-            print(getpid(), ": Re-acquiring read lock ......")
         else:
             lock.acquire_read()
-            print(getpid(), ": Re-acquiring read lock ......")
+            result = self.results(*args, **kwargs)
             if result is None:
                 with self.cache.lock:
-                    print(getpid(), ": Re-entering dict lock ......")
-                    print(getpid(), ": Re-reading cache")
-                    result, firstarg, time = self.cache[hargs]
-                    self.cache[hargs][2] = time_ns()                
-                print(getpid(), ": ...... Re-leaving dict lock")
+                    self.cache[hargs][1] = time_ns()                
 
         return result, lock
 
@@ -273,10 +253,8 @@ class SharedRWLock:
         """
         Acquire lock in read mode.
         """
-        print(getpid(), ": ...... Acquiring read lock with b = ", self.b[0])
         with Semaphore(self._rlock_name) as rlock:
             self.b[0] += 1
-            print(getpid(), ": ...... Acquired read lock with b = ", self.b[0])
             if self.b[0] == 1:
                 Semaphore(self._glock_name).acquire()
 
@@ -292,9 +270,7 @@ class SharedRWLock:
         """
         Release acquired read lock.
         """
-        print(getpid(), ": ...... Releasing read lock with b = ", self.b[0])
         with Semaphore(self._rlock_name) as rlock:
-            print(getpid(), self.b[0])
             self.b[0] -= 1
             if self.b[0] == 0:
                 Semaphore(self._glock_name).release()
