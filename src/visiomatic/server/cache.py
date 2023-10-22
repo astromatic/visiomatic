@@ -70,6 +70,16 @@ class LRUCache:
         self.cache[args] = result
         return result
 
+    def __delitem__(self, key) -> None:
+        """
+        Delete a specific cache entry.
+
+        :meta public:
+        """
+        if key in self.cache:
+            del self.cache[key]
+
+
 
 class LRUSharedRWLockCache:
     """
@@ -141,22 +151,22 @@ class LRUSharedRWLockCache:
             else:
                 # Reference not in cache: lock in write mode
                 # after testing if we're reaching the cache limit
+                if len(self.cache) >= self.maxsize:
+                    # Find LRU cache entry
+                    oldest = min(self.cache, key=lambda k: self.cache[k][1])
+                    olock = self.locks(oldest[1])
+                    ofirstarg = self.cache[oldest][0]
+                    # Acquire write lock on (now defunct) LRU cache entry
+                    olock.acquire_write()
+                    # Delete cache entry
+                    del self.cache[oldest]
+                    # Will have to do remove call if callback function available
+                    remove = self.removecall
                 lock.acquire_write()
+                write = True
                 # Cache an empty content just to mark territory
                 firstarg = args[0]
                 self.cache[hargs] = [firstarg, time_ns()]
-                write = True
-                if len(self.cache) >= self.maxsize:
-                    # Find LRU cache entry
-                    oldest = min(self.cache, key=lambda k: self.cache[k][2])
-                    olock = oldest[1]
-                    ofirstarg = self.cache[oldest][0]
-                    # Delete cache entry
-                    del self.cache[oldest]
-                    # Acquire write lock on (now defunct) LRU cache entry
-                    olock.acquire_write()
-                    # Will have to do remove call if callback function available
-                    remove = self.removecall
                 # Prepare write operation on new data
         if remove:
             # Apply remove callback to first argument stored in cache (filename)
@@ -193,6 +203,7 @@ class LRUSharedRWLockCache:
             Semaphore(self._lock_name).unlink()
         except:
             pass
+
 
 
 class SharedRWLock:
