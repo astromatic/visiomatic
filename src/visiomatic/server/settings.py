@@ -168,12 +168,12 @@ class CacheSettings(BaseSettings):
         description="Clear image cache on startup"
         )
     max_cache_image_count: int = Field(
-        default=16,
+        default=100,
         ge=1,
         description="Maximum number of images in disk cache"
         )
     max_cache_tile_count: int = Field(
-        default=1024,
+        default=1000,
         ge=1,
         description="Maximum number of image tiles in memory cache"
         )
