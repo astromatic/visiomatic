@@ -62,22 +62,17 @@ def create_app() -> FastAPI:
     # Get shared lock dictionary if processing in parallel
     if share:
         sharedLock = LRUSharedRWLockCache(
+            pickledTiled,
             name=f"{package.title}.{getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"],
+            maxsize=config.settings["max_cache_image_count"],
             removecall=delTiled
         )
         # Scan and register images cached during previous sessions
         for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-            lock = sharedLock(
+            tiled, lock = sharedLock(
                 Tiled.get_image_filename(None, path.splitext(filename)[0])
             )
-            lock.release()
-
-    memCachedTiled = LRUCache(
-        pickledTiled,
-        maxsize=config.settings["max_mem_cache_image_count"]
-    )
-
+            lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -303,10 +298,8 @@ def create_app() -> FastAPI:
             image_argname if image_argname \
                else path.join(data_dir, FIF)
         )
-        if share:
-            lock = sharedLock(image_filename)
 
-        tiled = memCachedTiled(
+        tiled, lock = sharedLock(
             image_filename,
             contrast=contrast,
             color_saturation=color_saturation,
@@ -315,43 +308,30 @@ def create_app() -> FastAPI:
             tilesize=tile_size
         )
         if obj != None:
-            if share:
-                lock.release()
-            return responses.PlainTextResponse(tiled.get_iipheaderstr())
+            resp = tiled.get_iipheaderstr()
+            lock.release_read()
+            return responses.PlainTextResponse(resp)
         elif INFO != None:
-            if share:
-                lock.release()
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_model()
-            	)
-            )
+            resp = tiled.get_model()
+            lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         elif PFL != None:
-            if share:
-                lock.release()
             val = app.parse_pfl.findall(PFL)[0]
-            # We use the ORJSON response to properly manage NaNs
-            return responses.ORJSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_profiles(
+            resp = tiled.get_profiles(
             			CHAN,
                         [int(val[0]), int(val[1])],
                         [int(val[2]), int(val[3])]
-                    )
-            	)
             )
+            lock.release_read()
+            # We use the ORJSON response to properly manage NaNs
+            return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
-            if share:
-                lock.release()
             val = app.parse_val.findall(VAL)[0]
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
-            	)
-            )
+            resp = tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
+            lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         if JTL == None:
-            if share:
-                lock.release()
+            lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
@@ -392,9 +372,11 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
-        if share:
-            lock.release()
-        return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
+        lock.release_read()
+        return responses.StreamingResponse(
+            io.BytesIO(pix),
+            media_type="image/jpg"
+        )
 
 
     # VisiOmatic client endpoint
