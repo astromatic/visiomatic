@@ -64,7 +64,7 @@ def create_app() -> FastAPI:
         sharedLock = LRUSharedRWLockCache(
             pickledTiled,
             name=f"{package.title}.{getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"],
+            maxsize=config.settings["max_cache_image_count"],
             removecall=delTiled
         )
         # Scan and register images cached during previous sessions

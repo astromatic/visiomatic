@@ -160,24 +160,19 @@ class EngineSettings(BaseSettings):
 class CacheSettings(BaseSettings):
     cache_dir: str = Field(
         default=package.cache_dir,
-        description="Disk cache directory"
+        description="Image cache directory"
         )
     clear_cache: bool = Field(
         short='C',
         default=False,
-        description="Clear disk cache on startup"
+        description="Clear image cache on startup"
         )
-    max_disk_cache_image_count: int = Field(
+    max_cache_image_count: int = Field(
         default=16,
         ge=1,
         description="Maximum number of images in disk cache"
         )
-    max_mem_cache_image_count: int = Field(
-        default=2,
-        ge=1,
-        description="Maximum number of images in memory cache"
-        )
-    max_mem_cache_tile_count: int = Field(
+    max_cache_tile_count: int = Field(
         default=1024,
         ge=1,
         description="Maximum number of image tiles in memory cache"
