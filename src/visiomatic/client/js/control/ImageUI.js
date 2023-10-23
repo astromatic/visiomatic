@@ -125,7 +125,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Adjust Contrast. 1.0: normal',
 			visio.contrast,
 			0.05,
-			0.0, 10.0
+			0.0, 100.0
 		);
 
 		// Colour saturation

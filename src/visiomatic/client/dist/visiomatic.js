@@ -19761,7 +19761,7 @@
         visio.contrast,
         0.05,
         0,
-        10
+        100
       );
       this._input.colorSat = this._addNumericalInput(
         layer,

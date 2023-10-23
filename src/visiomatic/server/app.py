@@ -216,7 +216,7 @@ def create_app() -> FastAPI:
                 contrast,
                 title="Relative contrast",
                 ge=0.0,
-                le=10.0
+                le=100.0
                 ),
             GAM: float = Query(
                 1.0/gamma,
