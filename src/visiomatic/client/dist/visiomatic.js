@@ -17829,6 +17829,10 @@
       down.title = "Decrease number by " + options.step;
       up.title = "Increase number by " + options.step;
       import_leaflet9.DomEvent.on(this._input, "change", function() {
+        this.value(Math.min(
+          Math.max(parseFloat(this._input.value), this.options.dmin),
+          this.options.dmax
+        ));
         this.fire("change");
       }, this);
       if (options.repButton === false) {
