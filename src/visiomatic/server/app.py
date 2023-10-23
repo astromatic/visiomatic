@@ -149,6 +149,9 @@ def create_app() -> FastAPI:
     )
 
     # Prepare the RegExps
+    # FIF (image filenames): discard filenames with ..
+    reg_fif = r"(?!\.\.)(^.*$)"
+    app.parse_fif = re.compile(reg_fif)
     # JTL (tile indices)
     reg_jtl = r"^(\d+),(\d+)$"
     app.parse_jtl = re.compile(reg_jtl)
@@ -197,7 +200,10 @@ def create_app() -> FastAPI:
             request: Request,
             FIF: str = Query(
                 None,
-                title="Image filename"
+                title="Image filename",
+                min_length=1,
+                max_length=1024,
+                regex=reg_fif
                 ),
             obj: str = Query(
                 None,
@@ -298,7 +304,7 @@ def create_app() -> FastAPI:
                else path.join(data_dir, FIF)
         )
 
-        tiled, lock, detail = sharedLock(
+        tiled, lock, msg = sharedLock(
             image_filename,
             contrast=contrast,
             color_saturation=color_saturation,
@@ -312,7 +318,11 @@ def create_app() -> FastAPI:
             # Return 404 error with data_dir removed for security
             raise HTTPException(
                 status_code=404,
-                detail=detail.replace(path.join(data_dir,""), "")
+                detail=[{
+                    "loc": ["query", "FIF"],
+                    "msg": msg.replace(path.join(data_dir,""), ""),
+                    "type": "value_error.str"
+                }]
             )
         if obj != None:
             resp = tiled.get_iipheaderstr()

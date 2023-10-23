@@ -144,7 +144,7 @@ class Tiled(object):
         try:
             hdus = fits.open(self.filename)
         except:
-            raise(LookupError(f"Cannot open {filename}"))
+            raise(FileNotFoundError(f"Cannot open {filename}")) from None
             return
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
@@ -158,7 +158,7 @@ class Tiled(object):
         )
         self.nimages = len(self.images)
         if self.nimages == 0:
-            raise(LookupError(f"No 2D+ data found in {filename}"))
+            raise(LookupError(f"No 2D+ data found in {filename}")) from None
             return
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]

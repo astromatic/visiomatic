@@ -19805,7 +19805,9 @@
         "Reset image settings",
         function() {
           _this.loadSettings(layer, _this._initsettings);
-          layer.updateMix();
+          if (layer.visio === "color") {
+            layer.updateMix();
+          }
           layer.redraw();
         }
       );
@@ -37081,7 +37083,10 @@
         visio.metaReady = true;
         this.fire("metaload");
       } else {
-        alert("VisiOmatic metadata query error: " + meta.detail + ".");
+        console.log(meta);
+        alert(
+          "VisiOmatic metadata query error: " + meta.detail[0].msg + "."
+        );
       }
     },
     getChannelColor: function(channel) {

@@ -139,7 +139,7 @@ class LRUSharedRWLockCache:
             Cached output.
         lock:
             Reader-Writer lock associated with args.
-        detail:
+        msg:
             "OK" or error string in case of an exception.
 
         :meta public:
@@ -193,11 +193,11 @@ class LRUSharedRWLockCache:
                     del self.cache[hargs]
                 del self.locks[hargs]
                 result = None
-                detail = e.args[0]
+                msg = e.args[0]
             else:
                 with self.cache.lock:
                     self.cache[hargs] = [firstarg, time_ns()]
-                detail = "OK"
+                msg = "OK"
             lock.release_write()
             lock.acquire_read()
         else:
@@ -205,13 +205,14 @@ class LRUSharedRWLockCache:
             try:
                 result = self.results(*args, **kwargs)
             except Exception as e:
+                result = None
+                msg = e.args[0]
+            else:
                 with self.cache.lock:
                     self.cache[hargs][1] = time_ns()                
-                detail = e.args[0]
-            else:
-                detail = "OK"
+                msg = "OK"
 
-        return result, lock, detail
+        return result, lock, msg
 
 
     def remove(self, *args) -> None:
