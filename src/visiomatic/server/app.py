@@ -31,8 +31,8 @@ config.image_filename = conf.image_filename
 from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
 from .cache import LRUCache, LRUSharedRWLockCache
 
-
-share = config.settings["workers"] > 1 and not config.settings["reload"]
+# True with multiple workers (multiprocessing).
+# share = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
@@ -60,19 +60,18 @@ def create_app() -> FastAPI:
     image_argname = config.image_filename
 
     # Get shared lock dictionary if processing in parallel
-    if share:
-        sharedLock = LRUSharedRWLockCache(
-            pickledTiled,
-            name=f"{package.title}.{getppid()}",
-            maxsize=config.settings["max_cache_image_count"],
-            removecall=delTiled
+    sharedLock = LRUSharedRWLockCache(
+        pickledTiled,
+        name=f"{package.title}.{getppid()}",
+        maxsize=config.settings["max_cache_image_count"],
+        removecall=delTiled
+    )
+    # Scan and register images cached during previous sessions
+    for filename in glob(path.join(cache_dir, "*" + ".pkl")):
+        tiled, lock = sharedLock(
+            Tiled.get_image_filename(None, path.splitext(filename)[0])
         )
-        # Scan and register images cached during previous sessions
-        for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-            tiled, lock = sharedLock(
-                Tiled.get_image_filename(None, path.splitext(filename)[0])
-            )
-            lock.release_read()
+        lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 

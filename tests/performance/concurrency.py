@@ -40,7 +40,7 @@ if resetflag == 0:
 		print("Generating random batch...", file=sys.stderr)
 		log = open("req.log",'w')
 		for i in range(tilerange):
-			log.write(f"http://{url}{uri}&CNT={10.*random.random():.3f}&JTL={zoom},{random.randint(1,tilerange)}\n")
+			log.write(f"http://{url}{uri}&JTL={zoom},{random.randint(1,tilerange)}\n")
 		log.close()
 		print("Sending warm-up requests...", file=sys.stderr)
 		output = subprocess.check_output(["./ab","-r","-c", "200","-n", "%d" %tilerange,"-L","req.log"]) 
@@ -60,7 +60,7 @@ for c in range(0,nconcur):
 		print("Generating new random batch...", file=sys.stderr)
 		log = open("req.log",'w')
 		for i in range(nreq):
-			log.write(f"http://{url}{uri}&CNT={10.*random.random():.3f}&JTL={zoom},{random.randint(1,tilerange)}\n")
+			log.write(f"http://{url}{uri}&JTL={zoom},{random.randint(1,tilerange)}\n")
 		log.close()
 	time.sleep(5.0)
 	print("Sending requests...", file=sys.stderr)
