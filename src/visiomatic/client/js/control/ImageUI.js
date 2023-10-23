@@ -176,7 +176,9 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Reset image settings',
 			function () {
 				_this.loadSettings(layer, _this._initsettings);
-				layer.updateMix();
+				if (layer.visio === 'color') {
+					layer.updateMix();
+				}
 				layer.redraw();
 			}
 		);
