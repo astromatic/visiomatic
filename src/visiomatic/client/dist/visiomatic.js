@@ -37077,7 +37077,8 @@
         visio.metaReady = true;
         this.fire("metaload");
       } else {
-        alert("There was a problem with the VisiOmatic metadata request.");
+        alert("VisiOmatic metadata query error: " + meta.detail + ".");
+        console.log(meta);
       }
     },
     getChannelColor: function(channel) {
@@ -37208,7 +37209,7 @@
                     zoom2,
                     { reset: true, animate: false }
                   );
-                  alert("There was a problem with the request to the Sesame service at CDS");
+                  alert("Error with Sesame query at CDS");
                 }
               }
             },

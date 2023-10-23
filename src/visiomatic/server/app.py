@@ -11,7 +11,7 @@ from typing import List, Literal, Optional, Union
 
 import cv2
 from fastapi import FastAPI, Query, Request
-from fastapi import responses
+from fastapi import responses, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -298,7 +298,7 @@ def create_app() -> FastAPI:
                else path.join(data_dir, FIF)
         )
 
-        tiled, lock = sharedLock(
+        tiled, lock, detail = sharedLock(
             image_filename,
             contrast=contrast,
             color_saturation=color_saturation,
@@ -306,6 +306,14 @@ def create_app() -> FastAPI:
             quality=quality,
             tilesize=tile_size
         )
+        # Manage image file open error
+        if tiled is None:
+            lock.release_read()
+            # Return 404 error with data_dir removed for security
+            raise HTTPException(
+                status_code=404,
+                detail=detail.replace(path.join(data_dir,""), "")
+            )
         if obj != None:
             resp = tiled.get_iipheaderstr()
             lock.release_read()

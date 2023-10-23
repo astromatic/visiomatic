@@ -141,7 +141,11 @@ class Tiled(object):
         self.filename = path.abspath(filename)
         # Otherwise, create it
         self.nthreads = nthreads
-        hdus = fits.open(self.filename)
+        try:
+            hdus = fits.open(self.filename)
+        except:
+            raise(LookupError(f"Cannot open {filename}"))
+            return
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
             hdus = [hdus[extnum]]
@@ -817,7 +821,7 @@ class Tiled(object):
         return self.tiles
 
 
-def pickledTiled(filename: str, **kwargs) -> Tiled:
+def pickledTiled(filename: str, **kwargs) -> Union[Tiled, None]:
     """
     Return pickled version of object if available.
     
@@ -831,7 +835,8 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
     Returns
     -------
     tiled: object
-        Tiled object pickled from file if available, or initialized otherwise).
+        Tiled object pickled from file if available (or initialized otherwise),
+        or None if the image file could not be opened.
     """
     afilename = path.abspath(filename)
     prefix = quote(afilename)
@@ -841,10 +846,7 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
         with open(oname, "rb") as f:
             return pickle.load(f)
     else:
-        return Tiled(
-            filename,
-            **kwargs
-        )
+        return Tiled(filename, **kwargs)
 
 
 def delTiled(filename: str):

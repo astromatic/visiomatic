@@ -88,6 +88,8 @@ class LRUSharedRWLockCache:
 
     Parameters
     ----------
+    func: Callable
+        Function to be cached.
     name: str, optional
         Name of the lock cache.
     maxsize: int, optional
@@ -128,11 +130,17 @@ class LRUSharedRWLockCache:
         ----------
         args: any
             Hashable arguments to the cache dictionary.
+        kwargs: any
+            Hashable keyworded arguments to the cache dictionary.
 
         Returns
         -------
-        result: lock
+        result:
+            Cached output.
+        lock:
             Reader-Writer lock associated with args.
+        detail:
+            "OK" or error string in case of an exception.
 
         :meta public:
         """
@@ -174,21 +182,36 @@ class LRUSharedRWLockCache:
             olock.release_write()
             del self.locks[oldest]
             del olock
-        # Finally update the shared version
+        # Finally try to update the shared version
         if write:
-            result = self.func(*args, **kwargs)
-            with self.cache.lock:
-                self.cache[hargs] = [firstarg, time_ns()]
+            try:
+                result = self.func(*args, **kwargs)
+            except Exception as e:
+                # Uh-oh! things went wrong: remove cache entry and lock
+                # and return None
+                with self.cache.lock:
+                    del self.cache[hargs]
+                del self.locks[hargs]
+                result = None
+                detail = e.args[0]
+            else:
+                with self.cache.lock:
+                    self.cache[hargs] = [firstarg, time_ns()]
+                detail = "OK"
             lock.release_write()
             lock.acquire_read()
         else:
             lock.acquire_read()
-            result = self.results(*args, **kwargs)
-            if result is None:
+            try:
+                result = self.results(*args, **kwargs)
+            except Exception as e:
                 with self.cache.lock:
                     self.cache[hargs][1] = time_ns()                
+                detail = e.args[0]
+            else:
+                detail = "OK"
 
-        return result, lock
+        return result, lock, detail
 
 
     def remove(self, *args) -> None:
