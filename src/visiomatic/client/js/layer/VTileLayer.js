@@ -520,7 +520,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			this.fire('metaload');
 		} else {
 			alert('VisiOmatic metadata query error: ' + meta.detail + '.');
-			console.log(meta);
 		}
 	},
 

@@ -37078,7 +37078,6 @@
         this.fire("metaload");
       } else {
         alert("VisiOmatic metadata query error: " + meta.detail + ".");
-        console.log(meta);
       }
     },
     getChannelColor: function(channel) {
