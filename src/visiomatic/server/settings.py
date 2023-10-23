@@ -177,6 +177,12 @@ class CacheSettings(BaseSettings):
         ge=1,
         description="Maximum number of image tiles in memory cache"
         )
+    max_open_files: int = Field(
+        default=10000,
+        ge=100,
+        le=1000000,
+        description="Maximum number of open files"
+        )
     ultradict_cache_file : str = Field(
         default="/dev/shm/visiomatic_cache_dict.pkl",
         description="Name of the pickled cache dictionary shared across processes"
