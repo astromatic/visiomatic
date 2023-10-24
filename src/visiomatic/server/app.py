@@ -68,7 +68,7 @@ def create_app() -> FastAPI:
     )
     # Scan and register images cached during previous sessions
     for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-        tiled, lock = sharedLock(
+        tiled, lock, msg = sharedLock(
             Tiled.get_image_filename(None, path.splitext(filename)[0])
         )
         lock.release_read()
