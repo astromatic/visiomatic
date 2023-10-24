@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 """
 Start script (renamed as :program:`visiomatic`).
 """
