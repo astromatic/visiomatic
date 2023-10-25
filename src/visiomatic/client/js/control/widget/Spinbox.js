@@ -146,6 +146,10 @@ export const Spinbox = Evented.extend( /** @lends Spinbox */ {
 		up.title = 'Increase number by ' + options.step;
 
 		DomEvent.on(this._input, 'change', function () {
+			this.value(Math.min(
+				Math.max(parseFloat(this._input.value), this.options.dmin),
+				this.options.dmax
+			));
 			this.fire('change');
 		}, this);
 

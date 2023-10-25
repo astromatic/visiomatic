@@ -4,16 +4,19 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import glob, os, math, pickle
+import glob, math, pickle
+
 from methodtools import lru_cache
+from os import path, unlink
 from typing import List, NamedTuple, Tuple, Union
-from joblib import Parallel, delayed
-from pydantic import BaseModel
+from urllib.parse import quote, unquote
 
 import numpy as np
 import cv2
 
 from astropy.io import fits
+from joblib import Parallel, delayed
+from pydantic import BaseModel
 from simplejpeg import encode_jpeg
 from skimage.draw import line
 from tiler import Tiler
@@ -108,8 +111,6 @@ class Tiled(object):
     ----------
     filename: str | ~pathlib.Path,
         Path to the image.
-    data_dir: str | ~pathlib.Path, optional
-        Data root directory.
     extnum: int, optional
         Extension number (for Multi-Extension FITS files).
     tilesize: tuple[int, int], optional
@@ -128,7 +129,6 @@ class Tiled(object):
     def __init__(
             self,
             filename: str,
-            data_dir: str = config.settings["data_dir"],
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
@@ -138,11 +138,14 @@ class Tiled(object):
             quality: int = 90,
             nthreads : int = config.settings["thread_count"]):
 
-        self.prefix = os.path.splitext(os.path.basename(filename))[0]
-        self.filename = os.path.join(data_dir, filename)
+        self.filename = path.abspath(filename)
         # Otherwise, create it
         self.nthreads = nthreads
-        hdus = fits.open(self.filename)
+        try:
+            hdus = fits.open(self.filename)
+        except:
+            raise(FileNotFoundError(f"Cannot open {filename}")) from None
+            return
         # Collect Header Data Units that contain 2D+ image data ("HDIs")
         if extnum is not None:
             hdus = [hdus[extnum]]
@@ -155,7 +158,7 @@ class Tiled(object):
         )
         self.nimages = len(self.images)
         if self.nimages == 0:
-            raise(LookupError(f"No 2D+ data found in {filename}"))
+            raise(LookupError(f"No 2D+ data found in {filename}")) from None
             return
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
@@ -192,7 +195,7 @@ class Tiled(object):
         for image in self.images:
             del image.data
         # Pickle-save current object
-        with open(self.get_object_filename(self.prefix), "wb") as f:
+        with open(self.get_object_filename(self.filename), "wb") as f:
             pickle.dump(self, f, protocol=5)
             self.nbytes += f.tell()
 
@@ -270,46 +273,90 @@ class Tiled(object):
         )
 
 
-    def get_object_filename(self, prefix: str):
+    def get_object_filename(self, image_filename: Union[str, None]=None):
         """
         Return the name of the file containing the pickled Tiled object.
         
+        Parameters
+        ----------
+        Image filename: str, optional
+            Full image filename. Use internal image filename if missing.
+
         Returns
         -------
         filename: str
             Pickled object filename.
         """
-        return os.path.join(config.settings["cache_dir"], prefix + ".pkl")
+        return path.join(
+            config.settings["cache_dir"],
+            quote(
+                image_filename if image_filename else self.filename,
+                safe=''
+            ) + ".pkl"
+        )
 
 
-    def get_data_filename(self):
+    def get_data_filename(self, image_filename: Union[str, None]=None):
         """
         Return the name of the file containing the memory-mapped image data.
         
+        Parameters
+        ----------
+        Image filename: str, optional
+            Full image filename. Use internal image filename if missing.
+
         Returns
         -------
         filename: str
             Filename of the memory-mapped image data.
         """
-        return os.path.join(
+        return path.join(
             config.settings["cache_dir"],
-            self.prefix + ".data.np"
+            quote(
+                image_filename if image_filename else self.filename,
+                safe=''
+            ) + ".data.np"
         )
 
 
-    def get_tiles_filename(self):
+    def get_tiles_filename(self, image_filename: Union[str, None]=None):
         """
         Return the name of the file containing the memory-mapped tile datacube.
         
+        Parameters
+        ----------
+        Image filename: str, optional
+            Full image filename. Use internal image filename if missing.
+
         Returns
         -------
         filename: str
             Filename of the memory mapped tile datacube.
         """
-        return os.path.join(
+        return path.join(
             config.settings["cache_dir"],
-            self.prefix + ".tiles.np"
+            quote(
+                image_filename if image_filename else self.filename,
+                safe=''
+            ) + ".tiles.np"
         )
+
+
+    def get_image_filename(self, prefix: str):
+        """
+        Return the name of the file containing the memory-mapped tile datacube.
+        
+        Parameters
+        ----------
+        prefix: str,
+            Image name prefix.
+
+        Returns
+        -------
+        filename: str
+            Filename of the memory mapped tile datacube.
+        """
+        return unquote(path.basename(prefix))
 
 
     def make_mosaic(self, images : List[Image]) -> None:
@@ -663,7 +710,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=config.settings["max_mem_cache_tile_count"] if config.settings else 0)
+    @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
     def get_tile_cached(self, *args, **kwargs):
         """
         Cached version of get_tile().
@@ -774,10 +821,7 @@ class Tiled(object):
         return self.tiles
 
 
-def pickledTiled(
-        filename: str,
-        data_dir: str = config.settings["data_dir"],
-        **kwargs) -> Tiled:
+def pickledTiled(filename: str, **kwargs) -> Union[Tiled, None]:
     """
     Return pickled version of object if available.
     
@@ -785,29 +829,30 @@ def pickledTiled(
     ----------
     filename: str | ~pathlib.Path
         Path to the image.
-    data_dir: str | ~pathlib.Path, optional
-        Data root directory.
     **kwargs: dict
         Additional keyword arguments.
 
     Returns
     -------
     tiled: object
-        Tiled object pickled from file if available, or initialized otherwise).
+        Tiled object pickled from file if available (or initialized otherwise),
+        or None if the image file could not be opened.
     """
-    prefix = os.path.splitext(os.path.basename(filename))[0]
-    fname = os.path.join(data_dir, filename)
+    afilename = path.abspath(filename)
+    prefix = quote(afilename)
     # Check if a recent cached object is available
-    if os.path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
-            os.path.getmtime(oname) > os.path.getmtime(fname):
+    if path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
+            path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
             return pickle.load(f)
     else:
-        return Tiled(
-            filename,
-            data_dir=data_dir,
-            **kwargs
-        )
+        return Tiled(filename, **kwargs)
 
 
+def delTiled(filename: str):
+    tiled = pickledTiled(filename)
+    unlink(tiled.get_object_filename())
+    unlink(tiled.get_data_filename())
+    unlink(tiled.get_tiles_filename())
+    del tiled
 

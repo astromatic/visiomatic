@@ -519,7 +519,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			 */
 			this.fire('metaload');
 		} else {
-			alert('There was a problem with the VisiOmatic metadata request.');
+		    console.log(meta);
+			alert(
+				'VisiOmatic metadata query error: ' + meta.detail[0].msg + '.'
+			);
 		}
 	},
 
@@ -660,7 +663,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Wait for metadata request to complete
 			this._loadActivity = DomUtil.create(
 				'div',
-				'visiomatic-layer-activity-',
+				'visiomatic-layer-activity',
 				map._controlContainer
 			);
 			this.once('metaload', function () {
@@ -755,7 +758,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 									zoom,
 									{reset: true, animate: false}
 								);
-								alert('There was a problem with the request to the Sesame service at CDS');
+								alert('Error with Sesame query at CDS');
 							}
 						}
 					}, this, 10

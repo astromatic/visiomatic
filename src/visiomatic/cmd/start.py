@@ -1,10 +1,14 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 """
 Start script (renamed as :program:`visiomatic`).
 """
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
-import glob, os, pickle, sys, time, webbrowser
+from glob import glob
+from os import makedirs, path, remove
+from resource import getrlimit, setrlimit, RLIMIT_NOFILE
+from sys import exit
+import webbrowser
 
 import uvicorn
 
@@ -62,17 +66,20 @@ def main() -> int:
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
 
+    # Set maximum number of descriptors
+    max_open_files = config.settings["max_open_files"]
+    setrlimit(RLIMIT_NOFILE, (max_open_files, max_open_files))
+
+    # Cache management
     cache_dir = config.settings["cache_dir"]
-
     # Create cache dir if it does not exist
-    os.makedirs(cache_dir, exist_ok=True)
-
+    makedirs(cache_dir, exist_ok=True)
     # Clear cache if requested
     if config.settings["clear_cache"]:
-        files = glob.glob(os.path.join(cache_dir, '*.pkl')) \
-            + glob.glob(os.path.join(cache_dir, '*.np'))
+        files = glob(path.join(cache_dir, '*.pkl')) \
+            + glob(path.join(cache_dir, '*.np'))
         for file in files:
-            os.remove(file)
+            remove(file)
 
     # Local use case
     if config.image_filename and not config.settings["no_browser"]:
@@ -103,5 +110,5 @@ def main() -> int:
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    exit(main())
 

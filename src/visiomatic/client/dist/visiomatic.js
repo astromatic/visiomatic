@@ -17829,6 +17829,10 @@
       down.title = "Decrease number by " + options.step;
       up.title = "Increase number by " + options.step;
       import_leaflet9.DomEvent.on(this._input, "change", function() {
+        this.value(Math.min(
+          Math.max(parseFloat(this._input.value), this.options.dmin),
+          this.options.dmax
+        ));
         this.fire("change");
       }, this);
       if (options.repButton === false) {
@@ -19757,7 +19761,7 @@
         visio.contrast,
         0.05,
         0,
-        10
+        100
       );
       this._input.colorSat = this._addNumericalInput(
         layer,
@@ -19801,7 +19805,9 @@
         "Reset image settings",
         function() {
           _this.loadSettings(layer, _this._initsettings);
-          layer.updateMix();
+          if (layer.visio === "color") {
+            layer.updateMix();
+          }
           layer.redraw();
         }
       );
@@ -37077,7 +37083,10 @@
         visio.metaReady = true;
         this.fire("metaload");
       } else {
-        alert("There was a problem with the VisiOmatic metadata request.");
+        console.log(meta);
+        alert(
+          "VisiOmatic metadata query error: " + meta.detail[0].msg + "."
+        );
       }
     },
     getChannelColor: function(channel) {
@@ -37137,7 +37146,7 @@
       } else {
         this._loadActivity = import_leaflet31.DomUtil.create(
           "div",
-          "visiomatic-layer-activity-",
+          "visiomatic-layer-activity",
           map4._controlContainer
         );
         this.once("metaload", function() {
@@ -37208,7 +37217,7 @@
                     zoom2,
                     { reset: true, animate: false }
                   );
-                  alert("There was a problem with the request to the Sesame service at CDS");
+                  alert("Error with Sesame query at CDS");
                 }
               }
             },

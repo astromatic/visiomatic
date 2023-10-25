@@ -4,12 +4,14 @@ Application module
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import io, logging, os, pickle, re
+import io, logging, pickle, re
+from glob import glob
+from os import getpid, getppid, path
 from typing import List, Literal, Optional, Union
 
 import cv2
 from fastapi import FastAPI, Query, Request
-from fastapi import responses
+from fastapi import responses, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,25 +28,26 @@ config.settings = conf.flat_dict()
 config.config_filename = conf.config_filename
 config.image_filename = conf.image_filename
 
-from .tiled import colordict, pickledTiled, ProfileModel, Tiled
-from .cache import LRUMemCache, LRUSharedRWLockCache
+from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
+from .cache import LRUCache, LRUSharedRWLockCache
 
-
-share = config.settings["workers"] > 1 and not config.settings["reload"]
+# True with multiple workers (multiprocessing).
+# share = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
 
-    worker_id = os.getpid()
+    worker_id = getpid()
 
     banner_template = config.settings["banner_template"]
     base_template = config.settings["base_template"]
-    template_dir = os.path.abspath(config.settings["template_dir"])
-    cache_dir = os.path.abspath(config.settings["cache_dir"])
-    client_dir = os.path.abspath(config.settings["client_dir"])
-    extra_dir = os.path.abspath(config.settings["extra_dir"])
+    template_dir = path.abspath(config.settings["template_dir"])
+    cache_dir = path.abspath(config.settings["cache_dir"])
+    client_dir = path.abspath(config.settings["client_dir"])
+    data_dir = path.abspath(config.settings["data_dir"])
+    extra_dir = path.abspath(config.settings["extra_dir"])
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
@@ -54,20 +57,21 @@ def create_app() -> FastAPI:
     gamma = config.settings["gamma"]
     quality = config.settings["quality"]
     tile_size = config.settings["tile_size"]
-    image = config.image_filename
+    image_argname = config.image_filename
 
     # Get shared lock dictionary if processing in parallel
-    if share:
-        sharedLock = LRUSharedRWLockCache(
-            name=f"{package.title}.{os.getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"]
-        )
-
-    memCachedTiled = LRUMemCache(
+    sharedLock = LRUSharedRWLockCache(
         pickledTiled,
-        maxsize=config.settings["max_mem_cache_image_count"]
+        name=f"{package.title}.{getppid()}",
+        maxsize=config.settings["max_cache_image_count"],
+        removecall=delTiled
     )
-
+    # Scan and register images cached during previous sessions
+    for filename in glob(path.join(cache_dir, "*" + ".pkl")):
+        tiled, lock, msg = sharedLock(
+            Tiled.get_image_filename(None, path.splitext(filename)[0])
+        )
+        lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -126,7 +130,7 @@ def create_app() -> FastAPI:
     )
 
     # Provide an endpoint for the user's manual (if it exists)
-    if os.path.exists(doc_dir):
+    if path.exists(doc_dir):
         logger.info(f"Default documentation found at {doc_dir}.")
         app.mount(
             doc_path,
@@ -141,10 +145,13 @@ def create_app() -> FastAPI:
 
     # Instantiate templates
     templates = Jinja2Templates(
-        directory=os.path.join(package.src_dir, template_dir)
+        directory=path.join(package.src_dir, template_dir)
     )
 
     # Prepare the RegExps
+    # FIF (image filenames): discard filenames with ..
+    reg_fif = r"(?!\.\.)(^.*$)"
+    app.parse_fif = re.compile(reg_fif)
     # JTL (tile indices)
     reg_jtl = r"^(\d+),(\d+)$"
     app.parse_jtl = re.compile(reg_jtl)
@@ -193,7 +200,10 @@ def create_app() -> FastAPI:
             request: Request,
             FIF: str = Query(
                 None,
-                title="Image filename"
+                title="Image filename",
+                min_length=1,
+                max_length=1024,
+                regex=reg_fif
                 ),
             obj: str = Query(
                 None,
@@ -212,7 +222,7 @@ def create_app() -> FastAPI:
                 contrast,
                 title="Relative contrast",
                 ge=0.0,
-                le=10.0
+                le=100.0
                 ),
             GAM: float = Query(
                 1.0/gamma,
@@ -289,66 +299,56 @@ def create_app() -> FastAPI:
                 }
             )
 
-        if share:
-            lock = sharedLock(FIF)
+        image_filename = path.abspath(
+            image_argname if image_argname \
+               else path.join(data_dir, FIF)
+        )
 
-        if (image):
-            tiled = memCachedTiled(
-                os.path.basename(image),
-                data_dir=os.path.dirname(image),
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
-            )
-        else:
-            tiled = memCachedTiled(
-                FIF,
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
+        tiled, lock, msg = sharedLock(
+            image_filename,
+            contrast=contrast,
+            color_saturation=color_saturation,
+            gamma=gamma,
+            quality=quality,
+            tilesize=tile_size
+        )
+        # Manage image file open error
+        if tiled is None:
+            lock.release_read()
+            # Return 404 error with data_dir removed for security
+            raise HTTPException(
+                status_code=404,
+                detail=[{
+                    "loc": ["query", "FIF"],
+                    "msg": msg.replace(path.join(data_dir,""), ""),
+                    "type": "value_error.str"
+                }]
             )
         if obj != None:
-            if share:
-                lock.release()
-            return responses.PlainTextResponse(tiled.get_iipheaderstr())
+            resp = tiled.get_iipheaderstr()
+            lock.release_read()
+            return responses.PlainTextResponse(resp)
         elif INFO != None:
-            if share:
-                lock.release()
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_model()
-            	)
-            )
+            resp = tiled.get_model()
+            lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         elif PFL != None:
-            if share:
-                lock.release()
             val = app.parse_pfl.findall(PFL)[0]
-            # We use the ORJSON response to properly manage NaNs
-            return responses.ORJSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_profiles(
+            resp = tiled.get_profiles(
             			CHAN,
                         [int(val[0]), int(val[1])],
                         [int(val[2]), int(val[3])]
-                    )
-            	)
             )
+            lock.release_read()
+            # We use the ORJSON response to properly manage NaNs
+            return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
-            if share:
-                lock.release()
             val = app.parse_val.findall(VAL)[0]
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
-            	)
-            )
+            resp = tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
+            lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         if JTL == None:
-            if share:
-                lock.release()
+            lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
@@ -389,9 +389,11 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
-        if share:
-            lock.release()
-        return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
+        lock.release_read()
+        return responses.StreamingResponse(
+            io.BytesIO(pix),
+            media_type="image/jpg"
+        )
 
 
     # VisiOmatic client endpoint
