@@ -18209,34 +18209,25 @@
       return select;
     },
     _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title = void 0, fn = void 0) {
-      const _this = this, colpick = import_leaflet10.DomUtil.create("input", className, parent);
-      colpick.type = "text";
-      colpick.value = defaultColor;
-      colpick.id = className + "-" + subClassName;
-      $(document).ready(function() {
-        $(colpick).spectrum({
-          showInput: true,
-          allowEmpty,
-          appendTo: "#" + _this._id,
-          showPaletteOnly: true,
-          togglePaletteOnly: true,
-          localStorageKey: storageKey,
-          change: function(color2) {
-            colpick.value = color2 ? color2.toHexString() : "";
+      const _this = this, colpick = import_leaflet10.DomUtil.create("div", className, parent), colinput = import_leaflet10.DomUtil.create("input", className + "-input", colpick);
+      colinput.type = "color";
+      colpick.style.backgroundColor = colinput.value = defaultColor;
+      colinput.id = className + "-" + subClassName;
+      import_leaflet10.DomEvent.on(
+        colinput,
+        "change",
+        function() {
+          colpick.style.backgroundColor = colinput.value;
+          if (fn) {
+            fn;
           }
-        }).on("show.spectrum", function() {
-          if (_this._container) {
-            import_leaflet10.DomEvent.off(_this._container, "mouseout", _this._collapse);
-          }
-        });
-        if (fn) {
-          $(colpick).on("change", fn);
-        }
-        if (title) {
-          $("#" + colpick.id + "+.sp-replacer").prop("title", title);
-        }
-      });
-      return colpick;
+        },
+        this
+      );
+      if (title) {
+        colinput.title = title;
+      }
+      return colinput;
     },
     _addSwitchInput: function(layer, attr, box, label, title = void 0, checked) {
       const line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = new FlipSwitch(elem, {

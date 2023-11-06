@@ -26,7 +26,6 @@
 	"dependencies": {
 		"help": "^3.0.2",
 		"html2canvas": "~1.4.1",
-		"jquery": "~2.1.4",
 		"leaflet": "~1.9.3",
 		"npm": "^9.2.0",
 		"chart.js": "=4.3.0",

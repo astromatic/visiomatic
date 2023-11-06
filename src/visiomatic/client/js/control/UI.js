@@ -515,36 +515,30 @@ export const UI = Control.extend( /** @lends UI */ {
 	    fn=undefined
 	) {
 		const	_this = this,
-			colpick = DomUtil.create('input', className, parent);
+			colpick = DomUtil.create('div', className, parent),
+			colinput = DomUtil.create('input', className + '-input', colpick);
 
-		colpick.type = 'text';
-		colpick.value = defaultColor;
-		colpick.id = className + '-' + subClassName;
-		$(document).ready(function () {
-			$(colpick).spectrum({
-				showInput: true,
-				allowEmpty: allowEmpty,
-				appendTo: '#' + _this._id,
-				showPaletteOnly: true,
-				togglePaletteOnly: true,
-				localStorageKey: storageKey,
-				change: function (color) {
-					colpick.value = color? color.toHexString() : '';
+		colinput.type = 'color';
+		// Hide actual color input as we cannot style it freely
+		// Use parent DIV as a proxy
+		colpick.style.backgroundColor = colinput.value = defaultColor;
+		colinput.id = className + '-' + subClassName;
+		DomEvent.on(
+			colinput,
+			'change',
+			function() {
+				colpick.style.backgroundColor = colinput.value;
+				if (fn) {
+					fn;
 				}
-			}).on('show.spectrum', function () {
-				if (_this._container) {
-					DomEvent.off(_this._container, 'mouseout', _this._collapse);
-				}
-			});
-			if (fn) {
-				$(colpick).on('change', fn);
-			}
-			if (title) {
-				$('#' + colpick.id + '+.sp-replacer').prop('title', title);
-			}
-		});
+			},
+			this
+		);
+		if (title) {
+			colinput.title = title
+		}
 
-		return colpick;
+		return colinput;
 	},
 
 

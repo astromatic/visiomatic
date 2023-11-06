@@ -281,7 +281,7 @@ input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:acti
 /*------------------------------- Select menu -------------------------------*/
 
 div.visiomatic-control-select {
-	display: flow-root;
+	display: flex;
 	margin-right: 2px;
 }
 
@@ -468,27 +468,21 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 
 /*------------------------------ Color picker -------------------------------*/
 
-.sp-replacer {
+.visiomatic-control-color-input {
+	opacity: 0;
+	cursor: pointer;
+}
+
+.visiomatic-control-color {
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	float: left;
 	padding: 0px;
 	margin: 2px 0px;
 	border-width: 0px;
 	border-radius: 4px 0px 0px 4px;
-}
-.sp-preview {
-	padding: 0px;
-	border-width: 0px;
-	margin: 0px;
 	width: 32px;
 	height: 32px;
 	cursor: pointer;
-}
-.sp-preview-inner {
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	border-radius: 4px 0px 0px 4px;
-}
-.sp-dd {
-	display: none;	/* hide spectrum arrow */
 }
 
 /*------------------------------ Layer list -------------------------------*/
