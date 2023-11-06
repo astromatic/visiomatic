@@ -8,9 +8,6 @@
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
 import {DomEvent, DomUtil, Util}  from 'leaflet';
 
 import {rgb} from '../util';
@@ -422,18 +419,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 		if (colorElem) {
 			const	rgbStr = layer.getChannelColor(channel);
 
-			$(colorElem).spectrum('set', rgbStr);
-			$(colorElem)
-				.val(rgbStr)
-				.off('change')
-				.on('change', function () {
-					const	color = $(colorElem).val();
-					_this._updateChannelMix(
-						layer,
-						channel,
-						color ? rgb(color) : false
-					);
-				});
+			colorElem.value = rgbStr;
 		}
 
 		this._minElem.spinbox

@@ -471,6 +471,10 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 .visiomatic-control-color-input {
 	opacity: 0;
 	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	margin: 0px;
+	padding: 0px;
 }
 
 .visiomatic-control-color {

@@ -9,10 +9,6 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-import 'spectrum-colorpicker';
 
 import {
 	Browser,
@@ -525,7 +521,7 @@ export const UI = Control.extend( /** @lends UI */ {
 		colinput.id = className + '-' + subClassName;
 		DomEvent.on(
 			colinput,
-			'change',
+			'change input',
 			function() {
 				colpick.style.backgroundColor = colinput.value;
 				if (fn) {
