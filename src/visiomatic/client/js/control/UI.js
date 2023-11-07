@@ -511,30 +511,30 @@ export const UI = Control.extend( /** @lends UI */ {
 	    fn=undefined
 	) {
 		const	_this = this,
-			colpick = DomUtil.create('div', className, parent),
-			colinput = DomUtil.create('input', className + '-input', colpick);
+			coldiv = DomUtil.create('div', className, parent),
+			colpick = DomUtil.create('input', className + '-input', coldiv);
 
-		colinput.type = 'color';
-		// Hide actual color input as we cannot style it freely
-		// Use parent DIV as a proxy
-		colpick.style.backgroundColor = colinput.value = defaultColor;
-		colinput.id = className + '-' + subClassName;
+		colpick.type = 'color';
+		// Hide actual color picker as we cannot style it freely
+		// Use parent DIV as a proxy.
+		coldiv.style.backgroundColor = colpick.value = defaultColor;
+		colpick.id = className + '-' + subClassName;
 		DomEvent.on(
-			colinput,
-			'change input',
+			colpick,
+			'change',
 			function() {
-				colpick.style.backgroundColor = colinput.value;
+				coldiv.style.backgroundColor = colpick.value;
 				if (fn) {
-					fn;
+					fn(colpick.value);
 				}
 			},
 			this
 		);
 		if (title) {
-			colinput.title = title
+			colpick.title = title
 		}
 
-		return colinput;
+		return colpick;
 	},
 
 

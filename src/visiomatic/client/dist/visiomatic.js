@@ -56,14 +56,14 @@
             return new F();
           };
         }();
-        function bind(fn, obj) {
+        function bind(fn2, obj) {
           var slice = Array.prototype.slice;
-          if (fn.bind) {
-            return fn.bind.apply(fn, slice.call(arguments, 1));
+          if (fn2.bind) {
+            return fn2.bind.apply(fn2, slice.call(arguments, 1));
           }
           var args = slice.call(arguments, 2);
           return function() {
-            return fn.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
+            return fn2.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
           };
         }
         var lastId = 0;
@@ -73,7 +73,7 @@
           }
           return obj._leaflet_id;
         }
-        function throttle(fn, time, context) {
+        function throttle(fn2, time, context) {
           var lock, args, wrapperFn, later;
           later = function() {
             lock = false;
@@ -86,7 +86,7 @@
             if (lock) {
               args = arguments;
             } else {
-              fn.apply(context, arguments);
+              fn2.apply(context, arguments);
               setTimeout(later, time);
               lock = true;
             }
@@ -157,20 +157,20 @@
           return window["webkit" + name] || window["moz" + name] || window["ms" + name];
         }
         var lastTime = 0;
-        function timeoutDefer(fn) {
+        function timeoutDefer(fn2) {
           var time = +new Date(), timeToCall = Math.max(0, 16 - (time - lastTime));
           lastTime = time + timeToCall;
-          return window.setTimeout(fn, timeToCall);
+          return window.setTimeout(fn2, timeToCall);
         }
         var requestFn = window.requestAnimationFrame || getPrefixed("RequestAnimationFrame") || timeoutDefer;
         var cancelFn = window.cancelAnimationFrame || getPrefixed("CancelAnimationFrame") || getPrefixed("CancelRequestAnimationFrame") || function(id) {
           window.clearTimeout(id);
         };
-        function requestAnimFrame2(fn, context, immediate) {
+        function requestAnimFrame2(fn2, context, immediate) {
           if (immediate && requestFn === timeoutDefer) {
-            fn.call(context);
+            fn2.call(context);
           } else {
-            return requestFn.call(window, bind(fn, context));
+            return requestFn.call(window, bind(fn2, context));
           }
         }
         function cancelAnimFrame(id) {
@@ -265,10 +265,10 @@
           extend4(this.prototype.options, options);
           return this;
         };
-        Class4.addInitHook = function(fn) {
+        Class4.addInitHook = function(fn2) {
           var args = Array.prototype.slice.call(arguments, 1);
-          var init = typeof fn === "function" ? fn : function() {
-            this[fn].apply(this, args);
+          var init = typeof fn2 === "function" ? fn2 : function() {
+            this[fn2].apply(this, args);
           };
           this.prototype._initHooks = this.prototype._initHooks || [];
           this.prototype._initHooks.push(init);
@@ -286,25 +286,25 @@
           }
         }
         var Events = {
-          on: function(types, fn, context) {
+          on: function(types, fn2, context) {
             if (typeof types === "object") {
               for (var type in types) {
-                this._on(type, types[type], fn);
+                this._on(type, types[type], fn2);
               }
             } else {
               types = splitWords(types);
               for (var i2 = 0, len = types.length; i2 < len; i2++) {
-                this._on(types[i2], fn, context);
+                this._on(types[i2], fn2, context);
               }
             }
             return this;
           },
-          off: function(types, fn, context) {
+          off: function(types, fn2, context) {
             if (!arguments.length) {
               delete this._events;
             } else if (typeof types === "object") {
               for (var type in types) {
-                this._off(type, types[type], fn);
+                this._off(type, types[type], fn2);
               }
             } else {
               types = splitWords(types);
@@ -313,24 +313,24 @@
                 if (removeAll) {
                   this._off(types[i2]);
                 } else {
-                  this._off(types[i2], fn, context);
+                  this._off(types[i2], fn2, context);
                 }
               }
             }
             return this;
           },
-          _on: function(type, fn, context, _once) {
-            if (typeof fn !== "function") {
-              console.warn("wrong listener type: " + typeof fn);
+          _on: function(type, fn2, context, _once) {
+            if (typeof fn2 !== "function") {
+              console.warn("wrong listener type: " + typeof fn2);
               return;
             }
-            if (this._listens(type, fn, context) !== false) {
+            if (this._listens(type, fn2, context) !== false) {
               return;
             }
             if (context === this) {
               context = void 0;
             }
-            var newListener = { fn, ctx: context };
+            var newListener = { fn: fn2, ctx: context };
             if (_once) {
               newListener.once = true;
             }
@@ -338,7 +338,7 @@
             this._events[type] = this._events[type] || [];
             this._events[type].push(newListener);
           },
-          _off: function(type, fn, context) {
+          _off: function(type, fn2, context) {
             var listeners, i2, len;
             if (!this._events) {
               return;
@@ -356,11 +356,11 @@
               delete this._events[type];
               return;
             }
-            if (typeof fn !== "function") {
-              console.warn("wrong listener type: " + typeof fn);
+            if (typeof fn2 !== "function") {
+              console.warn("wrong listener type: " + typeof fn2);
               return;
             }
-            var index3 = this._listens(type, fn, context);
+            var index3 = this._listens(type, fn2, context);
             if (index3 !== false) {
               var listener = listeners[index3];
               if (this._firingCount) {
@@ -385,11 +385,11 @@
                 this._firingCount = this._firingCount + 1 || 1;
                 for (var i2 = 0, len = listeners.length; i2 < len; i2++) {
                   var l = listeners[i2];
-                  var fn = l.fn;
+                  var fn2 = l.fn;
                   if (l.once) {
-                    this.off(type, fn, l.ctx);
+                    this.off(type, fn2, l.ctx);
                   }
-                  fn.call(l.ctx || this, event);
+                  fn2.call(l.ctx || this, event);
                 }
                 this._firingCount--;
               }
@@ -399,13 +399,13 @@
             }
             return this;
           },
-          listens: function(type, fn, context, propagate) {
+          listens: function(type, fn2, context, propagate) {
             if (typeof type !== "string") {
               console.warn('"string" type argument expected');
             }
-            var _fn = fn;
-            if (typeof fn !== "function") {
-              propagate = !!fn;
+            var _fn = fn2;
+            if (typeof fn2 !== "function") {
+              propagate = !!fn2;
               _fn = void 0;
               context = void 0;
             }
@@ -417,40 +417,40 @@
             }
             if (propagate) {
               for (var id in this._eventParents) {
-                if (this._eventParents[id].listens(type, fn, context, propagate)) {
+                if (this._eventParents[id].listens(type, fn2, context, propagate)) {
                   return true;
                 }
               }
             }
             return false;
           },
-          _listens: function(type, fn, context) {
+          _listens: function(type, fn2, context) {
             if (!this._events) {
               return false;
             }
             var listeners = this._events[type] || [];
-            if (!fn) {
+            if (!fn2) {
               return !!listeners.length;
             }
             if (context === this) {
               context = void 0;
             }
             for (var i2 = 0, len = listeners.length; i2 < len; i2++) {
-              if (listeners[i2].fn === fn && listeners[i2].ctx === context) {
+              if (listeners[i2].fn === fn2 && listeners[i2].ctx === context) {
                 return i2;
               }
             }
             return false;
           },
-          once: function(types, fn, context) {
+          once: function(types, fn2, context) {
             if (typeof types === "object") {
               for (var type in types) {
-                this._on(type, types[type], fn, true);
+                this._on(type, types[type], fn2, true);
               }
             } else {
               types = splitWords(types);
               for (var i2 = 0, len = types.length; i2 < len; i2++) {
-                this._on(types[i2], fn, context, true);
+                this._on(types[i2], fn2, context, true);
               }
             }
             return this;
@@ -1493,27 +1493,27 @@
           getSizedParentNode,
           getScale
         };
-        function on(obj, types, fn, context) {
+        function on(obj, types, fn2, context) {
           if (types && typeof types === "object") {
             for (var type in types) {
-              addOne(obj, type, types[type], fn);
+              addOne(obj, type, types[type], fn2);
             }
           } else {
             types = splitWords(types);
             for (var i2 = 0, len = types.length; i2 < len; i2++) {
-              addOne(obj, types[i2], fn, context);
+              addOne(obj, types[i2], fn2, context);
             }
           }
           return this;
         }
         var eventsKey = "_leaflet_events";
-        function off(obj, types, fn, context) {
+        function off(obj, types, fn2, context) {
           if (arguments.length === 1) {
             batchRemove(obj);
             delete obj[eventsKey];
           } else if (types && typeof types === "object") {
             for (var type in types) {
-              removeOne(obj, type, types[type], fn);
+              removeOne(obj, type, types[type], fn2);
             }
           } else {
             types = splitWords(types);
@@ -1523,7 +1523,7 @@
               });
             } else {
               for (var i2 = 0, len = types.length; i2 < len; i2++) {
-                removeOne(obj, types[i2], fn, context);
+                removeOne(obj, types[i2], fn2, context);
               }
             }
           }
@@ -1542,13 +1542,13 @@
           mouseleave: "mouseout",
           wheel: !("onwheel" in window) && "mousewheel"
         };
-        function addOne(obj, type, fn, context) {
-          var id = type + stamp(fn) + (context ? "_" + stamp(context) : "");
+        function addOne(obj, type, fn2, context) {
+          var id = type + stamp(fn2) + (context ? "_" + stamp(context) : "");
           if (obj[eventsKey] && obj[eventsKey][id]) {
             return this;
           }
           var handler = function(e) {
-            return fn.call(context || obj, e || window.event);
+            return fn2.call(context || obj, e || window.event);
           };
           var originalHandler = handler;
           if (!Browser4.touchNative && Browser4.pointer && type.indexOf("touch") === 0) {
@@ -1575,8 +1575,8 @@
           obj[eventsKey] = obj[eventsKey] || {};
           obj[eventsKey][id] = handler;
         }
-        function removeOne(obj, type, fn, context, id) {
-          id = id || type + stamp(fn) + (context ? "_" + stamp(context) : "");
+        function removeOne(obj, type, fn2, context, id) {
+          id = id || type + stamp(fn2) + (context ? "_" + stamp(context) : "");
           var handler = obj[eventsKey] && obj[eventsKey][id];
           if (!handler) {
             return this;
@@ -3088,16 +3088,16 @@
               this._map.zoomOut(this._map.options.zoomDelta * (e.shiftKey ? 3 : 1));
             }
           },
-          _createButton: function(html, title, className, container, fn) {
+          _createButton: function(html, title2, className, container, fn2) {
             var link = create$1("a", className, container);
             link.innerHTML = html;
             link.href = "#";
-            link.title = title;
+            link.title = title2;
             link.setAttribute("role", "button");
-            link.setAttribute("aria-label", title);
+            link.setAttribute("aria-label", title2);
             disableClickPropagation(link);
             on(link, "click", stop);
-            on(link, "click", fn, this);
+            on(link, "click", fn2, this);
             on(link, "click", this._refocusOnMap, this);
             return link;
           },
@@ -8205,12 +8205,12 @@
         var round2 = Math.round;
         var abs = Math.abs;
         var now = Date.now;
-        function setTimeoutContext(fn, timeout, context) {
-          return setTimeout(bindFn(fn, context), timeout);
+        function setTimeoutContext(fn2, timeout, context) {
+          return setTimeout(bindFn(fn2, context), timeout);
         }
-        function invokeArrayArg(arg, fn, context) {
+        function invokeArrayArg(arg, fn2, context) {
           if (Array.isArray(arg)) {
-            each2(arg, context[fn], context);
+            each2(arg, context[fn2], context);
             return true;
           }
           return false;
@@ -8291,9 +8291,9 @@
             assign(childP, properties);
           }
         }
-        function bindFn(fn, context) {
+        function bindFn(fn2, context) {
           return function boundFn() {
-            return fn.apply(context, arguments);
+            return fn2.apply(context, arguments);
           };
         }
         function boolOrFn(val, args) {
@@ -10968,38 +10968,38 @@
       }
       return void 0;
     },
-    _addButton: function(className, parent, subClassName = void 0, title = void 0, fn = void 0) {
+    _addButton: function(className, parent, subClassName = void 0, title2 = void 0, fn2 = void 0) {
       const button = import_leaflet10.DomUtil.create("div", className, parent), icon = import_leaflet10.DomUtil.create("div", className + "-icon", button);
       button.target = "_blank";
       if (subClassName) {
         button.id = className + "-" + subClassName;
       }
-      if (fn) {
-        import_leaflet10.DomEvent.on(button, "click touch", fn, this);
+      if (fn2) {
+        import_leaflet10.DomEvent.on(button, "click touch", fn2, this);
       }
-      if (title) {
-        button.title = title;
+      if (title2) {
+        button.title = title2;
       }
       return button;
     },
-    _addRadioButton: function(className, parent, value, checked, title = void 0, fn = void 0) {
+    _addRadioButton: function(className, parent, value, checked, title2 = void 0, fn2 = void 0) {
       const label = import_leaflet10.DomUtil.create("label", className, parent), input = import_leaflet10.DomUtil.create("input", className, label), div = import_leaflet10.DomUtil.create("div", className, label);
       input.type = "radio";
       input.name = className;
       input.value = value;
       input.checked = checked;
-      if (fn) {
+      if (fn2) {
         import_leaflet10.DomEvent.on(input, "click touch", function() {
-          fn(value);
+          fn2(value);
         }, this);
       }
       label.htmlFor = input.id = className + "-" + value;
-      if (title) {
-        label.title = title;
+      if (title2) {
+        label.title = title2;
       }
       return input;
     },
-    _addSelectMenu: function(className, parent, items, disabled = void 0, selected = void 0, title = void 0, fn = void 0) {
+    _addSelectMenu: function(className, parent, items, disabled = void 0, selected = void 0, title2 = void 0, fn2 = void 0) {
       const div = import_leaflet10.DomUtil.create("div", className, parent), select = import_leaflet10.DomUtil.create("select", className, div), choose = document.createElement("option"), opt = select.opt = [];
       choose.text = "choose";
       choose.disabled = true;
@@ -11042,56 +11042,57 @@
           }
         }, this);
       }
-      if (fn) {
-        import_leaflet10.DomEvent.on(select, "change keyup", fn, this);
+      if (fn2) {
+        import_leaflet10.DomEvent.on(select, "change keyup", fn2, this);
       }
-      if (title) {
-        div.title = title;
+      if (title2) {
+        div.title = title2;
       }
       return select;
     },
-    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title = void 0, fn = void 0) {
-      const _this = this, colpick = import_leaflet10.DomUtil.create("div", className, parent), colinput = import_leaflet10.DomUtil.create("input", className + "-input", colpick);
-      colinput.type = "color";
-      colpick.style.backgroundColor = colinput.value = defaultColor;
-      colinput.id = className + "-" + subClassName;
+    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title2 = void 0, fn2 = void 0) {
+      const _this = this, coldiv = import_leaflet10.DomUtil.create("div", className, parent), colpick = import_leaflet10.DomUtil.create("input", className + "-input", coldiv);
+      colpick.type = "color";
+      coldiv.style.backgroundColor = colpick.value = defaultColor;
+      colpick.id = className + "-" + subClassName;
       import_leaflet10.DomEvent.on(
-        colinput,
-        "change input",
+        colpick,
+        "change",
         function() {
-          colpick.style.backgroundColor = colinput.value;
-          if (fn) {
-            fn;
+          coldiv.style.backgroundColor = colpick.value;
+          console.log(colpick.value);
+          if (fn2) {
+            fn2(colpick.value);
           }
         },
         this
       );
-      if (title) {
-        colinput.title = title;
+      if (title2) {
+        colpick.title = title2;
       }
-      return colinput;
+      return colpick;
     },
-    _addSwitchInput: function(layer, attr, box, label, title = void 0, checked) {
+    _addSwitchInput: function(layer, attr, box, label, title2 = void 0, checked) {
       const line = this._addDialogLine(label, box), elem = this._addDialogElement(line), flip = elem.flip = new FlipSwitch(elem, {
         checked,
-        title
+        title: title2
       });
       flip.on("change", function() {
         layer._setAttr(attr, flip.value());
       }, this);
       return elem;
     },
-    _addNumericalInput: function(layer, attr, box, label, title = void 0, initValue, step, min = void 0, max = void 0, fn = void 0) {
+    _addNumericalInput: function(layer, attr, box, label, title2 = void 0, initValue, step, min = void 0, max = void 0, fn2 = void 0) {
       const line = this._addDialogLine(label, box), elem = this._addDialogElement(line), spinbox = elem.spinbox = new Spinbox(elem, {
         step,
         dmin: min,
         dmax: max,
         initValue,
-        title
+        title: title2
       });
       spinbox.on("change", function() {
         VUtil.flashElement(spinbox._input);
-        layer._setAttr(attr, spinbox.value(), fn);
+        layer._setAttr(attr, spinbox.value(), fn2);
       }, this);
       return elem;
     },
@@ -11591,7 +11592,10 @@
         layer.getChannelColor(visio.channel),
         true,
         "visiomaticChannel",
-        "Click to set channel color"
+        title = "Click to set channel color",
+        fn = (colorStr) => {
+          this._updateChannelMix(layer, visio.channel, rgb(colorStr));
+        }
       );
       layer._setAttr("cMap", "grey");
       layer.updateMix();
@@ -11604,7 +11608,7 @@
         "Select image channel",
         function() {
           visio.channel = this._chanSelect.selectedIndex - 1;
-          this._updateChannel(layer, visio.channel, colpick);
+          this._updateChannel(layer, visio.channel, updateColor = true);
         }
       );
       this._addMinMax(layer, visio.channel, box);
@@ -11617,7 +11621,7 @@
         function() {
           _this.loadSettings(layer, _this._initsettings, "color", true);
           layer.updateMix();
-          this._updateColPick(layer);
+          this._updateColPick(layer, layer.visio.channel);
           this._updateChannelList(layer);
           layer.redraw();
         }
@@ -11643,7 +11647,7 @@
             }
           }
           layer.updateMix();
-          this._updateColPick(layer);
+          this._updateColPick(layer, layer.visio.channel);
           this._updateChannelList(layer);
           layer.redraw();
         }
@@ -11675,15 +11679,14 @@
         step
       );
     },
-    _updateChannel: function(layer, channel, colorElem = void 0) {
+    _updateChannel: function(layer, channel, color2 = false) {
       const _this = this, visio = layer.visio, step = this._spinboxStep(
         visio.minValue[channel],
         visio.maxValue[channel]
       );
       _this._chanSelect.selectedIndex = channel + 1;
-      if (colorElem) {
-        const rgbStr = layer.getChannelColor(channel);
-        colorElem.value = rgbStr;
+      if (updateColor) {
+        this._updateColPick(layer, channel);
       }
       this._minElem.spinbox.value(visio.minValue[channel]).step(step).off("change").on("change", function() {
         layer._setAttr(
@@ -11747,23 +11750,22 @@
         trashElems.push(trashElem);
       }
     },
-    _updateColPick: function(layer) {
-      const rgbStr = layer.getChannelColor(layer.visio.channel);
-      $(this._chanColPick).spectrum("set", rgbStr);
-      $(this._chanColPick).val(rgbStr);
+    _updateColPick: function(layer, channel) {
+      const rgbStr = layer.getChannelColor(channel);
+      this._chanColPick.parentNode.style.backgroundColor = this._chanColPick.value = rgbStr;
     },
     _activateTrashElem: function(trashElem, layer, channel) {
       import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
         this._updateChannelMix(layer, channel, false);
         if (layer === this._layer && channel === layer.visio.channel) {
-          this._updateColPick(layer);
+          this._updateColPick(layer, channel);
         }
       }, this);
     },
     _activateChanElem: function(chanElem, layer, channel) {
       import_leaflet12.DomEvent.on(chanElem, "click touch", function() {
         layer.visio.channel = channel;
-        this._updateChannel(layer, channel, this._chanColPick);
+        this._updateChannel(layer, channel, updateColor = true);
       }, this);
     }
   });
@@ -12240,13 +12242,13 @@
       this._toggleDisplayButton.style.width = this.options.collapsedWidth + "px";
       this._toggleDisplayButton.style.height = this.options.collapsedHeight + "px";
     },
-    _addButton: function(html, title, className, container, fn, context) {
+    _addButton: function(html, title2, className, container, fn2, context) {
       const link = import_leaflet15.DomUtil.create("a", className, container);
       link.innerHTML = html;
       link.href = "#";
-      link.title = title;
+      link.title = title2;
       const stop = import_leaflet15.DomEvent.stopPropagation;
-      import_leaflet15.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet15.DomEvent.preventDefault).on(link, "click", fn, context);
+      import_leaflet15.DomEvent.on(link, "click", stop).on(link, "mousedown", stop).on(link, "dblclick", stop).on(link, "click", import_leaflet15.DomEvent.preventDefault).on(link, "click", fn2, context);
       return link;
     },
     _toggleDisplayButtonClicked: function() {
@@ -12471,11 +12473,11 @@
       );
       return container;
     },
-    _addButton: function(title, className, container, fn, context) {
+    _addButton: function(title2, className, container, fn2, context) {
       const link = import_leaflet16.DomUtil.create("a", className, container);
       link.href = "#";
-      link.title = title;
-      import_leaflet16.DomEvent.addListener(link, "click", import_leaflet16.DomEvent.stopPropagation).addListener(link, "click", import_leaflet16.DomEvent.preventDefault).addListener(link, "click", fn, context);
+      link.title = title2;
+      import_leaflet16.DomEvent.addListener(link, "click", import_leaflet16.DomEvent.stopPropagation).addListener(link, "click", import_leaflet16.DomEvent.preventDefault).addListener(link, "click", fn2, context);
       import_leaflet16.DomEvent.addListener(container, fullScreenApi.fullScreenEventName, import_leaflet16.DomEvent.stopPropagation).addListener(container, fullScreenApi.fullScreenEventName, import_leaflet16.DomEvent.preventDefault).addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
       return link;
     },
@@ -13293,29 +13295,29 @@
   }
   var toPercentage = (value, dimension) => typeof value === "string" && value.endsWith("%") ? parseFloat(value) / 100 : +value / dimension;
   var toDimension = (value, dimension) => typeof value === "string" && value.endsWith("%") ? parseFloat(value) / 100 * dimension : +value;
-  function callback(fn, args, thisArg) {
-    if (fn && typeof fn.call === "function") {
-      return fn.apply(thisArg, args);
+  function callback(fn2, args, thisArg) {
+    if (fn2 && typeof fn2.call === "function") {
+      return fn2.apply(thisArg, args);
     }
   }
-  function each(loopable, fn, thisArg, reverse) {
+  function each(loopable, fn2, thisArg, reverse) {
     let i2, len, keys;
     if (isArray(loopable)) {
       len = loopable.length;
       if (reverse) {
         for (i2 = len - 1; i2 >= 0; i2--) {
-          fn.call(thisArg, loopable[i2], i2);
+          fn2.call(thisArg, loopable[i2], i2);
         }
       } else {
         for (i2 = 0; i2 < len; i2++) {
-          fn.call(thisArg, loopable[i2], i2);
+          fn2.call(thisArg, loopable[i2], i2);
         }
       }
     } else if (isObject(loopable)) {
       keys = Object.keys(loopable);
       len = keys.length;
       for (i2 = 0; i2 < len; i2++) {
-        fn.call(thisArg, loopable[keys[i2]], keys[i2]);
+        fn2.call(thisArg, loopable[keys[i2]], keys[i2]);
       }
     }
   }
@@ -13682,7 +13684,7 @@
     }
     return window.requestAnimationFrame;
   }();
-  function throttled(fn, thisArg) {
+  function throttled(fn2, thisArg) {
     let argsToUse = [];
     let ticking = false;
     return function(...args) {
@@ -13691,19 +13693,19 @@
         ticking = true;
         requestAnimFrame.call(window, () => {
           ticking = false;
-          fn.apply(thisArg, argsToUse);
+          fn2.apply(thisArg, argsToUse);
         });
       }
     };
   }
-  function debounce(fn, delay) {
+  function debounce(fn2, delay) {
     let timeout;
     return function(...args) {
       if (delay) {
         clearTimeout(timeout);
-        timeout = setTimeout(fn, delay, args);
+        timeout = setTimeout(fn2, delay, args);
       } else {
-        fn.apply(this, args);
+        fn2.apply(this, args);
       }
       return delay;
     };
@@ -15582,7 +15584,7 @@
     _notify(chart, anims, date, type) {
       const callbacks = anims.listeners[type];
       const numSteps = anims.duration;
-      callbacks.forEach((fn) => fn({
+      callbacks.forEach((fn2) => fn2({
         chart,
         initial: anims.initial,
         numSteps,
@@ -20295,25 +20297,25 @@
       }
     }
     drawTitle() {
-      const { ctx, options: { position, title, reverse } } = this;
-      if (!title.display) {
+      const { ctx, options: { position, title: title2, reverse } } = this;
+      if (!title2.display) {
         return;
       }
-      const font = toFont(title.font);
-      const padding = toPadding(title.padding);
-      const align = title.align;
+      const font = toFont(title2.font);
+      const padding = toPadding(title2.padding);
+      const align = title2.align;
       let offset = font.lineHeight / 2;
       if (position === "bottom" || position === "center" || isObject(position)) {
         offset += padding.bottom;
-        if (isArray(title.text)) {
-          offset += font.lineHeight * (title.text.length - 1);
+        if (isArray(title2.text)) {
+          offset += font.lineHeight * (title2.text.length - 1);
         }
       } else {
         offset += padding.top;
       }
       const { titleX, titleY, maxWidth, rotation } = titleArgs(this, offset, position, align);
-      renderText(ctx, title.text, 0, 0, font, {
-        color: title.color,
+      renderText(ctx, title2.text, 0, 0, font, {
+        color: title2.color,
         maxWidth,
         rotation,
         textAlign: titleAlign(align, position, reverse),
@@ -23120,9 +23122,9 @@
     }
     return end;
   }
-  function _getEdge(a, b, prop, fn) {
+  function _getEdge(a, b, prop, fn2) {
     if (a && b) {
-      return fn(a[prop], b[prop]);
+      return fn2(a[prop], b[prop]);
     }
     return a ? a[prop] : b ? b[prop] : 0;
   }
@@ -24242,14 +24244,14 @@
     }
   };
   function createTitle(chart, titleOpts) {
-    const title = new Title({
+    const title2 = new Title({
       ctx: chart.ctx,
       options: titleOpts,
       chart
     });
-    layouts.configure(chart, title, titleOpts);
-    layouts.addBox(chart, title);
-    chart.titleBlock = title;
+    layouts.configure(chart, title2, titleOpts);
+    layouts.addBox(chart, title2);
+    chart.titleBlock = title2;
   }
   var plugin_title = {
     id: "title",
@@ -24263,9 +24265,9 @@
       delete chart.titleBlock;
     },
     beforeUpdate(chart, _args, options) {
-      const title = chart.titleBlock;
-      layouts.configure(chart, title, options);
-      title.options = options;
+      const title2 = chart.titleBlock;
+      layouts.configure(chart, title2, options);
+      title2.options = options;
     },
     defaults: {
       align: "center",
@@ -24291,23 +24293,23 @@
   var plugin_subtitle = {
     id: "subtitle",
     start(chart, _args, options) {
-      const title = new Title({
+      const title2 = new Title({
         ctx: chart.ctx,
         options,
         chart
       });
-      layouts.configure(chart, title, options);
-      layouts.addBox(chart, title);
-      map3.set(chart, title);
+      layouts.configure(chart, title2, options);
+      layouts.addBox(chart, title2);
+      map3.set(chart, title2);
     },
     stop(chart) {
       layouts.removeBox(chart, map3.get(chart));
       map3.delete(chart);
     },
     beforeUpdate(chart, _args, options) {
-      const title = map3.get(chart);
-      layouts.configure(chart, title, options);
-      title.options = options;
+      const title2 = map3.get(chart);
+      layouts.configure(chart, title2, options);
+      title2.options = options;
     },
     defaults: {
       align: "center",
@@ -24416,12 +24418,12 @@
   }
   function getTooltipSize(tooltip, options) {
     const ctx = tooltip.chart.ctx;
-    const { body, footer, title } = tooltip;
+    const { body, footer, title: title2 } = tooltip;
     const { boxWidth, boxHeight } = options;
     const bodyFont = toFont(options.bodyFont);
     const titleFont = toFont(options.titleFont);
     const footerFont = toFont(options.footerFont);
-    const titleLineCount = title.length;
+    const titleLineCount = title2.length;
     const footerLineCount = footer.length;
     const bodyLineItemCount = body.length;
     const padding = toPadding(options.padding);
@@ -24693,11 +24695,11 @@
     getTitle(context, options) {
       const { callbacks } = options;
       const beforeTitle = invokeCallbackWithFallback(callbacks, "beforeTitle", this, context);
-      const title = invokeCallbackWithFallback(callbacks, "title", this, context);
+      const title2 = invokeCallbackWithFallback(callbacks, "title", this, context);
       const afterTitle = invokeCallbackWithFallback(callbacks, "afterTitle", this, context);
       let lines = [];
       lines = pushOrConcat(lines, splitNewlines(beforeTitle));
-      lines = pushOrConcat(lines, splitNewlines(title));
+      lines = pushOrConcat(lines, splitNewlines(title2));
       lines = pushOrConcat(lines, splitNewlines(afterTitle));
       return lines;
     }
@@ -24870,8 +24872,8 @@
       };
     }
     drawTitle(pt, ctx, options) {
-      const title = this.title;
-      const length = title.length;
+      const title2 = this.title;
+      const length = title2.length;
       let titleFont, titleSpacing, i2;
       if (length) {
         const rtlHelper = getRtlAdapter(options.rtl, this.x, this.width);
@@ -24883,7 +24885,7 @@
         ctx.fillStyle = options.titleColor;
         ctx.font = titleFont.string;
         for (i2 = 0; i2 < length; ++i2) {
-          ctx.fillText(title[i2], rtlHelper.x(pt.x), pt.y + titleFont.lineHeight / 2);
+          ctx.fillText(title2[i2], rtlHelper.x(pt.x), pt.y + titleFont.lineHeight / 2);
           pt.y += titleFont.lineHeight + titleSpacing;
           if (i2 + 1 === length) {
             pt.y += options.titleMarginBottom - titleSpacing;
@@ -26905,11 +26907,11 @@
     }
     return { x: false, y: false };
   }
-  function debounce2(fn, delay) {
+  function debounce2(fn2, delay) {
     let timeout;
     return function() {
       clearTimeout(timeout);
-      timeout = setTimeout(fn, delay);
+      timeout = setTimeout(fn2, delay);
       return delay;
     };
   }
@@ -27137,12 +27139,12 @@
     return originalScaleLimits;
   }
   function doZoom(scale2, amount, center, limits) {
-    const fn = zoomFunctions[scale2.type] || zoomFunctions.default;
-    callback(fn, [scale2, amount, center, limits]);
+    const fn2 = zoomFunctions[scale2.type] || zoomFunctions.default;
+    callback(fn2, [scale2, amount, center, limits]);
   }
   function doZoomRect(scale2, amount, from2, to2, limits) {
-    const fn = zoomRectFunctions[scale2.type] || zoomRectFunctions.default;
-    callback(fn, [scale2, amount, from2, to2, limits]);
+    const fn2 = zoomRectFunctions[scale2.type] || zoomRectFunctions.default;
+    callback(fn2, [scale2, amount, from2, to2, limits]);
   }
   function getCenter(chart) {
     const ca = chart.chartArea;
@@ -27236,8 +27238,8 @@
     if (sign(storedDelta) === sign(delta)) {
       delta += storedDelta;
     }
-    const fn = panFunctions[scale2.type] || panFunctions.default;
-    if (callback(fn, [scale2, delta, limits])) {
+    const fn2 = panFunctions[scale2.type] || panFunctions.default;
+    if (callback(fn2, [scale2, delta, limits])) {
       panDelta[scale2.id] = 0;
     } else {
       panDelta[scale2.id] = delta;
@@ -28002,7 +28004,7 @@
     _plotSpectrum: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker3 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title = "Image Spectrum", ylabel = "Average pixel value";
+          const json = JSON.parse(httpRequest.responseText), rawprof = json.profile, layer = self2._layer, visio = layer.visio, marker3 = self2._spectrumMarker, popdiv = document.getElementById("leaflet-spectrum-plot"), spec = [], series = [], title2 = "Image Spectrum", ylabel = "Average pixel value";
           self2.addLayer(marker3, "Image spectrum");
           for (let c2 = 0; c2 < visio.nChannel; c2++) {
             spec.push([
@@ -28391,19 +28393,19 @@
       this._tablist.setAttribute("role", "tablist");
       return this._tablist;
     },
-    addTab: function(id, className, title, content, sideClass) {
+    addTab: function(id, className, title2, content, sideClass) {
       const tablist = this._tablist ? this._tablist : this.addTabList(), item = import_leaflet23.DomUtil.create("li", "", tablist), button = import_leaflet23.DomUtil.create("a", className, item);
       item.setAttribute("role", "tab");
       item._sidebar = this;
       button.href = "#" + id;
       button.id = id + "-toggle";
-      button.title = title;
+      button.title = title2;
       import_leaflet23.DomEvent.on(button, "click", L.DomEvent.preventDefault);
       import_leaflet23.DomEvent.on(button, "click", this._onClick, item);
       item.sideClass = sideClass;
       this._tabitems.push(item);
       const pane = import_leaflet23.DomUtil.create("div", "sidebar-pane", this._container), header = import_leaflet23.DomUtil.create("h1", "sidebar-header", pane);
-      header.innerHTML = title;
+      header.innerHTML = title2;
       const closeButton = import_leaflet23.DomUtil.create("div", "sidebar-close", header), closeIcon = import_leaflet23.DomUtil.create("div", "sidebar-close-icon", closeButton);
       this._closeButtons.push(closeButton);
       import_leaflet23.DomEvent.on(closeButton, "click", this._onCloseClick, this);
@@ -28495,10 +28497,10 @@
     _onCloseClick: function() {
       this.close();
     },
-    _addButton: function(title, className, container) {
+    _addButton: function(title2, className, container) {
       const link = import_leaflet23.DomUtil.create("a", className, container);
       link.href = "#";
-      link.title = title;
+      link.title = title2;
       import_leaflet23.DomEvent.addListener(link, "click", import_leaflet23.DomEvent.stopPropagation).addListener(link, "click", import_leaflet23.DomEvent.preventDefault).addListener(link, "click", this.toggle, this);
       return link;
     }
@@ -29951,15 +29953,15 @@
       const reg = new RegExp(keyword + ":" + regexp);
       return reg.exec(str2);
     },
-    _setAttr: function(attr, value, fn = void 0) {
+    _setAttr: function(attr, value, fn2 = void 0) {
       const attrarr = attr.split(/\[|\]/);
       if (attrarr[1]) {
         this.visio[attrarr[0]][parseInt(attrarr[1], 10)] = value;
       } else {
         this.visio[attrarr[0]] = value;
       }
-      if (fn) {
-        fn(this);
+      if (fn2) {
+        fn2(this);
       }
       this.redraw();
     },

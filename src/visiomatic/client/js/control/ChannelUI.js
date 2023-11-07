@@ -283,7 +283,10 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				layer.getChannelColor(visio.channel),
 				true,
 				'visiomaticChannel',
-				'Click to set channel color'
+				title='Click to set channel color',
+				fn=(colorStr) => {
+					this._updateChannelMix(layer, visio.channel, rgb(colorStr));
+				}
 			);
 
 		layer._setAttr('cMap', 'grey');
@@ -298,7 +301,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'Select image channel',
 			function () {
 				visio.channel =  this._chanSelect.selectedIndex - 1;
-				this._updateChannel(layer, visio.channel, colpick);
+				this._updateChannel(layer, visio.channel, updateColor=true);
 			}
 		);
 
@@ -316,7 +319,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			function () {
 				_this.loadSettings(layer, _this._initsettings, 'color', true);
 				layer.updateMix();
-				this._updateColPick(layer);
+				this._updateColPick(layer, layer.visio.channel);
 				this._updateChannelList(layer);
 				layer.redraw();
 			}
@@ -348,7 +351,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 					}
 				}
 				layer.updateMix();
-				this._updateColPick(layer);
+				this._updateColPick(layer, layer.visio.channel);
 				this._updateChannelList(layer);
 				layer.redraw();
 
@@ -406,20 +409,18 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	   VisiOmatic layer.
 	 * @param {number} channel
 	   Image channel.
-	 * @param {object) colorElem
-	   Color patch element (if present).
+	 * @param {boolean) [updateColor=false]
+	   Update Color patch element?
 	 */
-	_updateChannel: function (layer, channel, colorElem=undefined) {
+	_updateChannel: function (layer, channel, color=false) {
 		const	_this = this,
 			visio = layer.visio,
 			step = this._spinboxStep(
 				visio.minValue[channel],
 				visio.maxValue[channel]);
 		_this._chanSelect.selectedIndex = channel + 1;
-		if (colorElem) {
-			const	rgbStr = layer.getChannelColor(channel);
-
-			colorElem.value = rgbStr;
+		if (updateColor) {
+			this._updateColPick(layer, channel);
 		}
 
 		this._minElem.spinbox
@@ -528,15 +529,18 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	},
 
 	/**
-	   Update the color picker value based on the current layer color.
+	   Update the color picker value based on the given channel color.
 	 * @private
-	 * @param {VTileLayer} layer
+	 * @param {number} layer
 	   VisiOmatic layer.
+	 * @param {number} channel
+	   Image channel.
 	 */
-	_updateColPick: function (layer) {
-		const	rgbStr = layer.getChannelColor(layer.visio.channel);
-		$(this._chanColPick).spectrum('set', rgbStr);
-		$(this._chanColPick).val(rgbStr);
+	_updateColPick: function (layer, channel) {
+		const	rgbStr = layer.getChannelColor(channel);
+		
+		this._chanColPick.parentNode.style.backgroundColor =
+			this._chanColPick.value = rgbStr;
 	},
 
 	/**
@@ -554,7 +558,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 		DomEvent.on(trashElem, 'click touch', function () {
 			this._updateChannelMix(layer, channel, false);
 			if (layer === this._layer && channel === layer.visio.channel) {
-				this._updateColPick(layer);
+				this._updateColPick(layer, channel);
 			}
 		}, this);
 	},
@@ -573,7 +577,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	_activateChanElem: function (chanElem, layer, channel) {
 		DomEvent.on(chanElem, 'click touch', function () {
 			layer.visio.channel = channel;
-			this._updateChannel(layer, channel, this._chanColPick);
+			this._updateChannel(layer, channel, updateColor=true);
 		}, this);
 	}
 
