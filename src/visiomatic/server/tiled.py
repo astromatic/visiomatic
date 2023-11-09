@@ -8,6 +8,7 @@ import glob, math, pickle
 
 from methodtools import lru_cache
 from os import path, unlink
+from sys import modules
 from typing import List, NamedTuple, Tuple, Union
 from urllib.parse import quote, unquote
 
@@ -136,7 +137,8 @@ class Tiled(object):
             color_saturation: float = 1.5,
             gamma : float = 0.45,
             quality: int = 90,
-            nthreads : int = config.settings["thread_count"]):
+            nthreads : int = config.settings["thread_count"] \
+                if 'sphinx' not in modules else 4):
 
         self.filename = path.abspath(filename)
         # Otherwise, create it

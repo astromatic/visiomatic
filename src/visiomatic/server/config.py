@@ -4,8 +4,9 @@ Configure application.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import os, sys, time
+import os, time
 from pathlib import Path
+from sys import exit, modules
 from typing import Tuple
 from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
@@ -28,7 +29,7 @@ class Config(object):
         self.image_filename = None
 
        # Skip argument parsing and stuff if Sphinx is involved
-        if 'sphinx' in sys.modules:
+        if 'sphinx' in modules:
             return
         # Parse command line
         args_dict = self.parse_args()
@@ -56,7 +57,7 @@ class Config(object):
         if Path(image_filename).exists():
             self.image_filename = image_filename
         else:
-            sys.exit(f"*Error*: {image_filename} not found!")
+            exit(f"*Error*: {image_filename} not found!")
 
     def dict(self) -> dict:
         """
@@ -302,4 +303,4 @@ class Config(object):
 config = None
 config_filename = None
 image_filename = None
-
+settings = {}
