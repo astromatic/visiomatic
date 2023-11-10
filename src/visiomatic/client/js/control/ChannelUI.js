@@ -539,7 +539,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	_updateColPick: function (layer, channel) {
 		const	rgbStr = layer.getChannelColor(channel);
 		
-		this._chanColPick.parentNode.style.backgroundColor =
+		this._chanColPick.style.backgroundColor =
 			this._chanColPick.value = rgbStr;
 	},
 
@@ -556,7 +556,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 */
 	_activateTrashElem: function (trashElem, layer, channel) {
 		DomEvent.on(trashElem, 'click touch', function () {
-			this._updateChannelMix(layer, channel, false);
+			this._updateChannelMix(layer, channel, undefined);
 			if (layer === this._layer && channel === layer.visio.channel) {
 				this._updateColPick(layer, channel);
 			}

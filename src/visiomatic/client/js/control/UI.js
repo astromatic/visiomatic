@@ -17,6 +17,7 @@ import {
 	DomUtil,
 	Util
 } from 'leaflet';
+import Spectrum from 'spectrum-vanilla';
 
 import {FlipSwitch, Spinbox} from './widget';
 import {VUtil} from '../util';
@@ -511,25 +512,28 @@ export const UI = Control.extend( /** @lends UI */ {
 	    fn=undefined
 	) {
 		const	_this = this,
-			coldiv = DomUtil.create('div', className, parent),
-			colpick = DomUtil.create('input', className + '-input', coldiv);
-
-		colpick.type = 'color';
-		// Hide actual color picker as we cannot style it freely
-		// Use parent DIV as a proxy.
-		coldiv.style.backgroundColor = colpick.value = defaultColor;
-		colpick.id = className + '-' + subClassName;
-		DomEvent.on(
-			colpick,
-			'change',
-			function() {
-				coldiv.style.backgroundColor = colpick.value;
-				if (fn) {
-					fn(colpick.value);
+			colpick = DomUtil.create('color', className, parent),
+			sp = Spectrum.create(
+				colpick,
+				{
+					color: defaultColor,
+					type: 'color',
+					showAlpha: false,
+					hideAfterPaletteSelect: true,
+					change: (e) => {
+						const	color = e.detail.color ?
+							e.detail.color.toHexString() : null;
+						colpick.style.backgroundColor = colpick.value = color;
+						if (fn) {
+							fn(color);
+						};
+					},
 				}
-			},
-			this
-		);
+			);
+
+		colpick.type = 'text';
+		colpick.style.backgroundColor = colpick.value = defaultColor;
+		colpick.id = className + '-' + subClassName;
 		if (title) {
 			colpick.title = title
 		}
