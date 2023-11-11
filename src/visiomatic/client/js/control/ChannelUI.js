@@ -556,7 +556,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 */
 	_activateTrashElem: function (trashElem, layer, channel) {
 		DomEvent.on(trashElem, 'click touch', function () {
-			this._updateChannelMix(layer, channel, undefined);
+			this._updateChannelMix(layer, channel, false);
 			if (layer === this._layer && channel === layer.visio.channel) {
 				this._updateColPick(layer, channel);
 			}

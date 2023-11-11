@@ -518,8 +518,10 @@ export const UI = Control.extend( /** @lends UI */ {
 				{
 					color: defaultColor,
 					type: 'color',
+					allowEmpty: allowEmpty,
+					appendTo: this._map._container,
+					localStorageKey: storageKey,
 					showAlpha: false,
-					hideAfterPaletteSelect: true,
 					change: (e) => {
 						const	color = e.detail.color ?
 							e.detail.color.toHexString() : null;

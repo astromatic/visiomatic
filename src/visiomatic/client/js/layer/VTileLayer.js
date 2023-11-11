@@ -519,7 +519,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			 */
 			this.fire('metaload');
 		} else {
-		    console.log(meta);
 			alert(
 				'VisiOmatic metadata query error: ' + meta.detail[0].msg + '.'
 			);
@@ -546,7 +545,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	visio = this.visio;
 		if (rgb) {
 			visio.rgb[channel] = rgb.clone();
-		} else if (rgb === false) {
+		} else if (rgb == false) {
 			delete visio.rgb[channel];
 			delete visio.mix[channel];
 			return;

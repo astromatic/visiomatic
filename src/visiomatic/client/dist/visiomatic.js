@@ -13192,8 +13192,10 @@
         {
           color: defaultColor,
           type: "color",
+          allowEmpty,
+          appendTo: this._map._container,
+          localStorageKey: storageKey,
           showAlpha: false,
-          hideAfterPaletteSelect: true,
           change: (e) => {
             const color2 = e.detail.color ? e.detail.color.toHexString() : null;
             colpick.style.backgroundColor = colpick.value = color2;
@@ -13896,7 +13898,7 @@
     },
     _activateTrashElem: function(trashElem, layer, channel) {
       import_leaflet12.DomEvent.on(trashElem, "click touch", function() {
-        this._updateChannelMix(layer, channel, void 0);
+        this._updateChannelMix(layer, channel, false);
         if (layer === this._layer && channel === layer.visio.channel) {
           this._updateColPick(layer, channel);
         }
@@ -32048,7 +32050,6 @@
         visio.metaReady = true;
         this.fire("metaload");
       } else {
-        console.log(meta);
         alert(
           "VisiOmatic metadata query error: " + meta.detail[0].msg + "."
         );
@@ -32062,7 +32063,7 @@
       const visio = this.visio;
       if (rgb2) {
         visio.rgb[channel] = rgb2.clone();
-      } else if (rgb2 === false) {
+      } else if (rgb2 == false) {
         delete visio.rgb[channel];
         delete visio.mix[channel];
         return;
