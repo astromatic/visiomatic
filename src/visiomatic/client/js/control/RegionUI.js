@@ -112,9 +112,9 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 				elem,
 				'region',
 				this.options.color,
-				false,		  
 				'visiomaticRegion',
-				'Click to set region color'
+				allowEmpty=false,		  
+				title='Click to set region color'
 			);
 
 		const	select = this._regionSelect = this._addSelectMenu(

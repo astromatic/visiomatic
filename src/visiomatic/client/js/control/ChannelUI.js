@@ -281,8 +281,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				elem,
 				'channel',
 				layer.getChannelColor(visio.channel),
-				true,
 				'visiomaticChannel',
+				allowEmpty=true,
 				title='Click to set channel color',
 				fn=(colorStr) => {
 					this._updateChannelMix(layer, visio.channel, rgb(colorStr));

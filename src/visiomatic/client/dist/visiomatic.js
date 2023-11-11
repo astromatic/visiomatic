@@ -9338,7 +9338,7 @@
             addClass(replaceInput, theme);
             addClass(replaceInput, opts.replacerClassName);
             return replaceInput;
-          })() : null, offsetElement = shouldReplace ? replacer : boundElement, previewElement = replacer === null || replacer === void 0 ? void 0 : replacer.querySelector(".sp-preview-inner"), initialColor = opts.color || isInput && boundElement.value, colorOnShow = "", currentPreferredFormat = opts.preferredFormat, clickoutFiresChange = !opts.showButtons || opts.clickoutFiresChange, isEmpty = !initialColor, allowEmpty = opts.allowEmpty;
+          })() : null, offsetElement = shouldReplace ? replacer : boundElement, previewElement = replacer === null || replacer === void 0 ? void 0 : replacer.querySelector(".sp-preview-inner"), initialColor = opts.color || isInput && boundElement.value, colorOnShow = "", currentPreferredFormat = opts.preferredFormat, clickoutFiresChange = !opts.showButtons || opts.clickoutFiresChange, isEmpty = !initialColor, allowEmpty2 = opts.allowEmpty;
           let originalInputContainer;
           let colorizeElement;
           let colorizeElementInitialColor;
@@ -9378,7 +9378,7 @@
             toggleClass(container, "sp-flat", flat);
             toggleClass(container, "sp-input-disabled", !opts.showInput);
             toggleClass(container, "sp-alpha-enabled", opts.showAlpha);
-            toggleClass(container, "sp-clear-enabled", allowEmpty);
+            toggleClass(container, "sp-clear-enabled", allowEmpty2);
             toggleClass(container, "sp-buttons-disabled", !opts.showButtons);
             toggleClass(container, "sp-palette-buttons-disabled", !opts.togglePaletteOnly);
             toggleClass(container, "sp-palette-disabled", !opts.showPalette);
@@ -9434,7 +9434,7 @@
             colorizeElement = (_a = boundElement.parentNode) === null || _a === void 0 ? void 0 : _a.querySelector(".sp-colorize");
             colorizeElementInitialColor = (colorizeElement === null || colorizeElement === void 0 ? void 0 : colorizeElement.style.color) || "";
             colorizeElementInitialBackground = (colorizeElement === null || colorizeElement === void 0 ? void 0 : colorizeElement.style.backgroundColor) || "";
-            if (!allowEmpty) {
+            if (!allowEmpty2) {
               clearButton.style.display = "none";
             }
             if (flat) {
@@ -9676,7 +9676,7 @@
               abortNextInputChange = false;
               return;
             }
-            if ((value === null || value === "") && allowEmpty) {
+            if ((value === null || value === "") && allowEmpty2) {
               set2("");
               move();
               updateOriginalInput();
@@ -9763,7 +9763,7 @@
               return;
             }
             var newColor, newHsv;
-            if ((!color2 || color2 === void 0) && allowEmpty) {
+            if ((!color2 || color2 === void 0) && allowEmpty2) {
               isEmpty = true;
             } else {
               isEmpty = false;
@@ -9780,7 +9780,7 @@
             }
           }
           function get(opts2 = {}) {
-            if (allowEmpty && isEmpty) {
+            if (allowEmpty2 && isEmpty) {
               return "";
             }
             return tinycolor.fromRatio({
@@ -9856,7 +9856,7 @@
             drawInitial();
           }
           function updateHelperLocations() {
-            if (allowEmpty && isEmpty) {
+            if (allowEmpty2 && isEmpty) {
               alphaSlideHelper.style.display = "none";
               slideHelper.style.display = "none";
               dragHelper.style.display = "none";
@@ -13186,13 +13186,13 @@
       }
       return select;
     },
-    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty = False, title2 = void 0, fn2 = void 0) {
+    _addColorPicker: function(className, parent, subClassName, defaultColor, storageKey, allowEmpty2 = false, title2 = void 0, fn2 = void 0) {
       const _this = this, colpick = import_leaflet10.DomUtil.create("color", className, parent), sp = import_spectrum_vanilla.default.create(
         colpick,
         {
           color: defaultColor,
           type: "color",
-          allowEmpty,
+          allowEmpty: allowEmpty2,
           appendTo: this._map._container,
           localStorageKey: storageKey,
           showAlpha: false,
@@ -13390,9 +13390,9 @@
         elem,
         "catalog",
         this.options.color,
-        false,
         "visiomaticCatalog",
-        "Click to set catalog color"
+        allowEmpty = false,
+        title = "Click to set catalog color"
       );
       const catselect = this._addSelectMenu(
         this._className + "-select",
@@ -13732,8 +13732,8 @@
         elem,
         "channel",
         layer.getChannelColor(visio.channel),
-        true,
         "visiomaticChannel",
+        allowEmpty = true,
         title = "Click to set channel color",
         fn = (colorStr) => {
           this._updateChannelMix(layer, visio.channel, rgb(colorStr));
@@ -29892,9 +29892,9 @@
           elem,
           "profile",
           options.profileColor,
-          false,
           "visiomaticProfile",
-          "Click to set line color"
+          allowEmpty = false,
+          title = "Click to set line color"
         );
         this._addButton(
           className + "-button",
@@ -29943,9 +29943,9 @@
           elem,
           "spectrum",
           options.spectrumColor,
-          false,
           "visiomaticSpectra",
-          "Click to set marker color"
+          allowEmpty = false,
+          title = "Click to set marker color"
         );
         this._addButton(
           className + "-button",
@@ -30203,9 +30203,9 @@
         elem,
         "region",
         this.options.color,
-        false,
         "visiomaticRegion",
-        "Click to set region color"
+        allowEmpty = false,
+        title = "Click to set region color"
       );
       const select = this._regionSelect = this._addSelectMenu(
         this._className + "-select",

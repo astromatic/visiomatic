@@ -507,7 +507,7 @@ export const UI = Control.extend( /** @lends UI */ {
 		subClassName,
 		defaultColor,
 	    storageKey,
-		allowEmpty=False,
+		allowEmpty=false,
 	    title=undefined,
 	    fn=undefined
 	) {

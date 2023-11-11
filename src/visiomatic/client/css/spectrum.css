@@ -201,8 +201,8 @@ input.spectrum.with-add-on {
   position: absolute;
   top: 0;
   left: 0;
-  margin-left: 3px;
-  margin-top: 3px;
+  margin-left: 5px;
+  margin-top: 5px;
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -310,8 +310,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
   padding: 0;
   border-radius: 4px;
   color: black;
-  box-shadow: 0 0 0 1px rgba(99, 114, 130, 0.16), 0 8px 16px rgba(27, 39, 51, 0.08);
-  font-size: 14px;
+  box-shadow: 1px 1px 2px var(--shadow-color);  font-size: 14px;
   box-sizing: border-box;
 }
 .sp-container button {
@@ -444,7 +443,6 @@ Here are the basic themeable display options (colors, fonts, global widths)
 .sp-palette-container {
   position: relative;
   padding: 10px;
-  border-right: solid 1px #ccc;
 }
 
 .sp-palette-only .sp-palette-container {
