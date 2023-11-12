@@ -113,7 +113,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 				'region',
 				this.options.color,
 				'visiomaticRegion',
-				allowEmpty=false,		  
 				title='Click to set region color'
 			);
 

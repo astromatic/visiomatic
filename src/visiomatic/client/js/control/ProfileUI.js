@@ -123,7 +123,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 					'profile',
 					options.profileColor,
 					'visiomaticProfile',
-					allowEmpty=false,
 					title='Click to set line color'
 				);
 
@@ -189,7 +188,6 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				'spectrum',
 				options.spectrumColor,
 				'visiomaticSpectra',
-				allowEmpty=false,
 				title='Click to set marker color'
 			);
 

@@ -9,8 +9,8 @@
 
 .sp-container {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -2px;
+  left: 10px;
   display: inline-block;
   z-index: 9999994;
   overflow: hidden;
@@ -64,6 +64,7 @@ input.spectrum.with-add-on {
 .sp-top {
   position: relative;
   width: 100%;
+  height: 178px;
   display: inline-block;
 }
 
@@ -81,6 +82,7 @@ input.spectrum.with-add-on {
   left: 0;
   bottom: 0;
   right: 20px !important;
+  box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 .sp-hue {
@@ -97,6 +99,7 @@ input.spectrum.with-add-on {
   background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), color-stop(0.17, #ffff00), color-stop(0.33, #00ff00), color-stop(0.5, #00ffff), color-stop(0.67, #0000ff), color-stop(0.83, #ff00ff), to(#ff0000));
   background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
   background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+  box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 
 .sp-clear-enabled .sp-hue {
@@ -193,17 +196,17 @@ input.spectrum.with-add-on {
 
 .sp-dragger {
   user-select: none;
-  border-radius: 5px;
+  border-radius: 10px;
   height: 10px;
   width: 10px;
-  border: 1px solid #fff;
+  border: 2px solid #fff;
   cursor: pointer;
   position: absolute;
   top: 0;
   left: 0;
   margin-left: 5px;
   margin-top: 5px;
-  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 1.0);
 }
 
 .sp-slider {
@@ -215,9 +218,13 @@ input.spectrum.with-add-on {
   border-radius: 50%;
   width: 16px;
   left: -2px;
-  background: #f9f9f9;
-  box-shadow: 0 0 2px 0px #3a3a3a;
+  background: var(--button-background-color);
+  box-shadow: -1px -1px 2px var(--shadow-color) inset;
   margin-top: 8px;
+}
+
+.sp-slider:hover {
+  background: var(--button-background-color-hover);
 }
 
 .sp-container.sp-dragging .sp-input {
@@ -310,19 +317,20 @@ Here are the basic themeable display options (colors, fonts, global widths)
   padding: 0;
   border-radius: 4px;
   color: black;
-  box-shadow: 1px 1px 2px var(--shadow-color);  font-size: 14px;
+  box-shadow: 1px 1px 4px var(--shadow-color);
+  font-size: 14px;
   box-sizing: border-box;
 }
 .sp-container button {
-  background-color: var(--icon-background-color);
-  color: var(--icon-color);
+  background-color: var(--button-background-color);
+  color: var(--button-color);
   font-size: 14px;
   box-sizing: border-box;
-  border-radius: 3px;
   border: none;
   line-height: 1;
-  padding: 0 0.75em;
-  height: 25px;
+  width: 78px;
+  height: 31px;
+  margin: 1px 0px 0px 2px;
   text-transform: capitalize;
   text-align: center;
   vertical-align: middle;
@@ -332,6 +340,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 .sp-container button:hover {
 	background-color: var(--button-background-color-hover);
+	color: var(--button-color-hover);
 	border-width: 1px;
 	border-color: var(--border-color);
 }
@@ -341,11 +350,12 @@ Here are the basic themeable display options (colors, fonts, global widths)
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 }
 .sp-container input {
-  font-size: 12px;
+  font-size: 14px;
   box-sizing: border-box;
 }
 .sp-container button.sp-choose {
-  margin-left: 5px;
+  border-radius: 0px 4px 4px 0px;
+
 }
 .sp-container button.sp-palette-toggle {
   width: 100%;
@@ -356,19 +366,19 @@ Here are the basic themeable display options (colors, fonts, global widths)
 .sp-color {
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sp-hue {
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sp-clear {
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sp-top {
@@ -376,11 +386,11 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 
 .sp-val {
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sp-sat {
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .sp-input-container {
@@ -388,7 +398,8 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 
 .sp-input-container.sp-cf {
-  height: 25px;
+  height: 32px;
+  float: left;
 }
 
 .sp-initial.sp-thumb.sp-cf {
@@ -396,17 +407,16 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 
 .sp-button-container.sp-cf {
-  height: 25px;
 }
 
 .sp-picker-container {
   position: relative;
-  padding: 10px;
-  width: 200px;
-  padding-bottom: 0;
+  padding: 0px;
+  width: 240px;
+  margin: 10px 10px 10px 5px;
 }
 .sp-picker-container .sp-cf {
-  margin-bottom: 10px;
+  margin: 0;
 }
 
 .sp-palette-row-initial > span:first-child {
@@ -414,25 +424,31 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 
 .sp-initial-disabled .sp-input-container {
-  width: 100%;
 }
 
 .sp-input {
   padding: 0px 5px !important;
   margin: 0;
-  width: 100%;
-  box-shadow: none !important;
-  height: 100% !important;
-  background: transparent;
-  color: #3a3a3a;
-  border-radius: 2px !important;
-  border: 1px solid #e0e0e0 !important;
+  width: 80px;
+  height: 32px;
+  box-shadow: 1px 1px 2px var(--shadow-color) inset;
+  background: var(--input-background-color);
+  color: var(--input-color);
+  border-radius: 4px 0px 0px 4px;
+  border-width: 0px;
   text-align: center;
   font-family: monospace;
-  font-size: inherit !important;
+  font-size: 14px;
 }
+
 .sp-input:focus {
-  border: 1px solid orange;
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
+.sp-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
 }
 
 .sp-input.sp-validation-error {
@@ -442,7 +458,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
 
 .sp-palette-container {
   position: relative;
-  padding: 10px;
+  padding: 10px 5px 10px 10px;
 }
 
 .sp-palette-only .sp-palette-container {
@@ -456,31 +472,30 @@ Here are the basic themeable display options (colors, fonts, global widths)
   cursor: pointer;
   width: 24px;
   height: 24px;
-  margin: 2px;
+  margin: 0px;
   border: none;
-  border-radius: 3px;
 }
 .sp-palette .sp-thumb-el:hover {
-  border-color: orange;
+  box-shadow: 1px 1px 4px var(--shadow-color) inset;
 }
 .sp-palette .sp-thumb-el.sp-thumb-active {
-  border-color: orange;
+  box-shadow: 1px 1px 4px var(--shadow-color) inset;
 }
 .sp-palette span:hover {
-  border-color: black;
+  box-shadow: 1px 1px 4px var(--shadow-color) inset;
 }
 .sp-palette span.sp-thumb-active {
-  border-color: black;
+  box-shadow: 1px 1px 4px var(--shadow-color) inset;
 }
 .sp-palette .sp-thumb-inner {
-  border-radius: 3px;
   background-position: 50% 50%;
   background-repeat: no-repeat;
-  box-shadow: 1px 1px 2px var(--shadow-color) inset;
+  box-shadow: -1px -1px 2px var(--shadow-color);
 }
 .sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIVJREFUeNpiYBhsgJFMffxAXABlN5JruT4Q3wfi/0DsT64h8UD8HmpIPCWG/KemIfOJCUB+Aoacx6EGBZyHBqI+WsDCwuQ9mhxeg2A210Ntfo8klk9sOMijaURm7yc1UP2RNCMbKE9ODK1HM6iegYLkfx8pligC9lCD7KmRof0ZhjQACDAAceovrtpVBRkAAAAASUVORK5CYII=");
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18'%3E%3Cpath d='M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z' fill='%23000'%3E%3C/path%3E%3C/svg%3E");
+  box-shadow: 1px 1px 4px var(--shadow-color) inset;
 }
 .sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=");
@@ -515,7 +530,6 @@ Here are the basic themeable display options (colors, fonts, global widths)
 }
 
 .sp-button-container {
-  float: right;
 }
 
 .sp-palette-button-container {
@@ -527,7 +541,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
   overflow: hidden;
   cursor: pointer;
   display: inline-block;
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid #aaa;
   color: #666;
   transition: border-color 0.3s;

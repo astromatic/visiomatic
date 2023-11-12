@@ -493,8 +493,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	   Default color picked by default.
 	 * @param {string} storageKey
 	   String to be used as a local browser storage key.
-	 * @param {boolean} [allowEmpty]
-	   Allow "empty" input colors?
 	 * @param {string} [title]
 	   Title of the color picker (for, e.g., display as a tooltip).
 	 * @param {UI~colorCallback} [fn]
@@ -507,7 +505,6 @@ export const UI = Control.extend( /** @lends UI */ {
 		subClassName,
 		defaultColor,
 	    storageKey,
-		allowEmpty=false,
 	    title=undefined,
 	    fn=undefined
 	) {
@@ -518,10 +515,13 @@ export const UI = Control.extend( /** @lends UI */ {
 				{
 					color: defaultColor,
 					type: 'color',
-					allowEmpty: allowEmpty,
+					allowEmpty: false,
 					appendTo: this._map._container,
+					cancelText: "CANCEL",
+					chooseText: "CHOOSE",
 					localStorageKey: storageKey,
 					showAlpha: false,
+					showInput: true,
 					change: (e) => {
 						const	color = e.detail.color ?
 							e.detail.color.toHexString() : null;
