@@ -9,10 +9,6 @@
  * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
-import jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-
-import 'spectrum-colorpicker';
 
 import {
 	Browser,
@@ -21,6 +17,7 @@ import {
 	DomUtil,
 	Util
 } from 'leaflet';
+import Spectrum from 'spectrum-vanilla';
 
 import {FlipSwitch, Spinbox} from './widget';
 import {VUtil} from '../util';
@@ -496,8 +493,6 @@ export const UI = Control.extend( /** @lends UI */ {
 	   Default color picked by default.
 	 * @param {string} storageKey
 	   String to be used as a local browser storage key.
-	 * @param {boolean} [allowEmpty]
-	   Allow "empty" input colors?
 	 * @param {string} [title]
 	   Title of the color picker (for, e.g., display as a tooltip).
 	 * @param {UI~colorCallback} [fn]
@@ -510,39 +505,40 @@ export const UI = Control.extend( /** @lends UI */ {
 		subClassName,
 		defaultColor,
 	    storageKey,
-		allowEmpty=False,
 	    title=undefined,
 	    fn=undefined
 	) {
 		const	_this = this,
-			colpick = DomUtil.create('input', className, parent);
+			colpick = DomUtil.create('color', className, parent),
+			sp = Spectrum.create(
+				colpick,
+				{
+					color: defaultColor,
+					type: 'color',
+					allowEmpty: false,
+					appendTo: this._map._container,
+					cancelText: "CANCEL",
+					chooseText: "CHOOSE",
+					localStorageKey: storageKey,
+					showAlpha: false,
+					showInput: true,
+					change: (e) => {
+						const	color = e.detail.color ?
+							e.detail.color.toHexString() : null;
+						colpick.style.backgroundColor = colpick.value = color;
+						if (fn) {
+							fn(color);
+						};
+					},
+				}
+			);
 
 		colpick.type = 'text';
-		colpick.value = defaultColor;
+		colpick.style.backgroundColor = colpick.value = defaultColor;
 		colpick.id = className + '-' + subClassName;
-		$(document).ready(function () {
-			$(colpick).spectrum({
-				showInput: true,
-				allowEmpty: allowEmpty,
-				appendTo: '#' + _this._id,
-				showPaletteOnly: true,
-				togglePaletteOnly: true,
-				localStorageKey: storageKey,
-				change: function (color) {
-					colpick.value = color? color.toHexString() : '';
-				}
-			}).on('show.spectrum', function () {
-				if (_this._container) {
-					DomEvent.off(_this._container, 'mouseout', _this._collapse);
-				}
-			});
-			if (fn) {
-				$(colpick).on('change', fn);
-			}
-			if (title) {
-				$('#' + colpick.id + '+.sp-replacer').prop('title', title);
-			}
-		});
+		if (title) {
+			colpick.title = title
+		}
 
 		return colpick;
 	},

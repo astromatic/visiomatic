@@ -122,9 +122,8 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 					elem,
 					'profile',
 					options.profileColor,
-					false,
 					'visiomaticProfile',
-					'Click to set line color'
+					title='Click to set line color'
 				);
 
 			// Create start profile line button
@@ -188,9 +187,8 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				elem,
 				'spectrum',
 				options.spectrumColor,
-				false,
 				'visiomaticSpectra',
-				'Click to set marker color'
+				title='Click to set marker color'
 			);
 
 			// Create Spectrum button
