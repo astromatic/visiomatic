@@ -518,7 +518,8 @@ export const UI = Control.extend( /** @lends UI */ {
 					allowEmpty: false,
 					appendTo: this._map._container,
 					cancelText: "CANCEL",
-					chooseText: "CHOOSE",
+					chooseText: "OK",
+					clickoutFiresChange: false,
 					localStorageKey: storageKey,
 					showAlpha: false,
 					showInput: true,
@@ -529,9 +530,13 @@ export const UI = Control.extend( /** @lends UI */ {
 						if (fn) {
 							fn(color);
 						};
-					},
+					}
 				}
 			);
+
+		// Disable propagation of mouse/touch events on colorpicker
+		DomEvent.disableClickPropagation(sp.spectrum.container);
+		DomEvent.disableScrollPropagation(sp.spectrum.container);
 
 		colpick.type = 'text';
 		colpick.style.backgroundColor = colpick.value = defaultColor;
