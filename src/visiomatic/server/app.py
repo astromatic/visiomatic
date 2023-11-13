@@ -7,6 +7,7 @@ Application module
 import io, logging, pickle, re
 from glob import glob
 from os import getpid, getppid, path
+from sys import modules
 from typing import List, Literal, Optional, Union
 
 import cv2
@@ -22,11 +23,13 @@ from .. import package
 
 from . import config
 
-# Set up settings by instantiating a configuration object
-conf = config.Config()
-config.settings = conf.flat_dict()
-config.config_filename = conf.config_filename
-config.image_filename = conf.image_filename
+# Skip argument parsing and stuff if Sphinx is involved
+if 'sphinx' not in modules:
+    # Set up settings by instantiating a configuration object
+    conf = config.Config()
+    config.settings = conf.flat_dict()
+    config.config_filename = conf.config_filename
+    config.image_filename = conf.image_filename
 
 from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
 from .cache import LRUCache, LRUSharedRWLockCache

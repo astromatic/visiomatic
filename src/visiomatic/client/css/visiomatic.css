@@ -7,37 +7,7 @@
 */
 
 @import "themes.css";
-
-:root {
-	--icon-background-color: rgba(50, 50, 50, 1);
-	--icon-color: rgba(180, 180, 180, 1);
-	--icon-background-color-hover: rgba(60, 60, 60, 1);
-	--icon-color-hover: rgba(240, 240, 240, 1);
-	--icon-background-color-checked: rgba(180, 180, 180, 1);
-	--icon-color-checked: rgba(50, 50, 50, 1);
-	--button-background-color: rgba(50, 50, 50, 1);
-	--button-color: rgba(180, 180, 180, 1);
-	--button-background-color-hover: rgba(60, 60, 60, 1);
-	--button-color-hover: rgba(240, 240, 240, 1);
-	--button-background-color-checked: rgba(180, 180, 180, 1);
-	--button-color-checked: rgba(50, 50, 50, 1);
-	--button-color-on: rgba(208, 0, 0, 1);
-	--input-background-color: rgba(60, 60, 60, 1);
-	--input-color: rgba(200, 200, 200, 1);
-	--input-background-color-hover: rgba(180, 180, 180, 1);
-	--input-color-hover: rgba(50, 50, 50, 1);
-	--input-background-color-focus: rgba(180, 180, 180, 1);
-	--input-color-focus: rgba(50, 50, 50, 1);
-	--dialog-background-color: rgba(40, 40, 40, 1);
-	--dialog-color: rgba(240, 240, 240, 1);
-	--header-background-color: rgba(180, 180, 180, 1);
-	--header-color: rgba(50, 50, 50, 1);
-	--border-color: rgba(0, 0, 0, 1);
-	--shadow-color: rgba(0, 0, 0, 0.5);
-	--scale-color: rgba(255, 255, 255, 0.66);
-	--extramap-border-color: rgba(255, 255, 255, 1);
-	--extramap-fill-color: rgba(15, 15, 15, 1);
-}
+@import "spectrum.css";
 
 .leaflet-container {
   touch-action: none;
@@ -281,7 +251,7 @@ input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:acti
 /*------------------------------- Select menu -------------------------------*/
 
 div.visiomatic-control-select {
-	display: flow-root;
+	display: flex;
 	margin-right: 2px;
 }
 
@@ -468,27 +438,25 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 
 /*------------------------------ Color picker -------------------------------*/
 
-.sp-replacer {
+.visiomatic-control-color-input {
+	opacity: 0;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.visiomatic-control-color {
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	float: left;
 	padding: 0px;
 	margin: 2px 0px;
 	border-width: 0px;
 	border-radius: 4px 0px 0px 4px;
-}
-.sp-preview {
-	padding: 0px;
-	border-width: 0px;
-	margin: 0px;
 	width: 32px;
 	height: 32px;
 	cursor: pointer;
-}
-.sp-preview-inner {
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	border-radius: 4px 0px 0px 4px;
-}
-.sp-dd {
-	display: none;	/* hide spectrum arrow */
 }
 
 /*------------------------------ Layer list -------------------------------*/
