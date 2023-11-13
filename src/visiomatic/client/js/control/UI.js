@@ -518,7 +518,7 @@ export const UI = Control.extend( /** @lends UI */ {
 					allowEmpty: false,
 					appendTo: this._map._container,
 					cancelText: "CANCEL",
-					chooseText: "CHOOSE",
+					chooseText: "OK",
 					localStorageKey: storageKey,
 					showAlpha: false,
 					showInput: true,
