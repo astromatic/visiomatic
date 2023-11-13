@@ -519,6 +519,7 @@ export const UI = Control.extend( /** @lends UI */ {
 					appendTo: this._map._container,
 					cancelText: "CANCEL",
 					chooseText: "OK",
+					clickoutFiresChange: false,
 					localStorageKey: storageKey,
 					showAlpha: false,
 					showInput: true,
@@ -529,7 +530,7 @@ export const UI = Control.extend( /** @lends UI */ {
 						if (fn) {
 							fn(color);
 						};
-					},
+					}
 				}
 			);
 

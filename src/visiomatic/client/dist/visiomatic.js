@@ -13240,6 +13240,7 @@
           appendTo: this._map._container,
           cancelText: "CANCEL",
           chooseText: "OK",
+          clickoutFiresChange: false,
           localStorageKey: storageKey,
           showAlpha: false,
           showInput: true,
