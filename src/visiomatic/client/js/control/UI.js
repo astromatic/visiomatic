@@ -533,6 +533,10 @@ export const UI = Control.extend( /** @lends UI */ {
 				}
 			);
 
+		// Disable propagation of mouse/touch events on colorpicker
+		DomEvent.disableClickPropagation(sp.spectrum.container);
+		DomEvent.disableScrollPropagation(sp.spectrum.container);
+
 		colpick.type = 'text';
 		colpick.style.backgroundColor = colpick.value = defaultColor;
 		colpick.id = className + '-' + subClassName;

@@ -13253,6 +13253,8 @@
           }
         }
       );
+      import_leaflet10.DomEvent.disableClickPropagation(sp.spectrum.container);
+      import_leaflet10.DomEvent.disableScrollPropagation(sp.spectrum.container);
       colpick.type = "text";
       colpick.style.backgroundColor = colpick.value = defaultColor;
       colpick.id = className + "-" + subClassName;
