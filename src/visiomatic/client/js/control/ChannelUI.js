@@ -250,8 +250,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				cmapinput,
 				cmaps[c],
 				(cmaps[c] === this.options.cMap),
-				'"' + cmaps[c].charAt(0).toUpperCase() + cmaps[c].substr(1) +
-					'" color-map',
+				'Select "' + cmaps[c].charAt(0).toUpperCase() +
+				    cmaps[c].substr(1) + '" color-map',
 				_changeMap
 			);
 		}
@@ -282,7 +282,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				'channel',
 				layer.getChannelColor(visio.channel),
 				'visiomaticChannel',
-				title='Click to set channel color',
+				title='Channel color. Click to edit',
 				fn=(colorStr) => {
 					this._updateChannelMix(layer, visio.channel, rgb(colorStr));
 				}
@@ -386,7 +386,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'minValue[' + channel + ']',
 			box,
 			'Min:',
-			'Lower clipping limit in ' + visio.channelUnits[channel],
+			'Adjust lower clipping limit in ' + visio.channelUnits[channel],
 			visio.minValue[channel], step
 		);
 
@@ -396,7 +396,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'maxValue[' + channel + ']',
 			box,
 			'Max:',
-			'Upper clipping limit in ' + visio.channelUnits[channel],
+			'Adjust upper clipping limit in ' + visio.channelUnits[channel],
 			visio.maxValue[channel], step
 		);
 	},
