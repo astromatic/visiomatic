@@ -532,11 +532,24 @@ export const UI = Control.extend( /** @lends UI */ {
 						};
 					}
 				}
-			);
+			),
+			container = sp.spectrum.container;
+		
+		// Add tooltips
+		container.getElementsByClassName("sp-input")[0].title =
+			"Current color. Click to edit";
+		container.getElementsByClassName("sp-cancel")[0].title =
+			"Cancel selection";
+		container.getElementsByClassName("sp-choose")[0].title =
+			"Accept selection";
+		container.getElementsByClassName("sp-dragger")[0].title =
+			"Drag to adjust saturation/luminosity";
+		container.getElementsByClassName("sp-slider")[0].title =
+			"Slide to adjust hue";
 
 		// Disable propagation of mouse/touch events on colorpicker
-		DomEvent.disableClickPropagation(sp.spectrum.container);
-		DomEvent.disableScrollPropagation(sp.spectrum.container);
+		DomEvent.disableClickPropagation(container);
+		DomEvent.disableScrollPropagation(container);
 
 		colpick.type = 'text';
 		colpick.style.backgroundColor = colpick.value = defaultColor;

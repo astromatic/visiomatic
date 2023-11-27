@@ -36,6 +36,8 @@ class Config(object):
         if args_dict['version']:
             print(f"{package.title} {package.version}")
             exit(0)
+
+        # Save configuration file if requested
         if args_dict['save_config']:
             # Create config dir if it does not exist
             os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
@@ -52,7 +54,6 @@ class Config(object):
         # Update settings from the command line
         self.update_from_dict(args_dict)
 
-        # Save configuration file if requested
         image_filename = args_dict['file']
         if Path(image_filename).exists():
             self.image_filename = image_filename
@@ -134,7 +135,7 @@ class Config(object):
         )
         # Add options not relevant to configuration itself
         config.add_argument(
-            "-v", "--version",
+            "-V", "--version",
             default=False,
             help="Return the version of the package and exit", 
             action='store_true'

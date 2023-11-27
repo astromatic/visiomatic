@@ -20,7 +20,7 @@ import {VUtil} from '../util'
 
 export const Coords = Control.extend( /** @lends Coords */ {
 	options: {
-		title: 'Center coordinates. Click to change',
+		title: 'Center coordinates. Click to edit',
 		position: 'topright',
 		/**
 		 * Coordinate settings.

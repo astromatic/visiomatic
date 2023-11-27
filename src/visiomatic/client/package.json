@@ -28,7 +28,7 @@
 		"chartjs-plugin-zoom": "^2.0.1",
 		"help": "^3.0.2",
 		"html2canvas": "~1.4.1",
-		"leaflet": "~1.9.3",
+		"leaflet": "~1.9.4",
 		"npm": "^9.2.0",
 		"spectrum-vanilla": "^1.1.0",
 		"tidy-jsdoc": "^1.4.1"
