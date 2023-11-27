@@ -1,2 +1,2 @@
 # VisiOmatic server
-An [IIIF](https://iiif.io/)-compliant web astronomical image server.
+A web application for visualizing astronomical images.
