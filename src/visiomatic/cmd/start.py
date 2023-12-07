@@ -8,9 +8,10 @@ from glob import glob
 from os import makedirs, path, remove
 from resource import getrlimit, setrlimit, RLIMIT_NOFILE
 from sys import exit
+from time import sleep
 import webbrowser
 
-import uvicorn
+from uvicorn import run, server, supervisors
 
 from visiomatic import package
 from visiomatic.server import config
@@ -45,7 +46,7 @@ def start_server(
     reload: bool, optional
         Enable auto-reload (turns off multiple workers).
     """
-    uvicorn.run(
+    run(
         app,
         host=host,
         port=port,
@@ -84,19 +85,33 @@ def main() -> int:
     # Local use case
     if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
-        def startup_with_browser(self) -> None:
-             self.original_startup()
-             self.should_exit.wait(1)
-             webbrowser.open(
+        def startup_with_browser(self, *args, **kwargs) -> None:
+            self.original_startup(*args, **kwargs)
+            self.should_exit.wait(1)
+            webbrowser.open(
                 f"{config.settings['host']}:{config.settings['port']}"
-             )
+            )
+
+        async def async_startup_with_browser(self, *args, **kwargs) -> None:
+            await self.original_startup(*args, **kwargs)
+            webbrowser.open(
+                f"{config.settings['host']}:{config.settings['port']}"
+            )
 
         for Supervisor in [
-            uvicorn.supervisors.Multiprocess,
-            uvicorn.supervisors.BaseReload
+            supervisors.BaseReload,
+            supervisors.Multiprocess
         ]:
             Supervisor.original_startup = Supervisor.startup
             Supervisor.startup = startup_with_browser
+
+        server.Server.original_startup = server.Server.startup
+        server.Server.startup = async_startup_with_browser
+   
+    # Force number of workers to be 1 if not on Linux (because of missing libs)
+    if not package.isonlinux \
+        and config.settings["workers"] > 1 and not config.settings["reload"]:
+        config.settings["workers"] = 1
 
     # Start the server
     start_server(

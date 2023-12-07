@@ -44,7 +44,7 @@ class HostSettings(BaseSettings):
         )
     workers: int = Field(
         short='w',
-        default=4,
+        default=4 if package.isonlinux else 1,
         ge=1,
         description="Number of workers"
         )

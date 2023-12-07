@@ -32,10 +32,10 @@ if 'sphinx' not in modules:
     config.image_filename = conf.image_filename
 
 from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
-from .cache import LRUCache, LRUSharedRWLockCache
+from .cache import LRUCache, LRUSharedRWCache
 
 # True with multiple workers (multiprocessing).
-# share = config.settings["workers"] > 1 and not config.settings["reload"]
+shared = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
@@ -63,18 +63,20 @@ def create_app() -> FastAPI:
     image_argname = config.image_filename
 
     # Get shared lock dictionary if processing in parallel
-    sharedLock = LRUSharedRWLockCache(
+    cache = LRUSharedRWCache(
         pickledTiled,
         name=f"{package.title}.{getppid()}",
         maxsize=config.settings["max_cache_image_count"],
-        removecall=delTiled
+        removecall=delTiled,
+        shared=shared
     )
     # Scan and register images cached during previous sessions
     for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-        tiled, lock, msg = sharedLock(
+        tiled, msg, lock = cache(
             Tiled.get_image_filename(None, path.splitext(filename)[0])
         )
-        lock.release_read()
+        if lock:
+            lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -307,7 +309,7 @@ def create_app() -> FastAPI:
                else path.join(data_dir, FIF)
         )
 
-        tiled, lock, msg = sharedLock(
+        tiled, msg, lock = cache(
             image_filename,
             contrast=contrast,
             color_saturation=color_saturation,
@@ -317,7 +319,8 @@ def create_app() -> FastAPI:
         )
         # Manage image file open error
         if tiled is None:
-            lock.release_read()
+            if lock:
+                lock.release_read()
             # Return 404 error with data_dir removed for security
             raise HTTPException(
                 status_code=404,
@@ -329,11 +332,13 @@ def create_app() -> FastAPI:
             )
         if obj != None:
             resp = tiled.get_iipheaderstr()
-            lock.release_read()
+            if lock:
+                lock.release_read()
             return responses.PlainTextResponse(resp)
         elif INFO != None:
             resp = tiled.get_model()
-            lock.release_read()
+            if lock:
+                lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
         elif PFL != None:
             val = app.parse_pfl.findall(PFL)[0]
@@ -342,16 +347,19 @@ def create_app() -> FastAPI:
                         [int(val[0]), int(val[1])],
                         [int(val[2]), int(val[3])]
             )
-            lock.release_read()
+            if lock:
+                lock.release_read()
             # We use the ORJSON response to properly manage NaNs
             return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
             val = app.parse_val.findall(VAL)[0]
             resp = tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
-            lock.release_read()
+            if lock:
+                lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
         if JTL == None:
-            lock.release_read()
+            if lock:
+                lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
@@ -392,7 +400,8 @@ def create_app() -> FastAPI:
             invert=(INV!=None),
             quality=QLT
         )
-        lock.release_read()
+        if lock:
+            lock.release_read()
         return responses.StreamingResponse(
             io.BytesIO(pix),
             media_type="image/jpg"
