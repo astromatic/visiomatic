@@ -8,15 +8,7 @@ from collections import OrderedDict
 from hashlib import md5
 from multiprocessing.shared_memory import SharedMemory
 from os import getpid, getppid
-from signal import (
-    signal,
-    SIGABRT,
-    SIGILL,
-    SIGINT,
-    SIGKILL,
-    SIGSEGV,
-    SIGTERM
-)
+
 from sys import platform
 from time import time_ns
 from typing import Callable, Union
@@ -27,6 +19,15 @@ from .. import package
 
 # Shared version of cache only available on Linux
 if package.isonlinux:
+    from signal import (
+        signal,
+        SIGABRT,
+        SIGILL,
+        SIGINT,
+        SIGKILL,
+        SIGSEGV,
+        SIGTERM
+    )
     from posix_ipc import Semaphore, O_CREAT
     from UltraDict import UltraDict
 
@@ -121,13 +122,14 @@ class LRUSharedRWCache:
             self.cache = {}
         self.results = LRUCache(func=func, maxsize=maxsize)
         # Delete semaphores when process is aborted.
-        for sig in (
-            SIGABRT,
-            SIGILL,
-            SIGINT,
-            SIGSEGV,
-            SIGTERM):
-            signal(sig, self.remove)
+        if self.shared:
+            for sig in (
+                SIGABRT,
+                SIGILL,
+                SIGINT,
+                SIGSEGV,
+                SIGTERM):
+                signal(sig, self.remove)
         self.removecall = removecall
         self.maxsize = maxsize
 
@@ -444,18 +446,19 @@ class SharedRWLock:
         """
         Remove files used by the RW lock semaphores and shared memory.
         """
-        try:
-            Semaphore(self._glock_name).unlink()
-            Semaphore(self._rlock_name).unlink()
-            self.shared_mem.close()
-            self.shared_me
-        except:
-            pass
-        try:
-            self.shared_mem.close()
-            self.shared_mem.unlink()
-        except:
-            pass
+        if self.shared:
+            try:
+                Semaphore(self._glock_name).unlink()
+                Semaphore(self._rlock_name).unlink()
+                self.shared_mem.close()
+                self.shared_me
+            except:
+                pass
+            try:
+                self.shared_mem.close()
+                self.shared_mem.unlink()
+            except:
+                pass
 
 
 

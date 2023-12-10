@@ -6,7 +6,6 @@ Start script (renamed as :program:`visiomatic`).
 # Licensed under the MIT licence
 from glob import glob
 from os import makedirs, path, remove
-from resource import getrlimit, setrlimit, RLIMIT_NOFILE
 from sys import exit
 from time import sleep
 import webbrowser
@@ -16,6 +15,8 @@ from uvicorn import run, server, supervisors
 from visiomatic import package
 from visiomatic.server import config
 
+if package.isonlinux:
+    from resource import getrlimit, setrlimit, RLIMIT_NOFILE
 
 def start_server(
         app: str="visiomatic.server.app:create_app",
@@ -67,9 +68,10 @@ def main() -> int:
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
 
-    # Set maximum number of descriptors
-    max_open_files = config.settings["max_open_files"]
-    setrlimit(RLIMIT_NOFILE, (max_open_files, max_open_files))
+    # Set maximum number of descriptors (only possible on Linux and BSD)
+    if package.isonlinux:
+        max_open_files = config.settings["max_open_files"]
+        setrlimit(RLIMIT_NOFILE, (max_open_files, max_open_files))
 
     # Cache management
     cache_dir = config.settings["cache_dir"]
@@ -85,18 +87,15 @@ def main() -> int:
     # Local use case
     if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
+        link =  f"http://{config.settings['host']}:{config.settings['port']}"
         def startup_with_browser(self, *args, **kwargs) -> None:
             self.original_startup(*args, **kwargs)
             self.should_exit.wait(1)
-            webbrowser.open(
-                f"{config.settings['host']}:{config.settings['port']}"
-            )
+            webbrowser.open(link)
 
         async def async_startup_with_browser(self, *args, **kwargs) -> None:
             await self.original_startup(*args, **kwargs)
-            webbrowser.open(
-                f"{config.settings['host']}:{config.settings['port']}"
-            )
+            webbrowser.open(link)
 
         for Supervisor in [
             supervisors.BaseReload,
