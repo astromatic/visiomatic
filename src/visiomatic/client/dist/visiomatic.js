@@ -13830,13 +13830,13 @@
         step
       );
     },
-    _updateChannel: function(layer, channel, color2 = false) {
+    _updateChannel: function(layer, channel, updateColor2 = false) {
       const _this = this, visio = layer.visio, step = this._spinboxStep(
         visio.minValue[channel],
         visio.maxValue[channel]
       );
       _this._chanSelect.selectedIndex = channel + 1;
-      if (updateColor) {
+      if (updateColor2) {
         this._updateColPick(layer, channel);
       }
       this._minElem.spinbox.value(visio.minValue[channel]).step(step).off("change").on("change", function() {
