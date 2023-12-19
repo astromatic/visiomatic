@@ -451,14 +451,8 @@ class SharedRWLock:
                 Semaphore(self._glock_name).unlink()
                 Semaphore(self._rlock_name).unlink()
                 self.shared_mem.close()
-                self.shared_me
-            except:
-                pass
-            try:
-                self.shared_mem.close()
                 self.shared_mem.unlink()
             except:
                 pass
-
 
 
