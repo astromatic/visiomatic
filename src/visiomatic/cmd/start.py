@@ -6,15 +6,17 @@ Start script (renamed as :program:`visiomatic`).
 # Licensed under the MIT licence
 from glob import glob
 from os import makedirs, path, remove
-from resource import getrlimit, setrlimit, RLIMIT_NOFILE
 from sys import exit
+from time import sleep
 import webbrowser
 
-import uvicorn
+from uvicorn import run, server, supervisors
 
 from visiomatic import package
 from visiomatic.server import config
 
+if package.isonlinux:
+    from resource import getrlimit, setrlimit, RLIMIT_NOFILE
 
 def start_server(
         app: str="visiomatic.server.app:create_app",
@@ -45,7 +47,7 @@ def start_server(
     reload: bool, optional
         Enable auto-reload (turns off multiple workers).
     """
-    uvicorn.run(
+    run(
         app,
         host=host,
         port=port,
@@ -66,9 +68,10 @@ def main() -> int:
     config.settings = conf.flat_dict()
     config.image_filename = conf.image_filename
 
-    # Set maximum number of descriptors
-    max_open_files = config.settings["max_open_files"]
-    setrlimit(RLIMIT_NOFILE, (max_open_files, max_open_files))
+    # Set maximum number of descriptors (only possible on Linux and BSD)
+    if package.isonlinux:
+        max_open_files = config.settings["max_open_files"]
+        setrlimit(RLIMIT_NOFILE, (max_open_files, max_open_files))
 
     # Cache management
     cache_dir = config.settings["cache_dir"]
@@ -84,19 +87,30 @@ def main() -> int:
     # Local use case
     if config.image_filename and not config.settings["no_browser"]:
         # Monkey-patch Uvicorn calls to start the browser AFTER the server
-        def startup_with_browser(self) -> None:
-             self.original_startup()
-             self.should_exit.wait(1)
-             webbrowser.open(
-                f"{config.settings['host']}:{config.settings['port']}"
-             )
+        link =  f"http://{config.settings['host']}:{config.settings['port']}"
+        def startup_with_browser(self, *args, **kwargs) -> None:
+            self.original_startup(*args, **kwargs)
+            self.should_exit.wait(1)
+            webbrowser.open(link)
+
+        async def async_startup_with_browser(self, *args, **kwargs) -> None:
+            await self.original_startup(*args, **kwargs)
+            webbrowser.open(link)
 
         for Supervisor in [
-            uvicorn.supervisors.Multiprocess,
-            uvicorn.supervisors.BaseReload
+            supervisors.BaseReload,
+            supervisors.Multiprocess
         ]:
             Supervisor.original_startup = Supervisor.startup
             Supervisor.startup = startup_with_browser
+
+        server.Server.original_startup = server.Server.startup
+        server.Server.startup = async_startup_with_browser
+   
+    # Force number of workers to be 1 if not on Linux (because of missing libs)
+    if not package.isonlinux \
+        and config.settings["workers"] > 1 and not config.settings["reload"]:
+        config.settings["workers"] = 1
 
     # Start the server
     start_server(

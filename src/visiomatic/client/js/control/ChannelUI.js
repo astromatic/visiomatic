@@ -411,7 +411,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	 * @param {boolean) [updateColor=false]
 	   Update Color patch element?
 	 */
-	_updateChannel: function (layer, channel, color=false) {
+	_updateChannel: function (layer, channel, updateColor=false) {
 		const	_this = this,
 			visio = layer.visio,
 			step = this._spinboxStep(

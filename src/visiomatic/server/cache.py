@@ -8,23 +8,28 @@ from collections import OrderedDict
 from hashlib import md5
 from multiprocessing.shared_memory import SharedMemory
 from os import getpid, getppid
-from signal import (
-    signal,
-    SIGABRT,
-    SIGILL,
-    SIGINT,
-    SIGKILL,
-    SIGSEGV,
-    SIGTERM
-)
+
+from sys import platform
 from time import time_ns
 from typing import Callable, Union
 
 import numpy as np
-from posix_ipc import Semaphore, O_CREAT
-from UltraDict import UltraDict
 
 from .. import package
+
+# Shared version of cache only available on Linux
+if package.isonlinux:
+    from signal import (
+        signal,
+        SIGABRT,
+        SIGILL,
+        SIGINT,
+        SIGKILL,
+        SIGSEGV,
+        SIGTERM
+    )
+    from posix_ipc import Semaphore, O_CREAT
+    from UltraDict import UltraDict
 
 
 class LRUCache:
@@ -81,10 +86,10 @@ class LRUCache:
 
 
 
-class LRUSharedRWLockCache:
+class LRUSharedRWCache:
     """
-    Custom, dictionary-based, Least Recently Used (LRU) reader-writer lock cache
-    shareable across processes.
+    Custom, dictionary-based, Least Recently Used (LRU) reader-writer lockable
+    cache, shareable across processes.
 
     Parameters
     ----------
@@ -100,31 +105,141 @@ class LRUSharedRWLockCache:
     def __init__(
             self,
             func: Callable,
-            name: Union[str, None]=None,
-            maxsize: int=8,
-            removecall: Callable=None):
+            name: Union[str, None] = None,
+            maxsize: int = 8,
+            shared: bool = True,
+            removecall: Callable = None):
         self.func = func
+        # Shared cache option only available on Linux
+        self.shared = shared and package.isonlinux
         self.name = name if name else f"rwlockcache_{getppid()}"
         self._lock_name = self.name + ".lock"
-        with Semaphore(self._lock_name, O_CREAT, initial_value=1) as lock:
-            self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+        if self.shared:
+            with Semaphore(self._lock_name, O_CREAT, initial_value=1) as lock:
+                self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
+            self.locks = LRUCache(func=SharedRWLock, maxsize=maxsize)
+        else:
+            self.cache = {}
         self.results = LRUCache(func=func, maxsize=maxsize)
-        self.locks = LRUCache(func=SharedRWLock, maxsize=maxsize)
         # Delete semaphores when process is aborted.
-        for sig in (
-            SIGABRT,
-            SIGILL,
-            SIGINT,
-            SIGSEGV,
-            SIGTERM):
-            signal(sig, self.remove)
+        if self.shared:
+            for sig in (
+                SIGABRT,
+                SIGILL,
+                SIGINT,
+                SIGSEGV,
+                SIGTERM):
+                signal(sig, self.remove)
         self.removecall = removecall
         self.maxsize = maxsize
 
 
     def __call__(self, *args, **kwargs):
         """
-        Create or recover a shared reader-writer lock (e.g., Raynal 2012).
+        Get or recover a cached entry.
+
+        Parameters
+        ----------
+        args: any
+            Hashable arguments to the cache dictionary.
+        kwargs: any
+            Hashable keyworded arguments to the cache dictionary.
+
+        Returns
+        -------
+        result: 
+            Cached output.
+        lock: :class:`SharedRWLock` or None
+            Reader-Writer lock associated with args, or None if cache is
+            unshared.
+        msg:
+            "OK" or error string in case of an exception.
+
+        :meta public:
+        """
+        return self.call_shared(*args, **kwargs) if self.shared \
+            else self.call_unshared(*args, **kwargs)
+
+
+    def call_unshared(self, *args, **kwargs):
+        """
+        Get or recover a cached entry, not shared with other processes.
+
+        Parameters
+        ----------
+        args: any
+            Hashable arguments to the cache dictionary.
+        kwargs: any
+            Hashable keyworded arguments to the cache dictionary.
+
+        Returns
+        -------
+        result:
+            Cached output.
+        lock:
+            Reader-Writer lock associated with args, set to None.
+        msg:
+            "OK" or error string in case of an exception.
+
+        :meta public:
+        """
+        # We use MD5 instead of hash() as output is consistent across processes
+        m = md5()
+        for s in args:
+            m.update(s.encode())
+        hargs = m.hexdigest()
+        write = False
+        remove = False
+        if hargs in self.cache:
+            # Reference already in cache: get time
+            self.cache[hargs] = [None, time_ns()]
+        else:
+            # Reference not in cache: test if we're reaching the cache limit
+            if len(self.cache) >= self.maxsize:
+                # Find LRU cache entry
+                oldest = min(self.cache, key=lambda k: self.cache[k][1])
+                ofirstarg = self.cache[oldest][0]
+                # Delete cache entry
+                del self.cache[oldest]
+                # Will have to do remove call if callback function available
+                remove = self.removecall
+                # Cache an empty content just to mark territory
+                write = True
+                firstarg = args[0]
+                self.cache[hargs] = [firstarg, time_ns()]
+                # Prepare write operation on new data
+        if remove:
+            # Apply remove callback to first argument stored in cache (filename)
+            self.removecall(ofirstarg)
+        # Finally try to update the shared version
+        if write:
+            try:
+                result = self.func(*args, **kwargs)
+            except Exception as e:
+                # Uh-oh! things went wrong: remove cache entry and lock
+                # and return None
+                del self.cache[hargs]
+                result = None
+                msg = e.args[0]
+            else:
+                self.cache[hargs] = [firstarg, time_ns()]
+                msg = "OK"
+        else:
+            try:
+                result = self.results(*args, **kwargs)
+            except Exception as e:
+                result = None
+                msg = e.args[0]
+            else:
+                self.cache[hargs] = [None, time_ns()]              
+                msg = "OK"
+
+        return result, msg, None
+
+
+    def call_shared(self, *args, **kwargs):
+        """
+        Get or recover a cached entry, not shared with other processes.
 
         Parameters
         ----------
@@ -212,7 +327,7 @@ class LRUSharedRWLockCache:
                     self.cache[hargs][1] = time_ns()                
                 msg = "OK"
 
-        return result, lock, msg
+        return result, msg, lock
 
 
     def remove(self, *args) -> None:
@@ -331,18 +446,13 @@ class SharedRWLock:
         """
         Remove files used by the RW lock semaphores and shared memory.
         """
-        try:
-            Semaphore(self._glock_name).unlink()
-            Semaphore(self._rlock_name).unlink()
-            self.shared_mem.close()
-            self.shared_me
-        except:
-            pass
-        try:
-            self.shared_mem.close()
-            self.shared_mem.unlink()
-        except:
-            pass
-
+        if self.shared:
+            try:
+                Semaphore(self._glock_name).unlink()
+                Semaphore(self._rlock_name).unlink()
+                self.shared_mem.close()
+                self.shared_mem.unlink()
+            except:
+                pass
 
 
