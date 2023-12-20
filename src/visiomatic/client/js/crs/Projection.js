@@ -261,9 +261,11 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			projparam.jd[1] = v + 2400000.5;
 		} else if ((v = header['EXPTIME'])) {
 			// Add exposure time to compute end JD
-			projparam.jd[1] = projparam.jd[0] + v / 86400.
+			projparam.jd[1] = projparam.jd[0] + v / 86400.;
+		} else {
+			// Add 1s to compute end JD (better than nothing)
+			projparam.jd[1] = projparam.jd[0] + 1.0 / 86400.;
 		}
-
 		// Observer's location
 		if ((v = header['LONGITUD'])) { projparam.obslatlng[1] = v; }
 		if ((v = header['LATITUDE'])) { projparam.obslatlng[0] = v; }

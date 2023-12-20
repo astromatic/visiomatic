@@ -30965,6 +30965,8 @@
         projparam2.jd[1] = v + 24000005e-1;
       } else if (v = header["EXPTIME"]) {
         projparam2.jd[1] = projparam2.jd[0] + v / 86400;
+      } else {
+        projparam2.jd[1] = projparam2.jd[0] + 1 / 86400;
       }
       if (v = header["LONGITUD"]) {
         projparam2.obslatlng[1] = v;
