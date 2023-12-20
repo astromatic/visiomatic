@@ -446,13 +446,12 @@ class SharedRWLock:
         """
         Remove files used by the RW lock semaphores and shared memory.
         """
-        if self.shared:
-            try:
-                Semaphore(self._glock_name).unlink()
-                Semaphore(self._rlock_name).unlink()
-                self.shared_mem.close()
-                self.shared_mem.unlink()
-            except:
-                pass
+        try:
+            Semaphore(self._glock_name).unlink()
+            Semaphore(self._rlock_name).unlink()
+            self.shared_mem.close()
+            self.shared_mem.unlink()
+        except:
+            pass
 
 
