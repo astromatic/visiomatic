@@ -199,12 +199,16 @@ class Image(object):
         # Speed up ~x8 by using only a fraction of the lines
         x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
         med = np.nanmedian(x, axis=1, keepdims=True)
+        std = np.nanstd(x, axis=1)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax, axis=1, keepdims=True)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x, axis=1, keepdims=True)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax, axis=1)
+        # Handle cases where the MAD is tiny because of many identical values
+        cond = 1e5 * mad < std
+        mad[cond] = 0.1 * std[cond]
         self.background_level = np.nanmean(3.5*med - 2.5*x, axis=1)
         self.background_mad = mad
 
