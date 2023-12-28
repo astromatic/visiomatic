@@ -1,7 +1,7 @@
 """
 Image tiling module
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 import glob, math, pickle
@@ -73,21 +73,33 @@ class TiledModel(BaseModel):
     Parameters
     ----------
     type: str
-        Name of the web service
+        Name of the web service.
     version: str
-        Version of the web service
+        Version of the web service.
     full_size: List[int]
-        Full raster size, FITS style (x comes first)
+        Full raster size, FITS style (x comes first).
     tile_size: List[int]
-        Tile size, FITS style
+        Tile size, FITS style.
     tile_levels: int
-        Number of levels in the image pyramid
+        Number of levels in the image pyramid.
     channels: int
-        Number of channels
+        Number of channels.
     bits_per_channel: int 
-        Number of bits per pixel
+        Number of bits per pixel.
+    brightness:  float
+        Relative tile brightness (black level).
+    contrast:  float
+        Relative tile contrast.
+    color_saturation:  float
+        Tile color saturation.
+    gamma: float
+        Tile display gamma.
+    quality: int
+        JPEG quality (0-100).
+    header: dict
+        Image header keyword/value pairs.
     images: List[ImageModel]
-        List of image model objects
+        List of image model objects.
     """
     type: str
     version: str
@@ -96,6 +108,7 @@ class TiledModel(BaseModel):
     tile_levels: int
     channels: int
     bits_per_channel: int
+    brightness: float
     contrast: float
     color_saturation: float
     gamma: float
@@ -118,6 +131,8 @@ class Tiled(object):
         shape of the served tiles.
     minmax: tuple[float, float], optional
         Intensity cuts of the served tiles.
+    brightness:  float, optional
+        Relative tile black level of the served tiles.
     contrast:  float, optional
         Relative tile contrast of the served tiles.
     color_saturation:  float, optional
@@ -133,7 +148,8 @@ class Tiled(object):
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = [256,256],
             minmax : Union[Tuple[int, int], None] = None,
-            contrast : float = 1.0,
+            brightness : float = 0.,
+            contrast : float = 1.,
             color_saturation: float = 1.5,
             gamma : float = 0.45,
             quality: int = 90,
@@ -168,6 +184,7 @@ class Tiled(object):
         self.tile_shape = [self.nchannels, tilesize[0], tilesize[1]];
         self.make_mosaic(self.images)
         hdus.close()
+        self.brightness = brightness
         self.contrast = contrast
         self.color_saturation = color_saturation
         self.gamma = gamma
@@ -266,6 +283,7 @@ class Tiled(object):
             tile_levels=self.nlevels,
             channels=self.shape[0],
             bits_per_channel=32,
+            brightness=self.brightness,
             contrast=self.contrast,
             color_saturation=self.color_saturation,
             gamma=self.gamma,
@@ -493,7 +511,8 @@ class Tiled(object):
             channel: Union[int, None] = None,
             minmax: Union[list[float, float], None] = None,
             mix: Union[list[int, float, float, float]| None] = None,
-            contrast: float = 1.0,
+            brightness: float = 0.,
+            contrast: float = 1.,
             gamma: float = 0.45,
             colormap: str = 'grey',
             invert: bool = False) -> np.ndarray:
@@ -510,6 +529,8 @@ class Tiled(object):
             Tile intensity cuts.
         mix: list[int, float, float, float], optional
             Tile slice RGB colors.
+        brightness:  float, optional
+            Relative tile brightness (black level).
         contrast:  float, optional
             Relative tile contrast.
         gamma:  float, optional
@@ -532,7 +553,8 @@ class Tiled(object):
                 minmax = self.minmax[chan]
             fac = minmax[1] - minmax[0]
             fac = contrast / fac if fac > 0.0 else self.maxfac
-            ctile = np.nan_to_num(tile[chan] - minmax[0], nan=0., copy=False) * fac
+            offset = 0.01 * contrast * brightness
+            ctile = np.nan_to_num(tile[chan] - minmax[0], nan=0., copy=False) * fac + offset
             ctile[ctile < 0.0] = 0.0
             ctile[ctile > 1.0] = 1.0
             ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
@@ -552,7 +574,8 @@ class Tiled(object):
             fac = cminmax[:,1] - cminmax[:,0]
        	    fac[fac <= 0] = self.maxfac
             fac = (contrast / fac).reshape(self.nchannels, 1, 1)
-            ctile = np.nan_to_num(tile - cminmax[:,0].reshape(self.nchannels, 1, 1), nan=0., copy=False) * fac
+            offset = 0.01 * contrast * brightness
+            ctile = np.nan_to_num(tile - cminmax[:,0].reshape(self.nchannels, 1, 1), nan=0., copy=False) * fac + offset
             cmix = self.cmix
             if mix:
                 imix = np.array(mix, dtype=int)[:, 0] - 1
@@ -632,7 +655,8 @@ class Tiled(object):
             channel: Union[int, None] = None,
             minmax: Union[Tuple[float, float], None] = None,
             mix: Union[Tuple[int, float, float, float]| None] = None,
-            contrast: float = 1.0,
+            brightness: float = 0.,
+            contrast: float = 1.,
             gamma: float = 0.4545,
             colormap: str = 'grey',
             invert: bool = False,
@@ -650,6 +674,8 @@ class Tiled(object):
             Data channel (first channel is 1)
         minmax: list[float, float], optional
             Tile intensity cuts.
+        brightness:  float, optional
+            Relative tile brightness.
         contrast:  float, optional
             Relative tile contrast.
         gamma:  float, optional
@@ -687,6 +713,7 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
+                brightness=brightness,
                 contrast=contrast,
                 gamma=gamma,
                 invert=invert
@@ -702,6 +729,7 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
+                brightness=brightness,
                 contrast=contrast,
                 gamma=gamma,
                 invert=invert,

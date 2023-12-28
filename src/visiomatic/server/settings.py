@@ -1,7 +1,7 @@
 """
 Configuration settings for the application.
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 from os import cpu_count, path
@@ -55,22 +55,28 @@ class HostSettings(BaseSettings):
 
 
 class ImageSettings(BaseSettings):
+    brightness: float = Field(
+        default=0.,
+        ge=-100.,
+        le=100.,
+        description="Default image brightness"
+        )
     contrast: float = Field(
-        default=1.0,
+        default=1.,
         ge=0.01,
-        le=10.0,
+        le=10.,
         description="Default image contrast"
         )
     color_saturation: float = Field(
         default=1.5,
-        ge=0.0,
-        le=5.0,
+        ge=0.,
+        le=5.,
         description="Default color saturation"
         )
     gamma: float = Field(
         default=2.2,
         ge=0.1,
-        le=5.0,
+        le=5.,
         description="Default image gamma"
         )
     quality: int = Field(

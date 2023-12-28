@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -31,6 +31,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		maxZoom: null,
 		maxNativeZoom: 18,
 		noWrap: true,
+		brightness: null,
 		contrast: null,
 		colorSat: null,
 		gamma: null,
@@ -65,6 +66,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	/**
 	   Default _server_ rendering parameters (to shorten tile query strings).
 	 * @type {object}
+	 * @property {number} brightness
+	   Default brightness level.
 	 * @property {number} contrast
 	   Default contrast factor.
 	 * @property {number} gamma
@@ -83,6 +86,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   Default JPEG encoding quality.
 	 */
 	visioDefault: {
+		brightness: 0.,
 		contrast: 1.,
 		gamma: 2.2,
 		cMap: 'grey',
@@ -148,6 +152,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	 * @param {boolean} [options.noWrap=true]
 	   Deactivate layer wrapping.
+
+	 * @param {number} [options.brightness=0.0]
+	   Brightness level.
 
 	 * @param {number} [options.contrast=1.0]
 	   Contrast factor.
@@ -250,6 +257,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
     	   Minimum zoom factor (tile resolution).
     	 * @property {number} maxZoom
     	   Maximum zoom factor (tile resolution).
+    	 * @property {number} brightness
+    	   Current image brightness level.
     	 * @property {number} contrast
     	   Current image contrast factor.
     	 * @property {number} colorSat
@@ -286,6 +295,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			nChannel: 1,
 			minZoom: options.minZoom,
 			maxZoom: options.maxZoom,
+			brightness: options.brightness,
 			contrast: options.contrast,
 			colorSat: options.colorSat,
 			gamma: options.gamma,
@@ -361,6 +371,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Number of channels
 			nchannel = visio.nChannel = meta.channels;
+
+			// Default brightness
+			if (meta.brightness) {
+				visioDefault.brightness = meta.brightness;
+			}
+			if (!visio.brightness) {
+				visio.brightness = visioDefault.brightness;
+			}
 
 			// Default contrast
 			if (meta.contrast) {
@@ -845,6 +863,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 		if (visio.invertCMap !== visioDefault.invertCMap) {
 			str += '&INV';
+		}
+		if (visio.brightness !== visioDefault.brightness) {
+			str += '&BRT=' + visio.brightness.toString();
 		}
 		if (visio.contrast !== visioDefault.contrast) {
 			str += '&CNT=' + visio.contrast.toString();
