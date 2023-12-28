@@ -1,7 +1,7 @@
 """
 Application module
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 import io, logging, pickle, re
@@ -55,6 +55,7 @@ def create_app() -> FastAPI:
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
     api_path = config.settings["api_path"]
+    brightness = config.settings["brightness"]
     contrast = config.settings["contrast"]
     color_saturation = config.settings["color_saturation"]
     gamma = config.settings["gamma"]
@@ -226,14 +227,14 @@ def create_app() -> FastAPI:
             CNT: float = Query(
                 contrast,
                 title="Relative contrast",
-                ge=0.0,
-                le=100.0
+                ge=0.,
+                le=100.
                 ),
             GAM: float = Query(
                 1.0/gamma,
                 title="Inverse display gamma",
                 ge=0.2,
-                le=2.0
+                le=2.
                 ),
             INFO: str = Query(
                 None,
@@ -242,6 +243,12 @@ def create_app() -> FastAPI:
             INV: str = Query(
                 None,
                 title="Invert the colormap"
+                ),
+            BRT: float = Query(
+                brightness,
+                title="Relative brightness",
+                ge=-100.,
+                le=100.
                 ),
             QLT: int = Query(
                 90,
@@ -394,6 +401,7 @@ def create_app() -> FastAPI:
             channel=CHAN[0] if CHAN else CHAN,
             minmax=minmax,
             mix=mix,
+            brightness=BRT,
             contrast=CNT,
             gamma=GAM,
             colormap=CMP,
