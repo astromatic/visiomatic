@@ -140,7 +140,7 @@ class ServerSettings(BaseSettings):
         description="Directory containing templates"
         )
     userdoc_url: str = Field(
-        default=doc_path.default + "/interface.html",
+        default = doc_path.default + "/interface.html", #type: ignore
         description="Endpoint URL for the user's HTML documentation"
         )
 
@@ -149,10 +149,13 @@ class ServerSettings(BaseSettings):
         extra = 'ignore'
 
 
+ncpu = cpu_count()
+
+
 class EngineSettings(BaseSettings):
     thread_count: int = Field(
         short='t',
-        default=cpu_count() // 2,
+        default = ncpu // 2 if ncpu is not None else 4,
         ge=1,
         le=1024,
         description="Number of engine threads"

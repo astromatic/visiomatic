@@ -31,7 +31,14 @@ if 'sphinx' not in modules:
     config.config_filename = conf.config_filename
     config.image_filename = conf.image_filename
 
-from .tiled import colordict, delTiled, pickledTiled, ProfileModel, Tiled
+from .tiled import (
+    colordict,
+    delTiled,
+    get_image_filename,
+    pickledTiled,
+    ProfileModel,
+    Tiled
+)
 from .cache import LRUCache, LRUSharedRWCache
 
 # True with multiple workers (multiprocessing).
@@ -74,7 +81,7 @@ def create_app() -> FastAPI:
     # Scan and register images cached during previous sessions
     for filename in glob(path.join(cache_dir, "*" + ".pkl")):
         tiled, msg, lock = cache(
-            Tiled.get_image_filename(None, path.splitext(filename)[0])
+            get_image_filename(path.splitext(filename)[0])
         )
         if lock:
             lock.release_read()
@@ -157,48 +164,24 @@ def create_app() -> FastAPI:
     # Prepare the RegExps
     # FIF (image filenames): discard filenames with ..
     reg_fif = r"(?!\.\.)(^.*$)"
-    app.parse_fif = re.compile(reg_fif)
     # JTL (tile indices)
     reg_jtl = r"^(\d+),(\d+)$"
-    app.parse_jtl = re.compile(reg_jtl)
+    parse_jtl = re.compile(reg_jtl)
     # MINMAX (intensity range)
     reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
         r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
         r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
-    app.parse_minmax = re.compile(reg_minmax)
+    parse_minmax = re.compile(reg_minmax)
     # MIX (mixing matrix)
     reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
-    app.parse_mix = re.compile(reg_mix) 
+    parse_mix = re.compile(reg_mix) 
     # PFL (image profile(s)
     reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
-    app.parse_pfl = re.compile(reg_pfl)
+    parse_pfl = re.compile(reg_pfl)
     # VAL (pixel value(s)
     reg_val = r"^([+-]?\d+),([+-]?\d+)$"
-    app.parse_val = re.compile(reg_val)
+    parse_val = re.compile(reg_val)
 
-    # Test endpoint
-    @app.get("/random", tags=["services"])
-    async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
-        """
-        Test endpoint of the web API that simply returns an image with white noise.
-
-        Parameters
-        ----------
-        w:  int, optional
-            Image width.
-
-        h:  int, optional
-            Image height.
-
-        Returns
-        -------
-        response: byte stream
-            [Streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>)
-            containing the JPEG image.
-        """
-        a = np.random.random((h,w)) * 255.0
-        res, im_jpg = cv2.imencode(".jpg", a)
-        return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
     @app.get(api_path, tags=["services"])
@@ -220,7 +203,7 @@ def create_app() -> FastAPI:
                 title="Channel index (mono-channel mode) or indices (measurements)",
                 ge=0
                 ),
-            CMP: Literal[tuple(colordict.keys())] = Query(
+            CMP: Literal[tuple(colordict.keys())] = Query( #type: ignore
                 'grey',
                 title="Name of the colormap"
                 ),
@@ -348,7 +331,7 @@ def create_app() -> FastAPI:
                 lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
         elif PFL != None:
-            val = app.parse_pfl.findall(PFL)[0]
+            val = parse_pfl.findall(PFL)[0]
             resp = tiled.get_profiles(
             			CHAN,
                         [int(val[0]), int(val[1])],
@@ -359,7 +342,7 @@ def create_app() -> FastAPI:
             # We use the ORJSON response to properly manage NaNs
             return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
-            val = app.parse_val.findall(VAL)[0]
+            val = parse_val.findall(VAL)[0]
             resp = tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
             if lock:
                 lock.release_read()
@@ -371,7 +354,7 @@ def create_app() -> FastAPI:
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
         if MINMAX != None:
-            resp = [app.parse_minmax.findall(m)[0] for m in MINMAX]
+            resp = [parse_minmax.findall(m)[0] for m in MINMAX]
             minmax = tuple(
                 (
                     int(r[0]),
@@ -381,7 +364,7 @@ def create_app() -> FastAPI:
             )
         mix = None
         if MIX != None:
-            resp = [app.parse_mix.findall(m)[0] for m in MIX]
+            resp = [parse_mix.findall(m)[0] for m in MIX]
             mix = tuple(
                 (
                     int(r[0]),
@@ -390,7 +373,7 @@ def create_app() -> FastAPI:
                     float(r[3])
                 ) for r in resp
             )
-        resp = app.parse_jtl.findall(JTL)[0]
+        resp = parse_jtl.findall(JTL)[0]
         tl = tiled.nlevels - 1 - int(resp[0])
         if tl < 0:
             tl = 0

@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from pydantic import BaseModel
 
 import numpy as np
-from astropy.io import fits
+from astropy.io import fits #type: ignore
 
 from .. import package
 
@@ -112,7 +112,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> Tuple[Union[int], None]:
+    def parse_2dslice(self, str: str) -> Union[List[int], None]:
         """
         Parse a string representation of a 2D slice.
 
@@ -132,17 +132,17 @@ class Image(object):
 
     def compute_geometry(
             self,
-            start: Tuple[Union[int]],
-            shape: Tuple[Union[int]]
+            start: Tuple[int, int],
+            shape: Tuple[int, int, int]
         ) -> None:
         """
         Compute geometry parameters related to the image position in a mosaic.
         
         Parameters
         ----------
-        start: Tuple[int]
+        start: Tuple[int, int]
             Position of starting point in mosaic (Python style).
-        shape: Tuple[int]
+        shape: Tuple[int, int, int]
             Shape of the mosaic (Python style).
         """
         
@@ -159,13 +159,13 @@ class Image(object):
             slice(0, self.data.shape[0]), \
             slice(
                 self.detsec[2] - start[0] - 1,
-                None if (endy:=self.detsec[3] - start[0] - 1 + ysign) < 0 \
+                None if (endy := self.detsec[3] - start[0] - 1 + ysign) < 0 \
                     else endy,
                 ysign
             ), \
-              slice(
+            slice(
                 self.detsec[0] - start[1] - 1,
-                   None if (endx:=self.detsec[1] - start[1] - 1 + xsign) < 0 \
+                None if (endx := self.detsec[1] - start[1] - 1 + xsign) < 0 \
                     else endx,
                 xsign
             )

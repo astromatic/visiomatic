@@ -11,7 +11,7 @@ from os import getpid, getppid
 
 from sys import platform
 from time import time_ns
-from typing import Callable, Union
+from typing import Any, Callable, OrderedDict, Union
 
 import numpy as np
 
@@ -28,8 +28,8 @@ if package.isonlinux:
         SIGSEGV,
         SIGTERM
     )
-    from posix_ipc import Semaphore, O_CREAT
-    from UltraDict import UltraDict
+    from posix_ipc import Semaphore, O_CREAT #type: ignore
+    from UltraDict import UltraDict #type: ignore
 
 
 class LRUCache:
@@ -44,11 +44,11 @@ class LRUCache:
         Maximum size of the cache.
     """
     def __init__(self, func: Callable, maxsize: int=8):
-        self.cache = OrderedDict()
+        self.cache: OrderedDict = OrderedDict()
         self.func = func
         self.maxsize = maxsize
 
-    def __call__(self, *args, **kwargs) -> any:
+    def __call__(self, *args, **kwargs) -> Any:
         """
         Cache or recover earlier cached result/object.
         If the number of cached items exceeds maxsize then the least recently
@@ -70,7 +70,7 @@ class LRUCache:
             self.cache.move_to_end(args)
             return self.cache[args]
         if len(self.cache) > self.maxsize:
-            self.cache.popitem(0)
+            self.cache.popitem(last=False)
         result = self.func(*args, **kwargs)
         self.cache[args] = result
         return result
@@ -108,7 +108,7 @@ class LRUSharedRWCache:
             name: Union[str, None] = None,
             maxsize: int = 8,
             shared: bool = True,
-            removecall: Callable = None):
+            removecall: Union[Callable, None] = None):
         self.func = func
         # Shared cache option only available on Linux
         self.shared = shared and package.isonlinux

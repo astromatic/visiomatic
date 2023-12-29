@@ -60,7 +60,8 @@ class Config(object):
         else:
             exit(f"*Error*: {image_filename} not found!")
 
-    def dict(self) -> dict:
+
+    def grouped_dict(self) -> dict:
         """
         Return a dictionary of all settings, organized in groups.
 
@@ -226,13 +227,13 @@ class Config(object):
         """
         config = ConfigParser(converters={})
         config.read(filename)
-        gdict = {}
+        gdict: dict = {}
         for group in self.groups:
             gdict[group] = {}
             gdictg = gdict[group]
             settings = getattr(self.settings, group).dict()
             for setting in settings:
-                if (value := config.get(group, setting, fallback=None)) != None:
+                if (value := config.get(group, setting, fallback=None)) is not None:
                     stype = type(settings[setting])
                     gdictg[setting] = tuple(
                         type(settings[setting][i])(val.strip()) \
@@ -304,4 +305,4 @@ class Config(object):
 config = None
 config_filename = None
 image_filename = None
-settings = {}
+settings: dict = {}

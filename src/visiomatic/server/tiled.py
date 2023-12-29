@@ -6,7 +6,7 @@ Image tiling module
 
 import glob, math, pickle
 
-from methodtools import lru_cache
+from methodtools import lru_cache #type: ignore
 from os import path, unlink
 from sys import modules
 from typing import List, NamedTuple, Tuple, Union
@@ -15,12 +15,12 @@ from urllib.parse import quote, unquote
 import numpy as np
 import cv2
 
-from astropy.io import fits
-from joblib import Parallel, delayed
+from astropy.io import fits #type: ignore
+from joblib import Parallel, delayed  #type: ignore
 from pydantic import BaseModel
-from simplejpeg import encode_jpeg
+from simplejpeg import encode_jpeg  #type: ignore
 from skimage.draw import line
-from tiler import Tiler
+from tiler import Tiler #type: ignore
 
 from .. import package
 from .image import Image, ImageModel
@@ -103,8 +103,8 @@ class TiledModel(BaseModel):
     """
     type: str
     version: str
-    full_size: List[int]
-    tile_size: List[int]
+    full_size: Tuple[int, ...]
+    tile_size: Tuple[int, ...]
     tile_levels: int
     channels: int
     bits_per_channel: int
@@ -146,7 +146,7 @@ class Tiled(object):
             self,
             filename: str,
             extnum : Union[int, None] = None,
-            tilesize : Tuple[int, int] = [256,256],
+            tilesize : Tuple[int, int] = (256,256),
             minmax : Union[Tuple[int, int], None] = None,
             brightness : float = 0.,
             contrast : float = 1.,
@@ -181,7 +181,7 @@ class Tiled(object):
         # Number of image dimensions
         self.nchannels = self.images[0].data.shape[0]
         self.cmix= np.ones((3, self.nchannels), dtype=np.float32)
-        self.tile_shape = [self.nchannels, tilesize[0], tilesize[1]];
+        self.tile_shape = (self.nchannels, tilesize[0], tilesize[1]);
         self.make_mosaic(self.images)
         hdus.close()
         self.brightness = brightness
@@ -214,7 +214,7 @@ class Tiled(object):
         for image in self.images:
             del image.data
         # Pickle-save current object
-        with open(self.get_object_filename(self.filename), "wb") as f:
+        with open(get_object_filename(self.filename), "wb") as f:
             pickle.dump(self, f, protocol=5)
             self.nbytes += f.tell()
 
@@ -234,23 +234,23 @@ class Tiled(object):
         )
 
 
-    def compute_grid_shape(self, level=0) -> int:
+    def compute_grid_shape(self, level: int=0) -> Tuple[int, int, int]:
         """
         Return the number of tiles per axis at a given image resolution level.
         
         Returns
         -------
-        shape: tuple[int, int]
+        shape: tuple[int, int, int]
             Number of tiles.
         """
-        return [
+        return (
             self.shape[0],
             ((self.shape[1] >> level) - 1) // self.tile_shape[1] + 1,
             ((self.shape[2] >> level) - 1) // self.tile_shape[2] + 1
-        ]
+        )
 
 
-    def compute_tile_bordershape(self, level=0) -> int:
+    def compute_tile_bordershape(self, level=0) -> Tuple[int, int, int]:
         """
         Return the border shape of tiles at a given image resolution level.
         
@@ -259,11 +259,11 @@ class Tiled(object):
         shape: tuple[int, int, int]
             Border shape.
         """
-        return [
+        return (
             self.tile_shape[0],
             ((self.shape[1] - 1) >> level) % self.tile_shape[1] + 1,
             ((self.shape[2] - 1) >> level) % self.tile_shape[2] + 1
-        ]
+        )
 
 
     def get_model(self) -> TiledModel:
@@ -293,92 +293,6 @@ class Tiled(object):
         )
 
 
-    def get_object_filename(self, image_filename: Union[str, None]=None):
-        """
-        Return the name of the file containing the pickled Tiled object.
-        
-        Parameters
-        ----------
-        Image filename: str, optional
-            Full image filename. Use internal image filename if missing.
-
-        Returns
-        -------
-        filename: str
-            Pickled object filename.
-        """
-        return path.join(
-            config.settings["cache_dir"],
-            quote(
-                image_filename if image_filename else self.filename,
-                safe=''
-            ) + ".pkl"
-        )
-
-
-    def get_data_filename(self, image_filename: Union[str, None]=None):
-        """
-        Return the name of the file containing the memory-mapped image data.
-        
-        Parameters
-        ----------
-        Image filename: str, optional
-            Full image filename. Use internal image filename if missing.
-
-        Returns
-        -------
-        filename: str
-            Filename of the memory-mapped image data.
-        """
-        return path.join(
-            config.settings["cache_dir"],
-            quote(
-                image_filename if image_filename else self.filename,
-                safe=''
-            ) + ".data.np"
-        )
-
-
-    def get_tiles_filename(self, image_filename: Union[str, None]=None):
-        """
-        Return the name of the file containing the memory-mapped tile datacube.
-        
-        Parameters
-        ----------
-        Image filename: str, optional
-            Full image filename. Use internal image filename if missing.
-
-        Returns
-        -------
-        filename: str
-            Filename of the memory mapped tile datacube.
-        """
-        return path.join(
-            config.settings["cache_dir"],
-            quote(
-                image_filename if image_filename else self.filename,
-                safe=''
-            ) + ".tiles.np"
-        )
-
-
-    def get_image_filename(self, prefix: str):
-        """
-        Return the name of the file containing the memory-mapped tile datacube.
-        
-        Parameters
-        ----------
-        prefix: str,
-            Image name prefix.
-
-        Returns
-        -------
-        filename: str
-            Filename of the memory mapped tile datacube.
-        """
-        return unquote(path.basename(prefix))
-
-
     def make_mosaic(self, images : List[Image]) -> None:
         """
         Stitch together several images to make a mosaic
@@ -396,10 +310,10 @@ class Tiled(object):
             pass
         else:
             # Compute the chip corner position in the mosaic, Python style
-            start = [min(y) - 1, min(x) -1]
+            start = (min(y) - 1, min(x) -1)
             # Compute the mosaic shape
             shape = (self.nchannels, max(y) - start[0],  max(x) - start[1])
-            self.data_filename = self.get_data_filename()
+            self.data_filename = get_data_filename(self.filename)
             self.data = np.memmap(
                 self.data_filename,
                 dtype=images[0].data.dtype,
@@ -409,7 +323,7 @@ class Tiled(object):
             for image in images:
                 image.compute_geometry(start, shape)
                 self.data[image.detslice] = image.data[image.dataslice]
-            self.shape = self.data.shape
+            self.shape = tuple(self.data.shape)
             self.minmax =  np.median(
                 np.array([image.minmax for image in images]),
                 axis=0
@@ -500,7 +414,7 @@ class Tiled(object):
         string += f"Resolution-number:{self.nlevels}\n"
         string += f"Bits-per-channel:{self.bitdepth}\n"
         string += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
-        string2 = "".join([header.tostring() for header in self.headers])
+        string2 = self.header.tostring()
         string += f"subject/{len(string2)}:{string2}"
         return string
 
@@ -509,8 +423,8 @@ class Tiled(object):
             self,
             tile: np.ndarray,
             channel: Union[int, None] = None,
-            minmax: Union[list[float, float], None] = None,
-            mix: Union[list[int, float, float, float]| None] = None,
+            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
+            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
             brightness: float = 0.,
             contrast: float = 1.,
             gamma: float = 0.45,
@@ -545,18 +459,19 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        if channel:
+        if channel is not None:
             chan = channel - 1
-            if minmax and int(minmax[0][0]) == channel:
-                minmax = minmax[0][1:]
-            else:
-                minmax = self.minmax[chan]
-            fac = minmax[1] - minmax[0]
-            fac = contrast / fac if fac > 0.0 else self.maxfac
+            cminmax = minmax[0][1:] \
+                if minmax is not None and int(minmax[0][0]) == channel \
+                else self.minmax[chan]
+            fac = cminmax[1] - cminmax[0]
+            fac = contrast / fac if fac > 0. else self.maxfac
             offset = 0.01 * contrast * brightness
-            ctile = np.nan_to_num(tile[chan] - minmax[0], nan=0., copy=False) * fac + offset
-            ctile[ctile < 0.0] = 0.0
-            ctile[ctile > 1.0] = 1.0
+            ctile = np.nan_to_num(
+                tile[chan] - cminmax[0], nan=0., copy=False
+            ) * fac + offset
+            ctile[ctile < 0.] = 0.
+            ctile[ctile > 1.] = 1.
             ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
        	    if invert:
                 ctile = 255 - ctile
@@ -569,21 +484,24 @@ class Tiled(object):
             cminmax = self.minmax
             if minmax:
                 iminmax = np.array(minmax, dtype=int)[:, 0] - 1
-                minmax = np.array(minmax, dtype=np.float32)[:, 1:]
-                cminmax[iminmax]= minmax
+                cminmax[iminmax] = np.array(minmax, dtype=np.float32)[:, 1:]
             fac = cminmax[:,1] - cminmax[:,0]
        	    fac[fac <= 0] = self.maxfac
             fac = (contrast / fac).reshape(self.nchannels, 1, 1)
             offset = 0.01 * contrast * brightness
-            ctile = np.nan_to_num(tile - cminmax[:,0].reshape(self.nchannels, 1, 1), nan=0., copy=False) * fac + offset
+            ctile = np.nan_to_num(
+                tile - cminmax[:,0].reshape(self.nchannels, 1, 1),
+                nan=0.,
+                copy=False
+            ) * fac + offset
             cmix = self.cmix
-            if mix:
-                imix = np.array(mix, dtype=int)[:, 0] - 1
-                mix = np.array(mix, dtype=np.float32)[:, 1:]
+            if mix is not None:
                 indices = np.arange(self.nchannels, dtype=np.float32)
-                cmix[0] = np.interp(indices, imix, mix[:, 0]) * 3 / self.nchannels
-                cmix[1] = np.interp(indices, imix, mix[:, 1]) * 3 / self.nchannels
-                cmix[2] = np.interp(indices, imix, mix[:, 2]) * 3 / self.nchannels
+                imix = np.array(mix, dtype=int)[:, 0] - 1
+                npmix = np.array(mix, dtype=np.float32)[:, 1:]
+                cmix[0] = np.interp(indices, imix, npmix[:, 0]) * 3 / self.nchannels
+                cmix[1] = np.interp(indices, imix, npmix[:, 1]) * 3 / self.nchannels
+                cmix[2] = np.interp(indices, imix, npmix[:, 2]) * 3 / self.nchannels
             ctile = (
                 cmix @ ctile.reshape(
                     ctile.shape[0],
@@ -605,7 +523,7 @@ class Tiled(object):
         self.tiles_start = np.zeros(self.nlevels, dtype=np.int32)
         self.tiles_end = np.cumsum(self.counts, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
-        self.tiles_filename = self.get_tiles_filename()
+        self.tiles_filename = get_tiles_filename(self.filename)
         self.tiles = np.memmap(
             self.tiles_filename,
             dtype=np.float32,
@@ -653,8 +571,8 @@ class Tiled(object):
             tilelevel: int,
             tileindex: int,
             channel: Union[int, None] = None,
-            minmax: Union[Tuple[float, float], None] = None,
-            mix: Union[Tuple[int, float, float, float]| None] = None,
+            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
+            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
             brightness: float = 0.,
             contrast: float = 1.,
             gamma: float = 0.4545,
@@ -773,7 +691,7 @@ class Tiled(object):
             self,
             channels: Union[Tuple[int, ...], None],
             pos1: Tuple[int, int],
-            pos2: Tuple[int, int]) -> np.ndarray:
+            pos2: Tuple[int, int]) -> ProfileModel:
         """
         Get image profile(s) between the given pixel coordinates in the merged
         frame.
@@ -793,18 +711,18 @@ class Tiled(object):
             Profile pydantic model of pixel value(s) along the line.
         """
         shape = self.shape
-        channels = np.array(channels) - 1 if channels \
+        npchannels = np.array(channels) - 1 if channels \
             else np.arange(self.nchannels)
         y, x = line(pos1[1] - 1, pos1[0] - 1, pos2[1] - 1, pos2[0] - 1)
-        values = np.full((x.size, channels.size), np.nan, dtype=np.float32)
+        values = np.full((x.size, npchannels.size), np.nan, dtype=np.float32)
         valid = (x>=0) & (x<shape[2]) & (y>=0) & (y<shape[1])
         values[valid] = self.get_data()[
-        	channels[:, np.newaxis],
+        	npchannels[:, np.newaxis],
         	y[valid],
         	x[valid]
         ].transpose()
         return ProfileModel(
-            profile=tuple(zip(x, y, tuple(map(tuple, values))))
+            profile=tuple(zip(x, y, tuple(map(tuple, values)))) #type: ignore
         )
 
 
@@ -851,9 +769,9 @@ class Tiled(object):
         return self.tiles
 
 
-def pickledTiled(filename: str, **kwargs) -> Union[Tiled, None]:
+def pickledTiled(filename: str, **kwargs) -> Tiled:
     """
-    Return pickled version of object if available.
+    Return pickled Tiled object if available, or initialized otherwise.
     
     Parameters
     ----------
@@ -865,13 +783,12 @@ def pickledTiled(filename: str, **kwargs) -> Union[Tiled, None]:
     Returns
     -------
     tiled: object
-        Tiled object pickled from file if available (or initialized otherwise),
-        or None if the image file could not be opened.
+        Tiled object pickled from file if available, or initialized otherwise.
     """
     afilename = path.abspath(filename)
     prefix = quote(afilename)
     # Check if a recent cached object is available
-    if path.isfile(oname:=Tiled.get_object_filename(None, prefix)) and \
+    if path.isfile(oname:=get_object_filename(prefix)) and \
             path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
             return pickle.load(f)
@@ -879,10 +796,92 @@ def pickledTiled(filename: str, **kwargs) -> Union[Tiled, None]:
         return Tiled(filename, **kwargs)
 
 
+
 def delTiled(filename: str):
     tiled = pickledTiled(filename)
-    unlink(tiled.get_object_filename())
-    unlink(tiled.get_data_filename())
-    unlink(tiled.get_tiles_filename())
+    unlink(get_object_filename(tiled.filename))
+    unlink(get_data_filename(tiled.filename))
+    unlink(get_tiles_filename(tiled.filename))
     del tiled
+
+
+
+def get_object_filename(image_filename: str):
+    """
+    Return the name of the file containing the pickled Tiled object.
+    
+    Parameters
+    ----------
+    Image filename: str
+        Full image filename.
+    
+    Returns
+    -------
+    filename: str
+        Pickled object filename.
+    """
+    return path.join(
+        config.settings["cache_dir"],
+        quote(image_filename, safe='') + ".pkl"
+    )
+
+
+
+def get_data_filename(image_filename: str):
+    """
+    Return the name of the file containing the memory-mapped image data.
+    
+    Parameters
+    ----------
+    Image filename: str
+        Full image filename.
+    
+    Returns
+    -------
+    filename: str
+        Filename of the memory-mapped image data.
+    """
+    return path.join(
+        config.settings["cache_dir"],
+        quote(image_filename, safe='') + ".data.np"
+    )
+
+
+
+def get_tiles_filename(image_filename: str):
+    """
+    Return the name of the file containing the memory-mapped tile datacube.
+    
+    Parameters
+    ----------
+    Image filename: str
+        Full image filename.
+    
+    Returns
+    -------
+    filename: str
+        Filename of the memory mapped tile datacube.
+    """
+    return path.join(
+        config.settings["cache_dir"],
+        quote(image_filename, safe='') + ".tiles.np"
+    )
+
+
+
+def get_image_filename(prefix: str):
+    """
+    Return the name of the file containing the memory-mapped tile datacube.
+    
+    Parameters
+    ----------
+    prefix: str,
+        Image name prefix.
+
+    Returns
+    -------
+    filename: str
+        Filename of the memory mapped tile datacube.
+    """
+    return unquote(path.basename(prefix))
 
