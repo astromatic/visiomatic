@@ -28,8 +28,8 @@ class Config(object):
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
 
-       # Skip argument parsing and stuff if Sphinx is involved
-        if 'sphinx' in modules:
+        # Skip argument parsing and stuff if Sphinx or PyTest are involved
+        if 'sphinx' in modules or 'pytest' in modules:
             return
         # Parse command line
         args_dict = self.parse_args()
