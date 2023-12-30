@@ -797,7 +797,7 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
 
 
 
-def delTiled(filename: str):
+def delTiled(filename: str) -> None:
     tiled = pickledTiled(filename)
     unlink(get_object_filename(tiled.filename))
     unlink(get_data_filename(tiled.filename))
@@ -806,7 +806,7 @@ def delTiled(filename: str):
 
 
 
-def get_object_filename(image_filename: str):
+def get_object_filename(image_filename: str) -> str:
     """
     Return the name of the file containing the pickled Tiled object.
     
@@ -827,7 +827,7 @@ def get_object_filename(image_filename: str):
 
 
 
-def get_data_filename(image_filename: str):
+def get_data_filename(image_filename: str) -> str:
     """
     Return the name of the file containing the memory-mapped image data.
     
@@ -848,7 +848,7 @@ def get_data_filename(image_filename: str):
 
 
 
-def get_tiles_filename(image_filename: str):
+def get_tiles_filename(image_filename: str) -> str:
     """
     Return the name of the file containing the memory-mapped tile datacube.
     
@@ -869,13 +869,13 @@ def get_tiles_filename(image_filename: str):
 
 
 
-def get_image_filename(prefix: str):
+def get_image_filename(prefix: str) -> str:
     """
     Return the name of the file containing the memory-mapped tile datacube.
     
     Parameters
     ----------
-    prefix: str,
+    prefix: str
         Image name prefix.
 
     Returns
