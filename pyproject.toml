@@ -39,7 +39,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
 ]
 
 [project.scripts]
@@ -50,3 +51,7 @@ Repository = "https://github.com/ebertin/visiomatic-server"
 Homepage = "https://visiomatic.org"
 Documentation = "https://ebertin.github.io/visiomatic-server/"
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
