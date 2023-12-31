@@ -302,7 +302,11 @@ class Config(object):
                 exit()
 
 # Initialize global dictionary
-config = None
+config = Config()
 config_filename = None
 image_filename = None
-settings: dict = {}
+settings = config.flat_dict()
+if 'sphinx' not in modules and 'pytest' not in modules:
+    config_filename = config.config_filename
+    image_filename = config.image_filename
+
