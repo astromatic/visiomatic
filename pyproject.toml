@@ -55,3 +55,8 @@ Documentation = "https://ebertin.github.io/visiomatic-server/"
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
+
+[tool.coverage.run]
+source = ["src"]
+command_line = "-m pytest"
+

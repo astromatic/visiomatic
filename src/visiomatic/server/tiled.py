@@ -60,8 +60,8 @@ class ProfileModel(BaseModel):
 
     Parameters
     ----------
-    profile: List[List[float]]
-        List
+    profile: tuple[Pixel, ...]
+        Tuple of pixel models.
     """
     profile: Tuple[Pixel, ...]
 
