@@ -1,6 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
- * @file Responsive sidebar.
+ * @file Coordinate display/control interface
  * @requires util/VUtil.js
 
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
@@ -72,6 +72,15 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	 * @param {coordinate[]} [options.coordinates]
 	   Coordinate settings for every instance of coordinates.
+
+	 * @param {string} [options.centerQueryKey='center']
+	   Web query key for map centering.
+
+	 * @param {string} [options.fovQueryKey='fov']
+	   Web query key for setting the Field of View.
+
+	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
+	   URL for Sesame queries.
 
 	 * @returns {Coords} Instance of a coordinate display/control interface.
 	 */
