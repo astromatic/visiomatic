@@ -1,4 +1,4 @@
-name: continuous integration
+name: Continuous Integration
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 #############################
 # Build and test Python API #
 #############################
-  build:
+  test:
     name: Test Python API
     continue-on-error: false
     runs-on: ubuntu-latest
