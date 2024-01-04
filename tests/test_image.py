@@ -30,4 +30,3 @@ def test_ImageModel():
     with pytest.raises(Exception):
         image.ImageModel(size=[2000, 1024, 3])
 
-
