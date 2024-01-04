@@ -36,6 +36,7 @@ colordict = {
 }
 
 
+
 class Pixel(NamedTuple):
     """
     Pydantic model class for pixels.
@@ -767,6 +768,7 @@ class Tiled(object):
                 )
             )
         return self.tiles
+
 
 
 def pickledTiled(filename: str, **kwargs) -> Tiled:
