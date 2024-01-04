@@ -23,6 +23,7 @@ def test_ProfileModel():
     with pytest.raises(Exception):
         tiled.ProfileModel(profile=((128, 129, (1.1, 2.2))))
 
+
 def test_get_data_filename():
     cache_dir = config.settings["cache_dir"]
     config.settings["cache_dir"] = "/cache"
