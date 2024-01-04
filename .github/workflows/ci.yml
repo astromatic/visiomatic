@@ -15,7 +15,7 @@ jobs:
 #############################
 # Build and test Python API #
 #############################
-  run:
+  build:
     name: Test Python API
     continue-on-error: false
     runs-on: ubuntu-latest
