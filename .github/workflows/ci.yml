@@ -3,42 +3,40 @@ name: continuous integration
 on:
   push:
     paths:
-    - 'src/visiomatic/server/**'
-    - 'tests/**'
+      - 'src/visiomatic/server/**'
+      - 'tests/**'
   pull_request:
     paths:
-    - 'src/visiomatic/server/**'
-    - 'tests/**'
-
+      - 'src/visiomatic/server/**'
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:
-
 #############################
 # Build and test Python API #
 #############################
   build:
-    runs-on: ubuntu-latest
-    continue-on-error: false
     name: Test Python API
+    continue-on-error: false
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-    - uses: actions/checkout@v3
+      - name: Checkout
+      - uses: actions/checkout@v3
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
 
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install .
 
-    - name: Run tests and collect coverage
-      run: coverage run
+      - name: Run tests and collect coverage
+        run: coverage run
 
-    - name: Upload coverage reports to Codecov
-      run: codecov/codecov-action@v3
-
+      - name: Upload coverage reports to Codecov
+        run: codecov/codecov-action@v3
 
