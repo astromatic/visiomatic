@@ -54,3 +54,4 @@ def test_get_image_filename():
     prefix = "/cache/%2Ftmp%2Ftest.fits"
     assert tiled.get_image_filename(prefix) == "/tmp/test.fits"
 
+
