@@ -3,6 +3,8 @@ name: Continuous Integration
 on:
   push:
     paths:
+      - 'src/visiomatic/server/**'
+      - 'tests/**'
   pull_request:
     paths:
       - 'src/visiomatic/server/**'
@@ -29,8 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install .
+          pip install --upgrade pip coverage
+          pip install .[test]
 
       - name: Run tests and collect coverage
         run: coverage run
