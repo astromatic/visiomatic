@@ -55,6 +55,7 @@ class Pixel(NamedTuple):
     values: Tuple[float, ...]
 
 
+
 class ProfileModel(BaseModel):
     """
     Pydantic model class for VisiOmatic profiles.
@@ -65,6 +66,7 @@ class ProfileModel(BaseModel):
         Tuple of pixel models.
     """
     profile: Tuple[Pixel, ...]
+
 
 
 class TiledModel(BaseModel):
@@ -116,6 +118,7 @@ class TiledModel(BaseModel):
     quality: int
     header: dict
     images: List[ImageModel]
+
 
 
 class Tiled(object):
