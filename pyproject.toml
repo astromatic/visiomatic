@@ -62,6 +62,6 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["src"]
-command_line = "-m pytest"
+source_pkgs = ["visiomatic"]
+command_line = "-m pytest tests"
 
