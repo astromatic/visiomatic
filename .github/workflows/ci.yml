@@ -3,8 +3,6 @@ name: Continuous Integration
 on:
   push:
     paths:
-      - 'src/visiomatic/server/**'
-      - 'tests/**'
   pull_request:
     paths:
       - 'src/visiomatic/server/**'
