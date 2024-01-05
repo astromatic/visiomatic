@@ -28,8 +28,8 @@ class Config(object):
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
 
-       # Skip argument parsing and stuff if Sphinx is involved
-        if 'sphinx' in modules:
+        # Skip argument parsing and stuff if Sphinx or PyTest are involved
+        if 'sphinx' in modules or 'pytest' in modules:
             return
         # Parse command line
         args_dict = self.parse_args()
@@ -302,7 +302,11 @@ class Config(object):
                 exit()
 
 # Initialize global dictionary
-config = None
+config = Config()
 config_filename = None
 image_filename = None
-settings: dict = {}
+settings = config.flat_dict()
+if 'sphinx' not in modules and 'pytest' not in modules:
+    config_filename = config.config_filename
+    image_filename = config.image_filename
+

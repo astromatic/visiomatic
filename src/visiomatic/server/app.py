@@ -23,14 +23,6 @@ from .. import package
 
 from . import config
 
-# Skip argument parsing and stuff if Sphinx is involved
-if 'sphinx' not in modules:
-    # Set up settings by instantiating a configuration object
-    conf = config.Config()
-    config.settings = conf.flat_dict()
-    config.config_filename = conf.config_filename
-    config.image_filename = conf.image_filename
-
 from .tiled import (
     colordict,
     delTiled,

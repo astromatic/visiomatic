@@ -63,11 +63,6 @@ def main() -> int:
     """
     Set up configuration and start the VisiOmatic server.
     """
-    # Set up settings by instantiating a configuration object
-    conf = config.Config()
-    config.settings = conf.flat_dict()
-    config.image_filename = conf.image_filename
-
     # Set maximum number of descriptors (only possible on Linux and BSD)
     if package.isonlinux:
         max_open_files = config.settings["max_open_files"]
