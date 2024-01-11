@@ -31,11 +31,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip pytest-cov
+          pip install --upgrade pip mypy pytest-cov
           pip install .[test]
 
       - name: Run tests and collect coverage
-        run: pytest --cov
+        run: |
+          mypy -p visiomatic
+          pytest --cov
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

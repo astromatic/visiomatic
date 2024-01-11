@@ -96,11 +96,11 @@ def main() -> int:
             supervisors.BaseReload,
             supervisors.Multiprocess
         ]:
-            Supervisor.original_startup = Supervisor.startup
-            Supervisor.startup = startup_with_browser
+            Supervisor.original_startup = Supervisor.startup #type: ignore
+            Supervisor.startup = startup_with_browser #type: ignore
 
-        server.Server.original_startup = server.Server.startup
-        server.Server.startup = async_startup_with_browser
+        server.Server.original_startup = server.Server.startup #type: ignore
+        server.Server.startup = async_startup_with_browser #type: ignore
    
     # Force number of workers to be 1 if not on Linux (because of missing libs)
     if not package.isonlinux \
