@@ -28,9 +28,9 @@ from . import config
 
 
 colordict = {
-    'grey': None,
+    'grey': cv2.COLORMAP_BONE, # equivalent to grayscale
     'jet': cv2.COLORMAP_JET,
-    'cold': cv2.COLORMAP_COOL,  # cold actually corresponds to COOL
+    'cold': cv2.COLORMAP_COOL, # cold actually corresponds to COOL
     'cool': cv2.COLORMAP_COOL,
     'hot': cv2.COLORMAP_HOT
 }
