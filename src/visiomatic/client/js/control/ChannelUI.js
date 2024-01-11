@@ -209,35 +209,163 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 	_initMonoDialog: function (layer, box) {
 		// Single Channels with colour map
 		const	_this = this,
+			visio = layer.visio,
 			channels = layer.visio.channelLabels,
 			className = this._className;
 
-		const	line = this._addDialogLine('Channel:', box),
-			elem = this._addDialogElement(line);
 
-		layer.updateMono();
+		if (visio.nChannel > 1) {
+			const	line = this._addDialogLine('Channel:', box),
+				elem = this._addDialogElement(line);
 
-		this._chanSelect = this._addSelectMenu(
-			this._className + '-select',
-			elem,
-			layer.visio.channelLabels,
-			undefined,
-			layer.visio.channel,
-			'Select image channel',
-			function () {
-				layer.visio.channel = parseInt(
-					this._chanSelect.selectedIndex - 1,
-					10
-				);
-				this._updateChannel(layer, layer.visio.channel);
-				layer.redraw();
-			}
-		);
+			layer.updateMono();
 
-		const	line2 = this._addDialogLine('LUT:', box),
-			elem2 = this._addDialogElement(line2);
+			this._chanSelect = this._addSelectMenu(
+				this._className + '-select',
+				elem,
+				visio.channelLabels,
+				undefined,
+				visio.channel,
+				'Select image channel',
+				function () {
+					visio.channel = parseInt(
+						this._chanSelect.selectedIndex - 1,
+						10
+					);
+					this._updateChannel(layer, visio.channel);
+					layer.redraw();
+				}
+			);
 
-		const	cmapinput = DomUtil.create('div', className + '-cmaps', elem2),
+
+			const line2 = this._addDialogLine('Animate:', box),
+				elem2 = this._addDialogElement(line2);
+			// Go to first frame
+			this._addButton(
+				className + '-button',
+				elem2,
+				'channel-first',
+				'Go to first frame/channel',
+				() => {
+					_this._gotoChannel(layer, 0);
+				}
+			);
+			// Play animation backward
+			const	playbackward = this._addButton(
+				className + '-button',
+				elem2,
+				'channel-reverse',
+				'Animate frames/channels in reverse',
+				() => {
+					if (visio.playAnimation && visio.reverseAnimation) {
+						DomUtil.removeClass(playbackward, 'playing');
+						_this._pauseAnimation(layer);
+					} else {
+						if (visio.playAnimation && !visio.reverseAnimation) {
+							DomUtil.removeClass(playforward, 'playing');
+						}
+						DomUtil.addClass(playbackward, 'playing');
+						_this._playAnimation(layer, reverse=true);
+					}
+				}
+			);
+			// Go to previous frame
+			this._addButton(
+				className + '-button',
+				elem2,
+				'channel-previous',
+				'Go to previous frame/channel',
+				() => {
+					if (visio.playAnimation) {
+						DomUtil.removeClass(
+							visio.reverseAnimation? playbackward : playforward,
+							'playing'
+						);
+						_this._pauseAnimation(layer);
+					}
+					const	chan = visio.channel - 1;
+					_this._gotoChannel(
+						layer,
+						chan < 0 ? visio.nChannel - 1 : chan
+					);
+				}
+			);
+			// Go to next frame
+			this._addButton(
+				className + '-button',
+				elem2,
+				'channel-next',
+				'Go to next frame/channel',
+				() => {
+					if (visio.playAnimation) {
+						DomUtil.removeClass(
+							visio.reverseAnimation? playbackward : playforward,
+							'playing'
+						);
+						_this._pauseAnimation(layer);
+					}
+					const	chan = visio.channel + 1;
+					_this._gotoChannel(
+						layer,
+						chan < visio.nChannel ? chan: 0
+					);
+				}
+			);
+			// Play animation forward
+			const	playforward = this._addButton(
+				className + '-button',
+				elem2,
+				'channel-play',
+				'Animate channels/frames',
+				() => {
+					if (visio.playAnimation && !visio.reverseAnimation) {
+						DomUtil.removeClass(playforward, 'playing');
+						_this._pauseAnimation(layer);
+					} else {
+						if (visio.playAnimation && visio.reverseAnimation) {
+							DomUtil.removeClass(playbackward, 'playing');
+						}
+						DomUtil.addClass(playforward, 'playing');
+						_this._playAnimation(layer);
+					}
+				}
+			);
+			// Go to last frame
+			this._addButton(
+				className + '-button',
+				elem2,
+				'channel-last',
+				'Go to last frame/channel',
+				() => {
+					_this._gotoChannel(layer, visio.nChannel - 1);
+				}
+			);
+
+			// Frame rate adjusment
+			this._addNumericalInput(
+				layer,
+				'framerate',
+				box,
+				'Framerate:',
+				'Adjust animation framerate',
+				visio.framerate,
+				0.2, 0.2, 30,
+				() => {
+					if (visio.playAnimation) {
+						this._playAnimation(
+							layer,
+							reverse=visio.reverseAnimation
+						);
+					};
+				},
+			);
+
+		}
+
+		const	line3 = this._addDialogLine('LUT:', box),
+			elem3 = this._addDialogElement(line3);
+
+		const	cmapinput = DomUtil.create('div', className + '-cmaps', elem3),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function (value) {
@@ -256,7 +384,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			);
 		}
 
-		this._addMinMax(layer, layer.visio.channel, box);
+		this._addMinMax(layer, visio.channel, box);
 		layer.redraw();
 	},
  
@@ -399,6 +527,71 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'Adjust upper clipping limit in ' + visio.channelUnits[channel],
 			visio.maxValue[channel], step
 		);
+	},
+
+	/**
+	   Play Animation by iterating over channels/slices.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {boolean) [reverse=false]
+	   Play in reverse?
+	 */
+	_playAnimation: function (layer, reverse=false) {
+		const visio = layer.visio;
+		if (visio.nChannel <= 1) {
+			return;
+		}
+		this._pauseAnimation(layer);
+		visio.reverseAnimation = reverse;
+		visio.playAnimation = true;
+		visio.intervalID = setInterval(
+			reverse ?
+				() => {
+					const	chan = visio.channel - 1;
+					visio.channel = chan < 0 ? visio.nChannel - 1 : chan;
+					this._updateChannel(layer, visio.channel);
+					layer.redraw();
+				} : () => {
+					const	chan = visio.channel + 1;
+					visio.channel = chan < visio.nChannel ? chan : 0;
+					this._updateChannel(layer, visio.channel);
+					layer.redraw();
+				},
+			visio.framerate > 0.? 1000. / visio.framerate : 1000. 
+		)
+	},
+
+	/**
+	   Pause Animation.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 */
+	_pauseAnimation: function (layer) {
+		const visio = layer.visio;
+		visio.playAnimation = false;
+		if (visio.intervalID) {
+			clearInterval(visio.intervalID);
+			visio.intervalID = 0;
+		}
+	},
+
+	/**
+	   Set current channel.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number} [channel=0]
+	   Image channel.
+	 */
+	_gotoChannel: function (layer, channel=0) {
+		const visio = layer.visio;
+		if (visio.nChannel <= 1) {
+			return;
+		}
+		this._updateChannel(layer, visio.channel=channel);
+		layer.redraw();
 	},
 
 	/**

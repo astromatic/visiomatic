@@ -84,6 +84,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   Default color mixing matrix.
 	 * @property {number} quality
 	   Default JPEG encoding quality.
+	 * @property {number} framerate
+	   Default animation framerate.
 	 */
 	visioDefault: {
 		brightness: 0.,
@@ -102,7 +104,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
 			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
 		],
-		quality: 90
+		quality: 90,
+		framerate: 1
 	},
 
 
@@ -200,6 +203,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	 * @param {number} [options.quality=0]
 	   Default active channel index in mono-channel mode.
+
+	 * @param {number} [options.framerate=1]
+	   Default animation framerate.
 
 	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
 	   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
@@ -308,7 +314,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			channelLabels: [],
 			channelFlags: [],
 			channelUnits: [],
-			quality: options.quality
+			quality: options.quality,
+			framerate: options.framerate
 		}
 		this._title = options.title ? options.title :
 		                this._url.match(/^.*\/(.*)\..*$/)[1];
@@ -410,6 +417,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			}
 			if (!visio.quality) {
 				visio.quality = visioDefault.quality;
+			}
+
+			// Default animation framerate
+			if (meta.framerate) {
+				visioDefault.framerate = meta.framerate;
+			}
+			if (!visio.framerate) {
+				visio.framerate = visioDefault.framerate;
 			}
 
 			// Images
@@ -990,7 +1005,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 
 		if (wasAnimated) {
-			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 5000);
+			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 100000);
 		}
 	}
 

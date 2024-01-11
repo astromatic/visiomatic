@@ -260,7 +260,7 @@ select.visiomatic-control-select {
 	background-color: var(--input-background-color);
 	color: var(--input-color);
 	vertical-align: top;
-	margin: 2px 0px 2px 4px;
+	margin: 2px 0px 2px 0px;
 	padding: -2px 0px 4px 0px;
 	border-width: 0px;
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
@@ -270,7 +270,7 @@ select.visiomatic-control-select {
 
 .visiomatic-control-element:last-child
 select.visiomatic-control-select {
-	border-radius: 0px 4px 4px 0px;
+	border-radius: 4px;
 }
 
 select.visiomatic-control-select:hover {
@@ -560,10 +560,10 @@ a#visiomatic-channel-toggle {
 }
 
 .sidebar.channel {
-	width: 296px;
+	width: 290px;
 }
 .sidebar-left.channel ~ .leaflet-left {
-	left: 310px;
+	left: 304px;
 }
 
 /*--------------------------------- Mixing mode -----------------------------*/
@@ -640,6 +640,80 @@ input.leaflet-cmap:checked {
 
 #leaflet-channel div.visiomatic-control-select {
 	display: flow-root;
+}
+
+#visiomatic-control-button-channel-first {
+	width: 28px;
+	border-radius: 4px 0px 0px 4px;
+}
+
+#visiomatic-control-button-channel-first >div {
+	mask-image: url(../images/icon-first.svg); -webkit-mask-image: url(../images/icon-first.svg);
+}
+
+#visiomatic-control-button-channel-reverse {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-reverse >div {
+	mask-image: url(../images/icon-reverse.svg); -webkit-mask-image: url(../images/icon-reverse.svg);
+}
+
+#visiomatic-control-button-channel-reverse.playing {
+	background-color: var(--button-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+#visiomatic-control-button-channel-reverse.playing >div {
+	mask-image: url(../images/icon-pause.svg); -webkit-mask-image: url(../images/icon-pause.svg);
+	background-color: var(--button-color-checked);
+}
+
+#visiomatic-control-button-channel-previous {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-previous >div {
+	mask-image: url(../images/icon-previous.svg); -webkit-mask-image: url(../images/icon-previous.svg);
+}
+
+#visiomatic-control-button-channel-next {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-next >div {
+	mask-image: url(../images/icon-next.svg); -webkit-mask-image: url(../images/icon-next.svg);
+}
+
+#visiomatic-control-button-channel-play {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-play >div {
+	mask-image: url(../images/icon-play.svg); -webkit-mask-image: url(../images/icon-play.svg);
+}
+
+#visiomatic-control-button-channel-play.playing {
+	background-color: var(--button-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+#visiomatic-control-button-channel-play.playing >div {
+	mask-image: url(../images/icon-pause.svg); -webkit-mask-image: url(../images/icon-pause.svg);
+	background-color: var(--button-color-checked);
+}
+
+#visiomatic-control-button-channel-last {
+	width: 28px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#visiomatic-control-button-channel-last >div {
+	mask-image: url(../images/icon-last.svg); -webkit-mask-image: url(../images/icon-last.svg);
 }
 
 /*-------------------------------- Channel list -----------------------------*/
