@@ -13,18 +13,24 @@ The main window
 
 The Figure below shows the main window of the VisiOmatic web interface in its default configuration.
 
-.. #figure:: figures/Main_Window.jpg
+.. figure:: figures/web_interface.png
    :alt: Snapshot of Main Window
    :align: center
 
    Snapshot of the Main VisiOmatic Window
 
-The main window contains a `"slippy map" <http://en.wikipedia.org/wiki/Tiled_web_map>`_ carrying the current image layer and optional vector overlays, plus a series of widgets. One navigates through the image and its overlays by "dragging" the map to the desired position. On computers this is done by clicking and holding the left button while moving the mouse, or by using the keyboard arrow keys. On touch devices one must press and move a finger throughout the screen.
+The main window contains a `"slippy map" <http://en.wikipedia.org/wiki/Tiled_web_map>`_ carrying the current image layer and optional vector overlays, plus a series of widgets.
+One navigates through the image and its overlays by "dragging" the map to the desired position.
+On computers this is done by clicking and holding the left button while moving the mouse, or by using the keyboard arrow keys.
+On touch devices one must press and move a finger throughout the screen.
 
-At the top left, two magnifier buttons can be used to zoom in (|magnifyplus|) or out (|magnifyminus|). One can also zoom using the mouse wheel or the -/+ keys on computers, or with a `pinch gesture <http://en.wikipedia.org/wiki/Pointing_device_gesture#Touchpad_and_touchscreen_gestures>`_ on touch devices.
-The user can switch to/from full screen mode by clicking the |fullscreen| button (third from the top). The |menu| button (last from the top) opens the :ref:`Advanced Settings Menu <chap_advanced>`.
+At the top left, two magnifier buttons can be used to zoom in (|magnifyplus|) or out (|magnifyminus|).
+One can also zoom using the mouse wheel or the -/+ keys on computers, or with a `pinch gesture <http://en.wikipedia.org/wiki/Pointing_device_gesture#Touchpad_and_touchscreen_gestures>`_ on touch devices.
+The user can switch to/from full screen mode by clicking the |fullscreen| button (third from the top).
+The |menu| button (last from the top) opens the :ref:`Advanced Settings Menu <chap_advanced>`.
 
-The coordinates of the *center* of the current field-of-view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the *Coordinate Pane*. In some configurations, a drop-down list allows one to switch between equatorial (RA,Dec) and other types of coordinates.
+The coordinates of the *center* of the current field-of-view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the *Coordinate Pane*.
+Depending on the configuration, a drop-down list allows one to switch between equatorial (RA,Dec) and other types of coordinates, including image pixel coordinates.
 
 Below the coordinates, a *Navigation Pane* may be offered, offering a larger view of the current image, as well as the current field of view, represented by a shaded orange box.
 
@@ -35,10 +41,11 @@ The Coordinates Pane
 
 The Coordinates Pane allows the user to:
 
-1. check the central coordinates of the current field of view
-2. pan to specific coordinates or to a given object.
+1. check the central coordinates and the current FITS extension (for mosaics of detectors) of the current field of view
+2. pan to the given coordinates or to a given object
+3. pan to a given detector for mosaic images stored as |MEF| files.
 
-To move to specific coordinates or objects, simply click in the coordinates pane, and enter the desired coordinates or object name. VisiOmatic uses `Simbad <http://simbad.u-strasbg.fr/simbad/sim-fid>`_ to parse the input coordinates and object names. According to the `Simbad Query-by-Coordinates webpage <http://simbad.u-strasbg.fr/simbad/sim-fcoo>`_, the following coordinates writings are allowed:
+To move to specific coordinates or objects, simply click in the coordinates pane, and enter the desired coordinates or object name. |VisiOmatic| uses `Simbad <http://simbad.u-strasbg.fr/simbad/sim-fid>`_ to parse the input coordinates and object names. According to the `Simbad Query-by-Coordinates webpage <http://simbad.u-strasbg.fr/simbad/sim-fcoo>`_, the following coordinates writings are allowed:
 
 * ``20 54 05.689 +37 01 17.38``
 * ``10:12:45.3-45:17:50``
@@ -50,13 +57,15 @@ To move to specific coordinates or objects, simply click in the coordinates pane
 * ``350.123456 -17.33333``
 
 while the dictionary of nomenclature for object identifiers can be found `here <http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad>`_.
- 
-.. #figure:: figures/GoTo.jpg
-   :alt: Navigation Pane
-   :align: center
 
-   Example of query by object identifier.
-	   
+The Pixel Value Pane 
+====================
+
+The Coordinates Pane allows the user to:
+
+1. check the central coordinates of the current field of view
+2. pan to specific coordinates or to a given object.
+
 
 The Navigation Pane 
 ===================

@@ -4,6 +4,9 @@
 .. |Python| replace:: `Python`
 .. _Python: https://python.org
 
+.. |MEF| replace:: :abbr:`MEF (Multi-Extension FITS)`
+.. _MEF: https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format
+
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
 .. |VisiOmatic| replace:: :program:`VisiOmatic`
