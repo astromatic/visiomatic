@@ -10,18 +10,37 @@ from visiomatic.server import config
 
 from visiomatic.server import tiled
 
-def test_Pixel():
-    assert tiled.Pixel(128, 129, (1.1, 2.2))
-    assert tiled.Pixel(x=128, y=129, values=(1.1, 2.2))
+def test_PixelValueModel():
+    assert tiled.PixelValueModel(values=[1.1, 2.2])
+    assert tiled.PixelValueModel(values=[-0.1, None])
     with pytest.raises(Exception):
-        assert tiled.Pixel(x=128, values=(1.1, 2.2))
+        assert tiled.PixelValueModel(values=1.1)
+
+
+def test_PixelModel():
+    assert tiled.PixelModel(x=128, y=129, values=[1.1, 2.2])
+    assert tiled.PixelModel(x=128, y=129, values=[-0.1, None])
+    with pytest.raises(Exception):
+        assert tiled.PixelModel(x=128, values=[1.1, 2.2])
 
 
 def test_ProfileModel():
-    assert tiled.ProfileModel(profile=((128, 129, (1.1, 2.2)),))
-    assert tiled.ProfileModel(profile=tuple((tiled.Pixel(128, 129, (1.1, 2.2)),)))
+    assert tiled.ProfileModel(
+        profile=[
+            tiled.PixelModel(x=128, y=129, values=[1.1, 2.2])
+        ]
+    )
+    assert tiled.ProfileModel(
+        profile=[
+            tiled.PixelModel(x=128, y=129, values=[-0.1, None])
+        ]
+    )
     with pytest.raises(Exception):
-        tiled.ProfileModel(profile=((128, 129, (1.1, 2.2))))
+        tiled.ProfileModel(
+            profile=[
+                tiled.PixelModel(y=129, values=[1.1, 2.2])
+            ]
+        )
 
 
 def test_get_data_filename():

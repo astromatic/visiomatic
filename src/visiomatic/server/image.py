@@ -1,7 +1,7 @@
 """
 Image reading and processing module
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 import re
@@ -34,6 +34,8 @@ class ImageModel(BaseModel):
     size: List[int]
     dataslice: List[List[int]]
     detslice: List[List[int]]
+    background_level: List[float]
+    background_mad: List[float]
     min_max: List[List[float]]
     header: dict
 
@@ -76,8 +78,11 @@ class Image(object):
         self.detsec = detsec \
             if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
             else self.datasec
-        self.minmax = self.compute_minmax() if minmax == None \
-            else np.array(minmax, dtype=np.float32)
+        self.background_level, self.background_mad = self.compute_background()
+        self.minmax = self.compute_minmax(
+            self.background_level,
+            self.background_mad
+        ) if minmax == None else np.array(minmax, dtype=np.float32)
 
 
     def get_model(self) -> ImageModel:
@@ -93,6 +98,8 @@ class Image(object):
             size=self.shape[::-1],
             dataslice=self.datasliceinfo,
             detslice=self.detsliceinfo,
+            background_level=self.background_level.tolist(),
+            background_mad=self.background_mad.tolist(),
             min_max=[list(minmax) for minmax in self.minmax],
             header=dict(self.header.items())
         )
@@ -186,14 +193,22 @@ class Image(object):
         ]
 
 
-    def compute_background(self, skip : int = 15) -> None:
+    def compute_background(self, skip : int = 15) -> tuple[np.ndarray, np.ndarray]:
         """
-        Compute background level and median absolute deviation.
+        Return background level and median absolute deviation
+        of every image channel.
 
         Parameters
         ----------
         skip:  int, optional
             Number of lines skipped after each line analyzed.
+
+        Returns
+        -------
+        background_level: ~numpy.ndarray
+            Background level for every channel.
+        background_mad: ~numpy.ndarray
+            Background median absolute deviation for every channel.
         """
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
@@ -209,18 +224,26 @@ class Image(object):
         # Handle cases where the MAD is tiny because of many identical values
         cond = 1e5 * mad < std
         mad[cond] = 0.1 * std[cond]
-        self.background_level = np.nanmean(3.5*med - 2.5*x, axis=1)
-        self.background_mad = mad
+        return np.nanmean(3.5*med - 2.5*x, axis=1), mad
 
 
-    def compute_minmax(self, nmadmin: float = -2.0, nmadmax: float = 400.0) -> np.ndarray:
+    def compute_minmax(
+            self,
+            background_level: np.ndarray,
+            background_mad: np.ndarray,
+            nmadmin: float = -2.0,
+            nmadmax: float = 400.0) -> np.ndarray:
         """
-        Compute "appropriate" intensity cuts for displaying the image.
+        Return matrix of "appropriate" intensity cuts for displaying the image.
         
         Parameters
         ----------
+        background_level: ~numpy.ndarray
+            Background level for every channel.
+        background_mad: ~numpy.ndarray
+            Background median absolute deviation for every channel.
         grey: float, optional
-            Target grey level (0.0 = black, 1.0 = 50% grey).
+            Lower intensity cut above background in units of Maximum Absolute Deviations.
         nmad: float, optional
             Upper intensity cut above background in units of Maximum Absolute Deviations.
 

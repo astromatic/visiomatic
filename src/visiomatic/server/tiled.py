@@ -7,6 +7,7 @@ Image tiling module
 import glob, math, pickle
 
 from methodtools import lru_cache #type: ignore
+from math import isnan
 from os import path, unlink
 from sys import modules
 from typing import List, NamedTuple, Tuple, Union
@@ -37,7 +38,20 @@ colordict = {
 
 
 
-class Pixel(NamedTuple):
+class PixelValueModel(BaseModel):
+    """
+    Pydantic model class for VisiOmatic pixel values.
+
+    Parameters
+    ----------
+    values: list[Union[float, None]]
+        Pixel values.
+    """
+    values: list[Union[float, None]]
+
+
+
+class PixelModel(BaseModel):
     """
     Pydantic model class for pixels.
 
@@ -47,12 +61,12 @@ class Pixel(NamedTuple):
         x coordinate of the pixel.
     y: int
         y coordinate of the pixel.
-    value: tuple[float]
+    values: list[Union[float, None]]
         Pixel values.
     """
     x: int
     y: int
-    values: Tuple[float, ...]
+    values: list[Union[float, None]]
 
 
 
@@ -62,10 +76,10 @@ class ProfileModel(BaseModel):
 
     Parameters
     ----------
-    profile: tuple[Pixel, ...]
-        Tuple of pixel models.
+    profile: list[PixelModel]
+        List of pixel models.
     """
-    profile: Tuple[Pixel, ...]
+    profile: list[PixelModel]
 
 
 
@@ -670,25 +684,41 @@ class Tiled(object):
         return self.get_tile(*args, **kwargs)
 
 
-    def get_pixel_values(self, pos: Tuple[int, int]) -> np.ndarray:
+    def get_pixel_values(
+            self,
+            channels: Tuple[int],
+            pos: Tuple[int, int]) -> PixelValueModel:
         """
         Get pixel values at the given pixel coordinates in merged frame.
         
         Parameters
         ----------
+        channels: tuple[int]
+            Tuple of data channels (first channel is 1).
         pos:  tuple[int, int]
-            pixel coordinates.
+            Pixel coordinates.
 
         Returns
         -------
-        values: numpy.ndarray
-            Pixel value(s) at the given position, or NaN(s) outside of the
+        value: numpy.ndarray
+            Pixel value at the given position, or NaN outside of the
             frame boundaries.
         """
         shape = self.shape
-        return self.get_data()[:, pos[1], pos[0]] \
-        	if 0 < pos[0] < shape[2] and 0 < pos[1] < shape[1] \
-        	else np.full(shape[0], 0., dtype=np.float32)
+        chans = np.array(channels, dtype=np.int32) - 1
+        nchans = chans.size
+        chanexists = (chans >= 0) & (chans < self.nchannels)
+        vals = np.full(nchans, np.nan, dtype=np.float32)
+        xpos = pos[0] - 1
+        ypos = pos[1] - 1
+        if (0 < xpos < shape[2]) and (0 < ypos < shape[1]):
+            vals[chanexists] = self.get_data()[
+                chans[chanexists],
+                ypos,
+                xpos
+            ]
+        values = [None if np.isnan(v) else v.item() for v in vals]
+        return PixelValueModel(values=values)
 
 
     def get_profiles(
@@ -703,7 +733,7 @@ class Tiled(object):
         Parameters
         ----------
         channels: tuple[int, ...] or None
-            List of channels or None for all channels.
+            Tuple of data channels (first channel is 1) or None for all channels.
         pos1:  tuple[int, int]
             Start pixel coordinates.
         pos2:  tuple[int, int]
@@ -726,7 +756,7 @@ class Tiled(object):
         	x[valid]
         ].transpose()
         return ProfileModel(
-            profile=tuple(zip(x, y, tuple(map(tuple, values)))) #type: ignore
+            profile=list(*zip(x, y, tuple(map(tuple,values))))
         )
 
 

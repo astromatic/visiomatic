@@ -611,6 +611,13 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				visio.minValue[channel],
 				visio.maxValue[channel]);
 		_this._chanSelect.selectedIndex = channel + 1;
+
+		/**
+		 * Fired when the image channel is being updated.
+		 * @event channelupdate
+		 * @memberof VTileLayer
+		 */
+		layer.fire('channelupdate');
 		if (updateColor) {
 			this._updateColPick(layer, channel);
 		}

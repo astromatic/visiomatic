@@ -194,7 +194,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   default.
 
 	 * @param {string[]} [options.channelUnits=[]]
-	   Channel units. Defaults to ``['ADUs','ADUs',...]``.
+	   Channel units. Defaults to ``['ADU','ADU',...]``.
 
 	 * @param {number[][]} [options.minMaxValues=[]]
 	   Pairs of lower, higher clipping limits for every channel. Defaults to values
@@ -275,6 +275,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current color map.
     	 * @property {boolean} invertCMap
 		   Current colormap inversion switch status.
+    	 * @property {number[]} backgroundLevel
+    	   Background level for every channel.
+    	 * @property {number[]} backgroundMAD
+    	   Background MAD for every channel.
     	 * @property {number[]} minValue
     	   Current lower clipping limit for every channel.
     	 * @property {number[]} maxValue
@@ -307,6 +311,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			gamma: options.gamma,
 			cMap: options.cMap,
 			invertCMap: options.invertCMap,
+			backgroundLevel: [0.],
+			backgroundMAD: [1.],
 			minValue: [0.],
 			maxValue: [255.],
 			mix: [[]],
@@ -430,6 +436,12 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Images
 			images = meta.images;
 			
+			// Background level and MAD values
+			for (let c = 0; c < nchannel; c++) {
+				visio.backgroundLevel[c] = images[0].background_level[c];
+				visio.backgroundMAD[c] = images[0].background_mad[c];
+			}
+
 			// Min and max pixel values
 			for (let c = 0; c < nchannel; c++) {
 				visioDefault.minValue[c] = images[0].min_max[c][0];
@@ -480,13 +492,19 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				}
 			}
 
+			// Channel Units
+			const imageUnit = (meta.header && (unit=meta.header['BUNIT'])) ?
+				unit : 'ADU';
+
 			// Copy those units that have been provided
 			for (const c in inunits) {
 				units[c] = inunits[c];
 			}
 			// Fill out units that are not provided with a default string
-			for (let c = ninunits; c < nchannel; c++) {
-				units[c] = 'ADUs';
+			for (let c = 0; c < nchannel; c++) {
+				if (!units[c]) {
+					units[c] = imageUnit;
+				}
 			}
 
 			// Initialize mixing matrix depending on arguments and the number of channels

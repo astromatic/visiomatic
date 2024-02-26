@@ -1199,6 +1199,54 @@ iframe.visiomatic-control-doc {
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.PixelValues %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+.leaflet-control-values-dialog {
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	border-radius: 4px;
+	font-size: 1.2em;
+	height: 32px;
+}
+
+.leaflet-control-values-select,.leaflet-control-values-input {
+	height: inherit;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	vertical-align: top;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 100%;
+	padding: 0px 0px 0px 8px;
+	border-width: 0px;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.leaflet-control-values-select {
+	text-align: center;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-values-input {
+	padding: 2px 6px 2px 6px;
+	border-radius: 0px 4px 4px 0px;
+	box-sizing : border-box;
+	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
+}
+
+.leaflet-control-values-ext:hover,.leaflet-control-values-select:hover,.leaflet-control-values-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
+}
+
+.leaflet-control-values-ext:focus,.leaflet-control-values-select:focus,.leaflet-control-values-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Scale.WCS %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 

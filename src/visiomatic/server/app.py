@@ -235,35 +235,35 @@ def create_app() -> FastAPI:
                 None,
                 title="Tile coordinates",
                 min_length=3,
-                max_length=11,
+                max_length=14,
                 regex=reg_jtl
                 ),
             MINMAX: list[str] = Query(
                 None,
                 title="Modified minimum and Maximum intensity ranges",
                 min_length=5,
-                max_length=48,
+                max_length=38,
                 regex=reg_minmax
                 ),
 			MIX: list[str] = Query(
 			    None,
 			    title="Slice of the mixing matrix", 
                 min_length=7,
-                max_length=2000,
+                max_length=54,
                 regex=reg_mix
                 ),
 			PFL: str = Query(
 			    None,
 			    title="Get image profile(s)", 
                 min_length=7,
-                max_length=2000,
+                max_length=39,
                 regex=reg_pfl
                 ),
             VAL: str = Query(
                 None,
                 title="Pixel value(s)",
                 min_length=3,
-                max_length=11,
+                max_length=32,
                 regex=reg_val
                 )
             ):
@@ -325,9 +325,9 @@ def create_app() -> FastAPI:
         elif PFL != None:
             val = parse_pfl.findall(PFL)[0]
             resp = tiled.get_profiles(
-            			CHAN,
-                        [int(val[0]), int(val[1])],
-                        [int(val[2]), int(val[3])]
+                CHAN,
+                [int(val[0]), int(val[1])],
+                [int(val[2]), int(val[3])]
             )
             if lock:
                 lock.release_read()
@@ -335,7 +335,10 @@ def create_app() -> FastAPI:
             return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
             val = parse_val.findall(VAL)[0]
-            resp = tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
+            resp = tiled.get_pixel_values(
+                CHAN,
+                (int(val[0]), int(val[1]))
+            )
             if lock:
                 lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
