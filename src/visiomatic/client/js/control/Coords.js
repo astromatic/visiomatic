@@ -351,7 +351,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				const	str = httpRequest.responseText,
-					latlng = _self._map.options.crs.parseCoords(str);
+					latlng = self._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					self._map.panTo(latlng);

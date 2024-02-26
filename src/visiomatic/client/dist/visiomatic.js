@@ -14342,7 +14342,7 @@
     _getCoordinates: function(self2, httpRequest) {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-          const str2 = httpRequest.responseText, latlng = _self._map.options.crs.parseCoords(str2);
+          const str2 = httpRequest.responseText, latlng = self2._map.options.crs.parseCoords(str2);
           if (latlng) {
             self2._map.panTo(latlng);
             self2._onDrag();
