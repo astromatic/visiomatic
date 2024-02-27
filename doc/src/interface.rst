@@ -114,7 +114,7 @@ The Advanced Settings menu button gives access to a taskbar with six tabs (in th
 Channel Mixing |equalizer2|
 ---------------------------
 
-The Channel Mixing panel has two modes, which can be selected using the radio buttons located at the top of the dialog: the Single Channel (monochromatic) mode, and the Multi-Channel (color composite) mixing mode.
+The Channel Mixing panel has two modes, which can be selected using the radio buttons located at the top of the dialog: the Single Channel (monochromatic) mode, and the Color Mixing (composite) mode.
 
 In Single Channel mode, one can:
 
@@ -129,12 +129,14 @@ In Multi-Channel mode, one can:
 * Set the color this channel contributes to the mix
 * Set the minimum and maximum channel levels
 * Click on a channel name in the active channel list to edit a channel contributing to the current mix, or click on the trashcan button to remove it.
-  
-.. #figure:: figures/Advanced_Menu_Channel_Mixing.jpg
+
+Colors are linearly interpolated between the selected channels.
+
+.. figure:: figures/channel_mixing.png
    :alt: Advanced Menu Channel Mixing
    :align: center
 
-   Snapshot of the Channel Mixing panel.
+   Snapshots of the Channel Mixing panel in Single Channel mode (left) and Color Mixing mode (right).
 	   
 Image Preferences |contrast|
 ----------------------------
