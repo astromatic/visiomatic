@@ -114,9 +114,6 @@ latex_elements = {
     #
     # 'preamble': '',
 'preamble': r'''
-\usepackage{amssymb}
-\usepackage[OT2,T1]{fontenc}
-
 \newcommand{\DUrolecredits}{\footnotesize\color{lightgray}\newline}
 
 \def\trans#1{{#1}^\intercal}

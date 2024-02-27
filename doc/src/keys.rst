@@ -1,3 +1,6 @@
+.. |ADU| replace:: :abbr:`ADU (Analog-to-Digital Unit)`
+.. _ADU: https://en.wikipedia.org/wiki/Analog-to-digital_converter
+
 .. |API| replace:: :abbr:`API (Application Programming Interface)`
 .. _API: https://en.wikipedia.org/wiki/Application_programming_interface
 
@@ -40,6 +43,8 @@
 .. |GAIA_DR1| replace:: ``'GAIA_DR1'``
 .. _GAIA_DR1: http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/337
 
+.. |camera| image:: figures/icon-camera.*
+  :width: 14pt
 .. |contrast| image:: figures/icon-contrast.*
   :width: 14pt
 .. |equalizer2| image:: figures/icon-equalizer2.*

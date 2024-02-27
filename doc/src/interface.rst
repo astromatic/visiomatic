@@ -29,10 +29,10 @@ One can also zoom using the mouse wheel or the -/+ keys on computers, or with a 
 The user can switch to/from full screen mode by clicking the |fullscreen| button (third from the top).
 The |menu| button (last from the top) opens the :ref:`Advanced Settings Menu <chap_advanced>`.
 
-The coordinates of the *center* of the current field-of-view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the *Coordinate Pane*.
-Depending on the configuration, a drop-down list allows one to switch between equatorial (RA,Dec) and other types of coordinates, including image pixel coordinates.
+The coordinates of the *center* of the current field of view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the *Coordinate Pane*.
+Depending on the configuration, a drop-down list allows the user to switch between equatorial (RA,Dec) and other types of coordinates, including image pixel coordinates.
 
-Below the coordinates, a *Navigation Pane* may be offered, offering a larger view of the current image, as well as the current field of view, represented by a shaded orange box.
+Below the coordinate and pixel value displays, a *Navigation Pane* may be offered, offering a larger view of the current image, as well as the current field of view, represented by a shaded orange box.
 
 The scale, as measured at the center of the main window, is displayed in the lower left corner.
 
@@ -41,11 +41,13 @@ The Coordinates Pane
 
 The Coordinates Pane allows the user to:
 
-1. check the central coordinates and the current FITS extension (for mosaics of detectors) of the current field of view
+1. check the central coordinates and the current FITS extension (for mosaics of detectors) of the current field of view.
 2. pan to the given coordinates or to a given object
 3. pan to a given detector for mosaic images stored as |MEF| files.
 
-To move to specific coordinates or objects, simply click in the coordinates pane, and enter the desired coordinates or object name. |VisiOmatic| uses `Simbad <http://simbad.u-strasbg.fr/simbad/sim-fid>`_ to parse the input coordinates and object names. According to the `Simbad Query-by-Coordinates webpage <http://simbad.u-strasbg.fr/simbad/sim-fcoo>`_, the following coordinates writings are allowed:
+To move to specific coordinates or objects, simply click in the coordinates pane, and enter the desired coordinates or object name.
+|VisiOmatic| uses `Simbad <http://simbad.u-strasbg.fr/simbad/sim-fid>`_ to parse the input coordinates and object names.
+According to the `Simbad Query-by-Coordinates webpage <http://simbad.u-strasbg.fr/simbad/sim-fcoo>`_, the following coordinates writings are allowed:
 
 * ``20 54 05.689 +37 01 17.38``
 * ``10:12:45.3-45:17:50``
@@ -56,15 +58,22 @@ To move to specific coordinates or objects, simply click in the coordinates pane
 * ``350.123456d-17.33333d``
 * ``350.123456 -17.33333``
 
-while the dictionary of nomenclature for object identifiers can be found `here <http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad>`_.
+while the dictionary of nomenclature for object identifiers can be found `at CDS <http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad>`_.
+
 
 The Pixel Value Pane 
 ====================
 
-The Coordinates Pane allows the user to:
+The Pixel Value Pane displays the value of the pixel at the center of the field of view in the current image channel.
+The unit is defined by the content of the ``BUNIT`` FITS image keyword; if not found, |VisiOmatic| uses |ADU|_ (counts) by default.
+A drop-down list at the left of the widget allows the user to select various value display options:
 
-1. check the central coordinates of the current field of view
-2. pan to specific coordinates or to a given object.
+* ``Raw``: raw value.
+* ``-Bkg``: background-subtracted value
+* ``SB``: surface brightness in instrumental mag.arcsec\ :math:`^{-2}`
+* ``SB-Bkg``: background-subtracted surface brightness in instrumental mag.arcsec\ :math:`^{-2}`.
+
+Note that the value of the background is assumed to be constant over the whole image, which may lead locally to significant inaccuracies.
 
 
 The Navigation Pane 
@@ -73,7 +82,7 @@ The Navigation Pane
 The Navigation Pane allows the user to quickly move over the image. Just drag the shaded orange rectangle representing the current field of view to the desired location.
 The Navigation Pane can be minimized by clicking on the pair of arrows that appear on the top right when hovering the area.
 
-.. #figure:: figures/Navigation_Pane.jpg
+.. figure:: figures/navigation.png
    :alt: Navigation Pane
    :align: center
 
@@ -84,18 +93,19 @@ The Navigation Pane can be minimized by clicking on the pair of arrows that appe
 Advanced Settings
 =================
 
-The Advanced Settings button gives access to a taskbar with five tabs, from top to bottom and as illustrated in :numref:`figmix`:
+The Advanced Settings menu button gives access to a taskbar with six tabs (in the default configuration), from top to bottom and as illustrated in :numref:`advanced_menu`:
 
-* |equalizer2| Channel Mixing, which allows the user to choose which image channels to use for display or color compositing
-* |contrast| Image Preferences, which gives the user control over the contrast, color saturation, gamma correction and JPEG compression level. There is also a switch for inverting the color map.
+* |equalizer2| Channel Mixing, which allows the user to choose which image channels to use for display, color compositing, or animation.
+* |contrast| Image Preferences, which gives the user control over the image brightness, contrast, color saturation, gamma correction and JPEG compression level. There is also a switch for inverting the color map.
 * |make-group| Catalog Overlays for superimposing multiple catalogs in vector form, e.g., the 2MASS Point Source Catalog :cite:`2003yCat.2246....0C` or the SDSS Photometric Catalog :cite:`2009ApJS..182..543A`.
 * |location| Region Overlays, for overlaying Points Of Interest (such as local catalogs) or any local vector data sets in `GeoJSON <http://geojson.org/>`_ format.
 * |plot| Profile Overlays, for plotting image profiles and (pseudo-)spectral energy distributions from the full precision pixel values stored on the server.
+* |camera| Snapshots, for capturing snapshots of the current display or of the whole image.
 * |info| Documentation, which opens a panel where any web page can be embedded, e.g., an online-manual.
 
-.. _figmix:
+.. _advanced_menu:
 
-.. #figure:: figures/Advanced_Menu_1.jpg
+.. figure:: figures/advanced_menu.png
    :alt: Advanced Menu main view
    :align: center
 
@@ -109,8 +119,9 @@ The Channel Mixing panel has two modes, which can be selected using the radio bu
 In Single Channel mode, one can:
 
 * Select an image channel for display
-* Select a color map among a selection of four
+* Select a color map for the current channel among a selection of four
 * Set the minimum and maximum channel levels
+* Play forward or backward an animation of the channel sequence at a given framerate
 
 In Multi-Channel mode, one can:
 
