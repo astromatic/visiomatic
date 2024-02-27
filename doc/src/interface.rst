@@ -109,7 +109,7 @@ The Advanced Settings menu button gives access to a taskbar with six tabs (in th
    :alt: Advanced Menu main view
    :align: center
 
-   Snapshot of the Advanced Menu.
+   Snapshot of the Advanced Menu (emphasized at the left).
 
 Channel Mixing |equalizer2|
 ---------------------------
