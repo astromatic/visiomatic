@@ -229,11 +229,11 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 					).openPopup();
 					VUtil.requestURL(
 						this._layer._url.replace(/\&.*$/g, '') +
-							'&PFL=' + zoom.toString() + ':' +
-							(point.x - 0.5).toFixed(0) + ',' +
-							(point.y - 0.5).toFixed(0) + '-' +
-							(point.x - 0.5).toFixed(0) + ',' +
-							(point.y - 0.5).toFixed(0),
+							'&PFL=' +
+							point.x.toFixed(0) + ',' +
+							point.y.toFixed(0) + ':' +
+							point.x.toFixed(0) + ',' +
+							point.y.toFixed(0),
 						'getting layer spectrum',
 						this._plotSpectrum,
 						this
@@ -392,12 +392,12 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 				{
 					type: 'line',
 					data: {
-						labels: rawprof.map((point) => [point[0], point[1]]),
+						labels: rawprof.map((point) => [point['x'], point['y']]),
 						datasets: monoflag ?
 							// Mono channel mode: plot a single line
 							[{
 								label: 'profile',
-								data: rawprof.map((point) => point[2][0]),
+								data: rawprof.map((point) => point['values'][0]),
 							}] :
 							// Color mode: plot one line per non-blank channel
 							visio.rgb.map(
@@ -408,7 +408,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 							).filter(Boolean).map(
 								(dataset, i) => ({
 									...dataset,
-									...{data: rawprof.map(point => point[2][i])}
+									...{data: rawprof.map(point => point['values'][i])}
 								})
 							)
 					},
@@ -601,9 +601,8 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		if (npix === 0) {
 			return 0.0;
 		}
-
 		for (let i = 0; i < npix; i++) {
-			val += rawprof[i * nchan + channel];
+			val += rawprof[i]['values'][channel];
 		}
 
 		return val / npix;

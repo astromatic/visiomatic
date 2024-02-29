@@ -30334,7 +30334,7 @@
               }
             ).openPopup();
             VUtil.requestURL(
-              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + zoom2.toString() + ":" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0) + "-" + (point8.x - 0.5).toFixed(0) + "," + (point8.y - 0.5).toFixed(0),
+              this._layer._url.replace(/\&.*$/g, "") + "&PFL=" + point8.x.toFixed(0) + "," + point8.y.toFixed(0) + ":" + point8.x.toFixed(0) + "," + point8.y.toFixed(0),
               "getting layer spectrum",
               this._plotSpectrum,
               this
@@ -30424,10 +30424,10 @@
         {
           type: "line",
           data: {
-            labels: rawprof.map((point8) => [point8[0], point8[1]]),
+            labels: rawprof.map((point8) => [point8["x"], point8["y"]]),
             datasets: monoflag ? [{
               label: "profile",
-              data: rawprof.map((point8) => point8[2][0])
+              data: rawprof.map((point8) => point8["values"][0])
             }] : visio.rgb.map(
               (rgb2, c2) => ({
                 label: visio.channelLabels[c2],
@@ -30436,7 +30436,7 @@
             ).filter(Boolean).map(
               (dataset, i2) => ({
                 ...dataset,
-                ...{ data: rawprof.map((point8) => point8[2][i2]) }
+                ...{ data: rawprof.map((point8) => point8["values"][i2]) }
               })
             )
           },
@@ -30527,7 +30527,7 @@
         return 0;
       }
       for (let i2 = 0; i2 < npix; i2++) {
-        val += rawprof[i2 * nchan + channel];
+        val += rawprof[i2]["values"][channel];
       }
       return val / npix;
     }
