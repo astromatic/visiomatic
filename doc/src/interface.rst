@@ -85,6 +85,8 @@ The Navigation Pane can be minimized by clicking on the pair of arrows that appe
 .. figure:: figures/navigation.png
    :alt: Navigation Pane
    :align: center
+   :figwidth: 75%
+   :width: 50%
 
    Snapshot of the Navigation Pane.
 
@@ -93,7 +95,7 @@ The Navigation Pane can be minimized by clicking on the pair of arrows that appe
 Advanced Settings
 =================
 
-The Advanced Settings menu button gives access to a taskbar with six tabs (in the default configuration), from top to bottom and as illustrated in :numref:`advanced_menu`:
+The Advanced Settings menu button gives access to a taskbar with seven tabs (in the default configuration), from top to bottom and as illustrated in :numref:`advanced_menu`:
 
 * |equalizer2| Channel Mixing, which allows the user to choose which image channels to use for display, color compositing, or animation.
 * |contrast| Image Preferences, which gives the user control over the image brightness, contrast, color saturation, gamma correction and JPEG compression level. There is also a switch for inverting the color map.
@@ -101,6 +103,7 @@ The Advanced Settings menu button gives access to a taskbar with six tabs (in th
 * |location| Region Overlays, for overlaying Points Of Interest (such as local catalogs) or any local vector data sets in `GeoJSON <http://geojson.org/>`_ format.
 * |plot| Profile Overlays, for plotting image profiles and (pseudo-)spectral energy distributions from the full precision pixel values stored on the server.
 * |camera| Snapshots, for capturing snapshots of the current display or of the whole image.
+* |cog| Preferences, for setting global |VisiOmatic| parameters.
 * |info| Documentation, which opens a panel where any web page can be embedded, e.g., an online-manual.
 
 .. _advanced_menu:
@@ -110,6 +113,10 @@ The Advanced Settings menu button gives access to a taskbar with six tabs (in th
    :align: center
 
    Snapshot of the Advanced Menu (emphasized at the left).
+
+All dialogs use similar widgets.
+The values in numerical widgets may be entered directly or decreased/increased using the -/+ buttons.
+Note that the image is only updated when the buttons are released so that data exchanges between the server and the client remain within reasonable values.
 
 Channel Mixing |equalizer2|
 ---------------------------
@@ -144,17 +151,20 @@ Image Preferences |contrast|
 The Image Preference dialog gives access to global image display settings:
 
 * Color map inversion (negative mode)
+* Brightness (additive factor)
 * Contrast (scaling factor)
-* Color saturation (0 for black&white, >1 for exaggerating colors)
-* Gamma correction (2.2 for linear output on a properly calibrated monitor, higher values for brightening dark regions, lower values for darkening)
+* Color saturation: 0 for gray levels, >1 for exaggerating colors
+* Gamma correction: 2.2 for linear output on a properly calibrated monitor, higher values for compressing the dynamic range, lower values for expanding it
 * JPEG quality percentage. The lower the quality percentage, the more
   compressed the image and the more artifacts in the rendering.
 
-.. #figure:: figures/Advanced_Menu_Image.jpg
+.. figure:: figures/image_prefs.png
    :alt: Image Preferences
    :align: center
+   :figwidth: 75%
+   :width: 50%
 
-   Snapshot of the Image Properties panel.
+   Snapshot of the Image Preferences panel.
 
 .. note:: Users with a low bandwidth can improve the reactivity of the display by setting a lower JPEG quality percentage. 
   
@@ -181,18 +191,25 @@ The Image Preference dialog gives access to global image display settings:
 Catalog Overlays |make-group|
 -----------------------------
 
-The Catalog Overlay dialog allows the user to download and overlay catalogs in the current field of view. The available list of catalogs and the rendering of catalog sources (marker, cross, circle with magnitude-dependent radius, ellipse, etc.) depends on client settings. In the current default interface all catalogs are queried from the |VizieR|_ service at |CDS|_ :cite:`2000A&AS..143...23O`.
+The Catalog Overlay dialog allows the user to download and overlay catalogs in the current field of view.
+The available list of catalogs and the rendering of catalog sources (marker, cross, circle with magnitude-dependent radius, ellipse, etc.) depends on client settings.
+In the current default interface all catalogs are queried from the |VizieR|_ service at |CDS|_ :cite:`2000A&AS..143...23O`.
 
-To query a catalog, move the map and adjust the zoom level to the desired field of view; choose the catalog from the drop-down catalog selector and an overlay color from the color selector, then click the "GO" button. After a few seconds a new overlay with the chosen color should appear, as well as a new entry in the active catalog list below the drop down selector. Each overlay may be turned off or on by clicking on the check-mark in the corresponding entry of the active catalog list, or simply discarded by clicking on the trashcan button.
+To query a catalog, move the map and adjust the zoom level to the desired field of view; choose the catalog from the drop-down catalog selector and an overlay color from the color selector, then click the "GO" button.
+After a few seconds a new overlay with the chosen color should appear, as well as a new entry in the active catalog list below the drop down selector.
+Each overlay may be turned off or on by clicking on the check-mark in the corresponding entry of the active catalog list, or simply discarded by clicking on the trashcan button.
 
-Depending on the implementation in the client, sources may be clickable and have pop-up information windows attached.
-
-.. #figure:: figures/Advanced_Menu_Catalogues.jpg
+.. figure:: figures/catalog_overlays.png
    :alt: Catalog Overlays
    :align: center
 
-   Snapshot of the Catalog Overlay menu.
-	   
+   Snapshot of the Catalog Overlay panel.
+
+Depending on the implementation in the client, sources may be clickable and have pop-up information windows attached.
+When several catalogs are displayed on screen, it may happen that symbols for a single source overlap, making it difficult to bring up the measurement for the chosen catalog.
+This problem can be solved by clicking on the chosen entry in the list of active catalogs, which will bring the symbols of the corresponding catalog to the front.
+
+
 Region Overlays |location|
 --------------------------
 

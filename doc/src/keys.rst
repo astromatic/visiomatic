@@ -45,6 +45,8 @@
 
 .. |camera| image:: figures/icon-camera.*
   :width: 14pt
+.. |cog| image:: figures/icon-cog.*
+  :width: 14pt
 .. |contrast| image:: figures/icon-contrast.*
   :width: 14pt
 .. |equalizer2| image:: figures/icon-equalizer2.*
