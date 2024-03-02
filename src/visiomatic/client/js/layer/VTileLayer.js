@@ -636,13 +636,15 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   @desc
 	   RGB colors and saturation settings define mixing matrix elements in
 	   ``'color'`` mode
+	 * @param {VTileLayer} layer - VisiOmatic layer ("this" is used if not provided)
 	 */
-	updateMix: function () {
-		const	visio = this.visio;
+	updateMix: function (layer) {
+		const	_this = layer ? layer : this,
+			visio = _this.visio;
 
 		visio.mode = 'color';
 		for (const c in visio.rgb) {
-			this.rgbToMix(c);
+			_this.rgbToMix(c);
 		}
 	},
 
