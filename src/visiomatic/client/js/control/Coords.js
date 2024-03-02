@@ -1,6 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
- * @file Responsive sidebar.
+ * @file Coordinate display/control interface
  * @requires util/VUtil.js
 
  * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
@@ -20,7 +20,7 @@ import {VUtil} from '../util'
 
 export const Coords = Control.extend( /** @lends Coords */ {
 	options: {
-		title: 'Center coordinates. Click to change',
+		title: 'Center coordinates. Click to edit',
 		position: 'topright',
 		/**
 		 * Coordinate settings.
@@ -72,6 +72,15 @@ export const Coords = Control.extend( /** @lends Coords */ {
 
 	 * @param {coordinate[]} [options.coordinates]
 	   Coordinate settings for every instance of coordinates.
+
+	 * @param {string} [options.centerQueryKey='center']
+	   Web query key for map centering.
+
+	 * @param {string} [options.fovQueryKey='fov']
+	   Web query key for setting the Field of View.
+
+	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
+	   URL for Sesame queries.
 
 	 * @returns {Coords} Instance of a coordinate display/control interface.
 	 */
@@ -342,7 +351,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				const	str = httpRequest.responseText,
-					latlng = _self._map.options.crs.parseCoords(str);
+					latlng = self._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					self._map.panTo(latlng);

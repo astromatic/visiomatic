@@ -6,7 +6,6 @@
     <meta id="root_path" content="{{ root_path }}">
     <link rel="icon" type="image/svg+xml" href="{{ root_path }}/client/images/visiomatic.png">
     <title>VisiOmatic III</title>
-    <link rel="stylesheet" href="{{ root_path }}/client/css/spectrum.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
     <link rel="stylesheet" href="{{ root_path }}/client/css/visiomatic.css" />
     <style type='text/css'>
@@ -40,6 +39,7 @@
 		V.control.scale({pixels: false}).addTo(map);
 		V.control.reticle().addTo(map);
 		V.control.coords({position: 'topright'}).addTo(map);
+		V.control.pixelValues({position: 'topright'}).addTo(map);
 
 		var	minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',

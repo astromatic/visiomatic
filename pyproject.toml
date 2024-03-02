@@ -25,13 +25,13 @@ dependencies = [
     "opencv-python >= 4.5",
     "orjson >= 3.9.0",
     "platformdirs >= 3.4.0",
-    "posix_ipc >= 1.1.0",
+    "posix_ipc >= 1.1.0; platform_system=='Linux'",
     "pydantic == 1.*",
-    "scikit-image >= 0.19",
+    "scikit-image >= 0.22.0",
     "simplejpeg >= 1.6",
     "tiler >= 0.5",
-    "ultradict >= 0.0.6",
-    "uvicorn[standard] >= 0.18",
+    "ultradict >= 0.0.6; platform_system=='Linux'",
+    "uvicorn[standard] >= 0.18"
 ]
 requires-python = ">=3.8"
 classifiers = [
@@ -39,7 +39,13 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest"
 ]
 
 [project.scripts]
@@ -49,4 +55,13 @@ visiomatic = "visiomatic.cmd.start:main"
 Repository = "https://github.com/ebertin/visiomatic-server"
 Homepage = "https://visiomatic.org"
 Documentation = "https://ebertin.github.io/visiomatic-server/"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
+
+[tool.coverage.run]
+source_pkgs = ["visiomatic"]
+command_line = "-m pytest tests"
 

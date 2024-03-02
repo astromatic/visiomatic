@@ -4,7 +4,7 @@
 
  * @requires control/UI.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {Util} from 'leaflet';
@@ -58,6 +58,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 
 		const	visio = layer.visio;
 		settings.invertCMap = visio.invertCMap;
+		settings.brightness = visio.brightness;
 		settings.contrast = visio.contrast;
 		settings.colorSat = visio.colorSat;
 		settings.gamma = visio.gamma;
@@ -79,6 +80,8 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 		const	visio = layer.visio;
 		visio.invertCMap = settings.invertCMap;
 		this._updateInput(this._input.invertCMap, settings.invertCMap);
+		visio.brightness = settings.brightness;
+		this._updateInput(this._input.brightness, settings.brightness);
 		visio.contrast = settings.contrast;
 		this._updateInput(this._input.contrast, settings.contrast);
 		visio.colorSat = settings.colorSat;
@@ -116,6 +119,18 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			visio.invertCMap
 		);
 
+		// Brightness
+		this._input.brightness = this._addNumericalInput(
+			layer,
+			'brightness',
+			this._dialog,
+			'Brightness:',
+			'Adjust brightness. 0.0: normal',
+			visio.brightness,
+			0.1,
+			-10.0, 10.0
+		);
+
 		// Contrast
 		this._input.contrast = this._addNumericalInput(
 			layer,
@@ -124,8 +139,8 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Contrast:',
 			'Adjust Contrast. 1.0: normal',
 			visio.contrast,
-			0.05,
-			0.0, 10.0
+			0.1,
+			0.0, 100.0
 		);
 
 		// Colour saturation
@@ -176,7 +191,9 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Reset image settings',
 			function () {
 				_this.loadSettings(layer, _this._initsettings);
-				layer.updateMix();
+				if (layer.visio === 'color') {
+					layer.updateMix();
+				}
 				layer.redraw();
 			}
 		);

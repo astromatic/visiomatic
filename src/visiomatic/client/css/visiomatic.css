@@ -3,41 +3,11 @@
 #
 #	This file part of: VisiOmatic
 #
-#	Copyright: (C) 2023 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU,
+#	Copyright: (C) 2023 Emmanuel Bertin - CNRS/IAP/CFHT/SorbonneU
 */
 
 @import "themes.css";
-
-:root {
-	--icon-background-color: rgba(50, 50, 50, 1);
-	--icon-color: rgba(180, 180, 180, 1);
-	--icon-background-color-hover: rgba(60, 60, 60, 1);
-	--icon-color-hover: rgba(240, 240, 240, 1);
-	--icon-background-color-checked: rgba(180, 180, 180, 1);
-	--icon-color-checked: rgba(50, 50, 50, 1);
-	--button-background-color: rgba(50, 50, 50, 1);
-	--button-color: rgba(180, 180, 180, 1);
-	--button-background-color-hover: rgba(60, 60, 60, 1);
-	--button-color-hover: rgba(240, 240, 240, 1);
-	--button-background-color-checked: rgba(180, 180, 180, 1);
-	--button-color-checked: rgba(50, 50, 50, 1);
-	--button-color-on: rgba(208, 0, 0, 1);
-	--input-background-color: rgba(60, 60, 60, 1);
-	--input-color: rgba(200, 200, 200, 1);
-	--input-background-color-hover: rgba(180, 180, 180, 1);
-	--input-color-hover: rgba(50, 50, 50, 1);
-	--input-background-color-focus: rgba(180, 180, 180, 1);
-	--input-color-focus: rgba(50, 50, 50, 1);
-	--dialog-background-color: rgba(40, 40, 40, 1);
-	--dialog-color: rgba(240, 240, 240, 1);
-	--header-background-color: rgba(180, 180, 180, 1);
-	--header-color: rgba(50, 50, 50, 1);
-	--border-color: rgba(0, 0, 0, 1);
-	--shadow-color: rgba(0, 0, 0, 0.5);
-	--scale-color: rgba(255, 255, 255, 0.66);
-	--extramap-border-color: rgba(255, 255, 255, 1);
-	--extramap-fill-color: rgba(15, 15, 15, 1);
-}
+@import "spectrum.css";
 
 .leaflet-container {
   touch-action: none;
@@ -281,7 +251,7 @@ input.visiomatic-control-radio:checked + div,input.visiomatic-control-radio:acti
 /*------------------------------- Select menu -------------------------------*/
 
 div.visiomatic-control-select {
-	display: flow-root;
+	display: flex;
 	margin-right: 2px;
 }
 
@@ -290,7 +260,7 @@ select.visiomatic-control-select {
 	background-color: var(--input-background-color);
 	color: var(--input-color);
 	vertical-align: top;
-	margin: 2px 0px 2px 4px;
+	margin: 2px 0px 2px 0px;
 	padding: -2px 0px 4px 0px;
 	border-width: 0px;
 	box-shadow: 1px 1px 2px var(--shadow-color) inset;
@@ -300,7 +270,7 @@ select.visiomatic-control-select {
 
 .visiomatic-control-element:last-child
 select.visiomatic-control-select {
-	border-radius: 0px 4px 4px 0px;
+	border-radius: 4px;
 }
 
 select.visiomatic-control-select:hover {
@@ -468,27 +438,25 @@ input.leaflet-flipswitch:checked + label .leaflet-flipswitch-button {
 
 /*------------------------------ Color picker -------------------------------*/
 
-.sp-replacer {
+.visiomatic-control-color-input {
+	opacity: 0;
+	cursor: pointer;
+	width: 32px;
+	height: 32px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.visiomatic-control-color {
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
 	float: left;
 	padding: 0px;
 	margin: 2px 0px;
 	border-width: 0px;
 	border-radius: 4px 0px 0px 4px;
-}
-.sp-preview {
-	padding: 0px;
-	border-width: 0px;
-	margin: 0px;
 	width: 32px;
 	height: 32px;
 	cursor: pointer;
-}
-.sp-preview-inner {
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
-	border-radius: 4px 0px 0px 4px;
-}
-.sp-dd {
-	display: none;	/* hide spectrum arrow */
 }
 
 /*------------------------------ Layer list -------------------------------*/
@@ -592,10 +560,10 @@ a#visiomatic-channel-toggle {
 }
 
 .sidebar.channel {
-	width: 296px;
+	width: 290px;
 }
 .sidebar-left.channel ~ .leaflet-left {
-	left: 310px;
+	left: 304px;
 }
 
 /*--------------------------------- Mixing mode -----------------------------*/
@@ -672,6 +640,80 @@ input.leaflet-cmap:checked {
 
 #leaflet-channel div.visiomatic-control-select {
 	display: flow-root;
+}
+
+#visiomatic-control-button-channel-first {
+	width: 28px;
+	border-radius: 4px 0px 0px 4px;
+}
+
+#visiomatic-control-button-channel-first >div {
+	mask-image: url(../images/icon-first.svg); -webkit-mask-image: url(../images/icon-first.svg);
+}
+
+#visiomatic-control-button-channel-reverse {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-reverse >div {
+	mask-image: url(../images/icon-reverse.svg); -webkit-mask-image: url(../images/icon-reverse.svg);
+}
+
+#visiomatic-control-button-channel-reverse.playing {
+	background-color: var(--button-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+#visiomatic-control-button-channel-reverse.playing >div {
+	mask-image: url(../images/icon-pause.svg); -webkit-mask-image: url(../images/icon-pause.svg);
+	background-color: var(--button-color-checked);
+}
+
+#visiomatic-control-button-channel-previous {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-previous >div {
+	mask-image: url(../images/icon-previous.svg); -webkit-mask-image: url(../images/icon-previous.svg);
+}
+
+#visiomatic-control-button-channel-next {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-next >div {
+	mask-image: url(../images/icon-next.svg); -webkit-mask-image: url(../images/icon-next.svg);
+}
+
+#visiomatic-control-button-channel-play {
+	width: 28px;
+	border-radius: 0px 0px 0px 0px;
+}
+
+#visiomatic-control-button-channel-play >div {
+	mask-image: url(../images/icon-play.svg); -webkit-mask-image: url(../images/icon-play.svg);
+}
+
+#visiomatic-control-button-channel-play.playing {
+	background-color: var(--button-background-color-checked);
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+#visiomatic-control-button-channel-play.playing >div {
+	mask-image: url(../images/icon-pause.svg); -webkit-mask-image: url(../images/icon-pause.svg);
+	background-color: var(--button-color-checked);
+}
+
+#visiomatic-control-button-channel-last {
+	width: 28px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#visiomatic-control-button-channel-last >div {
+	mask-image: url(../images/icon-last.svg); -webkit-mask-image: url(../images/icon-last.svg);
 }
 
 /*-------------------------------- Channel list -----------------------------*/
@@ -1155,6 +1197,54 @@ iframe.visiomatic-control-doc {
 .leaflet-control-coords-clipboard-icon:active {
 	background-color: var(--icon-color-checked);
 }
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%% Control.PixelValues %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+.leaflet-control-values-dialog {
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	border-radius: 4px;
+	font-size: 1.2em;
+	height: 32px;
+}
+
+.leaflet-control-values-select,.leaflet-control-values-input {
+	height: inherit;
+	background-color: var(--input-background-color);
+	color: var(--input-color);
+	vertical-align: top;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 100%;
+	padding: 0px 0px 0px 8px;
+	border-width: 0px;
+	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+}
+
+.leaflet-control-values-select {
+	text-align: center;
+	border-radius: 4px 0px 0px 4px;
+}
+
+.leaflet-control-values-input {
+	padding: 2px 6px 2px 6px;
+	border-radius: 0px 4px 4px 0px;
+	box-sizing : border-box;
+	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
+}
+
+.leaflet-control-values-ext:hover,.leaflet-control-values-select:hover,.leaflet-control-values-input:hover {
+	background-color: var(--input-background-color-hover);
+	color: var(--input-color-hover);
+}
+
+.leaflet-control-values-ext:focus,.leaflet-control-values-select:focus,.leaflet-control-values-input:focus {
+	background-color: var(--input-background-color-focus);
+	color: var(--input-color-focus);
+}
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.Scale.WCS %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

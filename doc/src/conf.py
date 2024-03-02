@@ -19,12 +19,12 @@ import adsarxiv
 
 # -- Project information -----------------------------------------------------
 
-project = 'VisiOmatic server'
-copyright = '2023, Emmanuel Bertin, Hervé Bouy'
+project = 'VisiOmatic'
+copyright = '2024 Emmanuel Bertin, Hervé Bouy'
 author = 'Emmanuel Bertin, Hervé Bouy'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2'
+release = '3.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -114,9 +114,6 @@ latex_elements = {
     #
     # 'preamble': '',
 'preamble': r'''
-\usepackage{amssymb}
-\usepackage[OT2,T1]{fontenc}
-
 \newcommand{\DUrolecredits}{\footnotesize\color{lightgray}\newline}
 
 \def\trans#1{{#1}^\intercal}

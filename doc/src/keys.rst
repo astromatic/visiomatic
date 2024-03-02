@@ -1,8 +1,14 @@
+.. |ADU| replace:: :abbr:`ADU (Analog-to-Digital Unit)`
+.. _ADU: https://en.wikipedia.org/wiki/Analog-to-digital_converter
+
 .. |API| replace:: :abbr:`API (Application Programming Interface)`
 .. _API: https://en.wikipedia.org/wiki/Application_programming_interface
 
 .. |Python| replace:: `Python`
 .. _Python: https://python.org
+
+.. |MEF| replace:: :abbr:`MEF (Multi-Extension FITS)`
+.. _MEF: https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format
 
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
@@ -37,6 +43,10 @@
 .. |GAIA_DR1| replace:: ``'GAIA_DR1'``
 .. _GAIA_DR1: http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/337
 
+.. |camera| image:: figures/icon-camera.*
+  :width: 14pt
+.. |cog| image:: figures/icon-cog.*
+  :width: 14pt
 .. |contrast| image:: figures/icon-contrast.*
   :width: 14pt
 .. |equalizer2| image:: figures/icon-equalizer2.*

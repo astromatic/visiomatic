@@ -1,7 +1,7 @@
 """
 Configuration settings for the application.
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 from os import cpu_count, path
@@ -44,7 +44,7 @@ class HostSettings(BaseSettings):
         )
     workers: int = Field(
         short='w',
-        default=4,
+        default=4 if package.isonlinux else 1,
         ge=1,
         description="Number of workers"
         )
@@ -55,22 +55,28 @@ class HostSettings(BaseSettings):
 
 
 class ImageSettings(BaseSettings):
+    brightness: float = Field(
+        default=0.,
+        ge=-100.,
+        le=100.,
+        description="Default image brightness"
+        )
     contrast: float = Field(
-        default=1.0,
+        default=1.,
         ge=0.01,
-        le=10.0,
+        le=10.,
         description="Default image contrast"
         )
     color_saturation: float = Field(
         default=1.5,
-        ge=0.0,
-        le=5.0,
+        ge=0.,
+        le=5.,
         description="Default color saturation"
         )
     gamma: float = Field(
         default=2.2,
         ge=0.1,
-        le=5.0,
+        le=5.,
         description="Default image gamma"
         )
     quality: int = Field(
@@ -134,7 +140,7 @@ class ServerSettings(BaseSettings):
         description="Directory containing templates"
         )
     userdoc_url: str = Field(
-        default=doc_path.default + "/interface.html",
+        default = doc_path.default + "/interface.html", #type: ignore
         description="Endpoint URL for the user's HTML documentation"
         )
 
@@ -143,10 +149,13 @@ class ServerSettings(BaseSettings):
         extra = 'ignore'
 
 
+ncpu = cpu_count()
+
+
 class EngineSettings(BaseSettings):
     thread_count: int = Field(
         short='t',
-        default=cpu_count() // 2,
+        default = ncpu // 2 if ncpu is not None else 4,
         ge=1,
         le=1024,
         description="Number of engine threads"
@@ -160,27 +169,28 @@ class EngineSettings(BaseSettings):
 class CacheSettings(BaseSettings):
     cache_dir: str = Field(
         default=package.cache_dir,
-        description="Disk cache directory"
+        description="Image cache directory"
         )
     clear_cache: bool = Field(
         short='C',
         default=False,
-        description="Clear disk cache on startup"
+        description="Clear image cache on startup"
         )
-    max_disk_cache_image_count: int = Field(
-        default=16,
+    max_cache_image_count: int = Field(
+        default=100,
         ge=1,
         description="Maximum number of images in disk cache"
         )
-    max_mem_cache_image_count: int = Field(
-        default=2,
-        ge=1,
-        description="Maximum number of images in memory cache"
-        )
-    max_mem_cache_tile_count: int = Field(
-        default=1024,
+    max_cache_tile_count: int = Field(
+        default=1000,
         ge=1,
         description="Maximum number of image tiles in memory cache"
+        )
+    max_open_files: int = Field(
+        default=10000,
+        ge=100,
+        le=1000000,
+        description="Maximum number of open files"
         )
     ultradict_cache_file : str = Field(
         default="/dev/shm/visiomatic_cache_dict.pkl",

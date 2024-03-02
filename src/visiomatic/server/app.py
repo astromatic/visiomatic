@@ -1,15 +1,18 @@
 """
 Application module
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
-import io, logging, os, pickle, re
+import io, logging, pickle, re
+from glob import glob
+from os import getpid, getppid, path
+from sys import modules
 from typing import List, Literal, Optional, Union
 
 import cv2
 from fastapi import FastAPI, Query, Request
-from fastapi import responses
+from fastapi import responses, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,54 +23,60 @@ from .. import package
 
 from . import config
 
-# Set up settings by instantiating a configuration object
-conf = config.Config()
-config.settings = conf.flat_dict()
-config.config_filename = conf.config_filename
-config.image_filename = conf.image_filename
+from .tiled import (
+    colordict,
+    delTiled,
+    get_image_filename,
+    pickledTiled,
+    ProfileModel,
+    Tiled
+)
+from .cache import LRUCache, LRUSharedRWCache
 
-from .tiled import colordict, pickledTiled, ProfileModel, Tiled
-from .cache import LRUMemCache, LRUSharedRWLockCache
-
-
-share = config.settings["workers"] > 1 and not config.settings["reload"]
+# True with multiple workers (multiprocessing).
+shared = config.settings["workers"] > 1 and not config.settings["reload"]
 
 def create_app() -> FastAPI:
     """
     Create FASTAPI application
     """
 
-    worker_id = os.getpid()
+    worker_id = getpid()
 
     banner_template = config.settings["banner_template"]
     base_template = config.settings["base_template"]
-    template_dir = os.path.abspath(config.settings["template_dir"])
-    cache_dir = os.path.abspath(config.settings["cache_dir"])
-    client_dir = os.path.abspath(config.settings["client_dir"])
-    extra_dir = os.path.abspath(config.settings["extra_dir"])
+    template_dir = path.abspath(config.settings["template_dir"])
+    cache_dir = path.abspath(config.settings["cache_dir"])
+    client_dir = path.abspath(config.settings["client_dir"])
+    data_dir = path.abspath(config.settings["data_dir"])
+    extra_dir = path.abspath(config.settings["extra_dir"])
     doc_dir = config.settings["doc_dir"]
     doc_path = config.settings["doc_path"]
     userdoc_url = config.settings["userdoc_url"]
     api_path = config.settings["api_path"]
+    brightness = config.settings["brightness"]
     contrast = config.settings["contrast"]
     color_saturation = config.settings["color_saturation"]
     gamma = config.settings["gamma"]
     quality = config.settings["quality"]
     tile_size = config.settings["tile_size"]
-    image = config.image_filename
+    image_argname = config.image_filename
 
     # Get shared lock dictionary if processing in parallel
-    if share:
-        sharedLock = LRUSharedRWLockCache(
-            name=f"{package.title}.{os.getppid()}",
-            maxsize=config.settings["max_disk_cache_image_count"]
-        )
-
-    memCachedTiled = LRUMemCache(
+    cache = LRUSharedRWCache(
         pickledTiled,
-        maxsize=config.settings["max_mem_cache_image_count"]
+        name=f"{package.title}.{getppid()}",
+        maxsize=config.settings["max_cache_image_count"],
+        removecall=delTiled,
+        shared=shared
     )
-
+    # Scan and register images cached during previous sessions
+    for filename in glob(path.join(cache_dir, "*" + ".pkl")):
+        tiled, msg, lock = cache(
+            get_image_filename(path.splitext(filename)[0])
+        )
+        if lock:
+            lock.release_read()
 
     logger = logging.getLogger("uvicorn.error")
 
@@ -126,7 +135,7 @@ def create_app() -> FastAPI:
     )
 
     # Provide an endpoint for the user's manual (if it exists)
-    if os.path.exists(doc_dir):
+    if path.exists(doc_dir):
         logger.info(f"Default documentation found at {doc_dir}.")
         app.mount(
             doc_path,
@@ -141,51 +150,30 @@ def create_app() -> FastAPI:
 
     # Instantiate templates
     templates = Jinja2Templates(
-        directory=os.path.join(package.src_dir, template_dir)
+        directory=path.join(package.src_dir, template_dir)
     )
 
     # Prepare the RegExps
+    # FIF (image filenames): discard filenames with ..
+    reg_fif = r"(?!\.\.)(^.*$)"
     # JTL (tile indices)
     reg_jtl = r"^(\d+),(\d+)$"
-    app.parse_jtl = re.compile(reg_jtl)
+    parse_jtl = re.compile(reg_jtl)
     # MINMAX (intensity range)
     reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
         r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
         r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
-    app.parse_minmax = re.compile(reg_minmax)
+    parse_minmax = re.compile(reg_minmax)
     # MIX (mixing matrix)
     reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
-    app.parse_mix = re.compile(reg_mix) 
+    parse_mix = re.compile(reg_mix) 
     # PFL (image profile(s)
     reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
-    app.parse_pfl = re.compile(reg_pfl)
+    parse_pfl = re.compile(reg_pfl)
     # VAL (pixel value(s)
     reg_val = r"^([+-]?\d+),([+-]?\d+)$"
-    app.parse_val = re.compile(reg_val)
+    parse_val = re.compile(reg_val)
 
-    # Test endpoint
-    @app.get("/random", tags=["services"])
-    async def read_item(w: Optional[int] = 128, h: Optional[int] = 128):
-        """
-        Test endpoint of the web API that simply returns an image with white noise.
-
-        Parameters
-        ----------
-        w:  int, optional
-            Image width.
-
-        h:  int, optional
-            Image height.
-
-        Returns
-        -------
-        response: byte stream
-            [Streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>)
-            containing the JPEG image.
-        """
-        a = np.random.random((h,w)) * 255.0
-        res, im_jpg = cv2.imencode(".jpg", a)
-        return responses.StreamingResponse(io.BytesIO(im_jpg.tobytes()), media_type="image/jpg")
 
     # Tile endpoint
     @app.get(api_path, tags=["services"])
@@ -193,7 +181,10 @@ def create_app() -> FastAPI:
             request: Request,
             FIF: str = Query(
                 None,
-                title="Image filename"
+                title="Image filename",
+                min_length=1,
+                max_length=1024,
+                regex=reg_fif
                 ),
             obj: str = Query(
                 None,
@@ -204,21 +195,21 @@ def create_app() -> FastAPI:
                 title="Channel index (mono-channel mode) or indices (measurements)",
                 ge=0
                 ),
-            CMP: Literal[tuple(colordict.keys())] = Query(
+            CMP: Literal[tuple(colordict.keys())] = Query( #type: ignore
                 'grey',
                 title="Name of the colormap"
                 ),
             CNT: float = Query(
                 contrast,
                 title="Relative contrast",
-                ge=0.0,
-                le=10.0
+                ge=0.,
+                le=100.
                 ),
             GAM: float = Query(
                 1.0/gamma,
                 title="Inverse display gamma",
                 ge=0.2,
-                le=2.0
+                le=2.
                 ),
             INFO: str = Query(
                 None,
@@ -227,6 +218,12 @@ def create_app() -> FastAPI:
             INV: str = Query(
                 None,
                 title="Invert the colormap"
+                ),
+            BRT: float = Query(
+                brightness,
+                title="Relative brightness",
+                ge=-100.,
+                le=100.
                 ),
             QLT: int = Query(
                 90,
@@ -238,35 +235,35 @@ def create_app() -> FastAPI:
                 None,
                 title="Tile coordinates",
                 min_length=3,
-                max_length=11,
+                max_length=14,
                 regex=reg_jtl
                 ),
             MINMAX: list[str] = Query(
                 None,
                 title="Modified minimum and Maximum intensity ranges",
                 min_length=5,
-                max_length=48,
+                max_length=38,
                 regex=reg_minmax
                 ),
 			MIX: list[str] = Query(
 			    None,
 			    title="Slice of the mixing matrix", 
                 min_length=7,
-                max_length=2000,
+                max_length=54,
                 regex=reg_mix
                 ),
 			PFL: str = Query(
 			    None,
 			    title="Get image profile(s)", 
                 min_length=7,
-                max_length=2000,
+                max_length=39,
                 regex=reg_pfl
                 ),
             VAL: str = Query(
                 None,
                 title="Pixel value(s)",
                 min_length=3,
-                max_length=11,
+                max_length=32,
                 regex=reg_val
                 )
             ):
@@ -289,71 +286,70 @@ def create_app() -> FastAPI:
                 }
             )
 
-        if share:
-            lock = sharedLock(FIF)
+        image_filename = path.abspath(
+            image_argname if image_argname \
+               else path.join(data_dir, FIF)
+        )
 
-        if (image):
-            tiled = memCachedTiled(
-                os.path.basename(image),
-                data_dir=os.path.dirname(image),
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
-            )
-        else:
-            tiled = memCachedTiled(
-                FIF,
-                contrast=contrast,
-                color_saturation=color_saturation,
-                gamma=gamma,
-                quality=quality,
-                tilesize=tile_size
+        tiled, msg, lock = cache(
+            image_filename,
+            contrast=contrast,
+            color_saturation=color_saturation,
+            gamma=gamma,
+            quality=quality,
+            tilesize=tile_size
+        )
+        # Manage image file open error
+        if tiled is None:
+            if lock:
+                lock.release_read()
+            # Return 404 error with data_dir removed for security
+            raise HTTPException(
+                status_code=404,
+                detail=[{
+                    "loc": ["query", "FIF"],
+                    "msg": msg.replace(path.join(data_dir,""), ""),
+                    "type": "value_error.str"
+                }]
             )
         if obj != None:
-            if share:
-                lock.release()
-            return responses.PlainTextResponse(tiled.get_iipheaderstr())
+            resp = tiled.get_iipheaderstr()
+            if lock:
+                lock.release_read()
+            return responses.PlainTextResponse(resp)
         elif INFO != None:
-            if share:
-                lock.release()
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_model()
-            	)
-            )
+            resp = tiled.get_model()
+            if lock:
+                lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         elif PFL != None:
-            if share:
-                lock.release()
-            val = app.parse_pfl.findall(PFL)[0]
+            val = parse_pfl.findall(PFL)[0]
+            resp = tiled.get_profiles(
+                CHAN,
+                [int(val[0]), int(val[1])],
+                [int(val[2]), int(val[3])]
+            )
+            if lock:
+                lock.release_read()
             # We use the ORJSON response to properly manage NaNs
-            return responses.ORJSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_profiles(
-            			CHAN,
-                        [int(val[0]), int(val[1])],
-                        [int(val[2]), int(val[3])]
-                    )
-            	)
-            )
+            return responses.ORJSONResponse(content=jsonable_encoder(resp))
         elif VAL != None:
-            if share:
-                lock.release()
-            val = app.parse_val.findall(VAL)[0]
-            return responses.JSONResponse(
-            	content=jsonable_encoder(
-            		tiled.get_pixel_values(int(val[0]), int(val[1])).tolist()
-            	)
+            val = parse_val.findall(VAL)[0]
+            resp = tiled.get_pixel_values(
+                CHAN,
+                (int(val[0]), int(val[1]))
             )
+            if lock:
+                lock.release_read()
+            return responses.JSONResponse(content=jsonable_encoder(resp))
         if JTL == None:
-            if share:
-                lock.release()
+            if lock:
+                lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
         if MINMAX != None:
-            resp = [app.parse_minmax.findall(m)[0] for m in MINMAX]
+            resp = [parse_minmax.findall(m)[0] for m in MINMAX]
             minmax = tuple(
                 (
                     int(r[0]),
@@ -363,7 +359,7 @@ def create_app() -> FastAPI:
             )
         mix = None
         if MIX != None:
-            resp = [app.parse_mix.findall(m)[0] for m in MIX]
+            resp = [parse_mix.findall(m)[0] for m in MIX]
             mix = tuple(
                 (
                     int(r[0]),
@@ -372,7 +368,7 @@ def create_app() -> FastAPI:
                     float(r[3])
                 ) for r in resp
             )
-        resp = app.parse_jtl.findall(JTL)[0]
+        resp = parse_jtl.findall(JTL)[0]
         tl = tiled.nlevels - 1 - int(resp[0])
         if tl < 0:
             tl = 0
@@ -383,15 +379,19 @@ def create_app() -> FastAPI:
             channel=CHAN[0] if CHAN else CHAN,
             minmax=minmax,
             mix=mix,
+            brightness=BRT,
             contrast=CNT,
             gamma=GAM,
             colormap=CMP,
             invert=(INV!=None),
             quality=QLT
         )
-        if share:
-            lock.release()
-        return responses.StreamingResponse(io.BytesIO(pix), media_type="image/jpg")
+        if lock:
+            lock.release_read()
+        return responses.StreamingResponse(
+            io.BytesIO(pix),
+            media_type="image/jpg"
+        )
 
 
     # VisiOmatic client endpoint

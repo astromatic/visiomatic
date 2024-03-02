@@ -1,7 +1,7 @@
 """
 Image reading and processing module
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
 import re
@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 from pydantic import BaseModel
 
 import numpy as np
-from astropy.io import fits
+from astropy.io import fits #type: ignore
 
 from .. import package
 
@@ -34,6 +34,8 @@ class ImageModel(BaseModel):
     size: List[int]
     dataslice: List[List[int]]
     detslice: List[List[int]]
+    background_level: List[float]
+    background_mad: List[float]
     min_max: List[List[float]]
     header: dict
 
@@ -76,8 +78,11 @@ class Image(object):
         self.detsec = detsec \
             if (detsec := self.parse_2dslice(self.header.get("DETSEC",""))) \
             else self.datasec
-        self.minmax = self.compute_minmax() if minmax == None \
-            else np.array(minmax, dtype=np.float32)
+        self.background_level, self.background_mad = self.compute_background()
+        self.minmax = self.compute_minmax(
+            self.background_level,
+            self.background_mad
+        ) if minmax == None else np.array(minmax, dtype=np.float32)
 
 
     def get_model(self) -> ImageModel:
@@ -93,6 +98,8 @@ class Image(object):
             size=self.shape[::-1],
             dataslice=self.datasliceinfo,
             detslice=self.detsliceinfo,
+            background_level=self.background_level.tolist(),
+            background_mad=self.background_mad.tolist(),
             min_max=[list(minmax) for minmax in self.minmax],
             header=dict(self.header.items())
         )
@@ -112,7 +119,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> Tuple[Union[int], None]:
+    def parse_2dslice(self, str: str) -> Union[List[int], None]:
         """
         Parse a string representation of a 2D slice.
 
@@ -132,17 +139,17 @@ class Image(object):
 
     def compute_geometry(
             self,
-            start: Tuple[Union[int]],
-            shape: Tuple[Union[int]]
+            start: Tuple[int, int],
+            shape: Tuple[int, int, int]
         ) -> None:
         """
         Compute geometry parameters related to the image position in a mosaic.
         
         Parameters
         ----------
-        start: Tuple[int]
+        start: Tuple[int, int]
             Position of starting point in mosaic (Python style).
-        shape: Tuple[int]
+        shape: Tuple[int, int, int]
             Shape of the mosaic (Python style).
         """
         
@@ -159,13 +166,13 @@ class Image(object):
             slice(0, self.data.shape[0]), \
             slice(
                 self.detsec[2] - start[0] - 1,
-                None if (endy:=self.detsec[3] - start[0] - 1 + ysign) < 0 \
+                None if (endy := self.detsec[3] - start[0] - 1 + ysign) < 0 \
                     else endy,
                 ysign
             ), \
-              slice(
+            slice(
                 self.detsec[0] - start[1] - 1,
-                   None if (endx:=self.detsec[1] - start[1] - 1 + xsign) < 0 \
+                None if (endx := self.detsec[1] - start[1] - 1 + xsign) < 0 \
                     else endx,
                 xsign
             )
@@ -186,37 +193,57 @@ class Image(object):
         ]
 
 
-    def compute_background(self, skip : int = 15) -> None:
+    def compute_background(self, skip : int = 15) -> tuple[np.ndarray, np.ndarray]:
         """
-        Compute background level and median absolute deviation.
+        Return background level and median absolute deviation
+        of every image channel.
 
         Parameters
         ----------
         skip:  int, optional
             Number of lines skipped after each line analyzed.
+
+        Returns
+        -------
+        background_level: ~numpy.ndarray
+            Background level for every channel.
+        background_mad: ~numpy.ndarray
+            Background median absolute deviation for every channel.
         """
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
         x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
         med = np.nanmedian(x, axis=1, keepdims=True)
+        std = np.nanstd(x, axis=1)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax, axis=1, keepdims=True)
         x[ax > 3.0 * mad] = np.nan
         med = np.nanmedian(x, axis=1, keepdims=True)
         ax = np.abs(x-med)
         mad = np.nanmedian(ax, axis=1)
-        self.background_level = np.nanmean(3.5*med - 2.5*x, axis=1)
-        self.background_mad = mad
+        # Handle cases where the MAD is tiny because of many identical values
+        cond = 1e5 * mad < std
+        mad[cond] = 0.1 * std[cond]
+        return np.nanmean(3.5*med - 2.5*x, axis=1), mad
 
 
-    def compute_minmax(self, nmadmin: float = -2.0, nmadmax: float = 400.0) -> np.ndarray:
+    def compute_minmax(
+            self,
+            background_level: np.ndarray,
+            background_mad: np.ndarray,
+            nmadmin: float = -2.0,
+            nmadmax: float = 400.0) -> np.ndarray:
         """
-        Compute "appropriate" intensity cuts for displaying the image.
+        Return matrix of "appropriate" intensity cuts for displaying the image.
         
         Parameters
         ----------
+        background_level: ~numpy.ndarray
+            Background level for every channel.
+        background_mad: ~numpy.ndarray
+            Background median absolute deviation for every channel.
         grey: float, optional
-            Target grey level (0.0 = black, 1.0 = 50% grey).
+            Lower intensity cut above background in units of Maximum Absolute Deviations.
         nmad: float, optional
             Upper intensity cut above background in units of Maximum Absolute Deviations.
 

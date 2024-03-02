@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -31,6 +31,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		maxZoom: null,
 		maxNativeZoom: 18,
 		noWrap: true,
+		brightness: null,
 		contrast: null,
 		colorSat: null,
 		gamma: null,
@@ -65,6 +66,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	/**
 	   Default _server_ rendering parameters (to shorten tile query strings).
 	 * @type {object}
+	 * @property {number} brightness
+	   Default brightness level.
 	 * @property {number} contrast
 	   Default contrast factor.
 	 * @property {number} gamma
@@ -81,8 +84,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   Default color mixing matrix.
 	 * @property {number} quality
 	   Default JPEG encoding quality.
+	 * @property {number} framerate
+	   Default animation framerate.
 	 */
 	visioDefault: {
+		brightness: 0.,
 		contrast: 1.,
 		gamma: 2.2,
 		cMap: 'grey',
@@ -98,7 +104,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
 			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
 		],
-		quality: 90
+		quality: 90,
+		framerate: 1
 	},
 
 
@@ -149,6 +156,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {boolean} [options.noWrap=true]
 	   Deactivate layer wrapping.
 
+	 * @param {number} [options.brightness=0.0]
+	   Brightness level.
+
 	 * @param {number} [options.contrast=1.0]
 	   Contrast factor.
 
@@ -184,7 +194,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   default.
 
 	 * @param {string[]} [options.channelUnits=[]]
-	   Channel units. Defaults to ``['ADUs','ADUs',...]``.
+	   Channel units. Defaults to ``['ADU','ADU',...]``.
 
 	 * @param {number[][]} [options.minMaxValues=[]]
 	   Pairs of lower, higher clipping limits for every channel. Defaults to values
@@ -193,6 +203,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	 * @param {number} [options.quality=0]
 	   Default active channel index in mono-channel mode.
+
+	 * @param {number} [options.framerate=1]
+	   Default animation framerate.
 
 	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
 	   URL of the [Sesame]{@link http://cds.u-strasbg.fr/cgi-bin/Sesame} resolver
@@ -250,6 +263,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
     	   Minimum zoom factor (tile resolution).
     	 * @property {number} maxZoom
     	   Maximum zoom factor (tile resolution).
+    	 * @property {number} brightness
+    	   Current image brightness level.
     	 * @property {number} contrast
     	   Current image contrast factor.
     	 * @property {number} colorSat
@@ -260,6 +275,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current color map.
     	 * @property {boolean} invertCMap
 		   Current colormap inversion switch status.
+    	 * @property {number[]} backgroundLevel
+    	   Background level for every channel.
+    	 * @property {number[]} backgroundMAD
+    	   Background MAD for every channel.
     	 * @property {number[]} minValue
     	   Current lower clipping limit for every channel.
     	 * @property {number[]} maxValue
@@ -286,11 +305,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			nChannel: 1,
 			minZoom: options.minZoom,
 			maxZoom: options.maxZoom,
+			brightness: options.brightness,
 			contrast: options.contrast,
 			colorSat: options.colorSat,
 			gamma: options.gamma,
 			cMap: options.cMap,
 			invertCMap: options.invertCMap,
+			backgroundLevel: [0.],
+			backgroundMAD: [1.],
 			minValue: [0.],
 			maxValue: [255.],
 			mix: [[]],
@@ -298,7 +320,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			channelLabels: [],
 			channelFlags: [],
 			channelUnits: [],
-			quality: options.quality
+			quality: options.quality,
+			framerate: options.framerate
 		}
 		this._title = options.title ? options.title :
 		                this._url.match(/^.*\/(.*)\..*$/)[1];
@@ -362,6 +385,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Number of channels
 			nchannel = visio.nChannel = meta.channels;
 
+			// Default brightness
+			if (meta.brightness) {
+				visioDefault.brightness = meta.brightness;
+			}
+			if (!visio.brightness) {
+				visio.brightness = visioDefault.brightness;
+			}
+
 			// Default contrast
 			if (meta.contrast) {
 				visioDefault.contrast = meta.contrast;
@@ -394,9 +425,23 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				visio.quality = visioDefault.quality;
 			}
 
+			// Default animation framerate
+			if (meta.framerate) {
+				visioDefault.framerate = meta.framerate;
+			}
+			if (!visio.framerate) {
+				visio.framerate = visioDefault.framerate;
+			}
+
 			// Images
 			images = meta.images;
 			
+			// Background level and MAD values
+			for (let c = 0; c < nchannel; c++) {
+				visio.backgroundLevel[c] = images[0].background_level[c];
+				visio.backgroundMAD[c] = images[0].background_mad[c];
+			}
+
 			// Min and max pixel values
 			for (let c = 0; c < nchannel; c++) {
 				visioDefault.minValue[c] = images[0].min_max[c][0];
@@ -447,13 +492,19 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				}
 			}
 
+			// Channel Units
+			const imageUnit = (meta.header && (unit=meta.header['BUNIT'])) ?
+				unit : 'ADU';
+
 			// Copy those units that have been provided
 			for (const c in inunits) {
 				units[c] = inunits[c];
 			}
 			// Fill out units that are not provided with a default string
-			for (let c = ninunits; c < nchannel; c++) {
-				units[c] = 'ADUs';
+			for (let c = 0; c < nchannel; c++) {
+				if (!units[c]) {
+					units[c] = imageUnit;
+				}
 			}
 
 			// Initialize mixing matrix depending on arguments and the number of channels
@@ -519,7 +570,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			 */
 			this.fire('metaload');
 		} else {
-			alert('There was a problem with the VisiOmatic metadata request.');
+			alert(
+				'VisiOmatic metadata query error: ' + meta.detail[0].msg + '.'
+			);
 		}
 	},
 
@@ -543,7 +596,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	visio = this.visio;
 		if (rgb) {
 			visio.rgb[channel] = rgb.clone();
-		} else if (rgb === false) {
+		} else if (rgb == false) {
 			delete visio.rgb[channel];
 			delete visio.mix[channel];
 			return;
@@ -660,7 +713,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			// Wait for metadata request to complete
 			this._loadActivity = DomUtil.create(
 				'div',
-				'visiomatic-layer-activity-',
+				'visiomatic-layer-activity',
 				map._controlContainer
 			);
 			this.once('metaload', function () {
@@ -755,7 +808,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 									zoom,
 									{reset: true, animate: false}
 								);
-								alert('There was a problem with the request to the Sesame service at CDS');
+								alert('Error with Sesame query at CDS');
 							}
 						}
 					}, this, 10
@@ -843,6 +896,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 		if (visio.invertCMap !== visioDefault.invertCMap) {
 			str += '&INV';
+		}
+		if (visio.brightness !== visioDefault.brightness) {
+			str += '&BRT=' + visio.brightness.toString();
 		}
 		if (visio.contrast !== visioDefault.contrast) {
 			str += '&CNT=' + visio.contrast.toString();
@@ -967,7 +1023,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 
 		if (wasAnimated) {
-			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 5000);
+			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 100000);
 		}
 	}
 

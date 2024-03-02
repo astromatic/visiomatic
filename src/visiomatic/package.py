@@ -7,6 +7,7 @@ Package-wide definitions
 from os import path
 from pathlib import Path
 from importlib.metadata import metadata
+import sys
 
 import platformdirs
 
@@ -40,4 +41,8 @@ config_file = path.join(platformdirs.user_config_dir(name), "visiomatic.conf")
 
 # Default cache dir
 cache_dir = platformdirs.user_cache_dir(name)
+
+# Platform
+platform  = sys.platform
+isonlinux = sys.platform.startswith('lin')
 

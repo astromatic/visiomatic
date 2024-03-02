@@ -4,8 +4,9 @@ Configure application.
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
-import os, sys, time
+import os, time
 from pathlib import Path
+from sys import exit, modules
 from typing import Tuple
 from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
@@ -27,14 +28,16 @@ class Config(object):
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
 
-       # Skip argument parsing and stuff if Sphinx is involved
-        if 'sphinx' in sys.modules:
+        # Skip argument parsing and stuff if Sphinx or PyTest are involved
+        if 'sphinx' in modules or 'pytest' in modules:
             return
         # Parse command line
         args_dict = self.parse_args()
         if args_dict['version']:
             print(f"{package.title} {package.version}")
             exit(0)
+
+        # Save configuration file if requested
         if args_dict['save_config']:
             # Create config dir if it does not exist
             os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
@@ -51,14 +54,14 @@ class Config(object):
         # Update settings from the command line
         self.update_from_dict(args_dict)
 
-        # Save configuration file if requested
         image_filename = args_dict['file']
         if Path(image_filename).exists():
             self.image_filename = image_filename
         else:
-            sys.exit(f"*Error*: {image_filename} not found!")
+            exit(f"*Error*: {image_filename} not found!")
 
-    def dict(self) -> dict:
+
+    def grouped_dict(self) -> dict:
         """
         Return a dictionary of all settings, organized in groups.
 
@@ -133,7 +136,7 @@ class Config(object):
         )
         # Add options not relevant to configuration itself
         config.add_argument(
-            "-v", "--version",
+            "-V", "--version",
             default=False,
             help="Return the version of the package and exit", 
             action='store_true'
@@ -224,13 +227,13 @@ class Config(object):
         """
         config = ConfigParser(converters={})
         config.read(filename)
-        gdict = {}
+        gdict: dict = {}
         for group in self.groups:
             gdict[group] = {}
             gdictg = gdict[group]
             settings = getattr(self.settings, group).dict()
             for setting in settings:
-                if (value := config.get(group, setting, fallback=None)) != None:
+                if (value := config.get(group, setting, fallback=None)) is not None:
                     stype = type(settings[setting])
                     gdictg[setting] = tuple(
                         type(settings[setting][i])(val.strip()) \
@@ -299,7 +302,11 @@ class Config(object):
                 exit()
 
 # Initialize global dictionary
-config = None
+config = Config()
 config_filename = None
 image_filename = None
+settings = config.flat_dict()
+if 'sphinx' not in modules and 'pytest' not in modules:
+    config_filename = config.config_filename
+    image_filename = config.image_filename
 
