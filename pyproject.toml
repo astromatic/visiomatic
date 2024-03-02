@@ -27,7 +27,7 @@ dependencies = [
     "platformdirs >= 3.4.0",
     "posix_ipc >= 1.1.0; platform_system=='Linux'",
     "pydantic == 1.*",
-    "scikit-image >= 0.19",
+    "scikit-image >= 0.22.0",
     "simplejpeg >= 1.6",
     "tiler >= 0.5",
     "ultradict >= 0.0.6; platform_system=='Linux'",

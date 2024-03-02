@@ -757,7 +757,7 @@ class Tiled(object):
         ].transpose()
         return ProfileModel(
             profile=list(
-                PixelModel(x=pixel[0], y=pixel[1], values=pixel[2])
+                PixelModel(x=pixel[0], y=pixel[1], values=pixel[2]) #type: ignore
                     for pixel in zip(x, y, tuple(map(list,values)))
                 )
         )
