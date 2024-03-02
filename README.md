@@ -21,7 +21,7 @@ visiomatic image.fits
 
 ## Documentation
 
-A detailed documentation, including API reference is available [here](https://astromatic.github.com/visiomatic). Note: this is still work in progress.
+A detailed documentation, including API reference is available [here](https://astromatic.github.io/visiomatic). Note: this is still work in progress.
 
 ## Technical overview
 
