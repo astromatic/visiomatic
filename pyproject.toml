@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "visiomatic"
-version = "3.0"
+version = "3.0.0-b1"
 description = "A web application for visualizing astronomical images"
 authors = [
     {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
@@ -28,6 +28,7 @@ dependencies = [
     "posix_ipc >= 1.1.0; platform_system=='Linux'",
     "pydantic == 1.*",
     "scikit-image >= 0.22.0",
+    "setuptools",
     "simplejpeg >= 1.6",
     "tiler >= 0.5",
     "ultradict >= 0.0.6; platform_system=='Linux'",
