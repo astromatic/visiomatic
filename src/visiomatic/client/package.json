@@ -2,12 +2,10 @@
 	"name": "visiomatic",
 	"version": "3.0.0",
 	"description": "Astronomical image client viewer",
-	"homepage": "https://github.com/ebertin/pypu#readme",
-	"author": "Emmanuel Bertin (IAP/CNRS/SorbonneU/CFHT)",
+	"homepage": "https://github.com/astromatic/visiomatic",
+	"author": "Emmanuel Bertin (CFHT/IAP/CNRS/SorbonneU/CEA/UParisSaclay)",
 	"contributors": [
-		"Emmanuel Bertin <bertin@iap.fr> (https://github.com/ebertin)",
-		"Chiara Marmo <chiara.marmo@u-psud.fr> (https://github.com/cmarmo)",
-		"Ruven Pillay <ruven@c2rmf.cnrs.fr> (https://github.com/ruven)"
+		"Emmanuel Bertin <bertin@cfht.hawaii.edu> (https://github.com/ebertin)"
 	],
 	"license": "MIT",
 	"keywords": [
@@ -18,10 +16,10 @@
 	"private": true,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ebertin/visiomatic-server.git"
+		"url": "git+https://github.com/astromatic/visiomatic.git"
 	},
 	"bugs": {
-		"url": "https://github.com/ebertin/visiomatic-server/issues"
+		"url": "https://github.com/astromatic/visiomatic/issues"
 	},
 	"dependencies": {
 		"chart.js": "=4.3.0",

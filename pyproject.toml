@@ -52,9 +52,9 @@ test = [
 visiomatic = "visiomatic.cmd.start:main"
 
 [project.urls]
-Repository = "https://github.com/ebertin/visiomatic-server"
+Repository = "https://github.com/astromatic/visiomatic"
 Homepage = "https://visiomatic.org"
-Documentation = "https://ebertin.github.io/visiomatic-server/"
+Documentation = "https://astromatic.github.io/visiomatic"
 
 [tool.pytest.ini_options]
 filterwarnings = [
