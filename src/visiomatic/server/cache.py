@@ -4,11 +4,12 @@ Custom caches and utilities
 # Copyright CFHT/CNRS/SorbonneU
 # Licensed under the MIT licence
 
+import atexit
 from collections import OrderedDict
 from hashlib import md5
+import logging
 from multiprocessing.shared_memory import SharedMemory
 from os import getpid, getppid
-
 from sys import platform
 from time import time_ns
 from typing import Any, Callable, OrderedDict, Union
@@ -25,7 +26,7 @@ if package.isonlinux:
         SIGILL,
         SIGINT,
         SIGKILL,
-        SIGSEGV,
+        SIGSEGV, 
         SIGTERM
     )
     from posix_ipc import Semaphore, O_CREAT #type: ignore
@@ -99,8 +100,12 @@ class LRUSharedRWCache:
         Name of the lock cache.
     maxsize: int, optional
         Maximum size of the cache.
+    shared: bool, optional
+        Share dictionary across processes (requires POSIX IPC support)
     removecall: func, optional
         Callback function for removing cached data.
+    logger: logging.Logger, optional
+        Logger object to display cache handling information.
     """
     def __init__(
             self,
@@ -108,12 +113,14 @@ class LRUSharedRWCache:
             name: Union[str, None] = None,
             maxsize: int = 8,
             shared: bool = True,
-            removecall: Union[Callable, None] = None):
+            removecall: Union[Callable, None] = None,
+            logger: Union[logging.Logger, None] = None):
         self.func = func
         # Shared cache option only available on Linux
         self.shared = shared and package.isonlinux
         self.name = name if name else f"rwlockcache_{getppid()}"
         self._lock_name = self.name + ".lock"
+        self.logger = logger
         if self.shared:
             with Semaphore(self._lock_name, O_CREAT, initial_value=1) as lock:
                 self.cache = UltraDict(name=self.name, create=None, shared_lock=True)
@@ -123,6 +130,7 @@ class LRUSharedRWCache:
         self.results = LRUCache(func=func, maxsize=maxsize)
         # Delete semaphores when process is aborted.
         if self.shared:
+            atexit.register(self.remove)
             for sig in (
                 SIGABRT,
                 SIGILL,
@@ -334,6 +342,8 @@ class LRUSharedRWCache:
         """
         Remove semaphores.
         """
+        if self.logger:
+            self.logger.info(f"Cleaning up semaphores")
         try:
             Semaphore(self._lock_name).close()
         except:
@@ -357,7 +367,7 @@ class SharedRWLock:
     name: str, optional
         Name of the lock.
     """
-    def __init__(self, name="RWLock"):
+    def __init__(self, name: str = "RWLock"):
         self.name = name
         self._rlock_name = f"{package.name}_{name}.r.lock"
         self._glock_name = f"{package.name}_{name}.g.lock"
@@ -372,12 +382,11 @@ class SharedRWLock:
                     create=True,
                     size=np.array([0], dtype=np.int32).nbytes
                 )
-                self.b = np.ndarray(
+                self.b : np.ndarray = np.ndarray(
                     [1],
                     dtype=np.int32,
                     buffer=self.shared_mem.buf
                 )
-                b.fill(0)
             except:
                 self.shared_mem = SharedMemory(
                     name=f"{package.name}_{name}.b.shm",
@@ -390,6 +399,7 @@ class SharedRWLock:
                     buffer=self.shared_mem.buf
                 )
 
+        atexit.register(self.remove)
         for sig in (
             SIGABRT,
             SIGILL,

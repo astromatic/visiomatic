@@ -62,22 +62,6 @@ def create_app() -> FastAPI:
     tile_size = config.settings["tile_size"]
     image_argname = config.image_filename
 
-    # Get shared lock dictionary if processing in parallel
-    cache = LRUSharedRWCache(
-        pickledTiled,
-        name=f"{package.title}.{getppid()}",
-        maxsize=config.settings["max_cache_image_count"],
-        removecall=delTiled,
-        shared=shared
-    )
-    # Scan and register images cached during previous sessions
-    for filename in glob(path.join(cache_dir, "*" + ".pkl")):
-        tiled, msg, lock = cache(
-            get_image_filename(path.splitext(filename)[0])
-        )
-        if lock:
-            lock.release_read()
-
     logger = logging.getLogger("uvicorn.error")
 
     # Provide an endpoint for the user's manual (if it exists)
@@ -87,6 +71,22 @@ def create_app() -> FastAPI:
         logger.warning(
             f"Configuration file not found: {config.config_filename}!"
         )
+    # Get shared lock dictionary if processing in parallel
+    cache = LRUSharedRWCache(
+        pickledTiled,
+        name=f"{package.title}.{getppid()}",
+        maxsize=config.settings["max_cache_image_count"],
+        removecall=delTiled,
+        shared=shared,
+        logger=logger
+    )
+    # Scan and register images cached during previous sessions
+    for filename in glob(path.join(cache_dir, "*" + ".pkl")):
+        tiled, msg, lock = cache(
+            get_image_filename(path.splitext(filename)[0])
+        )
+        if lock:
+            lock.release_read()
 
     app = FastAPI(
         title=package.title,
