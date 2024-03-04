@@ -141,22 +141,6 @@
     <span class="n">tile_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;tile_size&quot;</span><span class="p">]</span>
     <span class="n">image_argname</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">image_filename</span>
 
-    <span class="c1"># Get shared lock dictionary if processing in parallel</span>
-    <span class="n">cache</span> <span class="o">=</span> <span class="n">LRUSharedRWCache</span><span class="p">(</span>
-        <span class="n">pickledTiled</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">getppid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_image_count&quot;</span><span class="p">],</span>
-        <span class="n">removecall</span><span class="o">=</span><span class="n">delTiled</span><span class="p">,</span>
-        <span class="n">shared</span><span class="o">=</span><span class="n">shared</span>
-    <span class="p">)</span>
-    <span class="c1"># Scan and register images cached during previous sessions</span>
-    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)):</span>
-        <span class="n">tiled</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">lock</span> <span class="o">=</span> <span class="n">cache</span><span class="p">(</span>
-            <span class="n">get_image_filename</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
-            <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
-
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;uvicorn.error&quot;</span><span class="p">)</span>
 
     <span class="c1"># Provide an endpoint for the user&#39;s manual (if it exists)</span>
@@ -166,6 +150,22 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Configuration file not found: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">!&quot;</span>
         <span class="p">)</span>
+    <span class="c1"># Get shared lock dictionary if processing in parallel</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">LRUSharedRWCache</span><span class="p">(</span>
+        <span class="n">pickledTiled</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">getppid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_image_count&quot;</span><span class="p">],</span>
+        <span class="n">removecall</span><span class="o">=</span><span class="n">delTiled</span><span class="p">,</span>
+        <span class="n">shared</span><span class="o">=</span><span class="n">shared</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+    <span class="p">)</span>
+    <span class="c1"># Scan and register images cached during previous sessions</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)):</span>
+        <span class="n">tiled</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">lock</span> <span class="o">=</span> <span class="n">cache</span><span class="p">(</span>
+            <span class="n">get_image_filename</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+            <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
 
     <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
