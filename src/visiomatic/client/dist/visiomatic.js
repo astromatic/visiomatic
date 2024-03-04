@@ -13748,9 +13748,9 @@
     },
     _initMonoDialog: function(layer, box) {
       const _this = this, visio = layer.visio, channels = layer.visio.channelLabels, className = this._className;
+      layer.updateMono();
       if (visio.nChannel > 1) {
         const line = this._addDialogLine("Channel:", box), elem = this._addDialogElement(line);
-        layer.updateMono();
         this._chanSelect = this._addSelectMenu(
           this._className + "-select",
           elem,

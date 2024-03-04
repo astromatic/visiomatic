@@ -214,11 +214,11 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			className = this._className;
 
 
+		layer.updateMono();
+
 		if (visio.nChannel > 1) {
 			const	line = this._addDialogLine('Channel:', box),
 				elem = this._addDialogElement(line);
-
-			layer.updateMono();
 
 			this._chanSelect = this._addSelectMenu(
 				this._className + '-select',
