@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>VisiOmatic web client: control/ProfileUI.js</title>
+    
+      <link type="text/css" rel="stylesheet" href="styles/vendor/prism-tomorrow-night.css">
+    
+    <link type="text/css" rel="stylesheet" href="styles/styles.css">
+    
+</head>
+<body>
+
+<header class="layout-header">
+  
+  <h1>
+    <a href="./index.html">
+      VisiOmatic web client
+    </a>
+  </h1>
+  <nav class="layout-nav">
+    <ul><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="CAR.html">CAR</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CAR.html#._phiRToRed">_phiRToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CAR.html#._redToPhiR">_redToPhiR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="CEA.html">CEA</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CEA.html#._phiRToRed">_phiRToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CEA.html#._redToPhiR">_redToPhiR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="COE.html">COE</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="COE.html#._projInit">_projInit</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="COE.html#._rToTheta">_rToTheta</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="COE.html#._thetaToR">_thetaToR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Catalog.html">Catalog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#._csvToGeoJSON">_csvToGeoJSON</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.draw">draw</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.filter">filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.popup">popup</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.readProperty">readProperty</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.style">style</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Catalog.html#.toGeoJSON">toGeoJSON</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="CatalogUI.html">CatalogUI</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="CatalogUI.html#.defaultCatalogs">defaultCatalogs</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CatalogUI.html#._getCatalog">_getCatalog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CatalogUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CatalogUI.html#._loadCatalog">_loadCatalog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="CatalogUI.html#._resetDialog">_resetDialog</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="ChannelUI.html">ChannelUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._activateChanElem">_activateChanElem</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._activateTrashElem">_activateTrashElem</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._addMinMax">_addMinMax</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._gotoChannel">_gotoChannel</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._initColorDialog">_initColorDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._initMonoDialog">_initMonoDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._pauseAnimation">_pauseAnimation</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._playAnimation">_playAnimation</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._updateChannel">_updateChannel</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._updateChannelList">_updateChannelList</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._updateChannelMix">_updateChannelMix</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#._updateColPick">_updateColPick</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#.loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ChannelUI.html#.saveSettings">saveSettings</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Conical.html">Conical</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Conical.html#._phiRToRed">_phiRToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Conical.html#._redToPhiR">_redToPhiR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Coords.html">Coords</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#._checkVisiomatic">_checkVisiomatic</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#._getCoordinates">_getCoordinates</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#._onDrag">_onDrag</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#.onRemove">onRemove</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Coords.html#.panTo">panTo</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Cylindrical.html">Cylindrical</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Cylindrical.html#._projInit">_projInit</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Cylindrical.html#._rToTheta">_rToTheta</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Cylindrical.html#._thetaToR">_thetaToR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="DocUI.html">DocUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._backNav">_backNav</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._disableNav">_disableNav</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._forwardNav">_forwardNav</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._homeNav">_homeNav</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._onloadNav">_onloadNav</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="DocUI.html#._updateNav">_updateNav</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Ellipse.html">Ellipse</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Ellipse.html#._project">_project</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Ellipse.html#.getBounds">getBounds</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="EllipseMarker.html">EllipseMarker</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#._containsPoint">_containsPoint</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#._project">_project</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#._update">_update</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#._updateBounds">_updateBounds</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#._updatePath">_updatePath</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#.getLatLng">getLatLng</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#.getParams">getParams</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#.setLatLng">setLatLng</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="EllipseMarker.html#.setParams">setParams</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="ExtraMap.html">ExtraMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._addButton">_addButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._addToggleButton">_addToggleButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._decideMinimized">_decideMinimized</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._decideZoom">_decideZoom</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._isDefined">_isDefined</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._isInteger">_isInteger</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._isZoomLevelFixed">_isZoomLevelFixed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._minimize">_minimize</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._onExtraMapMoveStarted">_onExtraMapMoveStarted</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._onExtraMapMoved">_onExtraMapMoved</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._onExtraMapMoving">_onExtraMapMoving</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._onMainMapMoved">_onMainMapMoved</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._onMainMapMoving">_onMainMapMoving</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._restore">_restore</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._setDisplay">_setDisplay</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#._toggleDisplayButtonClicked">_toggleDisplayButtonClicked</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#.changeLayer">changeLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#.onAdd">onAdd</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ExtraMap.html#.onRemove">onRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="FlipsSwitch.html">FlipsSwitch</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="FlipsSwitch.html#.value">value</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="FullScreen.html">FullScreen</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="FullScreen.html#._addButton">_addButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="FullScreen.html#._handleEscKey">_handleEscKey</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="FullScreen.html#.onAdd">onAdd</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="FullScreen.html#.toogleFullScreen">toogleFullScreen</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="ImageUI.html">ImageUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ImageUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ImageUI.html#.loadSettings">loadSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ImageUI.html#.saveSettings">saveSettings</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="PIX.html">PIX</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PIX.html#._projInit">_projInit</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PIX.html#.project">project</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PIX.html#.unproject">unproject</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="PixelValues.html">PixelValues</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PixelValues.html#._checkVisiomatic">_checkVisiomatic</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PixelValues.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PixelValues.html#._onUpdate">_onUpdate</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PixelValues.html#.onRemove">onRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="PreferencesUI.html">PreferencesUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="PreferencesUI.html#._initDialog">_initDialog</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="ProfileUI.html">ProfileUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._extractAverage">_extractAverage</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._extractProfile">_extractProfile</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._getDistanceString">_getDistanceString</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._plotProfile">_plotProfile</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._plotSpectrum">_plotSpectrum</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._profileEnd">_profileEnd</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ProfileUI.html#._updateLine">_updateLine</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Projection.html">Projection</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="Projection.html#.defaultProjParam">defaultProjParam</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._celsysmatInit">_celsysmatInit</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._cpole">_cpole</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._getCenter">_getCenter</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._invertCD">_invertCD</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._multiToPix">_multiToPix</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._natpole">_natpole</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._paramUpdate">_paramUpdate</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._phiThetaToRADec">_phiThetaToRADec</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._pixToMulti">_pixToMulti</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._pixToRed">_pixToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._raDecToPhiTheta">_raDecToPhiTheta</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._readWCS">_readWCS</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._redToPix">_redToPix</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#._shiftWCS">_shiftWCS</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#.celSysToEq">celSysToEq</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#.eqToCelSys">eqToCelSys</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#.project">project</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Projection.html#.unproject">unproject</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="RGB.html">RGB</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RGB.html#.clone">clone</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RGB.html#.isOn">isOn</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RGB.html#.toStr">toStr</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="RegionUI.html">RegionUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RegionUI.html#._getRegion">_getRegion</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RegionUI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RegionUI.html#._loadRegion">_loadRegion</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="RegionUI.html#._resetDialog">_resetDialog</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Reticle.html">Reticle</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Reticle.html#.onRemove">onRemove</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Scale.html">Scale</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._addScales">_addScales</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._jacobian">_jacobian</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._update">_update</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._updateCustom">_updateCustom</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._updateDegrees">_updateDegrees</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Scale.html#._updatePixels">_updatePixels</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Sidebar.html">Sidebar</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#._addButton">_addButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#._onClick">_onClick</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#._onCloseClick">_onCloseClick</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.addTab">addTab</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.addTabList">addTabList</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.addTo">addTo</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.close">close</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.open">open</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.removeFrom">removeFrom</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Sidebar.html#.toggle">toggle</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="SnapshotUI.html">SnapshotUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="SnapshotUI.html#._initDialog">_initDialog</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Spinbox.html">Spinbox</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#._offset">_offset</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#._prec">_prec</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#._sboxRun">_sboxRun</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#.disable">disable</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#.enable">enable</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#.step">step</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Spinbox.html#.value">value</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="TAN.html">TAN</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TAN.html#._rToTheta">_rToTheta</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TAN.html#._thetaToR">_thetaToR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="TPV.html">TPV</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TPV.html#._dRedToRed">_dRedToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TPV.html#._pixToRed">_pixToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TPV.html#._redToDRed">_redToDRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="TPV.html#._redToPix">_redToPix</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="UI.html">UI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addButton">_addButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addColorPicker">_addColorPicker</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addDialogBox">_addDialogBox</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addDialogElement">_addDialogElement</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addDialogLine">_addDialogLine</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addLayerItem">_addLayerItem</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addNumericalInput">_addNumericalInput</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addRadioButton">_addRadioButton</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addSelectMenu">_addSelectMenu</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._addSwitchInput">_addSwitchInput</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._checkVisiomatic">_checkVisiomatic</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._collapse">_collapse</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._expand">_expand</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._findActiveBaseLayer">_findActiveBaseLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._initDialog">_initDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._onLayerChange">_onLayerChange</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._resetDialog">_resetDialog</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._spinboxStep">_spinboxStep</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._updateInput">_updateInput</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#._updateLayerList">_updateLayerList</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#.addLayer">addLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#.addTo">addTo</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#.getActiveBaseLayer">getActiveBaseLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#.onAdd">onAdd</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="UI.html#.removeLayer">removeLayer</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="VTileLayer.html">VTileLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="VTileLayer.html#visio">visio</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="VTileLayer.html#.visioDefault">visioDefault</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._addToMap">_addToMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._gammaCorr">_gammaCorr</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._initTile">_initTile</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._isValidTile">_isValidTile</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._readVisioKey">_readVisioKey</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._refreshTileUrl">_refreshTileUrl</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#._setAttr">_setAttr</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.addTo">addTo</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.createTile">createTile</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.getChannelColor">getChannelColor</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.getMetaData">getMetaData</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.getTileUrl">getTileUrl</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.redraw">redraw</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.rgbToMix">rgbToMix</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.updateMix">updateMix</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VTileLayer.html#.updateMono">updateMono</a></span></li><li class="nav-item"><span class="nav-item-type type-event" title="event">E</span><span class="nav-item-name is-event"><a href="VTileLayer.html#.event:channelupdate">channelupdate</a></span></li><li class="nav-item"><span class="nav-item-type type-event" title="event">E</span><span class="nav-item-name is-event"><a href="VTileLayer.html#.event:metaload">metaload</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="WCS.html">WCS</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="WCS.html#.code">code</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#._deltaLng">_deltaLng</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.distance">distance</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.fovToZoom">fovToZoom</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.getProjection">getProjection</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.hmsDMSToLatLng">hmsDMSToLatLng</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.latLngToHMSDMS">latLngToHMSDMS</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiLatLngToIndex">multiLatLngToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiLatLngToPoint">multiLatLngToPoint</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiPntToIndex">multiPntToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiPointToLatLng">multiPointToLatLng</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiProject">multiProject</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.multiUnproject">multiUnproject</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.parseCoords">parseCoords</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.pixelScale">pixelScale</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.rawPixelScale">rawPixelScale</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.scale">scale</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.transform">transform</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.untransform">untransform</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.zoom">zoom</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="WCS.html#.zoomToFov">zoomToFov</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="ZEA.html">ZEA</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ZEA.html#._rToTheta">_rToTheta</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="ZEA.html#._thetaToR">_thetaToR</a></span></li><li class="nav-heading"><span class="nav-item-type type-class" title="class">C</span><span class="nav-item-name is-class"><a href="Zenithal.html">Zenithal</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Zenithal.html#._phiRToRed">_phiRToRed</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Zenithal.html#._projInit">_projInit</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="Zenithal.html#._redToPhiR">_redToPhiR</a></span></li></ul><ul><li class="nav-heading">Namespaces</li><li class="nav-heading"><span class="nav-item-type type-namespace" title="namespace">N</span><span class="nav-item-name is-namespace"><a href="VUtil.html">VUtil</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.checkDomain">checkDomain</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.copyToClipboard">copyToClipboard</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.flashElement">flashElement</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.getCookie">getCookie</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.isExternal">isExternal</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.parseURL">parseURL</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.readFITSKey">readFITSKey</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.requestURL">requestURL</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="VUtil.html#.updateURL">updateURL</a></span></li><li class="nav-heading"><span class="nav-item-type type-namespace" title="namespace">N</span><span class="nav-item-name is-namespace"><a href="catalogs.html">catalogs</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.abell">abell</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.allWISE">allWISE</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.first">first</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.gaiaDR3">gaiaDR3</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.galexAIS">galexAIS</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.gleam">gleam</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.nvss">nvss</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.panstarrs1">panstarrs1</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.ppmXL">ppmXL</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.sdss">sdss</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.skybot">skybot</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.tgss">tgss</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.twomass">twomass</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.unWISE">unWISE</a></span></li><li class="nav-item"><span class="nav-item-type type-member" title="member">M</span><span class="nav-item-name is-member"><a href="catalogs.html#.urat1">urat1</a></span></li></ul><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#catalogUI">catalogUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#channelUI">channelUI</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#coordinate">coordinate</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#coords">coords</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#docUI">docUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#ellipse">ellipse</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#ellipseMarker">ellipseMarker</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#ellipseShape">ellipseShape</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#flipSwitch">flipSwitch</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#fullScreen">fullScreen</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#image">image</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#imageUI">imageUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#pixelValues">pixelValues</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#preferencesUI">preferencesUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#profileUI">profileUI</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#projParam">projParam</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#rectangleOptions">rectangleOptions</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#region">region</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#regionUI">regionUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#reticle">reticle</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#rgb">rgb</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#scale">scale</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#sidebar">sidebar</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#snapshotUI">snapshotUI</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#spinbox">spinbox</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#vTileLayer">vTileLayer</a></span></li><li class="nav-item"><span class="nav-item-type type-typedef" title="typedef">T</span><span class="nav-item-name is-typedef"><a href="global.html#valueSettings">valueSettings</a></span></li><li class="nav-item"><span class="nav-item-type type-function" title="function">F</span><span class="nav-item-name is-function"><a href="global.html#wcs">wcs</a></span></li>
+  </nav>
+</header>
+
+
+<main class="layout-main  layout-content--source">
+  <div class="container">
+    <p class="page-kind">source</p>
+    <h1 class="page-title">control/ProfileUI.js</h1>
+    
+
+
+
+    
+
+<section>
+    <article>
+        <pre id="source" class="source-page line-numbers"><code class="language-js">/**
+ #	This file part of:	VisiOmatic
+ * @file User Interface for plotting image profiles and spectra.
+
+ * @requires util/VUtil.js
+ * @requires control/UI.js
+
+ * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @author Emmanuel Bertin &lt;bertin@cfht.hawaii.edu>
+*/
+import Chart from 'chart.js/auto';
+import zoomPlugin from 'chartjs-plugin-zoom';
+
+Chart.register(zoomPlugin);
+
+import {
+	DomUtil,
+	Util,
+	circleMarker,
+	divIcon,
+	marker,
+	polyline
+} from 'leaflet';
+
+import {VUtil} from '../util';
+import {UI} from './UI';
+
+
+export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
+
+	options: {
+		title: 'Profile overlays',
+		profile: true,
+		profileColor: '#FF00FF',
+		spectrum: true,
+		spectrumColor: '#A000FF',
+		collapsed: true,
+		position: 'topleft',
+		chartZoomOptions: {
+			zoom: {
+				wheel: {
+					enabled: true,
+				},
+				pinch: {
+					enabled: true
+				},
+				drag: {
+					enabled: true,
+					modifierKey: 'shift'
+				},
+				scaleMode: 'xy',
+				mode: 'xy',
+			},
+			pan: {
+				enabled: true,
+				scaleMode: 'xy'
+			},
+			limits: {
+				x: {min: 'original', max: 'original'},
+				y: {min: 'original', max: 'original'}
+			}
+		}
+	},
+
+	/**
+	 * Create a VisiOmatic dialog for plotting image profiles and spectra.
+
+	 * @extends UI
+	 * @memberof module:control/ProfileUI.js
+	 * @constructs
+	 * @param {object} [options] - Options.
+
+	 * @param {string} [options.title='Profile overlays']
+	   Title of the dialog window or panel.
+
+	 * @param {boolean} [options.profile=True]
+	   Include Profile plotting dialog?
+
+	 * @param {string} [options.profileColor='#FF00FF']
+	   Default profile overlay color
+
+	 * @param {boolean} [options.spectrum=True]
+	   Include spectrum plotting dialog?
+
+	 * @param {string} [options.spectrumColor='A000FF']
+	   Default spectrumoverlay color
+
+	 * @param {string} [options.chartZoomOptions]
+	   Default options for the chartjs-plugin-zoom Chart plug-in.
+	   @see {@link https://www.chartjs.org/chartjs-plugin-zoom/latest/guide/options.html}
+
+	 * @see {@link UI} for additional control options.
+
+	 * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
+	   plotting user interface.
+	 */
+	initialize: function (options) {
+		Util.setOptions(this, options);
+		this._className = 'visiomatic-control';
+		this._id = 'visiomatic-profile';
+		this._layers = {};
+		this._sideClass = 'profile';
+		this._handlingClick = false;
+	},
+
+	/**
+	 * Initialize the profile/spectrum plotting dialog.
+	 * @private
+	 */
+	_initDialog: function () {
+		const _this = this,
+			options = this.options,
+			className = this._className,
+			box = this._addDialogBox();
+
+		this._wcs = this._map.options.crs;
+		if (options.profile) {
+			const	line = this._addDialogLine('Profile:', box),
+				elem = this._addDialogElement(line),
+				linecolpick = this._addColorPicker(
+					className + '-color',
+					elem,
+					'profile',
+					options.profileColor,
+					'visiomaticProfile',
+					title='Click to set line color'
+				);
+
+			// Create start profile line button
+			this._addButton(
+				className + '-button',
+				elem,
+				'start',
+				'Start drawing a profile line',
+				() => {
+					if (this._currProfileLine) {
+						this._updateLine();
+					} else {
+						const	map = _this._map,
+							point = map.getCenter(),
+							line = this._currProfileLine = polyline(
+								[point, point],
+								{
+									color: linecolpick.value,
+									weight: 7,
+									opacity: 0.5
+								}
+							),
+							licon = this._currProfileLength = divIcon(
+								{
+									className: className + '-length',
+									html: '&lt;p style="font-size: 15pt; color: '
+										+ linecolpick.value +';">0&amp;#34;&lt;/p>'
+								}
+							),
+							lmarker = this._currProfileLengthMarker = marker(
+								point,
+								{icon: licon}
+							);
+
+						line.nameColor = linecolpick.value;
+						line.addTo(map);
+						lmarker.addTo(map);						
+						map.on('drag', this._updateLine, this);
+					}
+				}
+			);
+
+			// Create end profile line button
+			this._addButton(
+				className + '-button',
+				elem,
+				'end',
+				'End line and plot',
+				this._profileEnd
+			);
+		}
+
+		if (options.spectrum) {
+			// Create Spectrum dialog line
+			const	line = this._addDialogLine('Spectrum:', box),
+				elem = this._addDialogElement(line);
+
+			// Create Spectrum color picker
+			const	speccolpick = this._addColorPicker(
+				className + '-color',
+				elem,
+				'spectrum',
+				options.spectrumColor,
+				'visiomaticSpectra',
+				title='Click to set marker color'
+			);
+
+			// Create Spectrum button
+			this._addButton(
+				className + '-button',
+				elem,
+				'spectrum',
+				'Plot a spectrum at the current map position',
+				() => {
+					const map = _this._map,
+						latLng = map.getCenter(),
+						zoom = _this._wcs.options.nzoom - 1,
+						point = map.project(latLng, zoom).floor().add([0.5, 0.5]),
+						rLatLng = map.unproject(point, zoom),
+						marker = this._spectrumMarker = circleMarker(rLatLng, {
+							color: speccolpick.value,
+							radius: 6,
+							title: 'Spectrum'
+						}).addTo(map),
+						popdiv = DomUtil.create(
+							'div',
+							this._className + '-popup'
+						),
+						activity = DomUtil.create(
+							'div',
+							this._className + '-activity',
+							popdiv
+						);
+
+					popdiv.id = 'leaflet-spectrum-plot';
+					marker.bindPopup(
+						popdiv,
+						{
+							minWidth: 16,
+							maxWidth: 1024,
+							closeOnClick: false
+						}
+					).openPopup();
+					VUtil.requestURL(
+						this._layer._url.replace(/\&amp;.*$/g, '') +
+							'&amp;PFL=' +
+							point.x.toFixed(0) + ',' +
+							point.y.toFixed(0) + ':' +
+							point.x.toFixed(0) + ',' +
+							point.y.toFixed(0),
+						'getting layer spectrum',
+						this._plotSpectrum,
+						this
+					);
+				}
+			);
+		}
+	},
+
+	/**
+	 * Update plotted line parameters.
+	 * @private
+	 * @param {event} e
+	   Triggering event (e.g., ``'drag'``).
+	 */
+	_updateLine: function (e) {
+		const	map = this._map,
+			maxzoom = this._wcs.options.nzoom - 1,
+			path = this._currProfileLine.getLatLngs(),
+			point1 = map.project(path[0], maxzoom),
+			point2 = map.project(map.getCenter(), maxzoom);
+
+		path[1] = map.unproject(point2, maxzoom);
+		this._currProfileLength.options.html =
+			this._currProfileLength.options.html.replace(
+				/>[\d.&amp;#;]+&lt;/,
+				'>' + this._getDistanceString(path[0], path[1]) + '&lt;'
+			);
+		this._currProfileLengthMarker.setLatLng(
+			this._currProfileLine.getCenter()
+		);
+		this._currProfileLengthMarker.setIcon(this._currProfileLength);
+		this._currProfileLine.redraw();
+	},
+
+	/**
+	 * End interactive profile line definition and do the profile query. 
+	 * @private
+	 */
+	_profileEnd: async function () {
+		const	map = this._map,
+			wcs = this._wcs,
+			point = map.getCenter(),
+			line = this._profileLine = this._currProfileLine;
+
+		map.off('drag', this._updateLine, this);
+		this._currProfileLengthMarker.remove();
+		this._currProfileLengthMarker = undefined;
+		this._currProfileLine = undefined;
+
+		const	popdiv = this._popDiv = DomUtil.create(
+				'div',
+				'visiomatic-profile-plot'
+			),
+			activity = DomUtil.create(
+				'div',
+				this._className + '-activity',
+				popdiv
+			);
+
+		line.bindPopup(popdiv,
+			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
+		const	zoom = wcs.options.nzoom - 1,
+			path = line.getLatLngs(),
+			point1 = wcs.project(path[0]),
+			point2 = wcs.project(path[1]);
+
+		// Check if line is drawn from left-to-right; if not, swap endpoints.
+		if (point2.x &lt; point1.x) {
+			const x = point2.x,
+				y = point2.y;
+
+			point2.x = point1.x;
+			point1.x = x;
+			point2.y = point1.y;
+			point1.y = y;
+			line.lr = false;
+		} else {
+			line.lr = true;
+		}
+
+		const	layer = this._layer,
+			visio = layer.visio;
+
+		response = await fetch(
+			layer._url.replace(/\&amp;.*$/g, '') +
+				(
+					visio.mode === 'mono' ?
+						`&amp;CHAN=${visio.channel + 1}` :
+						visio.rgb.map((rgb, c) => `&amp;CHAN=${c+1}`).join('')
+				) +
+				'&amp;PFL=' +
+				point1.x.toFixed(0) + ',' +
+				point1.y.toFixed(0) + ':' +
+				point2.x.toFixed(0) + ',' +
+				point2.y.toFixed(0),
+		);
+		
+		if (response.status == 200) {
+			this._plotProfile(await response);
+		} else {
+			alert('Error ' + response.status + ' while getting profile.');
+		}
+	},
+
+	/**
+	 * Compute distance and set up measurement string.
+	 * @private
+	 * @returns {string} Measurement string.
+	 */
+	_getDistanceString: function (latlng1, latlng2) {
+		let	distance = this._wcs.distance(latlng1, latlng2);
+		var	unit;
+		
+		if (distance >= 1.0) {
+			unit = '&amp;#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&amp;#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&amp;#34;';
+			}
+		}
+		const	distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	},
+
+	/**
+	 * Load and plot image profile data.
+	 * @private
+	 * @param {object} response
+	   HTTP response object.
+	 */
+	_plotProfile: async function (response) {
+		const	json = await response.json(),
+			rawprof = json.profile,
+			layer = this._layer,
+			visio = layer.visio,
+			line = this._profileLine,
+			popdiv = this._popDiv,
+			prof = [],
+			series = [];
+
+		this.addLayer(line, 'Image profile');
+
+		const	monoflag = visio.mode === 'mono',
+			chart = new Chart(
+				DomUtil.create(
+					'canvas',
+					this._className + '-canvas',
+					popdiv
+				),
+				{
+					type: 'line',
+					data: {
+						labels: rawprof.map((point) => [point['x'], point['y']]),
+						datasets: monoflag ?
+							// Mono channel mode: plot a single line
+							[{
+								label: 'profile',
+								data: rawprof.map((point) => point['values'][0]),
+							}] :
+							// Color mode: plot one line per non-blank channel
+							visio.rgb.map(
+								(rgb, c) => ({
+									label: visio.channelLabels[c],
+									borderColor: rgb.toStr()
+								})
+							).filter(Boolean).map(
+								(dataset, i) => ({
+									...dataset,
+									...{data: rawprof.map(point => point['values'][i])}
+								})
+							)
+					},
+					options: {
+						pointRadius: 0,
+						stepped: 'middle',
+						scales: {
+							x: {
+								title: {
+									display: true,
+									text: 'position along line',
+									color: getComputedStyle(this._map._container)
+										.getPropertyValue('--dialog-color')
+								}
+							},
+							y: {
+								title: {
+									display: true,
+									text: 'Pixel value',
+									color: getComputedStyle(this._map._container)
+										.getPropertyValue('--dialog-color')
+								}
+							}
+						},
+						maintainAspectRatio: false,
+						interaction: {
+							mode: 'nearest',
+							intersect: true
+						},
+						plugins: {
+							title: {
+								display: true,
+								text: monoflag ?
+									'Image profile for ' +
+										visio.channelLabels[visio.channel] :
+									'Image profiles',
+								color: getComputedStyle(this._map._container)
+									.getPropertyValue('--dialog-color')
+							},
+							legend: {
+								display: !monoflag
+							},
+							zoom: this.options.chartZoomOptions
+						}
+					}
+				}
+			);
+		// Update chart colors on theme change.
+		this._map.on(
+			'themeChange',
+			() => {
+				chart.options.scales.x.title.color
+					= chart.options.scales.y.title.color = getComputedStyle(
+						this._map._container
+					).getPropertyValue('--dialog-color');
+				chart.options.plugins.title.color = getComputedStyle(
+					this._map._container
+				).getPropertyValue('--dialog-color');
+				chart.update();
+			}
+		);
+		popdiv.removeChild(
+			popdiv.childNodes[0]
+		);						// Remove activity spinner
+		line._popup.update();	// TODO: avoid private method
+	},
+
+	/**
+	 * Extract the image profile in a given channel from the multichannel
+	   profiles of a given VisiOmatic layer.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number[]} rawprof
+	   Input "raw" (multiplexed) image profiles.
+	 * @param {number} channel
+	   Image channel.
+	 * @returns {number[]} Extracted image profile.
+	 */
+	_extractProfile: function (layer, rawprof, channel) {
+		const	nchan = layer.visio.nChannel,
+			npix = rawprof.length,
+			prof = [];
+		for (let i = 0; i &lt; npix; i++) {
+			prof.push(rawprof[i][2][channel]);
+		}
+
+		return prof;
+	},
+
+	/**
+	 * Load and plot spectrum data.
+	 * @private
+	 * @param {object} self
+	   Calling control object (``this``).
+	 * @param {object} httpRequest
+	   HTTP request.
+	 */
+	_plotSpectrum: function (self, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				const	json = JSON.parse(httpRequest.responseText),
+					rawprof = json.profile,
+					layer = self._layer,
+					visio = layer.visio,
+					marker = self._spectrumMarker,
+					popdiv = document.getElementById('leaflet-spectrum-plot'),
+					spec = [],
+					series = [],
+					title = 'Image Spectrum',
+					ylabel = 'Average pixel value';
+
+				self.addLayer(marker, 'Image spectrum');
+
+				for (let c = 0; c &lt; visio.nChannel; c++) {
+					spec.push([
+						visio.channelLabels[c],
+						self._extractAverage(layer, rawprof, c)
+					]);
+				}
+				/*
+				$(document).ready(function () {
+					$.jqplot.config.enablePlugins = true;
+					$.jqplot('leaflet-spectrum-plot', [spec], {
+						title: title,
+						grid: {
+							backgroundColor: '#F0F0F0',
+							gridLineColor: '#F8F8F8'
+						},
+						axes: {
+							xaxis: {
+								renderer: $.jqplot.CategoryAxisRenderer,
+								tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+								tickOptions: {
+									angle: -30,
+									fontSize: '6pt'
+								}
+							},
+							yaxis: {
+								label: ylabel,
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							}
+						},
+						highlighter: {
+							show: true,
+							sizeAdjust: 2,
+							tooltipLocation: 'n',
+							tooltipAxes: 'y',
+							tooltipFormatString: '%.6g ' +
+								visio.channelUnits[visio.channel],
+							useAxesFormatters: false
+						},
+						cursor: {
+							show: true,
+							zoom: true
+						},
+						seriesDefaults: {
+							lineWidth: 2.0,
+							showMarker: false
+						}
+					});
+				});
+				*/
+				popdiv.removeChild(
+					popdiv.childNodes[0]
+				);						// Remove activity spinner
+
+				marker._popup.update();	// TODO: avoid private method
+			}
+		}
+	},
+
+	/**
+	 * Extract the average pixel value in a given channel from the multichannel
+	   profiles of a given VisiOmatic layer.
+	 * @private
+	 * @param {VTileLayer} layer
+	   VisiOmatic layer.
+	 * @param {number[]} rawprof
+	   Input "raw" (multiplexed) image profiles.
+	 * @param {number} channel
+	   Image channel.
+	 * @returns {number} Average value.
+	 */
+	_extractAverage: function (layer, rawprof, channel) {
+		const	nchan = layer.visio.nChannel,
+			npix = rawprof.length / nchan;
+		let	val = 0.0;
+
+		if (npix === 0) {
+			return 0.0;
+		}
+		for (let i = 0; i &lt; npix; i++) {
+			val += rawprof[i]['values'][channel];
+		}
+
+		return val / npix;
+	}
+
+});
+
+/**
+ * Instantiate a VisiOmatic dialog for plotting image profiles and spectra.
+ * @function
+ * @param {object} [options] - Options: see {@link ProfileUI}
+ * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
+   plotting user interface.
+ */
+export const profileUI = function (options) {
+	return new ProfileUI(options);
+};
+
+</code></pre>
+    </article>
+</section>
+
+
+
+
+  </div>
+</main>
+
+<footer class="layout-footer">
+  <div class="container">
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Tue Mar 19 2024 19:02:08 GMT+0000 (Coordinated Universal Time)
+  </div>
+</footer>
+
+
+
+<script src="scripts/prism.dev.js"></script>
+</body>
+</html>
