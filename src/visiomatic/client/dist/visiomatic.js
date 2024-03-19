@@ -14398,9 +14398,9 @@
       iframe.src = this._url;
       iframe.frameborder = 0;
       this._navHistory = [];
-      this._navPos = 0;
-      this._ignore = false;
-      import_leaflet14.DomEvent.on(iframe, "load hashchange", this._onloadNav, this);
+      this._navPos = 1;
+      this._navIgnore = false;
+      import_leaflet14.DomEvent.on(iframe, "load", this._onloadNav, this);
       const box = this._addDialogBox("visiomatic-doc-dialog"), line = this._addDialogLine("Navigate:", box), elem = this._addDialogElement(line);
       this._homeButton = this._addButton(
         className + "-button",
@@ -14460,15 +14460,15 @@
         this._updateNav(1);
       }
     },
-    _onloadNav: function() {
-      if (true) {
+    _onloadNav: function(event) {
+      if (event.type == "load") {
+        import_leaflet14.DomEvent.on(this._iframe.contentWindow, "hashchange", this._onloadNav, this);
         const as = this._iframe.contentDocument.getElementsByTagName("a");
         for (var i2 = 0; i2 < as.length; i2++) {
           if (VUtil.isExternal(as[i2].href)) {
             as[i2].setAttribute("target", "_blank");
           }
         }
-        this._iframeLoad1 = true;
       }
       if (!this._navIgnore) {
         const href = this._iframe.contentWindow.location.href;

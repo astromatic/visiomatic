@@ -78,10 +78,10 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 		iframe.frameborder = 0;
 
 		this._navHistory = [];
-		this._navPos = 0;
-		this._ignore = false;
+		this._navPos = 1;
+		this._navIgnore = false;
 
-		DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
+		DomEvent.on(iframe, 'load', this._onloadNav, this);
 
 		const	box = this._addDialogBox('visiomatic-doc-dialog'),
 			line = this._addDialogLine('Navigate:', box),
@@ -184,17 +184,18 @@ export const DocUI = UI.extend( /** @lends DocUI */ {
 	 * @see {@link http://stackoverflow.com/a/7704305}.
 	 * @private
 	 */
-	_onloadNav: function () {
-		if (true) {
-			// Force all external iframe links to open in new tab/window
-			// from 
+	_onloadNav: function (event) {
+		// Do specific things if the event is a page load
+		if (event.type == 'load') {
+			// Add listener for hashchanges on current page
+			DomEvent.on(this._iframe.contentWindow, 'hashchange', this._onloadNav, this);
+			// Force all external page links to open in new tab/window
 			const	as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
 				if (VUtil.isExternal(as[i].href)) {
 					as[i].setAttribute('target', '_blank');
 				}
 			}
-			this._iframeLoad1 = true;
 		}
 
 		if (!this._navIgnore) {
