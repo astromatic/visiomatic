@@ -49,7 +49,7 @@ Map.addInitHook(function () {
 	 this.options.attributionControl) {
 		this.attributionControl.setPrefix(
 			'<a id="logo-visiomatic" class="leaflet-control-attribution-logo "' +
-			 'href="http://visiomatic.org" target="_blank">&nbsp;</a>'
+			 'href="http://cfht.hawaii.edu" target="_blank">&nbsp;</a>'
 		);
 	}
 });

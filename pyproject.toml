@@ -46,7 +46,8 @@ classifiers = [
 
 [project.optional-dependencies]
 test = [
-    "pytest"
+    "mypy",
+    "pytest-cov"
 ]
 
 [project.scripts]

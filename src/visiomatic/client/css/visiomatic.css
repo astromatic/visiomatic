@@ -1477,10 +1477,10 @@ UL.filetree A:hover {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-attribution {
-	background: rgba(100,100,100,0.5) !important;
+	background: rgba(100,100,100,0.0) !important;
 	color: white;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+	box-shadow: none;
 	margin-bottom: 5px !important;
 	margin-right: 10px !important;
 	line-height: 200%;
@@ -1497,19 +1497,19 @@ UL.filetree A:hover {
 }
 
 .leaflet-control-attribution-logo {
-	opacity: 0.7;
-	filter: opacity(70%);
-	width: 2em;
-	height: 2em;
+	opacity: 0.8;
+	filter: opacity(80%);
+	width: 2.8em;
+	height: 2.8em;
 	float: left;
 	vertical-align: middle;
 	margin-left: 0.5em;
 }
 
 #logo-visiomatic {
-	background-image: url(../images/visiomatic.png);
+	background-image: url(../images/cfht-logo.svg);
 	background-repeat: no-repeat;
-	background-size: 2.1em;
+	background-size: 2.4em;
 	background-position: center;
 }
 
