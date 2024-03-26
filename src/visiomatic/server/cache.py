@@ -10,7 +10,7 @@ from hashlib import md5
 import logging
 from multiprocessing.shared_memory import SharedMemory
 from os import getpid, getppid
-from sys import platform
+from sys import exit, platform
 from time import time_ns
 from typing import Any, Callable, OrderedDict, Union
 
@@ -20,15 +20,6 @@ from .. import package
 
 # Shared version of cache only available on Linux
 if package.isonlinux:
-    from signal import (
-        signal,
-        SIGABRT,
-        SIGILL,
-        SIGINT,
-        SIGKILL,
-        SIGSEGV, 
-        SIGTERM
-    )
     from posix_ipc import Semaphore, O_CREAT #type: ignore
     from UltraDict import UltraDict #type: ignore
 
@@ -131,13 +122,6 @@ class LRUSharedRWCache:
         # Delete semaphores when process is aborted.
         if self.shared:
             atexit.register(self.remove)
-            for sig in (
-                SIGABRT,
-                SIGILL,
-                SIGINT,
-                SIGSEGV,
-                SIGTERM):
-                signal(sig, self.remove)
         self.removecall = removecall
         self.maxsize = maxsize
 
@@ -354,7 +338,6 @@ class LRUSharedRWCache:
             pass
 
 
-
 class SharedRWLock:
     """
     Custom reader-writer lock shareable across processes
@@ -400,13 +383,6 @@ class SharedRWLock:
                 )
 
         atexit.register(self.remove)
-        for sig in (
-            SIGABRT,
-            SIGILL,
-            SIGINT,
-            SIGSEGV,
-            SIGTERM):
-            signal(sig, self.remove)
 
 
     def acquire_read(self) -> None:
@@ -463,5 +439,4 @@ class SharedRWLock:
             self.shared_mem.unlink()
         except:
             pass
-
 
