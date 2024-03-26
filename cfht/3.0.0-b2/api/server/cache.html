@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cache &mdash; VisiOmatic 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cmd" href="cmd.html" />
+    <link rel="prev" title="Web API" href="app.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Python server</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app.html">Web API</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Cache</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#visiomatic.server.cache.LRUCache"><code class="docutils literal notranslate"><span class="pre">LRUCache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visiomatic.server.cache.LRUSharedRWCache"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visiomatic.server.cache.SharedRWLock"><code class="docutils literal notranslate"><span class="pre">SharedRWLock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cmd.html">cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html">Tiled</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html">Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../client/index.html">JS client</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Python server</a></li>
+      <li class="breadcrumb-item active">Cache</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/server/cache.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-visiomatic.server.cache">
+<span id="cache"></span><h1>Cache<a class="headerlink" href="#module-visiomatic.server.cache" title="Permalink to this heading"></a></h1>
+<p>Custom caches and utilities</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="visiomatic.server.cache.LRUCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LRUCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#LRUCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.LRUCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Custom Least Recently Used (LRU) memory cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>class</em><em> or </em><em>func</em>) -- Function result or class instantiation to be cached.</p></li>
+<li><p><strong>maxsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) -- Maximum size of the cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="visiomatic.server.cache.LRUSharedRWCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LRUSharedRWCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removecall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.12)"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#LRUSharedRWCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.LRUSharedRWCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Custom, dictionary-based, Least Recently Used (LRU) reader-writer lockable
+cache, shareable across processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em>) -- Function to be cached.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) -- Name of the lock cache.</p></li>
+<li><p><strong>maxsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) -- Maximum size of the cache.</p></li>
+<li><p><strong>shared</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) -- Share dictionary across processes (requires POSIX IPC support)</p></li>
+<li><p><strong>removecall</strong> (<em>func</em><em>, </em><em>optional</em>) -- Callback function for removing cached data.</p></li>
+<li><p><strong>logger</strong> (<a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.12)"><em>logging.Logger</em></a><em>, </em><em>optional</em>) -- Logger object to display cache handling information.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.LRUSharedRWCache.call_unshared">
+<span class="sig-name descname"><span class="pre">call_unshared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#LRUSharedRWCache.call_unshared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.LRUSharedRWCache.call_unshared" title="Permalink to this definition"></a></dt>
+<dd><p>Get or recover a cached entry, not shared with other processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>any</em>) -- Hashable arguments to the cache dictionary.</p></li>
+<li><p><strong>kwargs</strong> (<em>any</em>) -- Hashable keyworded arguments to the cache dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>result</em> -- Cached output.</p></li>
+<li><p><em>lock</em> -- Reader-Writer lock associated with args, set to None.</p></li>
+<li><p><em>msg</em> -- &quot;OK&quot; or error string in case of an exception.</p></li>
+<li><p><em>meta public:</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.LRUSharedRWCache.call_shared">
+<span class="sig-name descname"><span class="pre">call_shared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#LRUSharedRWCache.call_shared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.LRUSharedRWCache.call_shared" title="Permalink to this definition"></a></dt>
+<dd><p>Get or recover a cached entry, not shared with other processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>any</em>) -- Hashable arguments to the cache dictionary.</p></li>
+<li><p><strong>kwargs</strong> (<em>any</em>) -- Hashable keyworded arguments to the cache dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>result</em> -- Cached output.</p></li>
+<li><p><em>lock</em> -- Reader-Writer lock associated with args.</p></li>
+<li><p><em>msg</em> -- &quot;OK&quot; or error string in case of an exception.</p></li>
+<li><p><em>meta public:</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.LRUSharedRWCache.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#LRUSharedRWCache.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.LRUSharedRWCache.remove" title="Permalink to this definition"></a></dt>
+<dd><p>Remove semaphores.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SharedRWLock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'RWLock'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Custom reader-writer lock shareable across processes</p>
+<p>See Raynal, Michel (2012), Concurrent Programming: Algorithms, Principles,
+and Foundations, Springer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) -- Name of the lock.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock.acquire_read">
+<span class="sig-name descname"><span class="pre">acquire_read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock.acquire_read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock.acquire_read" title="Permalink to this definition"></a></dt>
+<dd><p>Acquire lock in read mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock.acquire_write">
+<span class="sig-name descname"><span class="pre">acquire_write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock.acquire_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock.acquire_write" title="Permalink to this definition"></a></dt>
+<dd><p>Acquire lock in write mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock.release_read">
+<span class="sig-name descname"><span class="pre">release_read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock.release_read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock.release_read" title="Permalink to this definition"></a></dt>
+<dd><p>Release acquired read lock.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock.release_write">
+<span class="sig-name descname"><span class="pre">release_write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock.release_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock.release_write" title="Permalink to this definition"></a></dt>
+<dd><p>Release acquired write lock.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="visiomatic.server.cache.SharedRWLock.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/cache.html#SharedRWLock.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.cache.SharedRWLock.remove" title="Permalink to this definition"></a></dt>
+<dd><p>Remove files used by the RW lock semaphores and shared memory.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app.html" class="btn btn-neutral float-left" title="Web API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd.html" class="btn btn-neutral float-right" title="cmd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Emmanuel Bertin, Hervé Bouy.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
