@@ -31,7 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip mypy pytest-cov
           pip install .[test]
 
       - name: Run tests and collect coverage
