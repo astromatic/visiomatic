@@ -75,7 +75,7 @@ To this aim, the command
 
 may be used to write (or replace) a default configuration file at the default location.
 
-The configuration settings are regrouped in five different sections: `host`, `image`, `server`, `engine`, and `cache`.
+Configuration settings are grouped into five sections: `host`, `image`, `server`, `engine`, and `cache`.
 
 host parameters
 ~~~~~~~~~~~~~~~
