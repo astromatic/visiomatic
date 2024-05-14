@@ -12,11 +12,19 @@
 
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
+.. |Jupyter| replace:: :program:`Jupyter`
+.. _Jupyter: https://jupyter.org/
+.. |pip| replace:: :program:`pip`
+.. _pip: https://pypi.org/project/pip/
+.. |pipx| replace:: :program:`pipx`
+.. _pipx: https://pipx.pypa.io
+.. |platformdirs| replace:: :program:`platformdirs`
+.. _platformdirs: https://github.com/platformdirs/platformdirs
 .. |VisiOmatic| replace:: :program:`VisiOmatic`
 .. _VisiOmatic: http://visiomatic.org
+
 .. |Leaflet| replace:: :program:`Leaflet`
 .. _Leaflet: http://leafletjs.com
-
 .. |VizieR| replace:: `VizieR`
 .. _VizieR: http://vizier.u-strasbg.fr
 .. |CDS| replace:: `CDS`

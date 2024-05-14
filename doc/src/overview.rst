@@ -7,6 +7,7 @@ Technical overview
 ==================
 
 The |VisiOmatic|_ package provides a complete remote visualization system for large multispectral/hyperspectral astronomical image data (or image sequences). The web client interface runs in standard web browsers, generating image requests to a server on behalf of the user. These `HTTP <http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol>`_ requests are processed in real-time by the server, through a `web API <https://en.wikipedia.org/wiki/Web_API>`_, to compute and deliver compressed images which are then updated almost immediately in the browser.
+|VisiOmatic| operates in a way very similar to other client-server applications such as |Jupyter|_, and may be used either locally (starting both the server and the client on your local machine), or remotely (accessing a dedicated server through the internet, generally by the means of `a reverse proxy <https://en.wikipedia.org/wiki/Reverse_proxy>`_).
 
 Web client
 ==========
@@ -17,7 +18,7 @@ The |VisiOmatic| web client interface is fully asynchronous, and is particularly
 Web server
 ==========
 
-The |VisiOmatic| web server version 3 (or above) is written in the Python language. It replaces the |IIPImage-Astro|_ `FCGI (Fast Common Gateway Interface) <http://www.fastcgi.com>`_ C++ code of earlier |VisiOmatic| versions :cite:`Pitzalis2006,2015A&C....10...43B`.
+The |VisiOmatic| web server version 3 (or above) is written in the Python language. It replaces the venerable |IIPImage-Astro|_ `FCGI (Fast Common Gateway Interface) <http://www.fastcgi.com>`_ C++ code of earlier |VisiOmatic| versions :cite:`Pitzalis2006,2015A&C....10...43B`.
 It operates as a `web-service <http://en.wikipedia.org/wiki/Web_service>`_ that encodes and streams in real-time large high resolution images which are delivered in the form of compressed "tiles".
 It is designed to be fast and bandwidth-efficient.
 
@@ -48,7 +49,7 @@ Performance
 -----------
 
 Although Python is not the fastest language for manipulating data, |VisiOmatic| is fairly efficient. Current server code is able to serve thousands of 256×256 JPEG tiles per second per CPU core.
-The output image stream from a single 16-core server under heavy load (tens of thousands of tile requests per second) can thus easily saturate a 1 Gbit/s connection *without caching*.
+The output image stream from a single 16-core server under heavy load (tens of thousands of tile requests per second) can thus easily saturate a 1 Gbit/s connection *even without caching*.
 
 Portability
 -----------
