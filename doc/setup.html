@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup &mdash; VisiOmatic 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to use VisiOmatic" href="interface.html" />
+    <link rel="prev" title="Technical overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Technical overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-configuration">Default configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-configuration-file">The configuration file</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#host-parameters">host parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setup</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setup">
+<span id="section-installation"></span><h1>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h1>
+<p>Installation and configuration are necessary only if you intend to run <strong class="program">VisiOmatic</strong> locally or as a web server.
+If you are only interested in using the default web client as a remote user, you may jump directly to the <a class="reference internal" href="interface.html#section-howtouse"><span class="std std-ref">web interface section</span></a>.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>The easiest way to install <strong class="program">VisiOmatic</strong> is through <a class="reference external" href="https://pypi.org/project/pip/"><strong class="program">pip</strong></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>visiomatic
+</pre></div>
+</div>
+<p>If the command above does not work and your operating system still comes with Python 2, try <strong class="program">pip3</strong> instead of <strong class="program">pip</strong>.</p>
+<p>On recent systems, the vanilla <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> command may trigger an &quot;externally managed environment&quot; error, due to <a class="reference external" href="https://peps.python.org/pep-0668/#implementation-notes">a change in policy</a> to avoid conflicts between the Python package manager and that of your own operating system.
+In this case, you should first <a class="reference external" href="https://docs.python.org/3/library/venv.html">set a virtual environment</a> to run <strong class="program">VisiOmatic</strong>, or even better, use the <a class="reference external" href="https://pipx.pypa.io"><strong class="program">pipx</strong></a> package that will automatically do it for you:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pipx<span class="w"> </span>install<span class="w"> </span>visiomatic
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<p><strong class="program">VisiOmatic</strong> can operate in a wide variety of environments and is highly configurable.</p>
+<p>The command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>returns a list of all the available settings and their default values.
+There are three successive levels at which the settings are applied (and overridden) :</p>
+<ol class="arabic simple">
+<li><p>Built-in default configuration.</p></li>
+<li><p>The configuration file.</p></li>
+<li><p>Command line arguments.</p></li>
+</ol>
+<section id="default-configuration">
+<h3>Default configuration<a class="headerlink" href="#default-configuration" title="Permalink to this heading"></a></h3>
+<p>The default configuration is defined <a class="reference external" href="https://github.com/astromatic/visiomatic/blob/main/src/visiomatic/server/settings.py">within the code itself</a>.
+The default values are those returned by the <code class="docutils literal notranslate"><span class="pre">visiomatic</span> <span class="pre">--help</span></code> command.
+They are generally appropriate for local use on a &quot;regular&quot; machine.</p>
+</section>
+<section id="the-configuration-file">
+<h3>The configuration file<a class="headerlink" href="#the-configuration-file" title="Permalink to this heading"></a></h3>
+<p>A configuration file may be used to store settings that will be applied anytime <strong class="program">VisiOmatic</strong> is started.
+The default location of the configuration file depends on the platform and is defined by the <a class="reference external" href="https://github.com/platformdirs/platformdirs"><strong class="program">platformdirs</strong></a> library: <code class="docutils literal notranslate"><span class="pre">~/.config/visiomatic/visiomatic.conf</span></code> (Linux), <code class="docutils literal notranslate"><span class="pre">~/Library/Application</span> <span class="pre">Support/visiomatic/visiomatic.conf</span></code> (macOS), or <code class="docutils literal notranslate"><span class="pre">C:\Documents</span> <span class="pre">and</span> <span class="pre">Settings\&lt;User&gt;\Application</span> <span class="pre">Data\Local</span> <span class="pre">Settings\visiomatic\visiomatic.conf</span></code> (Windows).
+The path to the configuration file may be changed using the <code class="docutils literal notranslate"><span class="pre">-c</span></code> / <code class="docutils literal notranslate"><span class="pre">--config</span></code> command line argument, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>--config<span class="w"> </span>/etc/visiomatic.conf
+</pre></div>
+</div>
+<p>Editing an existing configuration file is easier than writing one from scratch.
+To this aim, the command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>-s
+</pre></div>
+</div>
+<p>may be used to write (or replace) a default configuration file at the default location.</p>
+<p>The configuration settings are regrouped in five different sections: <cite>host</cite>, <cite>image</cite>, <cite>server</cite>, <cite>engine</cite>, and <cite>cache</cite>.</p>
+<section id="host-parameters">
+<h4>host parameters<a class="headerlink" href="#host-parameters" title="Permalink to this heading"></a></h4>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Technical overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="interface.html" class="btn btn-neutral float-right" title="How to use VisiOmatic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Emmanuel Bertin, Hervé Bouy.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
