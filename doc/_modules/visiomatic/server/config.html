@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.config &mdash; VisiOmatic 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=6a80b326" />
 
   
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -96,7 +95,9 @@
 <span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">AppSettings</span>
 
 
-<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config">[docs]</a>
+<span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Manage application settings in groups.</span>
 
@@ -141,7 +142,9 @@
             <span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*Error*: </span><span class="si">{</span><span class="n">image_filename</span><span class="si">}</span><span class="s2"> not found!&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Config.grouped_dict"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.grouped_dict">[docs]</a>    <span class="k">def</span> <span class="nf">grouped_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="Config.grouped_dict">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.grouped_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">grouped_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dictionary of all settings, organized in groups.</span>
 
@@ -153,7 +156,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Config.flat_dict"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.flat_dict">[docs]</a>    <span class="k">def</span> <span class="nf">flat_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.flat_dict">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.flat_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">flat_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a flattened dictionary of all settings.</span>
 
@@ -170,7 +176,10 @@
         <span class="k">return</span> <span class="n">fdict</span></div>
 
 
-<div class="viewcode-block" id="Config.schema"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.schema">[docs]</a>    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.schema">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.schema">[docs]</a>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a schema of the settings as a dictionary.</span>
 
@@ -182,7 +191,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Config.schema_json"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.schema_json">[docs]</a>    <span class="k">def</span> <span class="nf">schema_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.schema_json">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.schema_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">schema_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a schema of the settings as a JSON string.</span>
 
@@ -199,7 +211,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">schema_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Config.parse_args"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.parse_args">[docs]</a>    <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.parse_args">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.parse_args">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dictionary of all settings, with values updated from the</span>
 <span class="sd">        command line.</span>
@@ -288,7 +303,10 @@
         <span class="k">return</span> <span class="n">gdict</span></div>
 
 
-<div class="viewcode-block" id="Config.parse_config"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.parse_config">[docs]</a>    <span class="k">def</span> <span class="nf">parse_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.parse_config">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.parse_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dictionary of all settings, with values updated from a</span>
 <span class="sd">        configuration file in INI format.</span>
@@ -324,7 +342,10 @@
         <span class="k">return</span> <span class="n">gdict</span></div>
 
 
-<div class="viewcode-block" id="Config.save_config"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.save_config">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.save_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save all settings as a configuration file in INI format.</span>
 
@@ -358,7 +379,10 @@
             <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Config.update_from_dict"><a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.update_from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">update_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Config.update_from_dict">
+<a class="viewcode-back" href="../../../api/server/config.html#visiomatic.server.config.Config.update_from_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update internal settings based on a dictionary (in groups)</span>
 
@@ -379,7 +403,9 @@
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">valid_error</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">valid_error</span><span class="p">)</span>
-                <span class="n">exit</span><span class="p">()</span></div></div>
+                <span class="n">exit</span><span class="p">()</span></div>
+</div>
+
 
 <span class="c1"># Initialize global dictionary</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>

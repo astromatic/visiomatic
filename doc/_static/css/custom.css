@@ -130,3 +130,9 @@ td div.line-block {
 .admonition-answers .admonition-title {
 	background-color: #C83C2E;
 }
+
+.highlight {
+    box-shadow: inset 0.2em 0.2em 0.4em rgba(0, 0, 0, 0.15);
+	background: white;
+}
+

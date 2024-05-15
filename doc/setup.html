@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Setup &mdash; VisiOmatic 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=6a80b326" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=acc74ff5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -54,8 +53,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default-configuration">Default configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-configuration-file">The configuration file</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#host-parameters">host parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-configuration-file">The configuration file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-options">Command line options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-settings">Configuration settings</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#host-options">Host options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#image-options">Image options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#server-options">Server options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#engine-options">Engine options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cache-options">Cache options</a></li>
 </ul>
 </li>
 </ul>
@@ -92,59 +97,211 @@
            <div itemprop="articleBody">
              
   <section id="setup">
-<span id="section-installation"></span><h1>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h1>
+<span id="section-installation"></span><h1>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h1>
 <p>Installation and configuration are necessary only if you intend to run <strong class="program">VisiOmatic</strong> locally or as a web server.
 If you are only interested in using the default web client as a remote user, you may jump directly to the <a class="reference internal" href="interface.html#section-howtouse"><span class="std std-ref">web interface section</span></a>.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The easiest way to install <strong class="program">VisiOmatic</strong> is through <a class="reference external" href="https://pypi.org/project/pip/"><strong class="program">pip</strong></a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>visiomatic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>visiomatic
 </pre></div>
 </div>
 <p>If the command above does not work and your operating system still comes with Python 2, try <strong class="program">pip3</strong> instead of <strong class="program">pip</strong>.</p>
 <p>On recent systems, the vanilla <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> command may trigger an &quot;externally managed environment&quot; error, due to <a class="reference external" href="https://peps.python.org/pep-0668/#implementation-notes">a change in policy</a> to avoid conflicts between the Python package manager and that of your own operating system.
 In this case, you should first <a class="reference external" href="https://docs.python.org/3/library/venv.html">set a virtual environment</a> to run <strong class="program">VisiOmatic</strong>, or even better, use the <a class="reference external" href="https://pipx.pypa.io"><strong class="program">pipx</strong></a> package that will automatically do it for you:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pipx<span class="w"> </span>install<span class="w"> </span>visiomatic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pipx<span class="w"> </span>install<span class="w"> </span>visiomatic
 </pre></div>
 </div>
 </section>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p><strong class="program">VisiOmatic</strong> can operate in a wide variety of environments and is highly configurable.</p>
 <p>The command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>--help
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--help
 </pre></div>
 </div>
-<p>returns a list of all the available settings and their default values.
+<p>returns a list of all the available options and their default values.
 There are three successive levels at which the settings are applied (and overridden) :</p>
 <ol class="arabic simple">
 <li><p>Built-in default configuration.</p></li>
 <li><p>The configuration file.</p></li>
-<li><p>Command line arguments.</p></li>
+<li><p>Command line options.</p></li>
 </ol>
 <section id="default-configuration">
-<h3>Default configuration<a class="headerlink" href="#default-configuration" title="Permalink to this heading"></a></h3>
+<h3>Default configuration<a class="headerlink" href="#default-configuration" title="Link to this heading"></a></h3>
 <p>The default configuration is defined <a class="reference external" href="https://github.com/astromatic/visiomatic/blob/main/src/visiomatic/server/settings.py">within the code itself</a>.
 The default values are those returned by the <code class="docutils literal notranslate"><span class="pre">visiomatic</span> <span class="pre">--help</span></code> command.
 They are generally appropriate for local use on a &quot;regular&quot; machine.</p>
 </section>
 <section id="the-configuration-file">
-<h3>The configuration file<a class="headerlink" href="#the-configuration-file" title="Permalink to this heading"></a></h3>
+<h3>The configuration file<a class="headerlink" href="#the-configuration-file" title="Link to this heading"></a></h3>
 <p>A configuration file may be used to store settings that will be applied anytime <strong class="program">VisiOmatic</strong> is started.
 The default location of the configuration file depends on the platform and is defined by the <a class="reference external" href="https://github.com/platformdirs/platformdirs"><strong class="program">platformdirs</strong></a> library: <code class="docutils literal notranslate"><span class="pre">~/.config/visiomatic/visiomatic.conf</span></code> (Linux), <code class="docutils literal notranslate"><span class="pre">~/Library/Application</span> <span class="pre">Support/visiomatic/visiomatic.conf</span></code> (macOS), or <code class="docutils literal notranslate"><span class="pre">C:\Documents</span> <span class="pre">and</span> <span class="pre">Settings\&lt;User&gt;\Application</span> <span class="pre">Data\Local</span> <span class="pre">Settings\visiomatic\visiomatic.conf</span></code> (Windows).
 The path to the configuration file may be changed using the <code class="docutils literal notranslate"><span class="pre">-c</span></code> / <code class="docutils literal notranslate"><span class="pre">--config</span></code> command line argument, for example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>--config<span class="w"> </span>/etc/visiomatic.conf
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--config<span class="w"> </span>/etc/visiomatic.conf
 </pre></div>
 </div>
 <p>Editing an existing configuration file is easier than writing one from scratch.
 To this aim, the command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>visiomatic<span class="w"> </span>-s
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>-s
 </pre></div>
 </div>
 <p>may be used to write (or replace) a default configuration file at the default location.</p>
+</section>
+<section id="command-line-options">
+<h3>Command line options<a class="headerlink" href="#command-line-options" title="Link to this heading"></a></h3>
+<p>All configuration file settings may also be changed using arguments to the <strong class="program">visiomatic</strong> command; however the command line syntax differs slightly from that of the configuration file.
+For instance, to set the port number to 8010 from the config file one would use the line <span class="param">port = 8010</span>, whereas from the command line one could type</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--port<span class="o">=</span><span class="m">8010</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--port<span class="w"> </span><span class="m">8010</span>
+</pre></div>
+</div>
+<p>or even</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>-p<span class="w"> </span><span class="m">8010</span>
+</pre></div>
+</div>
+<p>and boolean command line options do not require to be followed by the <span class="param">True</span> value.
+For example, the following command runs <strong class="program">VisiOmatic</strong> with the cache cleared at startup:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--clear_cache
+</pre></div>
+</div>
+<p>The same option may be abbreviated</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>-C
+</pre></div>
+</div>
+</section>
+<section id="configuration-settings">
+<h3>Configuration settings<a class="headerlink" href="#configuration-settings" title="Link to this heading"></a></h3>
 <p>Configuration settings are grouped into five sections: <cite>host</cite>, <cite>image</cite>, <cite>server</cite>, <cite>engine</cite>, and <cite>cache</cite>.</p>
-<section id="host-parameters">
-<h4>host parameters<a class="headerlink" href="#host-parameters" title="Permalink to this heading"></a></h4>
+<section id="host-options">
+<h4>Host options<a class="headerlink" href="#host-options" title="Link to this heading"></a></h4>
+<p>The Host options allow you to specify how and where the Visiomatic service runs.</p>
+<dl class="simple">
+<dt><span class="param">host</span> <cite>host</cite></dt><dd><p>This option sets the host name or IP address where the service will run.
+If not specified, it defaults to <span class="param">localhost</span>.</p>
+</dd>
+<dt><span class="param">port</span> <cite>integer</cite></dt><dd><p>Define the port number for the service.
+The default port number is <span class="param">8009</span>.
+Note that without administrator priviledges, only values equal to or above 1024 are allowed.</p>
+</dd>
+<dt><span class="param">root_path</span> <cite>path</cite></dt><dd><p>Configure the <a class="reference external" href="https://en.wikipedia.org/wiki/Asynchronous_Server_Gateway_Interface"><abbr title="Asynchronous Server Gateway Interface">ASGI</abbr></a> root path, which is an advanced setting for specific deployment environments.
+The default value is the empty string.</p>
+</dd>
+<dt><span class="param">access_log</span></dt><dd><p>Set this option to <span class="param">True</span> to display the access log, which can be useful for monitoring requests to the server.</p>
+</dd>
+<dt><span class="param">reload</span></dt><dd><p>This option enables auto-reloading of the server when code changes are detected, which can be convenient for development purposes.
+Note that enabling this option turns off multiple workers.</p>
+</dd>
+<dt><span class="param">workers</span> <cite>integer</cite></dt><dd><p>Specify the number of worker processes to handle requests.
+By default, this is set to <span class="param">4</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="image-options">
+<h4>Image options<a class="headerlink" href="#image-options" title="Link to this heading"></a></h4>
+<p>Image options control the default settings for image processing and presentation.</p>
+<dl class="simple">
+<dt><span class="param">brightness</span> <cite>float</cite></dt><dd><p>Set the default brightness for images.
+The default value is <span class="param">0.0</span>, indicating no change from the original brightness.</p>
+</dd>
+<dt><span class="param">contrast</span> <cite>float</cite></dt><dd><p>Adjust the default contrast of images.
+The default value is <span class="param">1.0</span>, meaning no change from the original contrast.</p>
+</dd>
+<dt><span class="param">color_saturation</span> <cite>float</cite></dt><dd><p>Define the default color saturation level.
+The default is <span class="param">1.5</span>, which increases the saturation.</p>
+</dd>
+<dt><span class="param">gamma</span> <cite>float</cite></dt><dd><p>Set the default <a class="reference external" href="https://en.wikipedia.org/wiki/Gamma_correction">gamma correction</a> value.
+The default is <cite>2.2</cite>, which is appropriate for <a class="reference external" href="https://en.wikipedia.org/wiki/SRGB">sRGB</a> displays.</p>
+</dd>
+<dt><span class="param">quality</span> <cite>integer</cite></dt><dd><p>Determine the default compression quality for images, expressed as a percentage.
+The default value is <cite>97%</cite>, balancing quality and bandwidth requirements.</p>
+</dd>
+<dt><span class="param">tile_size</span> <cite>shape</cite></dt><dd><p>Specify the shape of image tiles used for processing, in pixels.
+Note that the vertical size comes first, following the Python convention for image arrays.
+The default tile size is <span class="param">256,256</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="server-options">
+<h4>Server options<a class="headerlink" href="#server-options" title="Link to this heading"></a></h4>
+<p>Server options configure various aspects of the web server and its endpoints.</p>
+<dl class="simple">
+<dt><span class="param">api_path</span> <cite>path</cite></dt><dd><p>Set the endpoint URL for the web service API.
+The default path is <span class="param">/api</span>.</p>
+</dd>
+<dt><span class="param">banner_template</span> <cite>filename</cite></dt><dd><p>Specify the HTML template file for the service banner.
+The default template is <cite>banner.html</cite>.</p>
+</dd>
+<dt><span class="param">base_template</span> <cite>filename</cite></dt><dd><p>Define the HTML template file for the web client interface.
+The default is <cite>base.html</cite>.</p>
+</dd>
+<dt><span class="param">client_dir</span> <cite>directory</cite></dt><dd><p>Point to the directory containing the web client code, including styles and media files.
+By default, this is set to <span class="param">src/visiomatic/client</span>.
+:TODO: check dir.</p>
+</dd>
+<dt><span class="param">data_dir</span> <cite>directory</cite></dt><dd><p>Set the root directory for data storage.
+The default is the current directory (<span class="param">.</span>).
+:TODO: check dir.</p>
+</dd>
+<dt><span class="param">doc_dir</span> <cite>directory</cite></dt><dd><p>Specify the directory where HTML documentation is built and stored.
+The default is <span class="param">doc/build/html</span>.
+:TODO: check dir.</p>
+</dd>
+<dt><span class="param">doc_path</span> <cite>path</cite></dt><dd><p>Set the endpoint URL for accessing HTML documentation.
+The default path is <span class="param">/manual</span>.</p>
+</dd>
+<dt><span class="param">extra_dir</span> <cite>directory</cite></dt><dd><p>Provide an additional directory for storing extra data.
+The default is the current directory (<span class="param">.</span>).</p>
+</dd>
+<dt><span class="param">no_browser</span></dt><dd><p>Use this option to prevent the automatic opening of a web browser when an image filename is provided.</p>
+</dd>
+<dt><span class="param">template_dir</span> <cite>directory</cite></dt><dd><p>Define the directory containing HTML templates.
+The default is <span class="param">src/visiomatic/templates</span>.
+:TODO: check dir.</p>
+</dd>
+<dt>:param:userdoc_url <cite>URL</cite></dt><dd><p>Set the URL endpoint for user documentation.
+The default URL is <span class="param">/manual/interface.html</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="engine-options">
+<h4>Engine options<a class="headerlink" href="#engine-options" title="Link to this heading"></a></h4>
+<p>Engine options configure the internal processing engine.</p>
+<dl class="simple">
+<dt><span class="param">thread_count</span> <cite>integer</cite></dt><dd><p>Specify the number of threads the engine uses.
+The default is <span class="param">10</span>, allowing for parallel processing of 10 tasks.</p>
+</dd>
+</dl>
+</section>
+<section id="cache-options">
+<h4>Cache options<a class="headerlink" href="#cache-options" title="Link to this heading"></a></h4>
+<p>Cache options manage how image data is cached for improved performance.</p>
+<dl class="simple">
+<dt><span class="param">cache_dir</span> <cite>directory</cite></dt><dd><p>Set the directory where image cache files are stored.
+The default depends on the platform; on Linux, it is <span class="param">~/.cache/visiomatic</span>.</p>
+</dd>
+<dt><span class="param">clear_cache</span></dt><dd><p>Enable this option to clear the image cache on startup, ensuring no cached data from previous runs is used.</p>
+</dd>
+<dt><span class="param">max_cache_image_count</span> <cite>integer</cite></dt><dd><p>Define the maximum number of images to store in the disk cache. The default is <span class="param">100</span>.</p>
+</dd>
+<dt><span class="param">max_cache_tile_count</span> <cite>integer</cite></dt><dd><p>Set the maximum number of image tiles to keep in the memory cache.
+The default is <span class="param">1000</span>.</p>
+</dd>
+<dt><span class="param">max_open_files</span> <cite>integer</cite>:</dt><dd><p>Specify the maximum number of files that can be opened simultaneously.
+The default is <span class="param">10000</span>.</p>
+</dd>
+<dt><span class="param">ultradict_cache_file</span> <cite>filename</cite></dt><dd><p>Define the file name for the pickled cache dictionary shared across processes.
+The default depends on the platform; on Linux it is <cite>/dev/shm/visiomatic_cache_dict.pkl</cite>.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">TODO<span class="colon">:</span></dt>
+<dd class="field-odd"><p>indicate intervals.</p>
+</dd>
+</dl>
 </section>
 </section>
 </section>
