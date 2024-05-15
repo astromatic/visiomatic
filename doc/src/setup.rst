@@ -116,7 +116,7 @@ Configuration settings
 
 Configuration settings are grouped into five sections: `host`, `image`, `server`, `engine`, and `cache`.
 
-Host section
+Host options
 ~~~~~~~~~~~~
 
 The Host options allow you to specify how and where the Visiomatic service runs.
@@ -145,7 +145,7 @@ The Host options allow you to specify how and where the Visiomatic service runs.
   Specify the number of worker processes to handle requests.
   By default, this is set to :param:`4`.
 
-Image section
+Image options
 ~~~~~~~~~~~~~
 
 Image options control the default settings for image processing and presentation.
@@ -175,7 +175,7 @@ Image options control the default settings for image processing and presentation
   Note that the vertical size comes first, following the Python convention for image arrays.
   The default tile size is :param:`256,256`.
 
-Server section
+Server options
 ~~~~~~~~~~~~~~
 
 Server options configure various aspects of the web server and its endpoints.
@@ -227,7 +227,7 @@ Server options configure various aspects of the web server and its endpoints.
   Set the URL endpoint for user documentation.
   The default URL is :param:`/manual/interface.html`.
 
-Engine section
+Engine options
 ~~~~~~~~~~~~~~
 
 Engine options configure the internal processing engine.
@@ -236,7 +236,7 @@ Engine options configure the internal processing engine.
   Specify the number of threads the engine uses.
   The default is :param:`10`, allowing for parallel processing of 10 tasks.
 
-Cache section
+Cache options
 ~~~~~~~~~~~~~
 
 Cache options manage how image data is cached for improved performance.
