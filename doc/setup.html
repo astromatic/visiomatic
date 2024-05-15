@@ -183,7 +183,7 @@ For example, the following command runs <strong class="program">VisiOmatic</stro
 <dt><span class="param">host</span> <cite>host</cite></dt><dd><p>This option sets the host name or IP address where the service will run.
 If not specified, it defaults to <span class="param">localhost</span>.</p>
 </dd>
-<dt><span class="param">port</span> <cite>integer</cite></dt><dd><p>Define the port number for the service.
+<dt><span class="param">port</span> <cite>integer</cite></dt><dd><p>Define the port number for the service (&lt;65536).
 The default port number is <span class="param">8009</span>.
 Note that without administrator priviledges, only values equal to or above 1024 are allowed.</p>
 </dd>
@@ -204,22 +204,22 @@ By default, this is set to <span class="param">4</span>.</p>
 <h4>Image options<a class="headerlink" href="#image-options" title="Link to this heading"></a></h4>
 <p>Image options control the default settings for image processing and presentation.</p>
 <dl class="simple">
-<dt><span class="param">brightness</span> <cite>float</cite></dt><dd><p>Set the default brightness for images.
+<dt><span class="param">brightness</span> <cite>float</cite></dt><dd><p>Set the default brightness for images (between -100.0 and +100.0).
 The default value is <span class="param">0.0</span>, indicating no change from the original brightness.</p>
 </dd>
-<dt><span class="param">contrast</span> <cite>float</cite></dt><dd><p>Adjust the default contrast of images.
+<dt><span class="param">contrast</span> <cite>float</cite></dt><dd><p>Adjust the default contrast of images (between 0.01 and 10.0).
 The default value is <span class="param">1.0</span>, meaning no change from the original contrast.</p>
 </dd>
-<dt><span class="param">color_saturation</span> <cite>float</cite></dt><dd><p>Define the default color saturation level.
+<dt><span class="param">color_saturation</span> <cite>float</cite></dt><dd><p>Define the default color saturation level (between 0.0 and 5.0).
 The default is <span class="param">1.5</span>, which increases the saturation.</p>
 </dd>
-<dt><span class="param">gamma</span> <cite>float</cite></dt><dd><p>Set the default <a class="reference external" href="https://en.wikipedia.org/wiki/Gamma_correction">gamma correction</a> value.
+<dt><span class="param">gamma</span> <cite>float</cite></dt><dd><p>Set the default <a class="reference external" href="https://en.wikipedia.org/wiki/Gamma_correction">gamma correction</a> value (between 0.1 and 5.0).
 The default is <cite>2.2</cite>, which is appropriate for <a class="reference external" href="https://en.wikipedia.org/wiki/SRGB">sRGB</a> displays.</p>
 </dd>
 <dt><span class="param">quality</span> <cite>integer</cite></dt><dd><p>Determine the default compression quality for images, expressed as a percentage.
 The default value is <cite>97%</cite>, balancing quality and bandwidth requirements.</p>
 </dd>
-<dt><span class="param">tile_size</span> <cite>shape</cite></dt><dd><p>Specify the shape of image tiles used for processing, in pixels.
+<dt><span class="param">tile_size</span> <cite>shape</cite></dt><dd><p>Specify the shape of image tiles used for processing, in pixels (between 1 and 4096 per axis).
 Note that the vertical size comes first, following the Python convention for image arrays.
 The default tile size is <span class="param">256,256</span>.</p>
 </dd>
@@ -239,16 +239,13 @@ The default template is <cite>banner.html</cite>.</p>
 The default is <cite>base.html</cite>.</p>
 </dd>
 <dt><span class="param">client_dir</span> <cite>directory</cite></dt><dd><p>Point to the directory containing the web client code, including styles and media files.
-By default, this is set to <span class="param">src/visiomatic/client</span>.
-:TODO: check dir.</p>
+By default, this is set to <span class="param">&lt;install_dir&gt;/client</span>.</p>
 </dd>
 <dt><span class="param">data_dir</span> <cite>directory</cite></dt><dd><p>Set the root directory for data storage.
-The default is the current directory (<span class="param">.</span>).
-:TODO: check dir.</p>
+The default is the current directory (<span class="param">.</span>).</p>
 </dd>
 <dt><span class="param">doc_dir</span> <cite>directory</cite></dt><dd><p>Specify the directory where HTML documentation is built and stored.
-The default is <span class="param">doc/build/html</span>.
-:TODO: check dir.</p>
+The default is <span class="param">&lt;install_dir&gt;/doc/build/html</span>.</p>
 </dd>
 <dt><span class="param">doc_path</span> <cite>path</cite></dt><dd><p>Set the endpoint URL for accessing HTML documentation.
 The default path is <span class="param">/manual</span>.</p>
@@ -259,8 +256,7 @@ The default is the current directory (<span class="param">.</span>).</p>
 <dt><span class="param">no_browser</span></dt><dd><p>Use this option to prevent the automatic opening of a web browser when an image filename is provided.</p>
 </dd>
 <dt><span class="param">template_dir</span> <cite>directory</cite></dt><dd><p>Define the directory containing HTML templates.
-The default is <span class="param">src/visiomatic/templates</span>.
-:TODO: check dir.</p>
+The default is <span class="param">&lt;install_dir&gt;/templates</span>.</p>
 </dd>
 <dt>:param:userdoc_url <cite>URL</cite></dt><dd><p>Set the URL endpoint for user documentation.
 The default URL is <span class="param">/manual/interface.html</span>.</p>
@@ -285,21 +281,17 @@ The default depends on the platform; on Linux, it is <span class="param">~/.cach
 </dd>
 <dt><span class="param">clear_cache</span></dt><dd><p>Enable this option to clear the image cache on startup, ensuring no cached data from previous runs is used.</p>
 </dd>
-<dt><span class="param">max_cache_image_count</span> <cite>integer</cite></dt><dd><p>Define the maximum number of images to store in the disk cache. The default is <span class="param">100</span>.</p>
+<dt><span class="param">max_cache_image_count</span> <cite>integer</cite></dt><dd><p>Define the maximum number of images to store in the disk cache.
+The default is <span class="param">100</span>.</p>
 </dd>
 <dt><span class="param">max_cache_tile_count</span> <cite>integer</cite></dt><dd><p>Set the maximum number of image tiles to keep in the memory cache.
 The default is <span class="param">1000</span>.</p>
 </dd>
-<dt><span class="param">max_open_files</span> <cite>integer</cite>:</dt><dd><p>Specify the maximum number of files that can be opened simultaneously.
+<dt><span class="param">max_open_files</span> <cite>integer</cite>:</dt><dd><p>Specify the maximum number of files that can be opened simultaneously (between 100 and 1,000,000).
 The default is <span class="param">10000</span>.</p>
 </dd>
 <dt><span class="param">ultradict_cache_file</span> <cite>filename</cite></dt><dd><p>Define the file name for the pickled cache dictionary shared across processes.
 The default depends on the platform; on Linux it is <cite>/dev/shm/visiomatic_cache_dict.pkl</cite>.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">TODO<span class="colon">:</span></dt>
-<dd class="field-odd"><p>indicate intervals.</p>
 </dd>
 </dl>
 </section>

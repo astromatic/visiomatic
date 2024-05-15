@@ -126,7 +126,7 @@ The Host options allow you to specify how and where the Visiomatic service runs.
   If not specified, it defaults to :param:`localhost`.
 
 :param:`port` `integer`
-  Define the port number for the service.
+  Define the port number for the service (<65536).
   The default port number is :param:`8009`.
   Note that without administrator priviledges, only values equal to or above 1024 are allowed.
 
@@ -151,19 +151,19 @@ Image options
 Image options control the default settings for image processing and presentation.
 
 :param:`brightness` `float`
-  Set the default brightness for images.
+  Set the default brightness for images (between -100.0 and +100.0).
   The default value is :param:`0.0`, indicating no change from the original brightness.
 
 :param:`contrast` `float`
-  Adjust the default contrast of images.
+  Adjust the default contrast of images (between 0.01 and 10.0).
   The default value is :param:`1.0`, meaning no change from the original contrast.
 
 :param:`color_saturation` `float`
-  Define the default color saturation level.
+  Define the default color saturation level (between 0.0 and 5.0).
   The default is :param:`1.5`, which increases the saturation.
 
 :param:`gamma` `float`
-  Set the default `gamma correction <https://en.wikipedia.org/wiki/Gamma_correction>`_ value.
+  Set the default `gamma correction <https://en.wikipedia.org/wiki/Gamma_correction>`_ value (between 0.1 and 5.0).
   The default is `2.2`, which is appropriate for `sRGB <https://en.wikipedia.org/wiki/SRGB>`_ displays.
 
 :param:`quality` `integer`
@@ -171,7 +171,7 @@ Image options control the default settings for image processing and presentation
   The default value is `97%`, balancing quality and bandwidth requirements.
 
 :param:`tile_size` `shape`
-  Specify the shape of image tiles used for processing, in pixels.
+  Specify the shape of image tiles used for processing, in pixels (between 1 and 4096 per axis).
   Note that the vertical size comes first, following the Python convention for image arrays.
   The default tile size is :param:`256,256`.
 
@@ -194,18 +194,15 @@ Server options configure various aspects of the web server and its endpoints.
 
 :param:`client_dir` `directory`
   Point to the directory containing the web client code, including styles and media files.
-  By default, this is set to :param:`src/visiomatic/client`.
-  :TODO: check dir.
+  By default, this is set to :param:`<install_dir>/client`.
 
 :param:`data_dir` `directory`
   Set the root directory for data storage.
   The default is the current directory (:param:`.`).
-  :TODO: check dir.
 
 :param:`doc_dir` `directory`
   Specify the directory where HTML documentation is built and stored.
-  The default is :param:`doc/build/html`.
-  :TODO: check dir.
+  The default is :param:`<install_dir>/doc/build/html`.
 
 :param:`doc_path` `path`
   Set the endpoint URL for accessing HTML documentation.
@@ -220,8 +217,7 @@ Server options configure various aspects of the web server and its endpoints.
 
 :param:`template_dir` `directory`
   Define the directory containing HTML templates.
-  The default is :param:`src/visiomatic/templates`.
-  :TODO: check dir.
+  The default is :param:`<install_dir>/templates`.
 
 :param:userdoc_url `URL`
   Set the URL endpoint for user documentation.
@@ -249,18 +245,19 @@ Cache options manage how image data is cached for improved performance.
   Enable this option to clear the image cache on startup, ensuring no cached data from previous runs is used.
 
 :param:`max_cache_image_count` `integer`
-  Define the maximum number of images to store in the disk cache. The default is :param:`100`.
+  Define the maximum number of images to store in the disk cache.
+  The default is :param:`100`.
 
 :param:`max_cache_tile_count` `integer`
   Set the maximum number of image tiles to keep in the memory cache.
   The default is :param:`1000`.
 
 :param:`max_open_files` `integer`:
-  Specify the maximum number of files that can be opened simultaneously.
+  Specify the maximum number of files that can be opened simultaneously (between 100 and 1,000,000).
   The default is :param:`10000`.
 
 :param:`ultradict_cache_file` `filename`
   Define the file name for the pickled cache dictionary shared across processes.
   The default depends on the platform; on Linux it is `/dev/shm/visiomatic_cache_dict.pkl`.
 
-:TODO: indicate intervals.
+
