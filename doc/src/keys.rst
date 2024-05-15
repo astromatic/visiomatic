@@ -4,6 +4,9 @@
 .. |API| replace:: :abbr:`API (Application Programming Interface)`
 .. _API: https://en.wikipedia.org/wiki/Application_programming_interface
 
+.. |ASGI| replace:: :abbr:`ASGI (Asynchronous Server Gateway Interface)`
+.. _ASGI: https://en.wikipedia.org/wiki/Asynchronous_Server_Gateway_Interface
+
 .. |Python| replace:: `Python`
 .. _Python: https://python.org
 
