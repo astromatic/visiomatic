@@ -63,6 +63,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#cache-options">Cache options</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-guide">Setup guide</a></li>
 </ul>
 </li>
 </ul>
@@ -141,12 +142,11 @@ The path to the configuration file may be changed using the <code class="docutil
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>--config<span class="w"> </span>/etc/visiomatic.conf
 </pre></div>
 </div>
-<p>Editing an existing configuration file is easier than writing one from scratch.
-To this aim, the command</p>
+<p>Editing an existing configuration file is easier than writing one from scratch!
+The following command may be used to write (or replace) a default configuration file at the default location:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>-s
 </pre></div>
 </div>
-<p>may be used to write (or replace) a default configuration file at the default location.</p>
 </section>
 <section id="command-line-options">
 <h3>Command line options<a class="headerlink" href="#command-line-options" title="Link to this heading"></a></h3>
@@ -190,7 +190,7 @@ Note that without administrator priviledges, only values equal to or above 1024 
 <dt><span class="param">root_path</span> <cite>path</cite></dt><dd><p>Configure the <a class="reference external" href="https://en.wikipedia.org/wiki/Asynchronous_Server_Gateway_Interface"><abbr title="Asynchronous Server Gateway Interface">ASGI</abbr></a> root path, which is an advanced setting for specific deployment environments.
 The default value is the empty string.</p>
 </dd>
-<dt><span class="param">access_log</span></dt><dd><p>Set this option to <span class="param">True</span> to display the access log, which can be useful for monitoring requests to the server.</p>
+<dt><span class="param">access_log</span></dt><dd><p>Use this option to display the access log, which can be useful for monitoring requests to the server.</p>
 </dd>
 <dt><span class="param">reload</span></dt><dd><p>This option enables auto-reloading of the server when code changes are detected, which can be convenient for development purposes.
 Note that enabling this option turns off multiple workers.</p>
@@ -258,7 +258,7 @@ The default is the current directory (<span class="param">.</span>).</p>
 <dt><span class="param">template_dir</span> <cite>directory</cite></dt><dd><p>Define the directory containing HTML templates.
 The default is <span class="param">&lt;install_dir&gt;/templates</span>.</p>
 </dd>
-<dt>:param:userdoc_url <cite>URL</cite></dt><dd><p>Set the URL endpoint for user documentation.
+<dt><span class="param">userdoc_url</span> <cite>URL</cite></dt><dd><p>Set the URL endpoint for user documentation.
 The default URL is <span class="param">/manual/interface.html</span>.</p>
 </dd>
 </dl>
@@ -291,10 +291,13 @@ The default is <span class="param">1000</span>.</p>
 The default is <span class="param">10000</span>.</p>
 </dd>
 <dt><span class="param">ultradict_cache_file</span> <cite>filename</cite></dt><dd><p>Define the file name for the pickled cache dictionary shared across processes.
-The default depends on the platform; on Linux it is <cite>/dev/shm/visiomatic_cache_dict.pkl</cite>.</p>
+The default depends on the platform; on Linux it is <span class="param">/dev/shm/visiomatic_cache_dict.pkl</span>.</p>
 </dd>
 </dl>
 </section>
+</section>
+<section id="setup-guide">
+<h3>Setup guide<a class="headerlink" href="#setup-guide" title="Link to this heading"></a></h3>
 </section>
 </section>
 </section>
