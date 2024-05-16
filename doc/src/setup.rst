@@ -66,14 +66,12 @@ The path to the configuration file may be changed using the ``-c`` / ``--config`
 
     $ visiomatic --config /etc/visiomatic.conf
 
-Editing an existing configuration file is easier than writing one from scratch.
-To this aim, the command
+Editing an existing configuration file is easier than writing one from scratch!
+The following command may be used to write (or replace) a default configuration file at the default location:
 
 .. code-block:: console
 
     $ visiomatic -s
-
-may be used to write (or replace) a default configuration file at the default location.
 
 Command line options
 --------------------
@@ -135,7 +133,7 @@ The Host options allow you to specify how and where the Visiomatic service runs.
   The default value is the empty string.
 
 :param:`access_log`
-  Set this option to :param:`True` to display the access log, which can be useful for monitoring requests to the server.
+  Use this option to display the access log, which can be useful for monitoring requests to the server.
 
 :param:`reload`
   This option enables auto-reloading of the server when code changes are detected, which can be convenient for development purposes.
@@ -219,7 +217,7 @@ Server options configure various aspects of the web server and its endpoints.
   Define the directory containing HTML templates.
   The default is :param:`<install_dir>/templates`.
 
-:param:userdoc_url `URL`
+:param:`userdoc_url` `URL`
   Set the URL endpoint for user documentation.
   The default URL is :param:`/manual/interface.html`.
 
@@ -258,6 +256,9 @@ Cache options manage how image data is cached for improved performance.
 
 :param:`ultradict_cache_file` `filename`
   Define the file name for the pickled cache dictionary shared across processes.
-  The default depends on the platform; on Linux it is `/dev/shm/visiomatic_cache_dict.pkl`.
+  The default depends on the platform; on Linux it is :param:`/dev/shm/visiomatic_cache_dict.pkl`.
 
+
+Setup guide
+-----------
 
