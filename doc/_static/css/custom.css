@@ -136,3 +136,7 @@ td div.line-block {
 	background: white;
 }
 
+/* Add a bit of space above figure captions */
+figcaption {
+    margin-top: 0.5em;
+}

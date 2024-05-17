@@ -7,7 +7,7 @@
   <title>Setup &mdash; VisiOmatic 3.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=6a80b326" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=201c3e3c" />
 
   
   <!--[if lt IE 9]>
@@ -55,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#default-configuration">Default configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-configuration-file">The configuration file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#command-line-options">Command line options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-guide">Setup guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration-settings">Configuration settings</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#host-options">Host options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#image-options">Image options</a></li>
@@ -63,7 +64,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#cache-options">Cache options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#setup-guide">Setup guide</a></li>
 </ul>
 </li>
 </ul>
@@ -103,7 +103,7 @@
 If you are only interested in using the default web client as a remote user, you may jump directly to the <a class="reference internal" href="interface.html#section-howtouse"><span class="std std-ref">web interface section</span></a>.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>The easiest way to install <strong class="program">VisiOmatic</strong> is through <a class="reference external" href="https://pypi.org/project/pip/"><strong class="program">pip</strong></a>:</p>
+<p>The easiest way to install <strong class="program">VisiOmatic</strong> is from the shell, through <a class="reference external" href="https://pypi.org/project/pip/"><strong class="program">pip</strong></a>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>visiomatic
 </pre></div>
 </div>
@@ -113,6 +113,12 @@ In this case, you should first <a class="reference external" href="https://docs.
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pipx<span class="w"> </span>install<span class="w"> </span>visiomatic
 </pre></div>
 </div>
+<p>If you have a FITS image in hand (say, <code class="docutils literal notranslate"><span class="pre">image.fits</span></code>), you can quickly check that <strong class="program">VisiOmatic</strong> works on your machine by typing in a shell window</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>image.fits
+</pre></div>
+</div>
+<p>A browser window should pop up, and after some time (used for caching the data), the image should appear in the web interface.
+Type <code class="docutils literal notranslate"><span class="pre">^C</span></code> in the shell window to quit.</p>
 </section>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -172,6 +178,12 @@ For example, the following command runs <strong class="program">VisiOmatic</stro
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>-C
 </pre></div>
 </div>
+</section>
+<section id="setup-guide">
+<h3>Setup guide<a class="headerlink" href="#setup-guide" title="Link to this heading"></a></h3>
+<p>This section will help you configure <strong class="program">VisiOmatic</strong> for best performance.
+The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running <strong class="program">VisiOmatic</strong> on a big server or on specific hardware.</p>
+<p>By default,</p>
 </section>
 <section id="configuration-settings">
 <h3>Configuration settings<a class="headerlink" href="#configuration-settings" title="Link to this heading"></a></h3>
@@ -295,9 +307,6 @@ The default depends on the platform; on Linux it is <span class="param">/dev/shm
 </dd>
 </dl>
 </section>
-</section>
-<section id="setup-guide">
-<h3>Setup guide<a class="headerlink" href="#setup-guide" title="Link to this heading"></a></h3>
 </section>
 </section>
 </section>
