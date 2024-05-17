@@ -14,7 +14,7 @@ If you are only interested in using the default web client as a remote user, you
 Installation
 ============
 
-The easiest way to install |VisiOmatic| is through |pip|_:
+The easiest way to install |VisiOmatic| is from the shell, through |pip|_:
 
 .. code-block:: console
 
@@ -29,6 +29,15 @@ In this case, you should first `set a virtual environment <https://docs.python.o
 
     $ pipx install visiomatic
 
+
+If you have a FITS image in hand (say, ``image.fits``), you can quickly check that |VisiOmatic| works on your machine by typing in a shell window
+
+.. code-block:: console
+
+    $ visiomatic image.fits
+
+A browser window should pop up, and after some time (used for caching the data), the image should appear in the web interface.
+Type ``^C`` in the shell window to quit.
 
 Configuration
 =============
@@ -107,6 +116,14 @@ The same option may be abbreviated
 .. code-block:: console
 
     $ visiomatic -C
+
+Setup guide
+-----------
+
+This section will help you configure |VisiOmatic| for best performance.
+The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running |VisiOmatic| on a big server or on specific hardware.
+
+By default, 
 
 
 Configuration settings
@@ -259,6 +276,5 @@ Cache options manage how image data is cached for improved performance.
   The default depends on the platform; on Linux it is :param:`/dev/shm/visiomatic_cache_dict.pkl`.
 
 
-Setup guide
------------
+
 
