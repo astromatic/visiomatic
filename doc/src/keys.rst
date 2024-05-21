@@ -13,10 +13,14 @@
 .. |MEF| replace:: :abbr:`MEF (Multi-Extension FITS)`
 .. _MEF: https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format
 
+.. |Apache| replace:: :program:`Apache`
+.. _Apache: https://apache.org/
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
 .. |Jupyter| replace:: :program:`Jupyter`
 .. _Jupyter: https://jupyter.org/
+.. |nginx| replace:: :program:`nginx`
+.. _nginx: https://nginx.org
 .. |pip| replace:: :program:`pip`
 .. _pip: https://pypi.org/project/pip/
 .. |pipx| replace:: :program:`pipx`
