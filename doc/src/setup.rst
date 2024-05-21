@@ -9,7 +9,7 @@ Setup
 =====
 
 Installation and configuration are necessary only if you intend to run |VisiOmatic| locally or as a web server.
-If you are only interested in using the default web client as a remote user, you may jump directly to the :ref:`web interface section <Section-HowToUse>`.
+If you are only interested in using the default web client as a remote user, you may head directly to the :ref:`web interface section <Section-HowToUse>`.
 
 Installation
 ============
@@ -28,6 +28,24 @@ In this case, you should first `set a virtual environment <https://docs.python.o
 .. code-block:: console
 
     $ pipx install visiomatic
+
+Checking installation
+=====================
+
+Once installation is complete, you may do a simple check of the server component by starting |VisiOmatic| with the default settings:
+
+.. code-block:: console
+
+    $ visiomatic
+
+and pointing your browser to ``http://localhost:8009/api``.
+You should land on the page shown below.
+
+.. _Fig_VisiomaticBanner:
+
+.. figure:: figures/visiomatic-banner.*
+   :alt: VisiOmatic banner
+   :align: center
 
 
 If you have a FITS image in hand (say, ``image.fits``), you can quickly check that |VisiOmatic| works on your machine by typing in a shell window
@@ -117,70 +135,11 @@ The same option may be abbreviated
 
     $ visiomatic -C
 
-Setup guide
------------
-
-This section will help you configure |VisiOmatic| for best performance in typical situations.
-The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running |VisiOmatic| on a big server or on specific hardware.
-
-
-Accessing |VisiOmatic| server from another machine
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-There are basically two ways to make your |VisiOmatic| server instance accessible from another machine.
-
-The first is to set :param:`host` to :param:`0.0.0.0`, and make sure that your machine firewall has the |VisiOmatic| port (8009 by default) open.
-This can be convenient, e.g., if you don't have administrator's rights but still want to browse your images from a different machine on a secured network.
-
-However the recommended way is to run |VisiOmatic| behind a web server acting as a reverse proxy (:numref:`fig_visiomatic_chart`), such as |nginx|_ or |Apache|_ (``httpd`` daemon).
-For information, here is a possible example of a reverse-proxy configuration for |Apache| running on a Linux machine with IP address ``myserver.com``, allowing web-clients to communicate remotely and securely with a local |VisiOmatic| server instance:
-
-.. code-block:: apache
-
-  <VirtualHost *:443>
-
-    ServerName myserver.com
-    ServerAlias anyalias.com
-
-    # configure SSL
-    SSLEngine on
-
-    SSLProxyEngine On
-    SSLProxyVerify none
-    SSLProxyCheckPeerCN off
-    SSLProxyCheckPeerName off
-    SSLProxyCheckPeerExpire off
-    ProxyPreserveHost Off
-
-    # Use RewriteEngine to handle websocket connection upgrades
-    RewriteEngine On
-    RedirectMatch permanent ^/vis$ /vis/
-    RewriteCond %{HTTP:Connection} Upgrade [NC]
-    RewriteCond %{HTTP:Upgrade} =websocket [NC]
-    RewriteRule /vis/ws/(.*) ws://127.0.0.1:8009/ws/$1 [NE,P,L]
-    RewriteRule /vis/(.*) http://127.0.0.1:8009/$1 [NE,P,L]
-    # Proxy to VisiOmatic
-    ProxyPass /vis http://127.0.0.1:8009
-    ProxyPassReverse /vis http://127.0.0.1:8009
-
-    SSLCertificateFile /etc/letsencrypt/live/myserver.com/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/myserver.com/privkey.pem
-    Include /etc/letsencrypt/options-ssl-apache.conf
-  </VirtualHost>
-
-The HTTPS certificate is obtained from the `LetsEncrypt <https://letsencrypt.org>`_ authority.
-In this example, the URL of the |VisiOmatic| client is ``https://myserver.com/vis/``, which means that |VisiOmatic| 's :param:`root_path` option should be set to :param:`/vis`.
-
-
-Running |VisiOmatic| behind a proxy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The :param:`root_path`
-
-
 Configuration settings
 ----------------------
 
 Configuration settings are grouped into five sections: `host`, `image`, `server`, `engine`, and `cache`.
+The full list of options is listed below; jump to :ref:`the setup guide <Section_SetupGuide>` for use cases.
 
 Host options
 ~~~~~~~~~~~~
@@ -328,5 +287,75 @@ Cache options manage how image data is cached for improved performance.
   The default depends on the platform; on Linux it is :param:`/dev/shm/visiomatic_cache_dict.pkl`.
 
 
+.. _Section_SetupGuide:
 
+Setup guide
+===========
+
+This section will help you configure |VisiOmatic| for best performance in typical situations.
+The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running |VisiOmatic| on a big server or on specific hardware.
+
+
+Accessing |VisiOmatic| server from another machine
+--------------------------------------------------
+
+There are basically two ways to make your |VisiOmatic| server instance accessible from another machine.
+
+The first is to set :param:`host` to :param:`0.0.0.0` to allow connections from all interfaces, and make sure that your machine firewall has the |VisiOmatic| port (8009 by default) open.
+This can be convenient (although insecure) if you don't have administrator's rights but still want to browse your images from a different machine on a local network.
+
+However the recommended way is to run |VisiOmatic| (or a containerized version of it) behind a web server acting as a reverse proxy (:numref:`Fig_VisiomaticChart`), such as |nginx|_ or |Apache|_ (``httpd`` daemon).
+For information, here is a possible example of a reverse-proxy configuration for |Apache| running on a Linux machine with IP address ``myserver.com``, allowing web-clients to communicate remotely and securely with a local |VisiOmatic| server instance:
+
+.. code-block:: apache
+
+  <VirtualHost *:443>
+
+    ServerName myserver.com
+    ServerAlias anyalias.com
+
+    # configure SSL
+    SSLEngine on
+
+    SSLProxyEngine On
+    SSLProxyVerify none
+    SSLProxyCheckPeerCN off
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerExpire off
+    ProxyPreserveHost Off
+
+    # Use RewriteEngine to handle websocket connection upgrades
+    RewriteEngine On
+    RedirectMatch permanent ^/vis$ /vis/
+    RewriteCond %{HTTP:Connection} Upgrade [NC]
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule /vis/ws/(.*) ws://127.0.0.1:8009/ws/$1 [NE,P,L]
+    RewriteRule /vis/(.*) http://127.0.0.1:8009/$1 [NE,P,L]
+    # Proxy to VisiOmatic
+    ProxyPass /vis http://127.0.0.1:8009
+    ProxyPassReverse /vis http://127.0.0.1:8009
+
+    SSLCertificateFile /etc/letsencrypt/live/myserver.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/myserver.com/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+  </VirtualHost>
+
+The HTTPS certificate is obtained from the `LetsEncrypt <https://letsencrypt.org>`_ authority.
+In this example, the URL of the |VisiOmatic| client is ``https://myserver.com/vis/``, which means that |VisiOmatic| 's :param:`root_path` option should be set to :param:`/vis`.
+
+Tuning for performance
+----------------------
+
+The |VisiOmatic| server component can be resource-intensive.
+Using the proper setup will help getting the most out of the computer serving your images.
+
+`Parallel computing <https://en.wikipedia.org/wiki/Parallel_computing>`_ is one way to improve the tile-serving performance of the server.
+|VisiOmatic| uses both `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ and `multithreading <https://en.wikipedia.org/wiki/Thread_(computing)>`_ to parallelize the processing of images.
+
+The multiprocessing aspect involves several `worker` processes which are handled the task of processing the requests and serving the images.
+The number of workers can be set with the :param:`workers` option (4 per default).
+The higher the number, the more processes are available to process the requests in parallel, but the higher the memory usage.
+For large servers with 128
+
+while multithreading is present at lower levels, for instance when generating cache data from |MEF|_ files.
 

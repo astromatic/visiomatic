@@ -11,10 +11,10 @@ The web client interface runs in standard web browsers, generating image request
 These `HTTP <http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol>`_ requests are processed in real-time by the server, through a `web API <https://en.wikipedia.org/wiki/Web_API>`_, to compute and deliver compressed images which are then updated almost immediately in the browser.
 |VisiOmatic| operates in a way very similar to other client-server applications such as |Jupyter|_, and may be used either locally (starting both the server and the client on your local machine), or remotely (accessing a dedicated server through the internet, generally by the means of `a reverse proxy <https://en.wikipedia.org/wiki/Reverse_proxy>`_).
 
-.. _fig_visiomatic_chart:
+.. _Fig_VisiomaticChart:
 
 .. figure:: figures/visiomatic-chart.*
-   :alt: Navigation Pane
+   :alt: VisiOmatic chart
    :align: center
 
    The |VisiOmatic| web clients connect to the |VisiOmatic| server component through an |ASGI|_ web server.
