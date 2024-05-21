@@ -120,7 +120,7 @@ The same option may be abbreviated
 Setup guide
 -----------
 
-This section will help you configure |VisiOmatic| for best performance.
+This section will help you configure |VisiOmatic| for best performance in typical situations.
 The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running |VisiOmatic| on a big server or on specific hardware.
 
 
@@ -132,13 +132,13 @@ The first is to set :param:`host` to :param:`0.0.0.0`, and make sure that your m
 This can be convenient, e.g., if you don't have administrator's rights but still want to browse your images from a different machine on a secured network.
 
 However the recommended way is to run |VisiOmatic| behind a web server acting as a reverse proxy (:numref:`fig_visiomatic_chart`), such as |nginx|_ or |Apache|_ (``httpd`` daemon).
-For information, here is a possible example of a reverse-proxy configuration for |Apache| running on a Linux machine with IP address ``mymachine.com``, allowing web-clients to communicate remotely and securely with a local |VisiOmatic| server instance:
+For information, here is a possible example of a reverse-proxy configuration for |Apache| running on a Linux machine with IP address ``myserver.com``, allowing web-clients to communicate remotely and securely with a local |VisiOmatic| server instance:
 
 .. code-block:: apache
 
   <VirtualHost *:443>
 
-    ServerName mymachine.com
+    ServerName myserver.com
     ServerAlias anyalias.com
 
     # configure SSL
@@ -162,13 +162,13 @@ For information, here is a possible example of a reverse-proxy configuration for
     ProxyPass /vis http://127.0.0.1:8009
     ProxyPassReverse /vis http://127.0.0.1:8009
 
-    SSLCertificateFile /etc/letsencrypt/live/mymachine.com/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/mymachine.com/privkey.pem
+    SSLCertificateFile /etc/letsencrypt/live/myserver.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/myserver.com/privkey.pem
     Include /etc/letsencrypt/options-ssl-apache.conf
   </VirtualHost>
 
 The HTTPS certificate is obtained from the `LetsEncrypt <https://letsencrypt.org>`_ authority.
-In this example, the URL of the |VisiOmatic| client is `https://mymachine.com/vis/` URL, which means that |VisiOmatic| 's :param:`root_path` option should be set to :param:`/vis`.
+In this example, the URL of the |VisiOmatic| client is ``https://myserver.com/vis/``, which means that |VisiOmatic| 's :param:`root_path` option should be set to :param:`/vis`.
 
 
 Running |VisiOmatic| behind a proxy
