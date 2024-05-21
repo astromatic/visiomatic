@@ -51,15 +51,11 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Technical overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Setup</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#checking-installation">Checking installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default-configuration">Default configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-configuration-file">The configuration file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#command-line-options">Command line options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#setup-guide">Setup guide</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#accessing-visiomatic-server-from-another-machine">Accessing <strong class="program">VisiOmatic</strong> server from another machine</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#running-visiomatic-behind-a-proxy">Running <strong class="program">VisiOmatic</strong> behind a proxy</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration-settings">Configuration settings</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#host-options">Host options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#image-options">Image options</a></li>
@@ -68,6 +64,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#cache-options">Cache options</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-guide">Setup guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#accessing-visiomatic-server-from-another-machine">Accessing <strong class="program">VisiOmatic</strong> server from another machine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tuning-for-performance">Tuning for performance</a></li>
 </ul>
 </li>
 </ul>
@@ -104,7 +105,7 @@
   <section id="setup">
 <span id="section-installation"></span><h1>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h1>
 <p>Installation and configuration are necessary only if you intend to run <strong class="program">VisiOmatic</strong> locally or as a web server.
-If you are only interested in using the default web client as a remote user, you may jump directly to the <a class="reference internal" href="interface.html#section-howtouse"><span class="std std-ref">web interface section</span></a>.</p>
+If you are only interested in using the default web client as a remote user, you may head directly to the <a class="reference internal" href="interface.html#section-howtouse"><span class="std std-ref">web interface section</span></a>.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The easiest way to install <strong class="program">VisiOmatic</strong> is from the shell, through <a class="reference external" href="https://pypi.org/project/pip/"><strong class="program">pip</strong></a>:</p>
@@ -117,6 +118,18 @@ In this case, you should first <a class="reference external" href="https://docs.
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pipx<span class="w"> </span>install<span class="w"> </span>visiomatic
 </pre></div>
 </div>
+</section>
+<section id="checking-installation">
+<h2>Checking installation<a class="headerlink" href="#checking-installation" title="Link to this heading"></a></h2>
+<p>Once installation is complete, you may do a simple check of the server component by starting <strong class="program">VisiOmatic</strong> with the default settings:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic
+</pre></div>
+</div>
+<p>and pointing your browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:8009/api</span></code>.
+You should land on the page shown below.</p>
+<figure class="align-center" id="fig-visiomaticbanner">
+<img alt="VisiOmatic banner" src="_images/visiomatic-banner.png" />
+</figure>
 <p>If you have a FITS image in hand (say, <code class="docutils literal notranslate"><span class="pre">image.fits</span></code>), you can quickly check that <strong class="program">VisiOmatic</strong> works on your machine by typing in a shell window</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>image.fits
 </pre></div>
@@ -183,60 +196,10 @@ For example, the following command runs <strong class="program">VisiOmatic</stro
 </pre></div>
 </div>
 </section>
-<section id="setup-guide">
-<h3>Setup guide<a class="headerlink" href="#setup-guide" title="Link to this heading"></a></h3>
-<p>This section will help you configure <strong class="program">VisiOmatic</strong> for best performance.
-The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running <strong class="program">VisiOmatic</strong> on a big server or on specific hardware.</p>
-<section id="accessing-visiomatic-server-from-another-machine">
-<h4>Accessing <strong class="program">VisiOmatic</strong> server from another machine<a class="headerlink" href="#accessing-visiomatic-server-from-another-machine" title="Link to this heading"></a></h4>
-<p>There are basically two ways to make your <strong class="program">VisiOmatic</strong> server instance accessible from another machine.</p>
-<p>The first is to set <span class="param">host</span> to <span class="param">0.0.0.0</span>, and make sure that your machine firewall has the <strong class="program">VisiOmatic</strong> port (8009 by default) open.
-This can be convenient, e.g., if you don't have administrator's rights but still want to browse your images from a different machine on a secured network.</p>
-<p>However the recommended way is to run <strong class="program">VisiOmatic</strong> behind a web server acting as a reverse proxy (<a class="reference internal" href="overview.html#fig-visiomatic-chart"><span class="std std-numref">Fig. 1</span></a>), such as <a class="reference external" href="https://nginx.org"><strong class="program">nginx</strong></a> or <a class="reference external" href="https://apache.org/"><strong class="program">Apache</strong></a> (<code class="docutils literal notranslate"><span class="pre">httpd</span></code> daemon).
-For information, here is a possible example of a reverse-proxy configuration for <strong class="program">Apache</strong> running on a Linux machine with IP address <code class="docutils literal notranslate"><span class="pre">mymachine.com</span></code>, allowing web-clients to communicate remotely and securely with a local <strong class="program">VisiOmatic</strong> server instance:</p>
-<div class="highlight-apache notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:443</span><span class="nt">&gt;</span>
-
-<span class="w">  </span><span class="nb">ServerName</span><span class="w"> </span>mymachine.com
-<span class="w">  </span><span class="nb">ServerAlias</span><span class="w"> </span>anyalias.com
-
-<span class="w">  </span><span class="c"># configure SSL</span>
-<span class="w">  </span><span class="nb">SSLEngine</span><span class="w"> </span><span class="k">on</span>
-
-<span class="w">  </span><span class="nb">SSLProxyEngine</span><span class="w"> </span><span class="k">On</span>
-<span class="w">  </span><span class="nb">SSLProxyVerify</span><span class="w"> </span><span class="k">none</span>
-<span class="w">  </span><span class="nb">SSLProxyCheckPeerCN</span><span class="w"> </span><span class="k">off</span>
-<span class="w">  </span><span class="nb">SSLProxyCheckPeerName</span><span class="w"> </span><span class="k">off</span>
-<span class="w">  </span><span class="nb">SSLProxyCheckPeerExpire</span><span class="w"> </span><span class="k">off</span>
-<span class="w">  </span><span class="nb">ProxyPreserveHost</span><span class="w"> </span><span class="k">Off</span>
-
-<span class="w">  </span><span class="c"># Use RewriteEngine to handle websocket connection upgrades</span>
-<span class="w">  </span><span class="nb">RewriteEngine</span><span class="w"> </span><span class="k">On</span>
-<span class="w">  </span><span class="nb">RedirectMatch</span><span class="w"> </span>permanent<span class="w"> </span>^/vis$<span class="w"> </span><span class="sx">/vis/</span>
-<span class="w">  </span><span class="nb">RewriteCond</span><span class="w"> </span>%{HTTP:Connection}<span class="w"> </span>Upgrade<span class="w"> </span>[NC]
-<span class="w">  </span><span class="nb">RewriteCond</span><span class="w"> </span>%{HTTP:Upgrade}<span class="w"> </span>=websocket<span class="w"> </span>[NC]
-<span class="w">  </span><span class="nb">RewriteRule</span><span class="w"> </span><span class="sx">/vis/ws/</span>(.*)<span class="w"> </span>ws://127.0.0.1:8009/ws/$1<span class="w"> </span>[NE,P,L]
-<span class="w">  </span><span class="nb">RewriteRule</span><span class="w"> </span><span class="sx">/vis/</span>(.*)<span class="w"> </span>http://127.0.0.1:8009/$1<span class="w"> </span>[NE,P,L]
-<span class="w">  </span><span class="c"># Proxy to VisiOmatic</span>
-<span class="w">  </span><span class="nb">ProxyPass</span><span class="w"> </span><span class="sx">/vis</span><span class="w"> </span>http://127.0.0.1:8009
-<span class="w">  </span><span class="nb">ProxyPassReverse</span><span class="w"> </span><span class="sx">/vis</span><span class="w"> </span>http://127.0.0.1:8009
-
-<span class="w">  </span><span class="nb">SSLCertificateFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/mymachine.com/fullchain.pem</span>
-<span class="w">  </span><span class="nb">SSLCertificateKeyFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/mymachine.com/privkey.pem</span>
-<span class="w">  </span><span class="nb">Include</span><span class="w"> </span><span class="sx">/etc/letsencrypt/options-ssl-apache.conf</span>
-<span class="nt">&lt;/VirtualHost&gt;</span>
-</pre></div>
-</div>
-<p>The HTTPS certificate is obtained from the <a class="reference external" href="https://letsencrypt.org">LetsEncrypt</a> authority.
-In this example, the URL of the <strong class="program">VisiOmatic</strong> client is <cite>https://mymachine.com/vis/</cite> URL, which means that <strong class="program">VisiOmatic</strong> 's <span class="param">root_path</span> option should be set to <span class="param">/vis</span>.</p>
-</section>
-<section id="running-visiomatic-behind-a-proxy">
-<h4>Running <strong class="program">VisiOmatic</strong> behind a proxy<a class="headerlink" href="#running-visiomatic-behind-a-proxy" title="Link to this heading"></a></h4>
-<p>The <span class="param">root_path</span></p>
-</section>
-</section>
 <section id="configuration-settings">
 <h3>Configuration settings<a class="headerlink" href="#configuration-settings" title="Link to this heading"></a></h3>
-<p>Configuration settings are grouped into five sections: <cite>host</cite>, <cite>image</cite>, <cite>server</cite>, <cite>engine</cite>, and <cite>cache</cite>.</p>
+<p>Configuration settings are grouped into five sections: <cite>host</cite>, <cite>image</cite>, <cite>server</cite>, <cite>engine</cite>, and <cite>cache</cite>.
+The full list of options is listed below; jump to <a class="reference internal" href="#section-setupguide"><span class="std std-ref">the setup guide</span></a> for use cases.</p>
 <section id="host-options">
 <h4>Host options<a class="headerlink" href="#host-options" title="Link to this heading"></a></h4>
 <p>The Host options allow you to specify how and where the Visiomatic service runs.</p>
@@ -356,6 +319,65 @@ The default depends on the platform; on Linux it is <span class="param">/dev/shm
 </dd>
 </dl>
 </section>
+</section>
+</section>
+<section id="setup-guide">
+<span id="section-setupguide"></span><h2>Setup guide<a class="headerlink" href="#setup-guide" title="Link to this heading"></a></h2>
+<p>This section will help you configure <strong class="program">VisiOmatic</strong> for best performance in typical situations.
+The default settings are generally appropriate for basic, local usage, but may not be the best compromise when it comes to running <strong class="program">VisiOmatic</strong> on a big server or on specific hardware.</p>
+<section id="accessing-visiomatic-server-from-another-machine">
+<h3>Accessing <strong class="program">VisiOmatic</strong> server from another machine<a class="headerlink" href="#accessing-visiomatic-server-from-another-machine" title="Link to this heading"></a></h3>
+<p>There are basically two ways to make your <strong class="program">VisiOmatic</strong> server instance accessible from another machine.</p>
+<p>The first is to set <span class="param">host</span> to <span class="param">0.0.0.0</span> to allow connections from all interfaces, and make sure that your machine firewall has the <strong class="program">VisiOmatic</strong> port (8009 by default) open.
+This can be convenient (although insecure) if you don't have administrator's rights but still want to browse your images from a different machine on a local network.</p>
+<p>However the recommended way is to run <strong class="program">VisiOmatic</strong> (or a containerized version of it) behind a web server acting as a reverse proxy (<a class="reference internal" href="overview.html#fig-visiomaticchart"><span class="std std-numref">Fig. 1</span></a>), such as <a class="reference external" href="https://nginx.org"><strong class="program">nginx</strong></a> or <a class="reference external" href="https://apache.org/"><strong class="program">Apache</strong></a> (<code class="docutils literal notranslate"><span class="pre">httpd</span></code> daemon).
+For information, here is a possible example of a reverse-proxy configuration for <strong class="program">Apache</strong> running on a Linux machine with IP address <code class="docutils literal notranslate"><span class="pre">myserver.com</span></code>, allowing web-clients to communicate remotely and securely with a local <strong class="program">VisiOmatic</strong> server instance:</p>
+<div class="highlight-apache notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:443</span><span class="nt">&gt;</span>
+
+<span class="w">  </span><span class="nb">ServerName</span><span class="w"> </span>myserver.com
+<span class="w">  </span><span class="nb">ServerAlias</span><span class="w"> </span>anyalias.com
+
+<span class="w">  </span><span class="c"># configure SSL</span>
+<span class="w">  </span><span class="nb">SSLEngine</span><span class="w"> </span><span class="k">on</span>
+
+<span class="w">  </span><span class="nb">SSLProxyEngine</span><span class="w"> </span><span class="k">On</span>
+<span class="w">  </span><span class="nb">SSLProxyVerify</span><span class="w"> </span><span class="k">none</span>
+<span class="w">  </span><span class="nb">SSLProxyCheckPeerCN</span><span class="w"> </span><span class="k">off</span>
+<span class="w">  </span><span class="nb">SSLProxyCheckPeerName</span><span class="w"> </span><span class="k">off</span>
+<span class="w">  </span><span class="nb">SSLProxyCheckPeerExpire</span><span class="w"> </span><span class="k">off</span>
+<span class="w">  </span><span class="nb">ProxyPreserveHost</span><span class="w"> </span><span class="k">Off</span>
+
+<span class="w">  </span><span class="c"># Use RewriteEngine to handle websocket connection upgrades</span>
+<span class="w">  </span><span class="nb">RewriteEngine</span><span class="w"> </span><span class="k">On</span>
+<span class="w">  </span><span class="nb">RedirectMatch</span><span class="w"> </span>permanent<span class="w"> </span>^/vis$<span class="w"> </span><span class="sx">/vis/</span>
+<span class="w">  </span><span class="nb">RewriteCond</span><span class="w"> </span>%{HTTP:Connection}<span class="w"> </span>Upgrade<span class="w"> </span>[NC]
+<span class="w">  </span><span class="nb">RewriteCond</span><span class="w"> </span>%{HTTP:Upgrade}<span class="w"> </span>=websocket<span class="w"> </span>[NC]
+<span class="w">  </span><span class="nb">RewriteRule</span><span class="w"> </span><span class="sx">/vis/ws/</span>(.*)<span class="w"> </span>ws://127.0.0.1:8009/ws/$1<span class="w"> </span>[NE,P,L]
+<span class="w">  </span><span class="nb">RewriteRule</span><span class="w"> </span><span class="sx">/vis/</span>(.*)<span class="w"> </span>http://127.0.0.1:8009/$1<span class="w"> </span>[NE,P,L]
+<span class="w">  </span><span class="c"># Proxy to VisiOmatic</span>
+<span class="w">  </span><span class="nb">ProxyPass</span><span class="w"> </span><span class="sx">/vis</span><span class="w"> </span>http://127.0.0.1:8009
+<span class="w">  </span><span class="nb">ProxyPassReverse</span><span class="w"> </span><span class="sx">/vis</span><span class="w"> </span>http://127.0.0.1:8009
+
+<span class="w">  </span><span class="nb">SSLCertificateFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/myserver.com/fullchain.pem</span>
+<span class="w">  </span><span class="nb">SSLCertificateKeyFile</span><span class="w"> </span><span class="sx">/etc/letsencrypt/live/myserver.com/privkey.pem</span>
+<span class="w">  </span><span class="nb">Include</span><span class="w"> </span><span class="sx">/etc/letsencrypt/options-ssl-apache.conf</span>
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</pre></div>
+</div>
+<p>The HTTPS certificate is obtained from the <a class="reference external" href="https://letsencrypt.org">LetsEncrypt</a> authority.
+In this example, the URL of the <strong class="program">VisiOmatic</strong> client is <code class="docutils literal notranslate"><span class="pre">https://myserver.com/vis/</span></code>, which means that <strong class="program">VisiOmatic</strong> 's <span class="param">root_path</span> option should be set to <span class="param">/vis</span>.</p>
+</section>
+<section id="tuning-for-performance">
+<h3>Tuning for performance<a class="headerlink" href="#tuning-for-performance" title="Link to this heading"></a></h3>
+<p>The <strong class="program">VisiOmatic</strong> server component can be resource-intensive.
+Using the proper setup will help getting the most out of the computer serving your images.</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Parallel_computing">Parallel computing</a> is one way to improve the tile-serving performance of the server.
+<strong class="program">VisiOmatic</strong> uses both <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Thread_(computing)">multithreading</a> to parallelize the processing of images.</p>
+<p>The multiprocessing aspect involves several <cite>worker</cite> processes which are handled the task of processing the requests and serving the images.
+The number of workers can be set with the <span class="param">workers</span> option (4 per default).
+The higher the number, the more processes are available to process the requests in parallel, but the higher the memory usage.
+For large servers with 128</p>
+<p>while multithreading is present at lower levels, for instance when generating cache data from <a class="reference external" href="https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format"><abbr title="Multi-Extension FITS">MEF</abbr></a> files.</p>
 </section>
 </section>
 </section>
