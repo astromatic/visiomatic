@@ -19,6 +19,8 @@
         <script src="_static/documentation_options.js?v=acc74ff5"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script>window.MathJax = {"tex": {"macros": {"trans": ["{#1}^\\intercal", 1], "vec": ["\\boldsymbol{#1}", 1], "oper": ["\\mathbf{#1}", 1], "dvol": ["{\\rm d}^{#1}\\hspace{-2pt}#2", 2], "sinc": ["\\mbox{sinc}"], "esp": ["\\mbox{E}\\left\\{#1\\right\\}", 1]}}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -68,7 +70,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#setup-guide">Setup guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#accessing-visiomatic-server-from-another-machine">Accessing <strong class="program">VisiOmatic</strong> server from another machine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tuning-for-performance">Tuning for performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tuning-for-performance">Tuning for performance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parallel-processing">Parallel processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#image-caches">Image caches</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -371,13 +377,47 @@ In this example, the URL of the <strong class="program">VisiOmatic</strong> clie
 <h3>Tuning for performance<a class="headerlink" href="#tuning-for-performance" title="Link to this heading"></a></h3>
 <p>The <strong class="program">VisiOmatic</strong> server component can be resource-intensive.
 Using the proper setup will help getting the most out of the computer serving your images.</p>
+<section id="parallel-processing">
+<h4>Parallel processing<a class="headerlink" href="#parallel-processing" title="Link to this heading"></a></h4>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Parallel_computing">Parallel computing</a> is one way to improve the tile-serving performance of the server.
 <strong class="program">VisiOmatic</strong> uses both <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Thread_(computing)">multithreading</a> to parallelize the processing of images.</p>
-<p>The multiprocessing aspect involves several <cite>worker</cite> processes which are handled the task of processing the requests and serving the images.
-The number of workers can be set with the <span class="param">workers</span> option (4 per default).
-The higher the number, the more processes are available to process the requests in parallel, but the higher the memory usage.
-For large servers with 128</p>
-<p>while multithreading is present at lower levels, for instance when generating cache data from <a class="reference external" href="https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format"><abbr title="Multi-Extension FITS">MEF</abbr></a> files.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Multiprocessing and multiple workers are currently available only on Linux, because of compatibility issues with some low-level libraries on macOS and Windows.</p>
+</div>
+<p id="section-workers">The <cite>multiprocessing</cite> aspect involves several <cite>worker</cite> processes which are handled the task of processing the requests and serving the images.
+The number of <cite>workers</cite> can be set with the <span class="param">workers</span> option (4 per default on Linux).
+The higher the number, the more processes are available to process requests in parallel, but the higher the memory usage.
+In the most extreme situation (as many images being cached as workers at a given time), the total memory usage in bytes may temporarily grow as high as <span class="math notranslate nohighlight">\(4 \times \sum_{i=1}^{i \le n_W} n_{\rm pix}^{(i)}\)</span>, where
+<span class="math notranslate nohighlight">\(n_W\)</span> is the number of <cite>workers</cite> and <span class="math notranslate nohighlight">\(n_{\rm pix}^{(i)}\)</span> is the number of pixels in all channels in the <span class="math notranslate nohighlight">\(i^{\rm th}\)</span> largest image to be served.
+For example, for a machine with 256GB or physical memory, serving gigapixel-sized images, the maximum recommended number of <cite>workers</cite> would be about 60 (64 minus some margin for the system and for memory caching).
+Note that having more <cite>workers</cite> than CPU cores on the machine will not improve serving performance, hence if the machine in the example above has 48 CPU cores in total, then there is a priori no reason for the number of <cite>workers</cite> to exceed 48.
+Finally, it is worth stressing that all systems but those equipped with the fastest storage hardware can become <a class="reference external" href="https://en.wikipedia.org/wiki/I/O_bound">I/O-bound</a> when too many <cite>workers</cite> are operating in parallel.
+Limited I/O performance may somewhat be mitigated by the memory cache the operating system provides, although this depends on the number of different images being served at a given time.
+Hence it is recommended to act with caution when increasing the number of <cite>workers</cite> to large values.</p>
+<p><cite>Multithreading</cite> is used more sporadically at lower levels, for instance when generating cache data from <a class="reference external" href="https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format"><abbr title="Multi-Extension FITS">MEF</abbr></a> files.
+It is set by default to half the number of &quot;CPUs&quot; reported by the operating system (which is often the number of physical CPUs).
+It is recommended to leave it unchanged, unless one intends to run several instances of <strong class="program">VisiOmatic</strong> on the same machine.</p>
+</section>
+<section id="image-caches">
+<h4>Image caches<a class="headerlink" href="#image-caches" title="Link to this heading"></a></h4>
+<p>Caching of image data is essential to the good performance of <strong class="program">VisiOmatic</strong>.
+Caching of the image tiles computed by the server component occurs at several levels, all of which following the <a class="reference external" href="https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)">LRU (&quot;Least-Recently-Used&quot;) policy</a>.</p>
+<p>The first level is that of the web browser, which has its own cache on the client side.
+It is particularly useful when displaying animated sequences.
+The browser cache does not require specific tuning when using the <strong class="program">VisiOmatic</strong> web client, however it may sometimes interfere with the expected behavior of the visualisation engine when rapidly updating image parameters, and lead to inconsistencies between the displayed tiles.
+In this case, clearing the cache of the browser and reloading the page will solve the issue.</p>
+<p>The second cache level, which may or may not be present, is that of the (optional) web server acting as a reverse proxy to the <strong class="program">VisiOmatic</strong> server component.
+Please check your web server documentation for configuration tips (e.g. <a class="reference external" href="https://docs.nginx.com/nginx/admin-guide/content-cache/content-caching/">nginx caching</a> or <a class="reference external" href="https://httpd.apache.org/docs/current/caching.html">Apache caching</a>).</p>
+<p>The <strong class="program">VisiOmatic</strong> server code itself provides the next two caches, in the form of a memory cache and a disk cache.
+The memory cache deals with the JPEG-encoded tiles.
+By default, up to 1,000 encoded tiles, or about 20-30 megabytes (per <a class="reference internal" href="#section-workers"><span class="std std-ref">worker</span></a>) are cached in memory.
+This limit may be increased or decreased using the <span class="param">max_cache_tile_count</span> option.</p>
+<p>Client requests do not deal directly with FITS image arrays.
+Instead, they get their data from the tiled, multi-resolution images stored in the <strong class="program">VisiOmatic</strong> LRU (Last Recently Used) disk cache.
+The cache data are generated on-the-fly when a memory mapped by the server component.
+TheIt is therefore</p>
+</section>
 </section>
 </section>
 </section>

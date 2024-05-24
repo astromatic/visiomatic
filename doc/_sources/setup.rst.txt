@@ -349,13 +349,53 @@ Tuning for performance
 The |VisiOmatic| server component can be resource-intensive.
 Using the proper setup will help getting the most out of the computer serving your images.
 
+Parallel processing
+~~~~~~~~~~~~~~~~~~~
+
 `Parallel computing <https://en.wikipedia.org/wiki/Parallel_computing>`_ is one way to improve the tile-serving performance of the server.
 |VisiOmatic| uses both `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ and `multithreading <https://en.wikipedia.org/wiki/Thread_(computing)>`_ to parallelize the processing of images.
 
-The multiprocessing aspect involves several `worker` processes which are handled the task of processing the requests and serving the images.
-The number of workers can be set with the :param:`workers` option (4 per default).
-The higher the number, the more processes are available to process the requests in parallel, but the higher the memory usage.
-For large servers with 128
+.. attention::
+   Multiprocessing and multiple workers are currently available only on Linux, because of compatibility issues with some low-level libraries on macOS and Windows.
 
-while multithreading is present at lower levels, for instance when generating cache data from |MEF|_ files.
+.. _Section_Workers:
 
+The `multiprocessing` aspect involves several `worker` processes which are handled the task of processing the requests and serving the images.
+The number of `workers` can be set with the :param:`workers` option (4 per default on Linux).
+The higher the number, the more processes are available to process requests in parallel, but the higher the memory usage.
+In the most extreme situation (as many images being cached as workers at a given time), the total memory usage in bytes may temporarily grow as high as :math:`4 \times \sum_{i=1}^{i \le n_W} n_{\rm pix}^{(i)}`, where
+:math:`n_W` is the number of `workers` and :math:`n_{\rm pix}^{(i)}` is the number of pixels in all channels in the :math:`i^{\rm th}` largest image to be served.
+For example, for a machine with 256GB or physical memory, serving gigapixel-sized images, the maximum recommended number of `workers` would be about 60 (64 minus some margin for the system and for memory caching).
+Note that having more `workers` than CPU cores on the machine will not improve serving performance, hence if the machine in the example above has 48 CPU cores in total, then there is a priori no reason for the number of `workers` to exceed 48.
+Finally, it is worth stressing that all systems but those equipped with the fastest storage hardware can become `I/O-bound <https://en.wikipedia.org/wiki/I/O_bound>`_ when too many `workers` are operating in parallel.
+Limited I/O performance may somewhat be mitigated by the memory cache the operating system provides, although this depends on the number of different images being served at a given time.
+Hence it is recommended to act with caution when increasing the number of `workers` to large values.
+
+`Multithreading` is used more sporadically at lower levels, for instance when generating cache data from |MEF|_ files.
+It is set by default to half the number of "CPUs" reported by the operating system (which is often the number of physical CPUs).
+It is recommended to leave it unchanged, unless one intends to run several instances of |VisiOmatic| on the same machine.
+
+Image caches
+~~~~~~~~~~~~
+
+Caching of image data is essential to the good performance of |VisiOmatic|.
+Caching of the image tiles computed by the server component occurs at several levels, all of which following the `LRU ("Least-Recently-Used") policy <https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>`_.
+
+The first level is that of the web browser, which has its own cache on the client side.
+It is particularly useful when displaying animated sequences.
+The browser cache does not require specific tuning when using the |VisiOmatic| web client, however it may sometimes interfere with the expected behavior of the visualisation engine when rapidly updating image parameters, and lead to inconsistencies between the displayed tiles.
+In this case, clearing the cache of the browser and reloading the page will solve the issue.
+
+The second cache level, which may or may not be present, is that of the (optional) web server acting as a reverse proxy to the |VisiOmatic| server component.
+Please check your web server documentation for configuration tips (e.g. `nginx caching <https://docs.nginx.com/nginx/admin-guide/content-cache/content-caching/>`_ or `Apache caching <https://httpd.apache.org/docs/current/caching.html>`_).
+
+The |VisiOmatic| server code itself provides the next two caches, in the form of a memory cache and a disk cache.
+The memory cache deals with the JPEG-encoded tiles.
+By default, up to 1,000 encoded tiles, or about 20-30 megabytes (per :ref:`worker <Section_Workers>`) are cached in memory.
+This limit may be increased or decreased using the :param:`max_cache_tile_count` option.
+
+
+Client requests do not deal directly with FITS image arrays.
+Instead, they get their data from the tiled, multi-resolution images stored in the |VisiOmatic| LRU (Last Recently Used) disk cache.
+The cache data are generated on-the-fly when a memory mapped by the server component.
+TheIt is therefore
