@@ -7,7 +7,7 @@
   <title>Setup &mdash; VisiOmatic 3.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=8e46af47" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=3ff5e572" />
 
   
   <!--[if lt IE 9]>
@@ -136,7 +136,7 @@ You should land on the page shown below.</p>
 <figure class="align-center" id="fig-visiomaticbanner" style="width: 60%">
 <img alt="VisiOmatic banner" src="_images/visiomatic-banner.png" />
 </figure>
-<p>If you have a FITS image in hand (say, <code class="docutils literal notranslate"><span class="pre">image.fits</span></code>), you can quickly check that <strong class="program">VisiOmatic</strong> works on your machine by typing in a shell window</p>
+<p>If you have a <abbr title="Flexible Image Transport System">FITS</abbr> image in hand (say, <code class="docutils literal notranslate"><span class="pre">image.fits</span></code>), you can quickly check that <strong class="program">VisiOmatic</strong> works on your machine by typing in a shell window</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>visiomatic<span class="w"> </span>image.fits
 </pre></div>
 </div>
@@ -424,11 +424,17 @@ This limit may be increased or decreased using the <span class="param">max_cache
 </section>
 <section id="disk-image-cache">
 <h5>Disk image cache<a class="headerlink" href="#disk-image-cache" title="Link to this heading"></a></h5>
-<p>Client requests do not deal directly with FITS image arrays.
+<p>The client requests managed by the server component do not deal directly with <abbr title="Flexible Image Transport System">FITS</abbr> image arrays.
 Instead, they get their data from the tiled, multi-resolution images stored in the <strong class="program">VisiOmatic</strong> LRU disk cache.
 The cache data are generated on-the-fly and memory mapped by the server component.
 By default, up to 100 image files can be cached on disk.
 This limit may be increased or decreased using the <span class="param">max_cache_image_count</span> option.</p>
+<p>The directory path where the cached data are written and read can be specified with the <span class="param">cache_dir</span> option. The default path depends on the platform; on Linux, it is <span class="param">~/.cache/visiomatic</span>.
+One should ensure that enough disk space is available for the cached data, knowing that an image with <span class="math notranslate nohighlight">\(n_{\rm pix}\)</span> pixels uses about <span class="math notranslate nohighlight">\(10\,n_{\rm pix}\)</span> bytes of cache disk space.
+The read/write performance of the device that carries the cache directory largely defines the performance and responsiveness of the <strong class="program">VisiOmatic</strong> server component.
+Hence make sure that the cache directory is located on the fastest <a class="reference external" href="https://en.wikipedia.org/wiki/Device_file#Block_devices">block device</a> the server machine has access too, ideally a local, recent <a class="reference external" href="https://en.wikipedia.org/wiki/Solid-state_drive">solid state drive</a>.
+Another possibility, if the machine has enough memory, is to use a <a class="reference external" href="https://en.wikipedia.org/wiki/RAM_drive">RAM drive</a>.
+A RAM drive provides the best possible cache performance, however the cache will not survive a reboot.</p>
 </section>
 </section>
 </section>

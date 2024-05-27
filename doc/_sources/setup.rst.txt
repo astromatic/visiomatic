@@ -49,7 +49,7 @@ You should land on the page shown below.
    :align: center
 
 
-If you have a FITS image in hand (say, ``image.fits``), you can quickly check that |VisiOmatic| works on your machine by typing in a shell window
+If you have a |FITS| image in hand (say, ``image.fits``), you can quickly check that |VisiOmatic| works on your machine by typing in a shell window
 
 .. code-block:: console
 
@@ -404,10 +404,15 @@ This limit may be increased or decreased using the :param:`max_cache_tile_count`
 
 Disk image cache
 """"""""""""""""
-Client requests do not deal directly with FITS image arrays.
+The client requests managed by the server component do not deal directly with |FITS| image arrays.
 Instead, they get their data from the tiled, multi-resolution images stored in the |VisiOmatic| LRU disk cache.
 The cache data are generated on-the-fly and memory mapped by the server component.
 By default, up to 100 image files can be cached on disk.
 This limit may be increased or decreased using the :param:`max_cache_image_count` option.
 
-
+The directory path where the cached data are written and read can be specified with the :param:`cache_dir` option. The default path depends on the platform; on Linux, it is :param:`~/.cache/visiomatic`.
+One should ensure that enough disk space is available for the cached data, knowing that an image with :math:`n_{\rm pix}` pixels uses about :math:`10\,n_{\rm pix}` bytes of cache disk space. 
+The read/write performance of the device that carries the cache directory largely defines the performance and responsiveness of the |VisiOmatic| server component.
+Hence make sure that the cache directory is located on the fastest `block device <https://en.wikipedia.org/wiki/Device_file#Block_devices>`_ the server machine has access too, ideally a local, recent `solid state drive <https://en.wikipedia.org/wiki/Solid-state_drive>`_.
+Another possibility, if the machine has enough memory, is to use a `RAM drive <https://en.wikipedia.org/wiki/RAM_drive>`_.
+A RAM drive provides the best possible cache performance, however the cache will not survive a reboot.

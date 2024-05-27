@@ -49,7 +49,7 @@ Data management
 ---------------
 
 Previous versions of |VisiOmatic| would require the original image data files to be converted to a tiled multi-resolution `TIFF <https://iipimage.sourceforge.io/documentation/images/#TIFF>`_ format.
-The new version works directly on FITS images, including data cubes and |MEF|_ files, and performs image tiling and rebinning on-the-fly.
+The new version works directly on |FITS|_ images, including data cubes and |MEF|_ files, and performs image tiling and rebinning on-the-fly.
 
 Vector data are stored in `GeoJSON <http://geojson.org/>`_ format. GeoJSON offers a compact, yet human-friendly representation of features such as markers, lines, polygons, and can easily be generated from e.g., `CSV <http://en.wikipedia.org/wiki/Comma-separated_values>`_ or `ds9 <http://ds9.si.edu>`_ region files.  
 
