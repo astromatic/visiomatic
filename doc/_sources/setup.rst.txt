@@ -45,6 +45,7 @@ You should land on the page shown below.
 
 .. figure:: figures/visiomatic-banner.*
    :alt: VisiOmatic banner
+   :figwidth: 60%
    :align: center
 
 
@@ -301,7 +302,7 @@ Accessing |VisiOmatic| server from another machine
 
 There are basically two ways to make your |VisiOmatic| server instance accessible from another machine.
 
-The first is to set :param:`host` to :param:`0.0.0.0` to allow connections from all interfaces, and make sure that your machine firewall has the |VisiOmatic| port (8009 by default) open.
+The first is to set :param:`host` to :param:`0.0.0.0` to allow connections from all interfaces, and make sure that your machine firewall has the |VisiOmatic| `TCP port <https://en.wikipedia.org/wiki/Transmission_Control_Protocol#TCP_ports>`_ (8009 by default) open.
 This can be convenient (although insecure) if you don't have administrator's rights but still want to browse your images from a different machine on a local network.
 
 However the recommended way is to run |VisiOmatic| (or a containerized version of it) behind a web server acting as a reverse proxy (:numref:`Fig_VisiomaticChart`), such as |nginx|_ or |Apache|_ (``httpd`` daemon).
@@ -381,21 +382,32 @@ Image caches
 Caching of image data is essential to the good performance of |VisiOmatic|.
 Caching of the image tiles computed by the server component occurs at several levels, all of which following the `LRU ("Least-Recently-Used") policy <https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>`_.
 
+Browser cache
+"""""""""""""
 The first level is that of the web browser, which has its own cache on the client side.
 It is particularly useful when displaying animated sequences.
 The browser cache does not require specific tuning when using the |VisiOmatic| web client, however it may sometimes interfere with the expected behavior of the visualisation engine when rapidly updating image parameters, and lead to inconsistencies between the displayed tiles.
 In this case, clearing the cache of the browser and reloading the page will solve the issue.
 
+Server cache
+""""""""""""
 The second cache level, which may or may not be present, is that of the (optional) web server acting as a reverse proxy to the |VisiOmatic| server component.
 Please check your web server documentation for configuration tips (e.g. `nginx caching <https://docs.nginx.com/nginx/admin-guide/content-cache/content-caching/>`_ or `Apache caching <https://httpd.apache.org/docs/current/caching.html>`_).
 
 The |VisiOmatic| server code itself provides the next two caches, in the form of a memory cache and a disk cache.
+
+Memory tile cache
+"""""""""""""""""
 The memory cache deals with the JPEG-encoded tiles.
 By default, up to 1,000 encoded tiles, or about 20-30 megabytes (per :ref:`worker <Section_Workers>`) are cached in memory.
 This limit may be increased or decreased using the :param:`max_cache_tile_count` option.
 
-
+Disk image cache
+""""""""""""""""
 Client requests do not deal directly with FITS image arrays.
-Instead, they get their data from the tiled, multi-resolution images stored in the |VisiOmatic| LRU (Last Recently Used) disk cache.
-The cache data are generated on-the-fly when a memory mapped by the server component.
-TheIt is therefore
+Instead, they get their data from the tiled, multi-resolution images stored in the |VisiOmatic| LRU disk cache.
+The cache data are generated on-the-fly and memory mapped by the server component.
+By default, up to 100 image files can be cached on disk.
+This limit may be increased or decreased using the :param:`max_cache_image_count` option.
+
+
