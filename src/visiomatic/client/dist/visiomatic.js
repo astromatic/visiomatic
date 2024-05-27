@@ -32699,7 +32699,7 @@
       if (wasAnimated) {
         setTimeout(function() {
           map._fadeAnimated = wasAnimated;
-        }, 1e5);
+        }, 1e6);
       }
     }
   });

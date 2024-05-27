@@ -7,11 +7,14 @@
 .. |ASGI| replace:: :abbr:`ASGI (Asynchronous Server Gateway Interface)`
 .. _ASGI: https://en.wikipedia.org/wiki/Asynchronous_Server_Gateway_Interface
 
-.. |Python| replace:: `Python`
-.. _Python: https://python.org
+.. |FITS| replace:: :abbr:`FITS (Flexible Image Transport System)`
+.. _FITS: https://en.wikipedia.org/wiki/FITS
 
 .. |MEF| replace:: :abbr:`MEF (Multi-Extension FITS)`
 .. _MEF: https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format
+
+.. |Python| replace:: `Python`
+.. _Python: https://python.org
 
 .. |Apache| replace:: :program:`Apache`
 .. _Apache: https://apache.org/

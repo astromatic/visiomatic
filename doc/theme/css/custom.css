@@ -37,16 +37,24 @@ h5::after, h6::after{
 }
 
 h5 + p, h6 + p {
-  display: inline;
   margin-left: 0.5rem;
 }
 
-h5 + p::after, h6 + p::after{
+h5 ~ p, h6 ~ p {
+  display: inline;
+}
+
+section h5 ~ p::after, section h6 ~ p::after{
   content: "";
-  height: 1rem;
+  height: 0.5rem;
   display: block;
   clear: both;
 }
+
+section h5 ~ p:last-child::after, section h6 ~ p:last-child::after{
+  height: 24px;
+}
+
 /* Justified and slightly lower line interval for text */
 li, p {
 	text-align: justify;

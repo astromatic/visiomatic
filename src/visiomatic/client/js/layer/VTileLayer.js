@@ -1025,7 +1025,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		}
 
 		if (wasAnimated) {
-			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 100000);
+			setTimeout(function() { map._fadeAnimated = wasAnimated; }, 1000000);
 		}
 	}
 
