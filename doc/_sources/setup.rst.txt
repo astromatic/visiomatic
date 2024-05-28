@@ -20,7 +20,7 @@ The easiest way to install |VisiOmatic| is from the shell, through |pip|_:
 
     $ pip install visiomatic
 
-If the command above does not work and your operating system still comes with Python 2, try :program:`pip3` instead of |pip|.
+If the command above does not work and your Operating System (OS) still comes with Python 2, try :program:`pip3` instead of |pip|.
 
 On recent systems, the vanilla ``pip install`` command may trigger an "externally managed environment" error, due to `a change in policy <https://peps.python.org/pep-0668/#implementation-notes>`_ to avoid conflicts between the Python package manager and that of your own operating system.
 In this case, you should first `set a virtual environment <https://docs.python.org/3/library/venv.html>`_ to run |VisiOmatic|, or even better, use the |pipx|_ package that will automatically do it for you:
@@ -369,7 +369,7 @@ In the most extreme situation (as many images being cached as workers at a given
 For example, for a machine with 256GB or physical memory, serving gigapixel-sized images, the maximum recommended number of `workers` would be about 60 (64 minus some margin for the system and for memory caching).
 Note that having more `workers` than CPU cores on the machine will not improve serving performance, hence if the machine in the example above has 48 CPU cores in total, then there is a priori no reason for the number of `workers` to exceed 48.
 Finally, it is worth stressing that all systems but those equipped with the fastest storage hardware can become `I/O-bound <https://en.wikipedia.org/wiki/I/O_bound>`_ when too many `workers` are operating in parallel.
-Limited I/O performance may somewhat be mitigated by the memory cache the operating system provides, although this depends on the number of different images being served at a given time.
+Limited I/O performance may somewhat be mitigated by the `page cache <https://en.wikipedia.org/wiki/Page_cache>`_ that comes with the OS, although this depends on the number of different images being served at a given time.
 Hence it is recommended to act with caution when increasing the number of `workers` to large values.
 
 `Multithreading` is used more sporadically at lower levels, for instance when generating cache data from |MEF|_ files.
@@ -405,8 +405,8 @@ This limit may be increased or decreased using the :param:`max_cache_tile_count`
 Disk image cache
 """"""""""""""""
 The client requests managed by the server component do not deal directly with |FITS| image arrays.
-Instead, they get their data from the tiled, multi-resolution images stored in the |VisiOmatic| LRU disk cache.
-The cache data are generated on-the-fly and memory mapped by the server component.
+Instead, they get their data from tiled, multi-resolution image files stored in the |VisiOmatic| LRU disk cache.
+The cache data are generated on-the-fly and `memory-mapped <https://en.wikipedia.org/wiki/Memory-mapped_file>`_ by the server component.
 By default, up to 100 image files can be cached on disk.
 This limit may be increased or decreased using the :param:`max_cache_image_count` option.
 
@@ -414,5 +414,11 @@ The directory path where the cached data are written and read can be specified w
 One should ensure that enough disk space is available for the cached data, knowing that an image with :math:`n_{\rm pix}` pixels uses about :math:`10\,n_{\rm pix}` bytes of cache disk space. 
 The read/write performance of the device that carries the cache directory largely defines the performance and responsiveness of the |VisiOmatic| server component.
 Hence make sure that the cache directory is located on the fastest `block device <https://en.wikipedia.org/wiki/Device_file#Block_devices>`_ the server machine has access too, ideally a local, recent `solid state drive <https://en.wikipedia.org/wiki/Solid-state_drive>`_.
-Another possibility, if the machine has enough memory, is to use a `RAM drive <https://en.wikipedia.org/wiki/RAM_drive>`_.
-A RAM drive provides the best possible cache performance, however the cache will not survive a reboot.
+Another possibility, if the machine has enough memory, is to use a `RAM drive <https://en.wikipedia.org/wiki/RAM_drive>`_ (e.g., ``/dev/shm`` on Linux).
+A RAM drive provides the best possible cache performance [#foot1]_, however the cache will not survive a reboot.
+In all cases, care must be taken to ensure that the filesystem does not get in the way of memory-mapping operations; for instance `ZFS <https://en.wikipedia.org/wiki/ZFS>`_ comes with its own caching mechanism that can negatively impact memory-mapping performance.
+
+
+.. [#foot1] Such an option may seem somewhat counterproductive in terms of performance, because memory space dedicated to the RAM drive competes with that of the built-in page cache the OS uses to cache memory-mapped data on disk.
+   However, measurements show that the RAM drive option is indeed the fastest in practice.
+
