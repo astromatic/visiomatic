@@ -12,6 +12,7 @@ Welcome to the VisiOmatic documentation!
 
    intro
    overview
+   setup
    interface
    api
    references
