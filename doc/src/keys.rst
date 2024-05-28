@@ -4,19 +4,37 @@
 .. |API| replace:: :abbr:`API (Application Programming Interface)`
 .. _API: https://en.wikipedia.org/wiki/Application_programming_interface
 
-.. |Python| replace:: `Python`
-.. _Python: https://python.org
+.. |ASGI| replace:: :abbr:`ASGI (Asynchronous Server Gateway Interface)`
+.. _ASGI: https://en.wikipedia.org/wiki/Asynchronous_Server_Gateway_Interface
+
+.. |FITS| replace:: :abbr:`FITS (Flexible Image Transport System)`
+.. _FITS: https://en.wikipedia.org/wiki/FITS
 
 .. |MEF| replace:: :abbr:`MEF (Multi-Extension FITS)`
 .. _MEF: https://hst-docs.stsci.edu/hstdhb/3-hst-file-formats/3-2-fits-file-format
 
+.. |Python| replace:: `Python`
+.. _Python: https://python.org
+
+.. |Apache| replace:: :program:`Apache`
+.. _Apache: https://apache.org/
 .. |IIPImage-astro| replace:: :program:`IIPImage-astro`
 .. _IIPImage-astro: https://github.com/cmarmo/iipsrv-astro
+.. |Jupyter| replace:: :program:`Jupyter`
+.. _Jupyter: https://jupyter.org/
+.. |nginx| replace:: :program:`nginx`
+.. _nginx: https://nginx.org
+.. |pip| replace:: :program:`pip`
+.. _pip: https://pypi.org/project/pip/
+.. |pipx| replace:: :program:`pipx`
+.. _pipx: https://pipx.pypa.io
+.. |platformdirs| replace:: :program:`platformdirs`
+.. _platformdirs: https://github.com/platformdirs/platformdirs
 .. |VisiOmatic| replace:: :program:`VisiOmatic`
 .. _VisiOmatic: http://visiomatic.org
+
 .. |Leaflet| replace:: :program:`Leaflet`
 .. _Leaflet: http://leafletjs.com
-
 .. |VizieR| replace:: `VizieR`
 .. _VizieR: http://vizier.u-strasbg.fr
 .. |CDS| replace:: `CDS`
