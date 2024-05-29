@@ -24,8 +24,6 @@
 					center: args['center'] ? args['center'] : false,
 					fov: args['fov'] ? parseFloat(args['fov']) : false,
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
-					contrast: 1.0,
-					colorSat: 1.5,
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
 					reuseTiles: true
 				}).addTo(map);
@@ -39,9 +37,6 @@
 		var	minivlayer = V.layer.vTileLayer(url, {
 					mixingMode: args['mode'] ? args['mode'] : 'mono',
 					defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 0,
-					contrast: 1.0,
-					gamma: 2.2,
-					colorSat: 1.5,
 					reuseTiles: true
 				}),
 				minimap = V.control.extraMap(minivlayer, {

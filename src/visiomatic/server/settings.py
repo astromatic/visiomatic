@@ -80,7 +80,7 @@ class ImageSettings(BaseSettings):
         description="Default image gamma"
         )
     quality: int = Field(
-        default=97,
+        default=95,
         ge=1,
         le=100,
         description="Default image compression quality in %%"

@@ -33,7 +33,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		noWrap: true,
 		brightness: null,
 		contrast: null,
-		colorSat: null,
+		colorSaturation: null,
 		gamma: null,
 		cMap: 'grey',
 		invertCMap: false,
@@ -45,6 +45,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
+		framerate: null,
 		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame',
 		credentials: null
 
@@ -70,6 +71,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   Default brightness level.
 	 * @property {number} contrast
 	   Default contrast factor.
+	 * @property {number} colorSaturation
+	   Default image color saturation.
 	 * @property {number} gamma
 	   Default display gamma.
 	 * @property {string} cMap
@@ -90,6 +93,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	visioDefault: {
 		brightness: 0.,
 		contrast: 1.,
+		colorSaturation: 1.5,
 		gamma: 2.2,
 		cMap: 'grey',
 		invertCMap: false,
@@ -147,7 +151,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {number} [options.minZoom=0]
 	   Minimum zoom factor.
 
-	 * @param {?number} [options.maxZoom=null]
+	 * @param {?number} options.maxZoom
 	   Maximum zoom factor.
 
 	 * @param {number} [options.maxNativeZoom=18]
@@ -156,16 +160,16 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {boolean} [options.noWrap=true]
 	   Deactivate layer wrapping.
 
-	 * @param {number} [options.brightness=0.0]
+	 * @param {number} options.brightness
 	   Brightness level.
 
-	 * @param {number} [options.contrast=1.0]
+	 * @param {number} options.contrast
 	   Contrast factor.
 
-	 * @param {number} [options.colorSat=1.0]
+	 * @param {number} options.colorSaturation
 	   Color saturation for multi-channel data (0.0: B&W, >1.0: enhance).
 
-	 * @param {number} [options.gamma=2.2]
+	 * @param {number} options.gamma
 	   Display gamma.
 
 	 * @param {string} [options.cMap='grey']
@@ -175,7 +179,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {boolean} [options.invertCMap=false]
 	   Invert Colormap or color mix (like a negative).
 
-	 * @param {number} [options.quality=90]
+	 * @param {number} options.quality
 	   JPEG encoding quality in percent.
 
 	 * @param {string} [options.mixingMode='color']
@@ -201,10 +205,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   extracted from the data header if available or
 	   ``[[0.,255.], [0.,255.], ...]`` otherwise.
 
-	 * @param {number} [options.quality=0]
+	 * @param {number} [options.channel=0]
 	   Default active channel index in mono-channel mode.
 
-	 * @param {number} [options.framerate=1]
+	 * @param {number} options.framerate
 	   Default animation framerate.
 
 	 * @param {string} [options.sesameURL='https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame']
@@ -247,54 +251,56 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		 * VisiOmatic-specific TileLayer properties.
 		 * @type {object}
 		 * @instance
-    	 * @property {number[][]} imageSize
-    	   Image sizes at every resolution.
-    	 * @property {object[]} gridSize
-    	   Grid sizes at every resolution.
-    	 * @property {number} bpp
-    	   Image depth in bits per pixel.
-    	 * @property {string} mixingMode
-    	   Current color mixing mode (``'mono'`` or ``'color'``).
-    	 * @property {number} channel
-    	   Current image channel index.
-    	 * @property {number} nChannel
-    	   Number of image channels.
-    	 * @property {number} minZoom
-    	   Minimum zoom factor (tile resolution).
-    	 * @property {number} maxZoom
-    	   Maximum zoom factor (tile resolution).
-    	 * @property {number} brightness
-    	   Current image brightness level.
-    	 * @property {number} contrast
-    	   Current image contrast factor.
-    	 * @property {number} colorSat
-    	   Current image color saturation.
-    	 * @property {number} gamma
-    	   Current image display gamma.
-    	 * @property {string} cMap
+		 * @property {number[][]} imageSize
+		   Image sizes at every resolution.
+		 * @property {object[]} gridSize
+		   Grid sizes at every resolution.
+		 * @property {number} bpp
+		   Image depth in bits per pixel.
+		 * @property {string} mixingMode
+		   Current color mixing mode (``'mono'`` or ``'color'``).
+		 * @property {number} channel
+		   Current image channel index.
+		 * @property {number} nChannel
+		   Number of image channels.
+		 * @property {number} minZoom
+		   Minimum zoom factor (tile resolution).
+		 * @property {number} maxZoom
+		   Maximum zoom factor (tile resolution).
+		 * @property {number} brightness
+		   Current image brightness level.
+		 * @property {number} contrast
+		   Current image contrast factor.
+		 * @property {number} colorSaturation
+		   Current image color saturation.
+		 * @property {number} gamma
+		   Current image display gamma.
+		 * @property {string} cMap
 		   Current color map.
-    	 * @property {boolean} invertCMap
+		 * @property {boolean} invertCMap
 		   Current colormap inversion switch status.
-    	 * @property {number[]} backgroundLevel
-    	   Background level for every channel.
-    	 * @property {number[]} backgroundMAD
-    	   Background MAD for every channel.
-    	 * @property {number[]} minValue
-    	   Current lower clipping limit for every channel.
-    	 * @property {number[]} maxValue
-    	   Current upper clipping limit for every channel.
-    	 * @property {number[][]} mix
-    	   Current color mixing matrix.
-    	 * @property {RGB[]} rgb
-    	   Current color mixing matrix as RGB mixes.
-    	 * @property {string[]} channelLabels
-    	   Label for every image channel.
-    	 * @property {boolean[]} channelFlags
-    	   Display activation flag for every channel.
-    	 * @property {string[]} channelUnits
-    	   Pixel value unit for every image channel.
-    	 * @property {number} quality
-    	   Current JPEG encoding quality in %.
+		 * @property {number[]} backgroundLevel
+		   Background level for every channel.
+		 * @property {number[]} backgroundMAD
+		   Background MAD for every channel.
+		 * @property {number[]} minValue
+		   Current lower clipping limit for every channel.
+		 * @property {number[]} maxValue
+		   Current upper clipping limit for every channel.
+		 * @property {number[][]} mix
+		   Current color mixing matrix.
+		 * @property {RGB[]} rgb
+		   Current color mixing matrix as RGB mixes.
+		 * @property {string[]} channelLabels
+		   Label for every image channel.
+		 * @property {boolean[]} channelFlags
+		   Display activation flag for every channel.
+		 * @property {string[]} channelUnits
+		   Pixel value unit for every image channel.
+		 * @property {number} quality
+		   Current JPEG encoding quality in %.
+		 * @property {number} framerate
+		   Current animation framerate.
     	 */
 		this.visio = {
 			imageSize: [[this.tileSize]],
@@ -307,7 +313,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			maxZoom: options.maxZoom,
 			brightness: options.brightness,
 			contrast: options.contrast,
-			colorSat: options.colorSat,
+			colorSaturation: options.colorSaturation,
 			gamma: options.gamma,
 			cMap: options.cMap,
 			invertCMap: options.invertCMap,
@@ -402,11 +408,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			}
 
 			// Default color saturation
-			if (meta.colorSat) {
-				visioDefault.colorSat = meta.colorSat;
+			if (meta.color_saturation) {
+				visioDefault.colorSaturation = meta.color_saturation;
 			}
-			if (!visio.colorSat) {
-				visio.colorSat = visioDefault.colorSat;
+			if (!visio.colorSaturation) {
+				visio.colorSaturation = visioDefault.colorSaturation;
 			}
 
 			// Default display gamma
@@ -608,7 +614,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			cg = this._gammaCorr(rgb.g),
 			cb = this._gammaCorr(rgb.b),
 			lum = (cr + cg + cb) / 3.0,
-			alpha = visio.colorSat / 3.0;
+			alpha = visio.colorSaturation / 3.0;
 
 		visio.mix[channel] = [];
 		visio.mix[channel][0] = lum + alpha * (2.0 * cr - cg - cb);

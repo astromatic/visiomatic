@@ -60,7 +60,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 		settings.invertCMap = visio.invertCMap;
 		settings.brightness = visio.brightness;
 		settings.contrast = visio.contrast;
-		settings.colorSat = visio.colorSat;
+		settings.colorSaturation = visio.colorSaturation;
 		settings.gamma = visio.gamma;
 		settings.quality = visio.quality;
 	},
@@ -84,8 +84,8 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 		this._updateInput(this._input.brightness, settings.brightness);
 		visio.contrast = settings.contrast;
 		this._updateInput(this._input.contrast, settings.contrast);
-		visio.colorSat = settings.colorSat;
-		this._updateInput(this._input.colorSat, settings.colorSat);
+		visio.colorSaturation = settings.colorSaturation;
+		this._updateInput(this._input.colorSaturation, settings.colorSaturation);
 		visio.gamma = settings.gamma;
 		this._updateInput(this._input.gamma, settings.gamma);
 		visio.quality = settings.quality;
@@ -144,13 +144,13 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 		);
 
 		// Colour saturation
-		this._input.colorSat = this._addNumericalInput(
+		this._input.colorSaturation = this._addNumericalInput(
 			layer,
-			'colorSat',
+			'colorSaturation',
 			this._dialog,
 			'Color Sat.:',
 			'Adjust Color Saturation. 0: B&W, 1.0: normal',
-			visio.colorSat,
+			visio.colorSaturation,
 			0.05,
 			0.0, 5.0,
 			layer.updateMix

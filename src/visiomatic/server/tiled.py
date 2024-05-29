@@ -166,17 +166,17 @@ class Tiled(object):
             extnum : Union[int, None] = None,
             tilesize : Tuple[int, int] = (256,256),
             minmax : Union[Tuple[int, int], None] = None,
-            brightness : float = 0.,
-            contrast : float = 1.,
-            color_saturation: float = 1.5,
-            gamma : float = 0.45,
-            quality: int = 90,
-            nthreads : int = config.settings["thread_count"] \
-                if 'sphinx' not in modules else 4):
+            brightness : Union[float, None] = None,
+            contrast : Union[float, None] = None,
+            color_saturation: Union[float, None] = None,
+            gamma : Union[float, None] = None,
+            quality: Union[int, None] = None,
+            nthreads : Union[int, None] = None):
 
         self.filename = path.abspath(filename)
-        # Otherwise, create it
-        self.nthreads = nthreads
+        self.nthreads = nthreads or (
+            config.settings["thread_count"] if 'sphinx' not in modules else 4
+        )
         try:
             hdus = fits.open(self.filename)
         except:
@@ -202,11 +202,11 @@ class Tiled(object):
         self.tile_shape = (self.nchannels, tilesize[0], tilesize[1]);
         self.make_mosaic(self.images)
         hdus.close()
-        self.brightness = brightness
-        self.contrast = contrast
-        self.color_saturation = color_saturation
-        self.gamma = gamma
-        self.quality = quality
+        self.brightness = brightness or config.settings["brightness"]
+        self.contrast = contrast or config.settings["contrast"]
+        self.color_saturation = color_saturation or config.settings["color_saturation"]
+        self.gamma = gamma or config.settings["gamma"]
+        self.quality = quality or config.settings["quality"]
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -443,9 +443,9 @@ class Tiled(object):
             channel: Union[int, None] = None,
             minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
             mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: float = 0.,
-            contrast: float = 1.,
-            gamma: float = 0.45,
+            brightness: Union[float, None] = None,
+            contrast: Union[float, None] = None,
+            gamma: Union[float, None] = None,
             colormap: str = 'grey',
             invert: bool = False) -> np.ndarray:
         """
@@ -477,6 +477,9 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
+        brightness = brightness or self.brightness
+        contrast = contrast or self.contrast
+        gamma = gamma or self.gamma
         if channel is not None:
             chan = channel - 1
             cminmax = minmax[0][1:] \
@@ -591,12 +594,12 @@ class Tiled(object):
             channel: Union[int, None] = None,
             minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
             mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: float = 0.,
-            contrast: float = 1.,
-            gamma: float = 0.4545,
+            brightness: Union[float, None] = None,
+            contrast: Union[float, None] = None,
+            gamma: Union[float, None] = None,
             colormap: str = 'grey',
             invert: bool = False,
-            quality: int = 90) -> bytes:
+            quality: Union[int, None]= None) -> bytes:
         """
         Generate a JPEG bytestream from a tile.
         
@@ -649,12 +652,12 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
-                brightness=brightness,
-                contrast=contrast,
-                gamma=gamma,
+                brightness=brightness or self.brightness,
+                contrast=contrast or self.contrast,
+                gamma=gamma or self.gamma,
                 invert=invert
             )[:, :, None],
-            quality=quality,
+            quality=quality or self.quality,
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
@@ -665,13 +668,13 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
-                brightness=brightness,
-                contrast=contrast,
-                gamma=gamma,
+                brightness=brightness or self.brightness,
+                contrast=contrast or self.contrast,
+                gamma=gamma or self.gamma,
                 invert=invert,
                 colormap=colormap
             ),
-            quality=quality,
+            quality=quality or self.quality,
             colorspace='RGB'
         )
 
@@ -829,7 +832,13 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
     if path.isfile(oname:=get_object_filename(prefix)) and \
             path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
-            return pickle.load(f)
+            tiled = pickle.load(f)
+            tiled.brightness = kwargs['brightness']
+            tiled.contrast = kwargs['contrast']
+            tiled.color_saturation = kwargs['color_saturation']
+            tiled.gamma = kwargs['gamma']
+            tiled.quality = kwargs['quality']
+            return tiled
     else:
         return Tiled(filename, **kwargs)
 

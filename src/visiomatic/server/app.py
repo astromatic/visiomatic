@@ -174,7 +174,6 @@ def create_app() -> FastAPI:
     reg_val = r"^([+-]?\d+),([+-]?\d+)$"
     parse_val = re.compile(reg_val)
 
-
     # Tile endpoint
     @app.get(api_path, tags=["services"])
     async def read_visio(
@@ -226,7 +225,7 @@ def create_app() -> FastAPI:
                 le=100.
                 ),
             QLT: int = Query(
-                90,
+                quality,
                 title="JPEG quality",
                 ge=0,
                 le=100
@@ -290,9 +289,9 @@ def create_app() -> FastAPI:
             image_argname if image_argname \
                else path.join(data_dir, FIF)
         )
-
         tiled, msg, lock = cache(
             image_filename,
+            brightness=brightness,
             contrast=contrast,
             color_saturation=color_saturation,
             gamma=gamma,

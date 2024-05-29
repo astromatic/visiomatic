@@ -14901,7 +14901,7 @@
       settings.invertCMap = visio.invertCMap;
       settings.brightness = visio.brightness;
       settings.contrast = visio.contrast;
-      settings.colorSat = visio.colorSat;
+      settings.colorSaturation = visio.colorSaturation;
       settings.gamma = visio.gamma;
       settings.quality = visio.quality;
     },
@@ -14916,8 +14916,8 @@
       this._updateInput(this._input.brightness, settings.brightness);
       visio.contrast = settings.contrast;
       this._updateInput(this._input.contrast, settings.contrast);
-      visio.colorSat = settings.colorSat;
-      this._updateInput(this._input.colorSat, settings.colorSat);
+      visio.colorSaturation = settings.colorSaturation;
+      this._updateInput(this._input.colorSaturation, settings.colorSaturation);
       visio.gamma = settings.gamma;
       this._updateInput(this._input.gamma, settings.gamma);
       visio.quality = settings.quality;
@@ -14957,13 +14957,13 @@
         0,
         100
       );
-      this._input.colorSat = this._addNumericalInput(
+      this._input.colorSaturation = this._addNumericalInput(
         layer,
-        "colorSat",
+        "colorSaturation",
         this._dialog,
         "Color Sat.:",
         "Adjust Color Saturation. 0: B&W, 1.0: normal",
-        visio.colorSat,
+        visio.colorSaturation,
         0.05,
         0,
         5,
@@ -32202,7 +32202,7 @@
       noWrap: true,
       brightness: null,
       contrast: null,
-      colorSat: null,
+      colorSaturation: null,
       gamma: null,
       cMap: "grey",
       invertCMap: false,
@@ -32214,12 +32214,14 @@
       channelUnits: [],
       minMaxValues: [],
       defaultChannel: 0,
+      framerate: null,
       sesameURL: "https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame",
       credentials: null
     },
     visioDefault: {
       brightness: 0,
       contrast: 1,
+      colorSaturation: 1.5,
       gamma: 2.2,
       cMap: "grey",
       invertCMap: false,
@@ -32262,7 +32264,7 @@
         maxZoom: options.maxZoom,
         brightness: options.brightness,
         contrast: options.contrast,
-        colorSat: options.colorSat,
+        colorSaturation: options.colorSaturation,
         gamma: options.gamma,
         cMap: options.cMap,
         invertCMap: options.invertCMap,
@@ -32329,11 +32331,11 @@
         if (!visio.contrast) {
           visio.contrast = visioDefault.contrast;
         }
-        if (meta.colorSat) {
-          visioDefault.colorSat = meta.colorSat;
+        if (meta.color_saturation) {
+          visioDefault.colorSaturation = meta.color_saturation;
         }
-        if (!visio.colorSat) {
-          visio.colorSat = visioDefault.colorSat;
+        if (!visio.colorSaturation) {
+          visio.colorSaturation = visioDefault.colorSaturation;
         }
         if (meta.gamma) {
           visioDefault.gamma = meta.gamma;
@@ -32457,7 +32459,7 @@
       } else {
         rgb2 = visio.rgb[channel];
       }
-      const cr = this._gammaCorr(rgb2.r), cg = this._gammaCorr(rgb2.g), cb = this._gammaCorr(rgb2.b), lum = (cr + cg + cb) / 3, alpha2 = visio.colorSat / 3;
+      const cr = this._gammaCorr(rgb2.r), cg = this._gammaCorr(rgb2.g), cb = this._gammaCorr(rgb2.b), lum = (cr + cg + cb) / 3, alpha2 = visio.colorSaturation / 3;
       visio.mix[channel] = [];
       visio.mix[channel][0] = lum + alpha2 * (2 * cr - cg - cb);
       visio.mix[channel][1] = lum + alpha2 * (2 * cg - cr - cb);
