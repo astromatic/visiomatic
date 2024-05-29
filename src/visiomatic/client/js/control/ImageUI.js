@@ -165,7 +165,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Adjust Gamma correction. The standard value is 2.2',
 			visio.gamma,
 			0.05,
-			0.5, 5.0
+			0.2, 5.0
 		);
 
 		// JPEG quality

@@ -202,11 +202,14 @@ class Tiled(object):
         self.tile_shape = (self.nchannels, tilesize[0], tilesize[1]);
         self.make_mosaic(self.images)
         hdus.close()
-        self.brightness = brightness or config.settings["brightness"]
-        self.contrast = contrast or config.settings["contrast"]
-        self.color_saturation = color_saturation or config.settings["color_saturation"]
-        self.gamma = gamma or config.settings["gamma"]
-        self.quality = quality or config.settings["quality"]
+        self.brightness = config.settings["brightness"] if brightness is None \
+            else brightness
+        self.contrast = config.settings["contrast"] if contrast is None \
+            else contrast
+        self.color_saturation = config.settings["color_saturation"] \
+            if color_saturation is None else color_saturation
+        self.gamma = config.settings["gamma"] if gamma is None else gamma
+        self.quality = config.settings["quality"] if quality is None else quality
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -477,9 +480,12 @@ class Tiled(object):
         tile: ~numpy.ndarray
             Processed tile.
         """
-        brightness = brightness or self.brightness
-        contrast = contrast or self.contrast
-        gamma = gamma or self.gamma
+        if brightness is None:
+            brightness = self.brightness
+        if contrast is None:
+           contrast = self.contrast
+        if gamma is None:
+           gamma = self.gamma
         if channel is not None:
             chan = channel - 1
             cminmax = minmax[0][1:] \
@@ -652,12 +658,12 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
-                brightness=brightness or self.brightness,
-                contrast=contrast or self.contrast,
-                gamma=gamma or self.gamma,
+                brightness=self.brightness if brightness is None else brightness,
+                contrast=self.contrast if contrast is None else contrast,
+                gamma=self.gamma if gamma is None else gamma,
                 invert=invert
             )[:, :, None],
-            quality=quality or self.quality,
+            quality=self.quality if quality is None else quality,
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
             self.convert_tile(
@@ -668,13 +674,13 @@ class Tiled(object):
 				channel=channel,
                 minmax=minmax,
                 mix=mix,
-                brightness=brightness or self.brightness,
-                contrast=contrast or self.contrast,
-                gamma=gamma or self.gamma,
+                brightness=self.brightness if brightness is None else brightness,
+                contrast=self.contrast if contrast is None else contrast,
+                gamma=self.gamma if gamma is None else gamma,
                 invert=invert,
                 colormap=colormap
             ),
-            quality=quality or self.quality,
+            quality=self.quality if quality is None else quality,
             colorspace='RGB'
         )
 

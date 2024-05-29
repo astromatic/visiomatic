@@ -14977,7 +14977,7 @@
         "Adjust Gamma correction. The standard value is 2.2",
         visio.gamma,
         0.05,
-        0.5,
+        0.2,
         5
       );
       this._input.quality = this._addNumericalInput(
