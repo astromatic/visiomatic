@@ -120,7 +120,7 @@
 <li><p><strong>options.noWrap</strong> (<em>boolean</em>) -- Deactivate layer wrapping.</p></li>
 <li><p><strong>options.brightness</strong> (<em>number</em>) -- Brightness level.</p></li>
 <li><p><strong>options.contrast</strong> (<em>number</em>) -- Contrast factor.</p></li>
-<li><p><strong>options.colorSat</strong> (<em>number</em>) -- Color saturation for multi-channel data (0.0: B&amp;W, &gt;1.0: enhance).</p></li>
+<li><p><strong>options.colorSaturation</strong> (<em>number</em>) -- Color saturation for multi-channel data (0.0: B&amp;W, &gt;1.0: enhance).</p></li>
 <li><p><strong>options.gamma</strong> (<em>number</em>) -- Display gamma.</p></li>
 <li><p><strong>options.cMap</strong> (<em>string</em>) -- Colormap for single channels or channel combinations. Valid colormaps are <code class="docutils literal notranslate"><span class="pre">'grey'</span></code>, <code class="docutils literal notranslate"><span class="pre">'jet'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cold'</span></code> and <code class="docutils literal notranslate"><span class="pre">'hot'</span></code>.</p></li>
 <li><p><strong>options.invertCMap</strong> (<em>boolean</em>) -- Invert Colormap or color mix (like a negative).</p></li>
@@ -131,7 +131,7 @@
 <li><p><strong>options.channelLabelMatch</strong> (<em>string</em>) -- Regular expression matching the labels of channels that are given a color by default.</p></li>
 <li><p><strong>options.channelUnits</strong> (<em>Array.&lt;string&gt;</em>) -- Channel units. Defaults to <code class="docutils literal notranslate"><span class="pre">['ADU','ADU',...]</span></code>.</p></li>
 <li><p><strong>options.minMaxValues</strong> (<em>Array.&lt;Array.&lt;number&gt;&gt;</em>) -- Pairs of lower, higher clipping limits for every channel. Defaults to values extracted from the data header if available or <code class="docutils literal notranslate"><span class="pre">[[0.,255.],</span> <span class="pre">[0.,255.],</span> <span class="pre">...]</span></code> otherwise.</p></li>
-<li><p><strong>options.quality</strong> -- Default active channel index in mono-channel mode.</p></li>
+<li><p><strong>options.channel</strong> (<em>number</em>) -- Default active channel index in mono-channel mode.</p></li>
 <li><p><strong>options.framerate</strong> (<em>number</em>) -- Default animation framerate.</p></li>
 <li><p><strong>options.sesameURL</strong> (<em>string</em>) -- URL of the [Sesame]{&#64;link <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Sesame">http://cds.u-strasbg.fr/cgi-bin/Sesame</a>} resolver service.</p></li>
 <li><p><strong>options.credentials</strong> (<em>string</em>) -- For future use.</p></li>
