@@ -7,6 +7,7 @@ Package-wide definitions
 from os import path
 from pathlib import Path
 from importlib.metadata import metadata
+from importlib.resources import files
 import sys
 
 import platformdirs
@@ -34,7 +35,7 @@ license_url = "https://spdx.org/licenses/MIT.html"
 src_dir = path.dirname(path.abspath(__file__))
 
 # Package root directory
-root_dir = Path(src_dir).parent.parent
+root_dir = Path(files(name))
 
 # Default configuration file
 config_file = path.join(platformdirs.user_config_dir(name), "visiomatic.conf")

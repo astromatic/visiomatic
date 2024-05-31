@@ -49,6 +49,12 @@ test = [
     "mypy",
     "pytest-cov"
 ]
+doc = [
+    "sphinx >= 7.0",
+    "sphinx-rtd-theme >= 1.2",
+    "sphinxcontrib-bibtex >= 2.4.0",
+    "sphinx-js >= 3.2.2"
+]
 
 [project.scripts]
 visiomatic = "visiomatic.cmd.start:main"
