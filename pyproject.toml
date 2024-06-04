@@ -70,7 +70,7 @@ excludes = [
 
 [tool.pdm.scripts]
 doc.cmd = "make inline"
-doc.working_dir = "doc"
+doc.working_dir = "docs"
 mypy = "mypy src"
 pre_build = {composite = ["doc", "mypy"]}
 pre_install = {composite = ["doc", "mypy"]}
