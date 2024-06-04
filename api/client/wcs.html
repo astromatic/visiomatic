@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>World Coordinate System &mdash; VisiOmatic 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -50,6 +49,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../server/index.html">Python server</a></li>
@@ -99,16 +99,16 @@
            <div itemprop="articleBody">
              
   <section id="world-coordinate-system">
-<h1>World Coordinate System<a class="headerlink" href="#world-coordinate-system" title="Permalink to this heading"></a></h1>
+<h1>World Coordinate System<a class="headerlink" href="#world-coordinate-system" title="Link to this heading"></a></h1>
 <section id="wcs">
-<h2>WCS<a class="headerlink" href="#wcs" title="Permalink to this heading"></a></h2>
+<h2>WCS<a class="headerlink" href="#wcs" title="Link to this heading"></a></h2>
 <dl class="js class">
 <dt class="sig sig-object js" id="WCS">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">WCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">WCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS" title="Link to this definition"></a></dt>
 <dd><p>Create a new coordinate reference system that emulates the WCS
 (World Coordinate System) used in astronomy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the merged image header.</p></li>
 <li><p><strong>images</strong> (<em>Array.&lt;image&gt;</em>) -- Array of image extension metadata.</p></li>
@@ -117,28 +117,28 @@
 <li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- Return world coordinates in their native celestial system?</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>WCS</strong> -- Instance of a World Coordinate System.</p>
 </dd>
 </dl>
 <dl class="js attribute">
 <dt class="sig sig-object js" id="WCS.code">
-<span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">code</span></span></span><a class="headerlink" href="#WCS.code" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">code</span></span></span><a class="headerlink" href="#WCS.code" title="Link to this definition"></a></dt>
 <dd><p>Codename of the WCS coordinate reference system.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS._deltaLng">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_deltaLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latLng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latLng0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS._deltaLng" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_deltaLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latLng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latLng0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS._deltaLng" title="Link to this definition"></a></dt>
 <dd><p>Compute the longitude of a point with respect to a reference point.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latLng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the point.</p></li>
 <li><p><strong>latLng0</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the reference point.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Difference in longitude (in degrees) in the interval -180 to 180 deg.</p>
 </dd>
 </dl>
@@ -146,16 +146,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.distance">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">distance</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.distance" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">distance</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.distance" title="Link to this definition"></a></dt>
 <dd><p>Compute the distance between two points on the sphere.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng1</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the first point.</p></li>
 <li><p><strong>latlng2</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the second point.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Spherical distance between the two points in degrees.</p>
 </dd>
 </dl>
@@ -163,20 +163,20 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.fovToZoom">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">fovToZoom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.fovToZoom" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">fovToZoom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.fovToZoom" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Compute the zoom level that corresponds to a given FoV at the provided</dt><dd><p>coordinates.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>map</strong> (<em>leaflet.Map</em>) -- Leaflet map.</p></li>
 <li><p><strong>fov</strong> (<em>number</em>) -- Field of View in degrees.</p></li>
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Zoom level.</p>
 </dd>
 </dl>
@@ -184,16 +184,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.getProjection">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getProjection</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.getProjection" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getProjection</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.getProjection" title="Link to this definition"></a></dt>
 <dd><p>Extract the WCS projection code from a JSON-encoded image header.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Projection options.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>string</strong> -- WCS projection code.</p>
 </dd>
 </dl>
@@ -201,15 +201,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.hmsDMSToLatLng">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">hmsDMSToLatLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Coordinate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.hmsDMSToLatLng" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">hmsDMSToLatLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Coordinate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.hmsDMSToLatLng" title="Link to this definition"></a></dt>
 <dd><p>Convert an HMSDMS string to world coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Coordinate</strong> (<em>string</em>) -- string in HMSDMS.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng|undefined</strong> -- World coordinates, or <cite>undefined</cite> if the input string could not be translated.</p>
 </dd>
 </dl>
@@ -217,18 +217,18 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.latLngToHMSDMS">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">latLngToHMSDMS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.latLngToHMSDMS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">latLngToHMSDMS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.latLngToHMSDMS" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Convert world coordinates to an HMSDMS string</dt><dd><p>(DMS code from the Leaflet-Coordinates plug-in).</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- Input world coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>string</strong> -- Coordinate string in HMSDMS.</p>
 </dd>
 </dl>
@@ -236,18 +236,18 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiLatLngToIndex">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiLatLngToIndex</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiLatLngToIndex" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiLatLngToIndex</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiLatLngToIndex" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Return index of chip closest to the given world coordinates in a</dt><dd><p>multi-WCS setting.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- Input world coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Index of the closest chip (extension).</p>
 </dd>
 </dl>
@@ -255,16 +255,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiLatLngToPoint">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiLatLngToPoint</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiLatLngToPoint" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiLatLngToPoint</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiLatLngToPoint" title="Link to this definition"></a></dt>
 <dd><p>Multi-WCS version of the projection to layer coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- Input world coordinates.</p></li>
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Layer coordinates at the given zoom level.</p>
 </dd>
 </dl>
@@ -272,18 +272,18 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiPntToIndex">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiPntToIndex</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiPntToIndex" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiPntToIndex</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiPntToIndex" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Return index of chip closest to the given pixel coordinates in a</dt><dd><p>multi-WCS setting.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Input (merged) pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Index of the closest chip (extension).</p>
 </dd>
 </dl>
@@ -291,16 +291,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiPointToLatLng">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiPointToLatLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiPointToLatLng" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiPointToLatLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiPointToLatLng" title="Link to this definition"></a></dt>
 <dd><p>Multi-WCS version of the de-projection from layer coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Input layer coordinates at the given zoom level.</p></li>
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- De-projected world coordinates.</p>
 </dd>
 </dl>
@@ -308,15 +308,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiProject">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiProject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiProject" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiProject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiProject" title="Link to this definition"></a></dt>
 <dd><p>Multi-WCS astrometric projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- Input world coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Projected (merged) pixel coordinates.</p>
 </dd>
 </dl>
@@ -324,15 +324,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.multiUnproject">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiUnproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiUnproject" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">multiUnproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.multiUnproject" title="Link to this definition"></a></dt>
 <dd><p>Multi-WCS version of the astrometric de-projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Input (merged) pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- De-projected world coordinates.</p>
 </dd>
 </dl>
@@ -340,15 +340,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.parseCoords">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">parseCoords</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.parseCoords" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">parseCoords</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.parseCoords" title="Link to this definition"></a></dt>
 <dd><p>Parse a string of world coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>str</strong> (<em>string</em>) -- Input string.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng|undefined</strong> -- World coordinates, or <cite>undefined</cite> if conversion failed.</p>
 </dd>
 </dl>
@@ -356,16 +356,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.pixelScale">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">pixelScale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.pixelScale" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">pixelScale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.pixelScale" title="Link to this definition"></a></dt>
 <dd><p>Compute the layer pixel scale at the given world coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Layer pixel scale (in degrees per pixel).</p>
 </dd>
 </dl>
@@ -373,15 +373,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.rawPixelScale">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">rawPixelScale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.rawPixelScale" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">rawPixelScale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.rawPixelScale" title="Link to this definition"></a></dt>
 <dd><p>Compute the image pixel scale at the given world coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Pixel scale (in degrees per pixel).</p>
 </dd>
 </dl>
@@ -389,15 +389,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.scale">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">scale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.scale" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">scale</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.scale" title="Link to this definition"></a></dt>
 <dd><p>Convert zoom level to relative scale.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Relative scale.</p>
 </dd>
 </dl>
@@ -405,16 +405,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.transform">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">transform</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.transform" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">transform</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.transform" title="Link to this definition"></a></dt>
 <dd><p>Convert pixel (image) coordinates to layer coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Pixel coordinates.</p></li>
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Layer coordinates at the given zoom level.</p>
 </dd>
 </dl>
@@ -422,16 +422,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.untransform">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">untransform</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layerpnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.untransform" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">untransform</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layerpnt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.untransform" title="Link to this definition"></a></dt>
 <dd><p>Convert layer coordinates to pixel (image) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layerpnt</strong> (<em>leaflet.Point</em>) -- Layer coordinates.</p></li>
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel (image) coordinates</p>
 </dd>
 </dl>
@@ -439,15 +439,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.zoom">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">zoom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.zoom" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">zoom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.zoom" title="Link to this definition"></a></dt>
 <dd><p>Convert relative scale to zoom level.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scale</strong> (<em>number</em>) -- Relative scale.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Zoom level.</p>
 </dd>
 </dl>
@@ -455,18 +455,18 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="WCS.zoomToFov">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">zoomToFov</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.zoomToFov" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">WCS</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">zoomToFov</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#WCS.zoomToFov" title="Link to this definition"></a></dt>
 <dd><p>Compute the FoV that corresponds to a given zoom level at the provided
 coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>map</strong> (<em>leaflet.Map</em>) -- Leaflet map.</p></li>
 <li><p><strong>zoom</strong> (<em>number</em>) -- Zoom level.</p></li>
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Field of View in degrees.</p>
 </dd>
 </dl>
@@ -476,17 +476,17 @@ coordinates.</p>
 
 <dl class="js function">
 <dt class="sig sig-object js" id="wcs">
-<span class="sig-name descname"><span class="n"><span class="pre">wcs</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wcs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="n"><span class="pre">wcs</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wcs" title="Link to this definition"></a></dt>
 <dd><p>Instantiate a World Coordinate System.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the merged image header.</p></li>
 <li><p><strong>images</strong> (<em>Array.&lt;Image&gt;</em>) -- Array of image extensions.</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> WCS}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>WCS</strong> -- WCS instance.</p>
 </dd>
 </dl>
@@ -494,44 +494,44 @@ coordinates.</p>
 
 </section>
 <section id="projections">
-<h2>Projections<a class="headerlink" href="#projections" title="Permalink to this heading"></a></h2>
+<h2>Projections<a class="headerlink" href="#projections" title="Link to this heading"></a></h2>
 <dl class="js class">
 <dt class="sig sig-object js" id="Projection">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Projection</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Projection</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Base class for the WCS (World Coordinate System) projections used in</dt><dd><p>astronomy.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Projection</strong> -- Instance of a projection.</p>
 </dd>
 </dl>
 <dl class="js attribute">
 <dt class="sig sig-object js" id="Projection.defaultProjParam">
-<span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">defaultProjParam</span></span></span><a class="headerlink" href="#Projection.defaultProjParam" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">defaultProjParam</span></span></span><a class="headerlink" href="#Projection.defaultProjParam" title="Link to this definition"></a></dt>
 <dd><p><strong>type:</strong> projParam</p>
 <p>Default WCS projection parameters.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._celsysmatInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_celsysmatInit</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">celsyscode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._celsysmatInit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_celsysmatInit</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">celsyscode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._celsysmatInit" title="Link to this definition"></a></dt>
 <dd><p>Return the transformation matrix between celestial coordinates for the
 given system and equatorial coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>celsyscode</strong> (<em>'galactic'|'ecliptic'|'supergalactic'</em>) -- Type of celestial system.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Array.&lt;Array.&lt;number&gt;&gt;</strong> -- Transformation matrix.</p>
 </dd>
 </dl>
@@ -539,13 +539,13 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._cpole">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_cpole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Projection._cpole" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_cpole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Projection._cpole" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Set up the celestial pole coordinates of the projection</dt><dd><p>(delta_p, alpha_p). projection._natpole() should be called first.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>leaflet.LatLng</strong> -- Celestial coordinates of the pole.</p>
 </dd>
 </dl>
@@ -553,15 +553,15 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._getCenter">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getCenter</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._getCenter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getCenter</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._getCenter" title="Link to this definition"></a></dt>
 <dd><p>Compute the pixel coordinates of the geometric image center.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>proj</strong> (<a class="reference internal" href="#Projection" title="Projection"><em>Projection</em></a>) -- Projection for pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel coordinates of the image center.</p>
 </dd>
 </dl>
@@ -569,15 +569,15 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._invertCD">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_invertCD</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._invertCD" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_invertCD</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._invertCD" title="Link to this definition"></a></dt>
 <dd><p>Invert the <cite>CD</cite> Jacobian matrix of the linear part of the de-projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cd</strong> (<em>Array.&lt;Array.&lt;number&gt;&gt;</em>) -- <cite>CD</cite> Jacobian matrix.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Array.&lt;Array.&lt;number&gt;&gt;</strong> -- Matrix inverse.</p>
 </dd>
 </dl>
@@ -585,15 +585,15 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._multiToPix">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_multiToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._multiToPix" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_multiToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._multiToPix" title="Link to this definition"></a></dt>
 <dd><p>Convert sliced (merged) coordinates to pixel coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Sliced (merged) coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel coordinates.</p>
 </dd>
 </dl>
@@ -601,10 +601,10 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._natpole">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_natpole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Projection._natpole" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_natpole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Projection._natpole" title="Link to this definition"></a></dt>
 <dd><p>Set up the native pole coordinates of the projection (theta_p, phi_p).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>leaflet.LatLng</strong> -- Latitude and longitude of the pole.</p>
 </dd>
 </dl>
@@ -612,12 +612,12 @@ given system and equatorial coordinates.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._paramUpdate">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_paramUpdate</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramSrc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._paramUpdate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_paramUpdate</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramSrc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._paramUpdate" title="Link to this definition"></a></dt>
 <dd><p>Update internal projection parameters from external properties.
 The internal projection parameter object is initialized if it does not
 exist.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>paramSrc</strong> (<em>projParam</em>) -- Input projection parameters.</p></li>
 </ul>
@@ -627,15 +627,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._phiThetaToRADec">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiThetaToRADec</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._phiThetaToRADec" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiThetaToRADec</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._phiThetaToRADec" title="Link to this definition"></a></dt>
 <dd><p>Convert native coordinates to celestial coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Native coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Celestial coordinates.</p>
 </dd>
 </dl>
@@ -643,15 +643,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._pixToMulti">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToMulti</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._pixToMulti" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToMulti</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._pixToMulti" title="Link to this definition"></a></dt>
 <dd><p>Convert pixel coordinates to sliced (merged) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Sliced (merged) coordinates.</p>
 </dd>
 </dl>
@@ -659,15 +659,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._pixToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._pixToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._pixToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert pixel coordinates to reduced coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pix</strong> (<em>leaflet.Point</em>) -- Pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -675,15 +675,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._raDecToPhiTheta">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_raDecToPhiTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._raDecToPhiTheta" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_raDecToPhiTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._raDecToPhiTheta" title="Link to this definition"></a></dt>
 <dd><p>Convert celestial coordinates to native coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Celestial coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Native coordinates.</p>
 </dd>
 </dl>
@@ -691,10 +691,10 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._readWCS">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_readWCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._readWCS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_readWCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._readWCS" title="Link to this definition"></a></dt>
 <dd><p>Update internal projection parameters from an image header.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 </ul>
@@ -704,15 +704,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._redToPix">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._redToPix" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._redToPix" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to pixel coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel coordinates.</p>
 </dd>
 </dl>
@@ -720,10 +720,10 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._shiftWCS">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_shiftWCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projparam</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._shiftWCS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_shiftWCS</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projparam</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._shiftWCS" title="Link to this definition"></a></dt>
 <dd><p>Correct projection parameters for data slicing.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>projparam</strong> (<em>projParam</em>) -- Projection parameters.</p></li>
 </ul>
@@ -733,15 +733,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection.celSysToEq">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">celSysToEq</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.celSysToEq" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">celSysToEq</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.celSysToEq" title="Link to this definition"></a></dt>
 <dd><p>Convert celestial (angular) coordinates to equatorial.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Celestial coordinates (e.g., ecliptic latitude and longitude).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Equatorial coordinates.</p>
 </dd>
 </dl>
@@ -749,15 +749,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection.eqToCelSys">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">eqToCelSys</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.eqToCelSys" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">eqToCelSys</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.eqToCelSys" title="Link to this definition"></a></dt>
 <dd><p>Convert equatorial coordinates to another celestial system.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Equatorial coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Celestial coordinates (e.g., ecliptic latitude and longitude).</p>
 </dd>
 </dl>
@@ -765,15 +765,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection.project">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">project</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.project" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">project</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.project" title="Link to this definition"></a></dt>
 <dd><p>Project world coordinates to pixel (image) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel (image) coordinates.</p>
 </dd>
 </dl>
@@ -781,15 +781,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection.unproject">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">unproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.unproject" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">unproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.unproject" title="Link to this definition"></a></dt>
 <dd><p>De-project pixel (image) coordinates to world coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- World coordinates.</p>
 </dd>
 </dl>
@@ -799,30 +799,30 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="Conical">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Conical</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Conical</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical" title="Link to this definition"></a></dt>
 <dd><p>Base class for conic WCS (World Coordinate System) projections.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Projection}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Conical</strong> -- Instance of a conic projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Conical._phiRToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Conical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical._phiRToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Conical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical._phiRToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert conic (phi,R) coordinates to reduced coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phiR</strong> (<em>leaflet.LatLng</em>) -- (phi,R) conic coordinates in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -830,15 +830,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Conical._redToPhiR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Conical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical._redToPhiR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Conical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Conical._redToPhiR" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to conic (phi,R) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- (phi,R) conic coordinates in degrees.</p>
 </dd>
 </dl>
@@ -854,36 +854,36 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="Cylindrical">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Cylindrical</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Cylindrical</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical" title="Link to this definition"></a></dt>
 <dd><p>Base class for cylindrical WCS (World Coordinate System) projections.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Projection}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Cylindrical</strong> -- Instance of a cylindrical projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Cylindrical._projInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._projInit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._projInit" title="Link to this definition"></a></dt>
 <dd><p>Initialize a cylindrical projection.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Cylindrical._rToTheta">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._rToTheta" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._rToTheta" title="Link to this definition"></a></dt>
 <dd><p>Convert cylindrical R coordinate to native theta angle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>number</em>) -- R cylindrical coordinate in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Native theta angle in degrees.</p>
 </dd>
 </dl>
@@ -891,15 +891,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Cylindrical._thetaToR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._thetaToR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Cylindrical</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cylindrical._thetaToR" title="Link to this definition"></a></dt>
 <dd><p>Convert native theta angle to cylindrical R.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>theta</strong> (<em>number</em>) -- Native theta angle in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- R cylindrical coordinate in degrees.</p>
 </dd>
 </dl>
@@ -915,30 +915,30 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="Zenithal">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Zenithal</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Zenithal</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal" title="Link to this definition"></a></dt>
 <dd><p>Base class for zenithal WCS (World Coordinate System) projections.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Projection}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Zenithal</strong> -- Instance of a zenithal projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Zenithal._phiRToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._phiRToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._phiRToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert zenithal (phi,R) coordinates to reduced coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phiR</strong> (<em>leaflet.LatLng</em>) -- (phi,R) zenithal coordinates in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -946,21 +946,21 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Zenithal._projInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._projInit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._projInit" title="Link to this definition"></a></dt>
 <dd><p>Initialize a Zenithal projection.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="Zenithal._redToPhiR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._redToPhiR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Zenithal</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Zenithal._redToPhiR" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to zenithal (phi,R) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- (phi,R) zenithal coordinates in degrees.</p>
 </dd>
 </dl>
@@ -976,42 +976,42 @@ exist.</p>
 
 </section>
 <section id="built-in">
-<h2>Built-in<a class="headerlink" href="#built-in" title="Permalink to this heading"></a></h2>
+<h2>Built-in<a class="headerlink" href="#built-in" title="Link to this heading"></a></h2>
 <dl class="js class">
 <dt class="sig sig-object js" id="PIX">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">PIX</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">PIX</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX" title="Link to this definition"></a></dt>
 <dd><p>Pixel (identity) projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Projection}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>PIX</strong> -- Instance of a PIX projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="PIX._projInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#PIX._projInit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#PIX._projInit" title="Link to this definition"></a></dt>
 <dd><p>Initialize a pixel (identity) projection.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="PIX.project">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">project</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX.project" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">project</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX.project" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Project &quot;world&quot; pixel coordinates to (image) pixel coordinates</dt><dd><p>(identity).</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- &quot;World&quot; pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel (image) coordinates.</p>
 </dd>
 </dl>
@@ -1019,18 +1019,18 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="PIX.unproject">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">unproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX.unproject" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PIX</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">unproject</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pnt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PIX.unproject" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>De-project (image) pixel coordinates to &quot;world&quot; pixel coordinates</dt><dd><p>(identity).</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pnt</strong> (<em>leaflet.Point</em>) -- Pixel (image) coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- &quot;World&quot; pixel coordinates.</p>
 </dd>
 </dl>
@@ -1040,30 +1040,30 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="CAR">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">CAR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">CAR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR" title="Link to this definition"></a></dt>
 <dd><p>Cylindrical Plate carrée projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Cylindrical}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>CAR</strong> -- Instance of a CAR projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="CAR._phiRToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CAR</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR._phiRToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CAR</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR._phiRToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert CAR (phi,R) coordinates to reduced coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phiR</strong> (<em>leaflet.LatLng</em>) -- (phi,R) CAR coordinates in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -1071,15 +1071,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="CAR._redToPhiR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CAR</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR._redToPhiR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CAR</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CAR._redToPhiR" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to CAR (phi,R) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- (phi,R) CAR coordinates in degrees.</p>
 </dd>
 </dl>
@@ -1095,30 +1095,30 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="CEA">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">CEA</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">CEA</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA" title="Link to this definition"></a></dt>
 <dd><p>Cylindrical Equal-Area projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Cylindrical}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>CEA</strong> -- Instance of a CEA projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="CEA._phiRToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA._phiRToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_phiRToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phiR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA._phiRToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert CEA (phi,R) coordinates to reduced coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phiR</strong> (<em>leaflet.LatLng</em>) -- (phi,R) CEA coordinates in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -1126,15 +1126,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="CEA._redToPhiR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA._redToPhiR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPhiR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CEA._redToPhiR" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to CEA (phi,R) coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.LatLng</strong> -- (phi,R) CEA coordinates in degrees.</p>
 </dd>
 </dl>
@@ -1150,36 +1150,36 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="COE">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">COE</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">COE</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE" title="Link to this definition"></a></dt>
 <dd><p>Conic Equal-Area projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Conical}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>COE</strong> -- Instance of a COE projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="COE._projInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#COE._projInit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_projInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#COE._projInit" title="Link to this definition"></a></dt>
 <dd><p>Initialize a COE projection.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="COE._rToTheta">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE._rToTheta" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE._rToTheta" title="Link to this definition"></a></dt>
 <dd><p>Convert conic equal-area R coordinate to native theta angle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>number</em>) -- R conic equal-area coordinate in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Native theta angle in degrees.</p>
 </dd>
 </dl>
@@ -1187,15 +1187,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="COE._thetaToR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE._thetaToR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">COE</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#COE._thetaToR" title="Link to this definition"></a></dt>
 <dd><p>Convert native theta angle to conic equal-area R.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>theta</strong> (<em>number</em>) -- Native theta angle in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- R conic equal-area coordinate in degrees.</p>
 </dd>
 </dl>
@@ -1211,30 +1211,30 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="TAN">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">TAN</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">TAN</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN" title="Link to this definition"></a></dt>
 <dd><p>Gnomonic (tangential) projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Zenithal}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TAN</strong> -- Instance of a TAN projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TAN._rToTheta">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TAN</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN._rToTheta" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TAN</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN._rToTheta" title="Link to this definition"></a></dt>
 <dd><p>Convert tangential R coordinate to native theta angle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>number</em>) -- R tangential coordinate in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Native theta angle in degrees.</p>
 </dd>
 </dl>
@@ -1242,15 +1242,15 @@ exist.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TAN._thetaToR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TAN</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN._thetaToR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TAN</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TAN._thetaToR" title="Link to this definition"></a></dt>
 <dd><p>Convert native theta angle to tangential R.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>theta</strong> (<em>number</em>) -- Native theta angle in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- R tangential coordinate in degrees.</p>
 </dd>
 </dl>
@@ -1266,31 +1266,31 @@ exist.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="TPV">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">TPV</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">TPV</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV" title="Link to this definition"></a></dt>
 <dd><p>Distorted gnomonic (tangential) projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Zenithal}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TPV</strong> -- Instance of a TPV projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TPV._dRedToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_dRedToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._dRedToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_dRedToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._dRedToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert distorted reduced coordinates to reduced coordinates
 using a TPV polynomial.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dred</strong> (<em>leaflet.Point</em>) -- Distorted reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -1298,16 +1298,16 @@ using a TPV polynomial.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TPV._pixToRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._pixToRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pixToRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._pixToRed" title="Link to this definition"></a></dt>
 <dd><p>Convert pixel coordinates to reduced coordinates,
 taking into account distortions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pix</strong> (<em>leaflet.Point</em>) -- Pixel coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Reduced coordinates.</p>
 </dd>
 </dl>
@@ -1315,16 +1315,16 @@ taking into account distortions.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TPV._redToDRed">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToDRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._redToDRed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToDRed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._redToDRed" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to distorted reduced coordinates
 using second order approximation to the inverted TPV polynomial.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Distorted reduced coordinates.</p>
 </dd>
 </dl>
@@ -1332,16 +1332,16 @@ using second order approximation to the inverted TPV polynomial.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="TPV._redToPix">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._redToPix" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">TPV</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_redToPix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">red</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TPV._redToPix" title="Link to this definition"></a></dt>
 <dd><p>Convert reduced coordinates to pixel coordinates,
 taking into account geometric distortions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>red</strong> (<em>leaflet.Point</em>) -- Reduced coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>leaflet.Point</strong> -- Pixel coordinates.</p>
 </dd>
 </dl>
@@ -1357,30 +1357,30 @@ taking into account geometric distortions.</p>
 
 <dl class="js class">
 <dt class="sig sig-object js" id="ZEA">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ZEA</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ZEA</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA" title="Link to this definition"></a></dt>
 <dd><p>Zenithal Equal-Area projection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>object</em>) -- JSON representation of the image header.</p></li>
 <li><p><strong>options</strong> (<em>projParam</em>) -- Projection options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Zenithal}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ZEA</strong> -- Instance of a TAN projection.</p>
 </dd>
 </dl>
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="ZEA._rToTheta">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ZEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA._rToTheta" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ZEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_rToTheta</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA._rToTheta" title="Link to this definition"></a></dt>
 <dd><p>Convert zenithal equal-area R coordinate to native theta angle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>number</em>) -- R zenithal equal-area coordinate in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- Native theta angle in degrees.</p>
 </dd>
 </dl>
@@ -1388,15 +1388,15 @@ taking into account geometric distortions.</p>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="ZEA._thetaToR">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ZEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA._thetaToR" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ZEA</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_thetaToR</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ZEA._thetaToR" title="Link to this definition"></a></dt>
 <dd><p>Convert native theta angle to zenithal equal-area R.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>theta</strong> (<em>number</em>) -- Native theta angle in degrees.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- R zenithal equal-area coordinate in degrees.</p>
 </dd>
 </dl>

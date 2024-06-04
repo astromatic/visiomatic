@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Layers &mdash; VisiOmatic 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -50,6 +49,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../server/index.html">Python server</a></li>
@@ -97,15 +97,15 @@
            <div itemprop="articleBody">
              
   <section id="layers">
-<h1>Layers<a class="headerlink" href="#layers" title="Permalink to this heading"></a></h1>
+<h1>Layers<a class="headerlink" href="#layers" title="Link to this heading"></a></h1>
 <section id="vtilelayer">
-<h2>VTileLayer<a class="headerlink" href="#vtilelayer" title="Permalink to this heading"></a></h2>
+<h2>VTileLayer<a class="headerlink" href="#vtilelayer" title="Link to this heading"></a></h2>
 <dl class="js class">
 <dt class="sig sig-object js" id="VTileLayer">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">VTileLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">VTileLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer" title="Link to this definition"></a></dt>
 <dd><p>Create a layer with tiled image data queried from a VisiOmatic server.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- URL of the tile server</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
@@ -120,7 +120,7 @@
 <li><p><strong>options.noWrap</strong> (<em>boolean</em>) -- Deactivate layer wrapping.</p></li>
 <li><p><strong>options.brightness</strong> (<em>number</em>) -- Brightness level.</p></li>
 <li><p><strong>options.contrast</strong> (<em>number</em>) -- Contrast factor.</p></li>
-<li><p><strong>options.colorSat</strong> (<em>number</em>) -- Color saturation for multi-channel data (0.0: B&amp;W, &gt;1.0: enhance).</p></li>
+<li><p><strong>options.colorSaturation</strong> (<em>number</em>) -- Color saturation for multi-channel data (0.0: B&amp;W, &gt;1.0: enhance).</p></li>
 <li><p><strong>options.gamma</strong> (<em>number</em>) -- Display gamma.</p></li>
 <li><p><strong>options.cMap</strong> (<em>string</em>) -- Colormap for single channels or channel combinations. Valid colormaps are <code class="docutils literal notranslate"><span class="pre">'grey'</span></code>, <code class="docutils literal notranslate"><span class="pre">'jet'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cold'</span></code> and <code class="docutils literal notranslate"><span class="pre">'hot'</span></code>.</p></li>
 <li><p><strong>options.invertCMap</strong> (<em>boolean</em>) -- Invert Colormap or color mix (like a negative).</p></li>
@@ -131,13 +131,13 @@
 <li><p><strong>options.channelLabelMatch</strong> (<em>string</em>) -- Regular expression matching the labels of channels that are given a color by default.</p></li>
 <li><p><strong>options.channelUnits</strong> (<em>Array.&lt;string&gt;</em>) -- Channel units. Defaults to <code class="docutils literal notranslate"><span class="pre">['ADU','ADU',...]</span></code>.</p></li>
 <li><p><strong>options.minMaxValues</strong> (<em>Array.&lt;Array.&lt;number&gt;&gt;</em>) -- Pairs of lower, higher clipping limits for every channel. Defaults to values extracted from the data header if available or <code class="docutils literal notranslate"><span class="pre">[[0.,255.],</span> <span class="pre">[0.,255.],</span> <span class="pre">...]</span></code> otherwise.</p></li>
-<li><p><strong>options.quality</strong> -- Default active channel index in mono-channel mode.</p></li>
+<li><p><strong>options.channel</strong> (<em>number</em>) -- Default active channel index in mono-channel mode.</p></li>
 <li><p><strong>options.framerate</strong> (<em>number</em>) -- Default animation framerate.</p></li>
 <li><p><strong>options.sesameURL</strong> (<em>string</em>) -- URL of the [Sesame]{&#64;link <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Sesame">http://cds.u-strasbg.fr/cgi-bin/Sesame</a>} resolver service.</p></li>
 <li><p><strong>options.credentials</strong> (<em>string</em>) -- For future use.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>VTileLayer</strong> -- VisiOmatic TileLayer instance.</p>
 </dd>
 </dl>
@@ -150,30 +150,30 @@
 </div>
 <dl class="js attribute">
 <dt class="sig sig-object js" id="VTileLayer.visio">
-<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">visio</span></span></span><a class="headerlink" href="#VTileLayer.visio" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">visio</span></span></span><a class="headerlink" href="#VTileLayer.visio" title="Link to this definition"></a></dt>
 <dd><p><strong>type:</strong> object</p>
 <p>VisiOmatic-specific TileLayer properties.</p>
 </dd></dl>
 
 <dl class="js attribute">
 <dt class="sig sig-object js" id="VTileLayer.metaload">
-<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">metaload</span></span></span><a class="headerlink" href="#VTileLayer.metaload" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">metaload</span></span></span><a class="headerlink" href="#VTileLayer.metaload" title="Link to this definition"></a></dt>
 <dd><p>Fired when the image metadata have been loaded.</p>
 </dd></dl>
 
 <dl class="js attribute">
 <dt class="sig sig-object js" id="VTileLayer.visioDefault">
-<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">visioDefault</span></span></span><a class="headerlink" href="#VTileLayer.visioDefault" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">visioDefault</span></span></span><a class="headerlink" href="#VTileLayer.visioDefault" title="Link to this definition"></a></dt>
 <dd><p><strong>type:</strong> object</p>
 <p>Default _server_ rendering parameters (to shorten tile query strings).</p>
 </dd></dl>
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._addToMap">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addToMap</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._addToMap" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addToMap</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._addToMap" title="Link to this definition"></a></dt>
 <dd><p>Executed once the layer to be added to the map is ready.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>map</strong> (<em>object</em>) -- Leaflet map to add the layer to.</p></li>
 </ul>
@@ -183,15 +183,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._gammaCorr">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_gammaCorr</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._gammaCorr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_gammaCorr</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._gammaCorr" title="Link to this definition"></a></dt>
 <dd><p>Apply gamma expansion to the provided input value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>val</strong> (<em>number</em>) -- Input value.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number</strong> -- gamma-compressed value.</p>
 </dd>
 </dl>
@@ -199,10 +199,10 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._initTile">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._initTile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._initTile" title="Link to this definition"></a></dt>
 <dd><p>Initialize a tile.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tile</strong> (<em>object</em>) -- The tile.</p></li>
 </ul>
@@ -212,15 +212,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._isValidTile">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_isValidTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._isValidTile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_isValidTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._isValidTile" title="Link to this definition"></a></dt>
 <dd><p>Tell if a tile at the given coordinates should be loaded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coords</strong> (<em>point</em>) -- Tile coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>boolean</strong> -- <code class="docutils literal notranslate"><span class="pre">true</span></code> if tile should be loaded, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise.</p>
 </dd>
 </dl>
@@ -228,21 +228,21 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._readVisioKey">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_readVisioKey</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regexp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._readVisioKey" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_readVisioKey</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regexp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._readVisioKey" title="Link to this definition"></a></dt>
 <dd><div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Deprecated: since version 3.0</p>
 </div>
 <p>Decode the input string as a 'keyword:value' pair.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>str</strong> (<em>string</em>) -- Input string.</p></li>
 <li><p><strong>keyword</strong> (<em>string</em>) -- Input keyword.</p></li>
 <li><p><strong>regexp</strong> (<em>string</em>) -- Regular expression for decoding the value.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>*</strong> -- Decoded output.</p>
 </dd>
 </dl>
@@ -250,10 +250,10 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._refreshTileUrl">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_refreshTileUrl</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._refreshTileUrl" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_refreshTileUrl</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._refreshTileUrl" title="Link to this definition"></a></dt>
 <dd><p>Replace a tile.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tile</strong> (<em>object</em>) -- The tile.</p></li>
 <li><p><strong>url</strong> (<em>string</em>) -- The tile URL.</p></li>
@@ -270,10 +270,10 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer._setAttr">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_setAttr</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._setAttr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_setAttr</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer._setAttr" title="Link to this definition"></a></dt>
 <dd><p>Update layer attribute and redraw layer content.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>attr</strong> (<em>string</em>) -- Name of the (numerical) layer attribute to be updated.</p></li>
 <li><p><strong>value</strong> (<em>*</em>) -- New value.</p></li>
@@ -285,10 +285,10 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.addTo">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTo</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.addTo" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTo</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.addTo" title="Link to this definition"></a></dt>
 <dd><p>Add the layer to the map.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>map</strong> (<em>object</em>) -- Leaflet map to add the layer to.</p></li>
 </ul>
@@ -298,16 +298,16 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.createTile">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">createTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.createTile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">createTile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.createTile" title="Link to this definition"></a></dt>
 <dd><p>Create a tile at the given coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coords</strong> (<em>point</em>) -- Tile coordinates.</p></li>
 <li><p><strong>done</strong> (<em>boolean</em>) -- Callback function called when the tile has been loaded.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>object</strong> -- The new tile.</p>
 </dd>
 </dl>
@@ -315,15 +315,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.getChannelColor">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getChannelColor</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getChannelColor" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getChannelColor</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getChannelColor" title="Link to this definition"></a></dt>
 <dd><p>Get color for the given channel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>channel</strong> (<em>number</em>) -- Input channel.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>string</strong> -- color string.</p>
 </dd>
 </dl>
@@ -331,10 +331,10 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.getMetaData">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getMetaData</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getMetaData" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getMetaData</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getMetaData" title="Link to this definition"></a></dt>
 <dd><p>Get metadata describing the tiled image at the provided URL.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- The full tile URL.</p></li>
 </ul>
@@ -344,15 +344,15 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.getTileUrl">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getTileUrl</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getTileUrl" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getTileUrl</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getTileUrl" title="Link to this definition"></a></dt>
 <dd><p>Generate a tile URL from its coordinates</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coords</strong> (<em>point</em>) -- Tile coordinates.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>string</strong> -- The tile URL.</p>
 </dd>
 </dl>
@@ -360,7 +360,7 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.redraw">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">redraw</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.redraw" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">redraw</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.redraw" title="Link to this definition"></a></dt>
 <dd><p>Redraw a tile without flickering.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -372,13 +372,13 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.rgbToMix">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">rgbToMix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.rgbToMix" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">rgbToMix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.rgbToMix" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Update the color mixing matrix with the RGB contribution of a given</dt><dd><p>channel.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>channel</strong> (<em>number</em>) -- Input channel.</p></li>
 <li><p><strong>rgb</strong> (<em>RGB|false</em>) -- RGB color. False deletes the channel.</p></li>
@@ -389,13 +389,13 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.updateMix">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">updateMix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.updateMix" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">updateMix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.updateMix" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>RGB colors and saturation settings define mixing matrix elements in</dt><dd><p><code class="docutils literal notranslate"><span class="pre">'color'</span></code> mode</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<a class="reference internal" href="#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer (&quot;this&quot; is used if not provided)</p></li>
 </ul>
@@ -405,7 +405,7 @@
 
 <dl class="js staticfunction">
 <dt class="sig sig-object js" id="VTileLayer.updateMono">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">updateMono</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.updateMono" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">updateMono</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.updateMono" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>The current channel index defines the color mixing matrix elements in</dt><dd><p><code class="docutils literal notranslate"><span class="pre">'mono'</span></code> mode</p>
 </dd>
@@ -416,16 +416,16 @@
 
 <dl class="js function">
 <dt class="sig sig-object js" id="vTileLayer">
-<span class="sig-name descname"><span class="n"><span class="pre">vTileLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vTileLayer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="n"><span class="pre">vTileLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vTileLayer" title="Link to this definition"></a></dt>
 <dd><p>Instantiate a VisiOmatic tile layer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Arguments</dt>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- URL of the tile server.</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> VTileLayer}.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>VTileLayer</strong> -- VisiOmatic TileLayer instance.</p>
 </dd>
 </dl>
