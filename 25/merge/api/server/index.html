@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python server &mdash; VisiOmatic 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Web API" href="app.html" />
+    <link rel="prev" title="API reference" href="../../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Python server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.html">Web API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html">Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmd.html">cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html">Tiled</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html">Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../client/index.html">JS client</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+      <li class="breadcrumb-item active">Python server</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/server/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python-server">
+<h1>Python server<a class="headerlink" href="#python-server" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.html">Web API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.html#visiomatic.server.app.create_app"><code class="docutils literal notranslate"><span class="pre">create_app()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cache.html">Cache</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUCache"><code class="docutils literal notranslate"><span class="pre">LRUCache</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.call_unshared"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.call_unshared()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.call_shared"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.call_shared()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.remove"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.remove()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock"><code class="docutils literal notranslate"><span class="pre">SharedRWLock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.acquire_read"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.acquire_read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.acquire_write"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.acquire_write()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.release_read"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.release_read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.release_write"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.release_write()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.remove"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd.html">cmd</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd.html#module-visiomatic.cmd.start">start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmd.html#visiomatic.cmd.start.start_server"><code class="docutils literal notranslate"><span class="pre">start_server()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmd.html#visiomatic.cmd.start.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tiled.html">Tiled</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel"><code class="docutils literal notranslate"><span class="pre">PixelValueModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.construct"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.construct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.copy"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.dict"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.json"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.update_forward_refs"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.update_forward_refs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel"><code class="docutils literal notranslate"><span class="pre">PixelModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.construct"><code class="docutils literal notranslate"><span class="pre">PixelModel.construct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.copy"><code class="docutils literal notranslate"><span class="pre">PixelModel.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.dict"><code class="docutils literal notranslate"><span class="pre">PixelModel.dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.json"><code class="docutils literal notranslate"><span class="pre">PixelModel.json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.update_forward_refs"><code class="docutils literal notranslate"><span class="pre">PixelModel.update_forward_refs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel"><code class="docutils literal notranslate"><span class="pre">ProfileModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.construct"><code class="docutils literal notranslate"><span class="pre">ProfileModel.construct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.copy"><code class="docutils literal notranslate"><span class="pre">ProfileModel.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.dict"><code class="docutils literal notranslate"><span class="pre">ProfileModel.dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.json"><code class="docutils literal notranslate"><span class="pre">ProfileModel.json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.update_forward_refs"><code class="docutils literal notranslate"><span class="pre">ProfileModel.update_forward_refs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel"><code class="docutils literal notranslate"><span class="pre">TiledModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.construct"><code class="docutils literal notranslate"><span class="pre">TiledModel.construct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.copy"><code class="docutils literal notranslate"><span class="pre">TiledModel.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.dict"><code class="docutils literal notranslate"><span class="pre">TiledModel.dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.json"><code class="docutils literal notranslate"><span class="pre">TiledModel.json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.update_forward_refs"><code class="docutils literal notranslate"><span class="pre">TiledModel.update_forward_refs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled"><code class="docutils literal notranslate"><span class="pre">Tiled</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_nlevels"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_nlevels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_grid_shape"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_grid_shape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_tile_bordershape"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_tile_bordershape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_model"><code class="docutils literal notranslate"><span class="pre">Tiled.get_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_mosaic"><code class="docutils literal notranslate"><span class="pre">Tiled.make_mosaic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_header"><code class="docutils literal notranslate"><span class="pre">Tiled.make_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_iipheaderstr"><code class="docutils literal notranslate"><span class="pre">Tiled.get_iipheaderstr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.convert_tile"><code class="docutils literal notranslate"><span class="pre">Tiled.convert_tile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_tiles"><code class="docutils literal notranslate"><span class="pre">Tiled.make_tiles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_tile"><code class="docutils literal notranslate"><span class="pre">Tiled.get_tile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_tile_cached"><code class="docutils literal notranslate"><span class="pre">Tiled.get_tile_cached</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_pixel_values"><code class="docutils literal notranslate"><span class="pre">Tiled.get_pixel_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_profiles"><code class="docutils literal notranslate"><span class="pre">Tiled.get_profiles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_data"><code class="docutils literal notranslate"><span class="pre">Tiled.get_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_tiles"><code class="docutils literal notranslate"><span class="pre">Tiled.get_tiles()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.pickledTiled"><code class="docutils literal notranslate"><span class="pre">pickledTiled()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_object_filename"><code class="docutils literal notranslate"><span class="pre">get_object_filename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_data_filename"><code class="docutils literal notranslate"><span class="pre">get_data_filename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_tiles_filename"><code class="docutils literal notranslate"><span class="pre">get_tiles_filename()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_image_filename"><code class="docutils literal notranslate"><span class="pre">get_image_filename()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel"><code class="docutils literal notranslate"><span class="pre">ImageModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.Image"><code class="docutils literal notranslate"><span class="pre">Image</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.get_model"><code class="docutils literal notranslate"><span class="pre">Image.get_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.get_header_string"><code class="docutils literal notranslate"><span class="pre">Image.get_header_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.parse_2dslice"><code class="docutils literal notranslate"><span class="pre">Image.parse_2dslice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_geometry"><code class="docutils literal notranslate"><span class="pre">Image.compute_geometry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_background"><code class="docutils literal notranslate"><span class="pre">Image.compute_background()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_minmax"><code class="docutils literal notranslate"><span class="pre">Image.compute_minmax()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Config</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.grouped_dict"><code class="docutils literal notranslate"><span class="pre">Config.grouped_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.flat_dict"><code class="docutils literal notranslate"><span class="pre">Config.flat_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.schema"><code class="docutils literal notranslate"><span class="pre">Config.schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.schema_json"><code class="docutils literal notranslate"><span class="pre">Config.schema_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.parse_config"><code class="docutils literal notranslate"><span class="pre">Config.parse_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.save_config"><code class="docutils literal notranslate"><span class="pre">Config.save_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#visiomatic.server.config.Config.update_from_dict"><code class="docutils literal notranslate"><span class="pre">Config.update_from_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.HostSettings"><code class="docutils literal notranslate"><span class="pre">HostSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.ImageSettings"><code class="docutils literal notranslate"><span class="pre">ImageSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.ServerSettings"><code class="docutils literal notranslate"><span class="pre">ServerSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.EngineSettings"><code class="docutils literal notranslate"><span class="pre">EngineSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.CacheSettings"><code class="docutils literal notranslate"><span class="pre">CacheSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.settings.AppSettings"><code class="docutils literal notranslate"><span class="pre">AppSettings</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../api.html" class="btn btn-neutral float-left" title="API reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.html" class="btn btn-neutral float-right" title="Web API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Emmanuel Bertin, Hervé Bouy.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
