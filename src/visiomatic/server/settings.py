@@ -119,7 +119,7 @@ class ServerSettings(BaseSettings):
         description="Data root directory"
         )
     doc_dir: str = Field(
-        default=path.join(package.root_dir, "doc/build/html"),
+        default=path.join(package.root_dir, "doc/html"),
         description="HTML documentation root directory (after build)"
         )
     doc_path: str = Field(

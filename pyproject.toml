@@ -4,16 +4,14 @@ build-backend = "pdm.backend"
 
 [project]
 name = "visiomatic"
-version = "3.0.0-b2"
+version = "3.0.0-b3"
 description = "A web application for visualizing astronomical images"
 authors = [
     {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
 ]
 keywords = ["astronomy", "CFHT", "imaging"]
 readme = "README.md"
-license = {text = "MIT"}
-license_files = ["LICENSE"]
-data_files = ["config/visiomatic.conf"]
+license = {file = "LICENSE"}
 dependencies = [
     "astropy >= 5.0",
     "atomics >= 1.0",
@@ -63,6 +61,19 @@ visiomatic = "visiomatic.cmd.start:main"
 Repository = "https://github.com/astromatic/visiomatic"
 Homepage = "https://visiomatic.org"
 Documentation = "https://astromatic.github.io/visiomatic"
+
+[tool.pdm.build]
+excludes = [
+    "src/visiomatic/client/node_modules",
+    "src/visiomatic/doc/doctrees"
+]
+
+[tool.pdm.scripts]
+doc.cmd = "make inline"
+doc.working_dir = "doc"
+mypy = "mypy src"
+pre_build = {composite = ["doc", "mypy"]}
+pre_install = {composite = ["doc", "mypy"]}
 
 [tool.pytest.ini_options]
 filterwarnings = [

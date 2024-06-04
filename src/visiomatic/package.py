@@ -35,7 +35,7 @@ license_url = "https://spdx.org/licenses/MIT.html"
 src_dir = path.dirname(path.abspath(__file__))
 
 # Package root directory
-root_dir = Path(files(name))
+root_dir = Path(str(files(name)))
 
 # Default configuration file
 config_file = path.join(platformdirs.user_config_dir(name), "visiomatic.conf")

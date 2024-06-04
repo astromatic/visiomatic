@@ -18,3 +18,9 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+# Specifically build HTML doc for inline documentation
+inline: Makefile
+	@$(SPHINXBUILD) -M clean "$(SOURCEDIR)" "../src/visiomatic/doc" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "../src/visiomatic/doc" $(SPHINXOPTS) $(O)
+
