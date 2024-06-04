@@ -1477,10 +1477,10 @@ UL.filetree A:hover {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 .leaflet-control-attribution {
-	background: rgba(100,100,100,0.5) !important;
+	background: rgba(100,100,100,0.0) !important;
 	color: white;
 	border-radius: 4px;
-	box-shadow: 1px 1px 2px var(--shadow-color) inset;
+	box-shadow: none;
 	margin-bottom: 5px !important;
 	margin-right: 10px !important;
 	line-height: 200%;

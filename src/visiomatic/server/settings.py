@@ -63,8 +63,8 @@ class ImageSettings(BaseSettings):
         )
     contrast: float = Field(
         default=1.,
-        ge=0.01,
-        le=10.,
+        ge=0.,
+        le=100.,
         description="Default image contrast"
         )
     color_saturation: float = Field(
@@ -75,12 +75,12 @@ class ImageSettings(BaseSettings):
         )
     gamma: float = Field(
         default=2.2,
-        ge=0.1,
+        ge=0.2,
         le=5.,
         description="Default image gamma"
         )
     quality: int = Field(
-        default=97,
+        default=95,
         ge=1,
         le=100,
         description="Default image compression quality in %%"
@@ -119,7 +119,7 @@ class ServerSettings(BaseSettings):
         description="Data root directory"
         )
     doc_dir: str = Field(
-        default=path.join(package.root_dir, "doc/build/html"),
+        default=path.join(package.root_dir, "doc/html"),
         description="HTML documentation root directory (after build)"
         )
     doc_path: str = Field(

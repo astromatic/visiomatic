@@ -41,7 +41,7 @@ The Coordinates Pane
 
 The Coordinates Pane allows the user to:
 
-1. check the central coordinates and the current FITS extension (for mosaics of detectors) of the current field of view.
+1. check the central coordinates and the current |FITS| extension (for mosaics of detectors) of the current field of view.
 2. pan to the given coordinates or to a given object
 3. pan to a given detector for mosaic images stored as |MEF| files.
 
@@ -65,7 +65,7 @@ The Pixel Value Pane
 ====================
 
 The Pixel Value Pane displays the value of the pixel at the center of the field of view in the current image channel.
-The unit is defined by the content of the ``BUNIT`` FITS image keyword; if not found, |VisiOmatic| uses |ADU|_ (counts) by default.
+The unit is defined by the content of the ``BUNIT`` |FITS| image keyword; if not found, |VisiOmatic| uses |ADU|_ (counts) by default.
 A drop-down list at the left of the widget allows the user to select various value display options:
 
 * ``Raw``: raw value.

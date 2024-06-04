@@ -92,12 +92,10 @@ def main() -> int:
             await self.original_startup(*args, **kwargs)
             webbrowser.open(link)
 
-        for Supervisor in [
-            supervisors.BaseReload,
-            supervisors.Multiprocess
-        ]:
-            Supervisor.original_startup = Supervisor.startup #type: ignore
-            Supervisor.startup = startup_with_browser #type: ignore
+        supervisors.BaseReload.original_startup = supervisors.BaseReload.startup #type: ignore
+        supervisors.BaseReload.startup = startup_with_browser #type: ignore
+        supervisors.Multiprocess.original_startup = supervisors.Multiprocess.init_processes #type: ignore
+        supervisors.Multiprocess.init_processes = startup_with_browser #type: ignore
 
         server.Server.original_startup = server.Server.startup #type: ignore
         server.Server.startup = async_startup_with_browser #type: ignore
