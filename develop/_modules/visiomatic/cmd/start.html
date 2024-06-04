@@ -176,12 +176,10 @@
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_startup</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">Supervisor</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="p">,</span>
-            <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span>
-        <span class="p">]:</span>
-            <span class="n">Supervisor</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">Supervisor</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#type: ignore</span>
-            <span class="n">Supervisor</span><span class="o">.</span><span class="n">startup</span> <span class="o">=</span> <span class="n">startup_with_browser</span> <span class="c1">#type: ignore</span>
+        <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#type: ignore</span>
+        <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">startup</span> <span class="o">=</span> <span class="n">startup_with_browser</span> <span class="c1">#type: ignore</span>
+        <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">init_processes</span> <span class="c1">#type: ignore</span>
+        <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">init_processes</span> <span class="o">=</span> <span class="n">startup_with_browser</span> <span class="c1">#type: ignore</span>
 
         <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#type: ignore</span>
         <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">startup</span> <span class="o">=</span> <span class="n">async_startup_with_browser</span> <span class="c1">#type: ignore</span>
