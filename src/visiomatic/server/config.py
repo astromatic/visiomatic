@@ -1,12 +1,13 @@
 """
 Configure application.
 """
-# Copyright CFHT/CNRS/SorbonneU
+# Copyright CEA/CFHT/CNRS/UParisSaclay
 # Licensed under the MIT licence
 
-import os, time
+from os import makedirs, path
 from pathlib import Path
 from sys import exit, modules
+from time import localtime, strftime
 from typing import Tuple
 from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
@@ -22,37 +23,39 @@ class Config(object):
 
     Settings are stored as Pydantic fields.
     """
-    def __init__(self):
+    def __init__(self, args: bool=True, config_file: str=package.config_file):
 
         self.settings = AppSettings()
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
+        self.config_filename = config_file
 
         # Skip argument parsing and stuff if Sphinx or PyTest are involved
         if 'sphinx' in modules or 'pytest' in modules:
             return
         # Parse command line
-        args_dict = self.parse_args()
-        if args_dict['version']:
-            print(f"{package.title} {package.version}")
-            exit(0)
-
-        # Save configuration file if requested
-        if args_dict['save_config']:
-            # Create config dir if it does not exist
-            os.makedirs(os.path.dirname(package.config_file), exist_ok=True)
-            self.save_config(package.config_file)
-            exit(0)
+        if args:
+            args_dict = self.parse_args()
+            if args_dict['version']:
+                print(f"{package.title} {package.version}")
+                exit(0)
+            # Save configuration file if requested
+            if args_dict['save_config']:
+                # Create config dir if it does not exist
+                makedirs(path.dirname(self.config_filename), exist_ok=True)
+                self.save_config(self.config_filename)
+                exit(0)
+            self.config_filename = args_dict['config']
 
         # Parse configuration file
-        self.config_filename = args_dict['config']
         if Path(self.config_filename).exists():
             config_dict = self.parse_config(self.config_filename)
             # Update settings from the config file
             self.update_from_dict(config_dict) 
 
-        # Update settings from the command line
-        self.update_from_dict(args_dict)
+        # Update settings from the command line (overriding config file values)
+        if args:
+            self.update_from_dict(args_dict)
 
         image_filename = args_dict['file']
         if Path(image_filename).exists():
@@ -150,7 +153,7 @@ class Config(object):
         config.add_argument(
             "-s", "--save_config",
             default=False,
-            help="Save a default VisiOmatic configuration file and exit",
+            help=f"Save a default {package.title} configuration file and exit",
             action='store_true'
         )
         config.add_argument(
@@ -273,7 +276,7 @@ class Config(object):
 
         with open(filename, 'w') as config_file:
             config_file.write(f"; Default {package.title} configuration file\n")
-            nowstr = time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime())
+            nowstr = strftime("%a, %d %b %Y %H:%M:%S %z", localtime())
             config_file.write(f"; {nowstr}\n")
             config.write(config_file)
 
@@ -302,6 +305,7 @@ class Config(object):
                 exit()
 
 # Initialize global dictionary
+# Set up settings by instantiating a configuration object
 config = Config()
 config_filename = None
 image_filename = None
