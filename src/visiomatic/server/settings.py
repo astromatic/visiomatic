@@ -1,16 +1,14 @@
 """
 Configuration settings for the application.
 """
-# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
+# Copyright UParisSaclay/CEA/CFHT/CNRS
 # Licensed under the MIT licence
 
 from os import cpu_count, path
 from typing import Tuple
 
-from pydantic import (
-    BaseSettings,
-    Field
-)
+from pydantic import BaseSettings, Field
+
 
 from .. import package
 
@@ -203,10 +201,10 @@ class CacheSettings(BaseSettings):
 
 
 class AppSettings(BaseSettings):
-    host = HostSettings()
-    image = ImageSettings()
-    server = ServerSettings()
-    engine = EngineSettings()
-    cache = CacheSettings()
+    host: BaseSettings = HostSettings()
+    image: BaseSettings = ImageSettings()
+    server: BaseSettings = ServerSettings()
+    engine: BaseSettings = EngineSettings()
+    cache: BaseSettings = CacheSettings()
 
 

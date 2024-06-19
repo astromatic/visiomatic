@@ -93,9 +93,9 @@ def create_app() -> FastAPI:
         description=package.description,
         version=package.version,
         contact={
-            "name":  f"{package.contact_name} ({package.contact_affiliation})",
+            "name":  f"{package.contact['name']} ({package.contact['affiliation']})",
             "url":   package.url,
-            "email": package.contact_email
+            "email": package.contact['email']
         },
         license_info={
             "name": package.license_name,
@@ -183,7 +183,7 @@ def create_app() -> FastAPI:
                 title="Image filename",
                 min_length=1,
                 max_length=1024,
-                regex=reg_fif
+                pattern=reg_fif
                 ),
             obj: str = Query(
                 None,
@@ -235,35 +235,35 @@ def create_app() -> FastAPI:
                 title="Tile coordinates",
                 min_length=3,
                 max_length=14,
-                regex=reg_jtl
+                pattern=reg_jtl
                 ),
             MINMAX: list[str] = Query(
                 None,
                 title="Modified minimum and Maximum intensity ranges",
                 min_length=5,
                 max_length=38,
-                regex=reg_minmax
+                pattern=reg_minmax
                 ),
-			MIX: list[str] = Query(
-			    None,
-			    title="Slice of the mixing matrix", 
+            MIX: list[str] = Query(
+                None,
+                title="Slice of the mixing matrix", 
                 min_length=7,
                 max_length=54,
-                regex=reg_mix
+                pattern=reg_mix
                 ),
-			PFL: str = Query(
-			    None,
-			    title="Get image profile(s)", 
+            PFL: str = Query(
+                None,
+                title="Get image profile(s)", 
                 min_length=7,
                 max_length=39,
-                regex=reg_pfl
+                pattern=reg_pfl
                 ),
             VAL: str = Query(
                 None,
                 title="Pixel value(s)",
                 min_length=3,
                 max_length=32,
-                regex=reg_val
+                pattern=reg_val
                 )
             ):
         """
