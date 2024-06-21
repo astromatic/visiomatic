@@ -7,7 +7,8 @@ Configuration settings for the application.
 from os import cpu_count, path
 from typing import Tuple
 
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 from .. import package
@@ -85,8 +86,8 @@ class ImageSettings(BaseSettings):
         )
     tile_size: Tuple[int, int] = Field(
         default=(256, 256),
-        ge=1,
-        le=4096,
+        ge=(1, 1),
+        le=(4096, 4096),
         description="Tile size"
         )
 
