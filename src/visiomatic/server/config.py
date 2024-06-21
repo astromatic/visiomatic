@@ -11,7 +11,7 @@ from time import localtime, strftime
 from typing import Tuple
 from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
-from pydantic import validate_model
+from pydantic import ValidationError
 
 from .. import package
 from .settings import AppSettings
@@ -183,7 +183,7 @@ class Config(object):
                     args_group.add_argument(
                         *arg,
                         default=SUPPRESS,
-                        type=lambda s: [deftype(val) for val in s.split(',')],
+                        type=lambda s: tuple([deftype(val) for val in s.split(',')]),
                         help=f"{props['description']} (default={props['default']})"
                     )
                 else:
@@ -296,13 +296,14 @@ class Config(object):
             settings = settings_dict[group]
             for setting in settings:
                 vars(groupsettings).update({setting: settings_dict[group][setting]})
-            *_, valid_error = validate_model(
-                groupsettings.__class__,
-                groupsettings.dict()
-            )
-            if valid_error:
-                print(valid_error)
-                exit()
+            try:
+                groupsettings.model_validate(groupsettings.dict())
+            except ValidationError as valid_exception:
+                print(valid_exception)
+                exit(1)
+            except Exception as other_exception:
+                print(other_exception)
+                exit(1)
 
 # Initialize global dictionary
 # Set up settings by instantiating a configuration object
