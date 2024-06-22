@@ -4,8 +4,10 @@ Image reading and processing module
 # Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
+from __future__ import annotations
+
 import re
-from typing import List, Tuple, Union
+from typing import List, Tuple
 from pydantic import BaseModel
 
 import numpy as np
@@ -59,7 +61,7 @@ class Image(object):
     def __init__(
             self,
             hdu : fits.ImageHDU,
-            minmax : Union[Tuple[float], None] = None):
+            minmax : Tuple[float] | None = None):
 
         # Small hack to translate compressed FITS headers
         self.header = fits.Header.fromstring(hdu.header.tostring())
@@ -119,7 +121,7 @@ class Image(object):
 
     re_2dslice = re.compile(r"\[(\d+):(\d+),(\d+):(\d+)\]")
 
-    def parse_2dslice(self, str: str) -> Union[List[int], None]:
+    def parse_2dslice(self, str: str) -> List[int] | None:
         """
         Parse a string representation of a 2D slice.
 

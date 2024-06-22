@@ -190,14 +190,14 @@ def create_app() -> FastAPI:
     async def read_visio(
             request: Request,
             FIF: Annotated[
-                str,
+                str | None,
                 # Trick to use a true Python regexp instead of Rust's
                 BeforeValidator(lambda s: validate_pattern(s, parse_fif)),
                 Query(
                     title="Image filename",
                     min_length=1,
                      max_length=1024
-                )]= None,
+                )] = None,
             obj: str = Query(
                 None,
                 title="Get image information instead of a tile"

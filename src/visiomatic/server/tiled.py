@@ -4,13 +4,15 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
+from __future__ import annotations
+
 import glob, math, pickle
 
 from methodtools import lru_cache #type: ignore
 from math import isnan
 from os import path, unlink
 from sys import modules
-from typing import List, NamedTuple, Tuple, Union
+from typing import List, NamedTuple, Tuple
 from urllib.parse import quote, unquote
 
 import numpy as np
@@ -44,10 +46,10 @@ class PixelValueModel(BaseModel):
 
     Parameters
     ----------
-    values: list[Union[float, None]]
+    values: list[float | None]
         Pixel values.
     """
-    values: list[Union[float, None]]
+    values: list[float | None]
 
 
 
@@ -61,12 +63,12 @@ class PixelModel(BaseModel):
         x coordinate of the pixel.
     y: int
         y coordinate of the pixel.
-    values: list[Union[float, None]]
+    values: list[float, None]
         Pixel values.
     """
     x: int
     y: int
-    values: list[Union[float, None]]
+    values: list[float, None]
 
 
 
@@ -163,15 +165,15 @@ class Tiled(object):
     def __init__(
             self,
             filename: str,
-            extnum : Union[int, None] = None,
+            extnum : int | None = None,
             tilesize : Tuple[int, int] = (256,256),
-            minmax : Union[Tuple[int, int], None] = None,
-            brightness : Union[float, None] = None,
-            contrast : Union[float, None] = None,
-            color_saturation: Union[float, None] = None,
-            gamma : Union[float, None] = None,
-            quality: Union[int, None] = None,
-            nthreads : Union[int, None] = None):
+            minmax : Tuple[int, int] | None = None,
+            brightness : float | None = None,
+            contrast : float | None = None,
+            color_saturation: float | None = None,
+            gamma : float | None = None,
+            quality: int | None = None,
+            nthreads : int | None = None):
 
         self.filename = path.abspath(filename)
         self.nthreads = nthreads or (
@@ -443,12 +445,12 @@ class Tiled(object):
     def convert_tile(
             self,
             tile: np.ndarray,
-            channel: Union[int, None] = None,
-            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
-            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: Union[float, None] = None,
-            contrast: Union[float, None] = None,
-            gamma: Union[float, None] = None,
+            channel: int | None = None,
+            minmax: Tuple[Tuple[int, float, float], ...] | None = None,
+            mix: Tuple[Tuple[int, float, float, float], ...] | None = None,
+            brightness: float | None = None,
+            contrast: float | None = None,
+            gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False) -> np.ndarray:
         """
@@ -597,15 +599,15 @@ class Tiled(object):
             self,
             tilelevel: int,
             tileindex: int,
-            channel: Union[int, None] = None,
-            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
-            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: Union[float, None] = None,
-            contrast: Union[float, None] = None,
-            gamma: Union[float, None] = None,
+            channel: int | None = None,
+            minmax: Tuple[Tuple[int, float, float], ...] | None = None,
+            mix: Tuple[Tuple[int, float, float, float], ...] | None = None,
+            brightness: float | None = None,
+            contrast: float | None = None,
+            gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False,
-            quality: Union[int, None]= None) -> bytes:
+            quality: int | None = None) -> bytes:
         """
         Generate a JPEG bytestream from a tile.
         
@@ -732,7 +734,7 @@ class Tiled(object):
 
     def get_profiles(
             self,
-            channels: Union[Tuple[int, ...], None],
+            channels: Tuple[int, ...] | None,
             pos1: Tuple[int, int],
             pos2: Tuple[int, int]) -> ProfileModel:
         """
