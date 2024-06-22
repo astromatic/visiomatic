@@ -26,11 +26,14 @@ url = meta['Project-URL'].rsplit(", ")[-1]
 # Contact
 authors = meta['Author-email'].split(", ")
 if authors:
-    contact = match(
+    m = match(
         r'\"?\s*(?P<name>[A-Za-zÀ-ÖØ-öø-ÿ\s]*?)\s*(?:\(\s*'
         '(?P<affiliation>[^)]+?)\s*\))?\"?\s*<\s*(?P<email>[^>]+?)\s*>?\s*$',
         authors[0]
-    ).groupdict()
+    )
+    contact = m.groupdict() if m is not None else {
+        'name': '', 'affiliation': '', 'email': ''
+    }
 
 # License
 #license = meta['License']
