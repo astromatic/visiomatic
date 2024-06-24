@@ -321,7 +321,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 		response = await fetch(
 			layer._url.replace(/\&.*$/g, '') +
 				(
-					visio.mode === 'mono' ?
+					visio.mixingMode === 'mono' ?
 						`&CHAN=${visio.channel + 1}` :
 						visio.rgb.map((rgb, c) => `&CHAN=${c+1}`).join('')
 				) +
@@ -382,7 +382,7 @@ export const ProfileUI = UI.extend( /** @lends ProfileUI */ {
 
 		this.addLayer(line, 'Image profile');
 
-		const	monoflag = visio.mode === 'mono',
+		const	monoflag = visio.mixingMode === 'mono',
 			chart = new Chart(
 				DomUtil.create(
 					'canvas',
