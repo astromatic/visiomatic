@@ -68,7 +68,7 @@ class PixelModel(BaseModel):
     """
     x: int
     y: int
-    values: list[float, None]
+    values: list[float | None]
 
 
 
