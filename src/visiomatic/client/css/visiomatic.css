@@ -1021,6 +1021,7 @@ a#visiomatic-doc-toggle {
 
 .sidebar.doc {
 	width: 530px;
+	max-width: 100%;
 }
 
 .sidebar-left.doc ~ .leaflet-left {
