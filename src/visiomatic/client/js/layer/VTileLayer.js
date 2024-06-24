@@ -206,7 +206,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   ``[[0.,255.], [0.,255.], ...]`` otherwise.
 
 	 * @param {number} [options.channel=0]
-	   Default active channel index in mono-channel mode.
+	   Default active channel index in mono-channel mixing mode.
 
 	 * @param {number} options.framerate
 	   Default animation framerate.
@@ -626,13 +626,13 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * @summary
-	   Switch the layer to ``'mono'`` mode for the current channel.
+	   Switch the layer to ``'mono'`` mixing mode for the current channel.
 	   @desc
 	   The current channel index defines the color mixing matrix elements in
 	   ``'mono'`` mode
 	 */
 	updateMono: function () {
-		this.visio.mode = 'mono';
+		this.visio.mixingMode = 'mono';
 	},
 
 	/**
@@ -648,7 +648,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	_this = layer ? layer : this,
 			visio = _this.visio;
 
-		visio.mode = 'color';
+		visio.mixingMode = 'color';
 		for (const c in visio.rgb) {
 			_this.rgbToMix(c);
 		}
@@ -918,7 +918,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const nchannel = visio.nChannel,
 		    mix = visio.mix;
 
-		if (visio.mode === 'color') {
+		if (visio.mixingMode === 'color') {
 			for (let c = 0; c < visio.nChannel; c++) {
 				if (visio.minValue[c] !== visioDefault.minValue[c] ||
 				   visio.maxValue[c] !== visioDefault.maxValue[c]) {
