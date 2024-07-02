@@ -918,7 +918,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * Generate the settings part of a tile query URL based on current settings.
 	 * @return {string} The tile settings URL.
 	 */
-    getTileSettingsURL: function() {
+	getTileSettingsURL: function() {
 		const	visio = this.visio,
 			visioDefault = this.visioDefault;
 
