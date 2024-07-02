@@ -92,8 +92,8 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 						z = map.getZoom(),
 						binfac = Math.pow(2, visio.maxZoom - z),
 						bin = binfac > 1 ? binfac : 1;
-            	   	fetch(
-                		layer.getTileSettingsURL() + '&RGN=' +
+					fetch(
+						layer.getTileSettingsURL() + '&RGN=' +
 						(binfac * bounds.min.x).toFixed(0) + ',' +
 						(binfac * bounds.min.y).toFixed(0) + ':' +
 						(binfac * bounds.max.x).toFixed(0) + ',' +
@@ -112,8 +112,8 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 							/[\s\:\.]/g,
 							'') + '.jpg';
 						hiddenlink.click();
-		        	}).catch(async (res) => {
-		        		const	json = await res.json();
+					}).catch(async (res) => {
+						const	json = await res.json();
 						alert('Error ' + res.status + ': ' +
 							json.detail[0].msg + '.');
 					});
@@ -160,13 +160,14 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 					function (canvas) {
 						const	latlng = map.getCenter(),
 							wcs = map.options.crs;
-                		hiddenlink2.href = canvas.toDataURL();
+						hiddenlink2.href = canvas.toDataURL();
 						hiddenlink2.download = visio.imageName.replace(
 							/(\.fits)|(\.fit)|(\.fz)/g, ''
 						) + '_' + wcs.latLngToHMSDMS(latlng).replace(
 							/[\s\:\.]/g, '') +'.jpg';
 						hiddenlink2.click();
-				});
+					}
+				);
 				control.style.display = 'unset';
 			}
 		);
