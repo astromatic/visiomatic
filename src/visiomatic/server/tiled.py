@@ -23,7 +23,7 @@ from joblib import Parallel, delayed  #type: ignore
 from pydantic import BaseModel
 from simplejpeg import encode_jpeg  #type: ignore
 from skimage.draw import line
-from tiler import Tiler #type: ignore
+from tiler import Merger, Tiler #type: ignore
 
 from .. import package
 from .image import Image, ImageModel
@@ -122,6 +122,8 @@ class TiledModel(BaseModel):
     """
     type: str
     version: str
+    image_name: str
+    object_name: str
     full_size: Tuple[int, ...]
     tile_size: Tuple[int, ...]
     tile_levels: int
@@ -176,6 +178,7 @@ class Tiled(object):
             nthreads : int | None = None):
 
         self.filename = path.abspath(filename)
+        self.image_name = path.basename(filename)
         self.nthreads = nthreads or (
             config.settings["thread_count"] if 'sphinx' not in modules else 4
         )
@@ -204,6 +207,7 @@ class Tiled(object):
         self.tile_shape = (self.nchannels, tilesize[0], tilesize[1]);
         self.make_mosaic(self.images)
         hdus.close()
+        self.object_name = self.header.get("OBJECT", "")
         self.brightness = config.settings["brightness"] if brightness is None \
             else brightness
         self.contrast = config.settings["contrast"] if contrast is None \
@@ -301,6 +305,8 @@ class Tiled(object):
         return TiledModel(
             type=package.name,
             version="3.0",
+            image_name=self.image_name,
+            object_name=self.object_name,
             full_size=self.shape[2:0:-1],
             tile_size=self.tile_shape[2:0:-1],
             tile_levels=self.nlevels,
@@ -479,8 +485,8 @@ class Tiled(object):
 
         Returns
         -------
-        tile: ~numpy.ndarray
-            Processed tile.
+        raster: ~numpy.ndarray
+            Processed tile image raster.
         """
         if brightness is None:
             brightness = self.brightness
@@ -595,7 +601,7 @@ class Tiled(object):
         self.tiles.flush()
 
 
-    def get_tile(
+    def get_tile_raster(
             self,
             tilelevel: int,
             tileindex: int,
@@ -607,9 +613,9 @@ class Tiled(object):
             gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False,
-            quality: int | None = None) -> bytes:
+            **_) -> np.ndarray:
         """
-        Generate a JPEG bytestream from a tile.
+        Compute a gray-level or color image raster from a tile.
         
         Parameters
         ----------
@@ -631,13 +637,11 @@ class Tiled(object):
             Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
         invert: bool, optional
             Invert the colormap.
-        quality: int, optional
-            JPEG quality (0-100)
 
         Returns
         -------
-        tile: bytes
-            JPEG bytestream of the tile.
+        raster: ~numpy.ndarray
+            The computed tile image raster.
         """
         if channel and channel > self.nchannels:
             channel = 1
@@ -651,48 +655,154 @@ class Tiled(object):
             self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
                 else self.border_shapes[tilelevel][2],
         ]
+        return self.convert_tile(
+            self.get_tiles()[
+                self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
+                0:shape[2]
+            ],
+            channel=channel,
+            minmax=minmax,
+            mix=mix,
+            brightness=self.brightness if brightness is None else brightness,
+            contrast=self.contrast if contrast is None else contrast,
+            gamma=self.gamma if gamma is None else gamma,
+            invert=invert
+        )
+
+
+    def encode(
+            self,
+            raster: np.ndarray,
+            channel: int | None = None,
+            colormap: str = 'grey',
+            quality: int | None = None,
+            **_) -> bytes:
+        """
+        Generate a JPEG bytestream from an image raster (e.g., a tile).
+        
+        Parameters
+        ----------
+        raster:  ~numpy.ndarray
+            Input tile.
+       channel: int
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
+        quality: int, optional
+            JPEG quality (0-100)
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+        """
+        if channel and channel > self.nchannels:
+            channel = 1
         return encode_jpeg(
-            self.convert_tile(
-                self.get_tiles()[
-                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
-                    0:shape[2]
-                ],
-				channel=channel,
-                minmax=minmax,
-                mix=mix,
-                brightness=self.brightness if brightness is None else brightness,
-                contrast=self.contrast if contrast is None else contrast,
-                gamma=self.gamma if gamma is None else gamma,
-                invert=invert
-            )[:, :, None],
+            raster[:, :, None],
             quality=self.quality if quality is None else quality,
             colorspace='Gray'
         ) if colormap=='grey' and channel else encode_jpeg(
-            self.convert_tile(
-                self.get_tiles()[
-                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
-                    0:shape[2]
-                ],
-				channel=channel,
-                minmax=minmax,
-                mix=mix,
-                brightness=self.brightness if brightness is None else brightness,
-                contrast=self.contrast if contrast is None else contrast,
-                gamma=self.gamma if gamma is None else gamma,
-                invert=invert,
-                colormap=colormap
-            ),
+            raster,
             quality=self.quality if quality is None else quality,
             colorspace='RGB'
         )
 
 
     @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
-    def get_tile_cached(self, *args, **kwargs):
+    def get_encoded_tile(self, *args, **kwargs):
         """
-        Cached version of get_tile().
+        Cached, encoded version of get_tile().
         """
-        return self.get_tile(*args, **kwargs)
+        return self.encode(self.get_tile_raster(*args, **kwargs), **kwargs)
+
+
+    def get_encoded_region(
+            self,
+            bounds: Tuple[Tuple[int, int], Tuple[int, int]],
+            binning: int = 1,
+            **kwargs) -> bytes:
+        """
+        Generate a JPEG bytestream from a specific image region by stitching
+        tiles that fall in that region.
+
+        Parameters
+        ----------
+        bounds: tuple[tuple[int, int], tuple[int, int]]
+            Image boundaries in pixels.
+        binning: int, optional
+            Binning factor per axis, in pixels.
+        **kwargs:
+            get_tile_raster() and encode() keyword arguments.
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+        """
+        level = binning.bit_length() - 1
+        # Compute sub-tile margins to be trimmed around the tiled region
+        xmin = (bounds[0][0] - 1) >> level
+        if (txmin := xmin // self.tile_shape[2]) < 0:
+             txmin = 0
+             rxmin = 0
+        else:
+             rxmin = xmin % self.tile_shape[2]
+        ymin = (bounds[0][1] - 1) >> level
+        if (tymin := ymin // self.tile_shape[1]) < 0:
+             tymin = 0
+             rymin = 0
+        else:
+             rymin = ymin % self.tile_shape[1]
+        xmax = (bounds[1][0] - 1) >> level
+        if (txmax := xmax // self.tile_shape[2] + 1) > self.shapes[level][2]:
+            txmax = self.shapes[level][2]
+            rxmax = self.tile_shape[2] - self.border_shapes[level][2]
+        elif txmax == self.shapes[level][2]:
+            rxmax = self.tile_shape[2] - \
+                min(xmax % self.tile_shape[2], self.border_shapes[level][2])
+        else:
+            rxmax = self.tile_shape[2] - (xmax % self.tile_shape[2])
+        ymax = (bounds[1][1] - 1) >> level
+        if (tymax := ymax // self.tile_shape[1] + 1) > self.shapes[level][1]:
+            tymax = self.shapes[level][1]
+            rymax = self.tile_shape[1] - self.border_shapes[level][1]
+        elif tymax == self.shapes[level][1]:
+            rymax = self.tile_shape[1] - \
+                min(ymax % self.tile_shape[1], self.border_shapes[level][1])
+        else:
+            rymax = self.tile_shape[1] - (ymax % self.tile_shape[1])
+
+        tile_grid = np.mgrid[tymin:tymax, txmin:txmax]
+
+        merger = Merger(
+            Tiler(
+                data_shape = (
+                    (tymax - tymin) * self.tile_shape[1],
+                    (txmax - txmin) * self.tile_shape[2],
+                    3
+                ),
+                tile_shape = (self.tile_shape[1], self.tile_shape[2], 3),
+                mode='constant',
+                channel_dimension=2
+            )
+        )
+        tile_ids = tile_grid[0].ravel() * self.shapes[level][2] + tile_grid[1].ravel()
+        for tile_id_rel, tile_id in enumerate(tile_ids):
+            merger.add(
+                tile_id_rel,
+                self.get_tile_raster(
+                    level,
+                    tile_id,
+                    **kwargs
+                )
+            )
+        return self.encode(
+            np.ascontiguousarray(
+                merger.merge().astype(np.uint8)[rymin:-rymax, rxmin:-rxmax, :]
+            ),
+            **kwargs
+        )
 
 
     def get_pixel_values(
@@ -711,7 +821,7 @@ class Tiled(object):
 
         Returns
         -------
-        value: numpy.ndarray
+        value: ~numpy.ndarray
             Pixel value at the given position, or NaN outside of the
             frame boundaries.
         """
@@ -926,7 +1036,7 @@ def get_tiles_filename(image_filename: str) -> str:
 
 def get_image_filename(prefix: str) -> str:
     """
-    Return the name of the file containing the memory-mapped tile datacube.
+    Return the name of the file containing the memory-mapped image datacube.
     
     Parameters
     ----------
@@ -939,4 +1049,6 @@ def get_image_filename(prefix: str) -> str:
         Filename of the memory mapped tile datacube.
     """
     return unquote(path.basename(prefix))
+
+
 

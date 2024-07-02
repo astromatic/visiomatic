@@ -55,9 +55,12 @@ parse_minmax = re.compile(reg_minmax)
 # MIX (mixing matrix)
 reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
 parse_mix = re.compile(reg_mix) 
-# PFL (image profile(s)
+# PFL (image profile(s))
 reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
 parse_pfl = re.compile(reg_pfl)
+# RGN (image region)
+reg_rgn = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
+parse_rgn = re.compile(reg_rgn)
 # VAL (pixel value(s)
 reg_val = r"^([+-]?\d+),([+-]?\d+)$"
 parse_val = re.compile(reg_val)
@@ -202,6 +205,12 @@ def create_app() -> FastAPI:
                 None,
                 title="Get image information instead of a tile"
                 ),
+            BIN: int = Query(
+                1,
+                title="Pixel Binning size",
+                ge=1,
+                le=65536
+                ),
             CHAN: Annotated[List[int] | None, Query(
                 title="Channel index (mono-channel mode) or indices (measurements)"
                 )] = None,
@@ -275,6 +284,13 @@ def create_app() -> FastAPI:
                 min_length=7,
                 max_length=39,
                 pattern=reg_pfl
+                ),
+            RGN: str = Query(
+                None,
+                title="Get image region", 
+                min_length=7,
+                max_length=39,
+                pattern=reg_rgn
                 ),
             VAL: str = Query(
                 None,
@@ -358,7 +374,8 @@ def create_app() -> FastAPI:
             if lock:
                 lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
-        if JTL is None:
+        if JTL is None and RGN is None:
+            # No image data: return
             if lock:
                 lock.release_read()
             return
@@ -384,24 +401,42 @@ def create_app() -> FastAPI:
                     float(r[3])
                 ) for r in resp
             )
-        resp = parse_jtl.findall(JTL)[0]
-        tl = tiled.nlevels - 1 - int(resp[0])
-        if tl < 0:
-            tl = 0
-        ti = int(resp[1])
-        pix = tiled.get_tile_cached(
-            tl,
-            ti,
-            channel=CHAN[0] if CHAN else CHAN,
-            minmax=minmax,
-            mix=mix,
-            brightness=BRT,
-            contrast=CNT,
-            gamma=GAM,
-            colormap=CMP,
-            invert=(INV is not None),
-            quality=QLT
-        )
+        if JTL is not None:
+            # Regular image tile
+            resp = parse_jtl.findall(JTL)[0]
+            tl = tiled.nlevels - 1 - int(resp[0])
+            if tl < 0:
+                tl = 0
+            ti = int(resp[1])
+            pix = tiled.get_encoded_tile(
+                tl,
+                ti,
+                channel=CHAN[0] if CHAN else CHAN,
+                minmax=minmax,
+                mix=mix,
+                brightness=BRT,
+                contrast=CNT,
+                gamma=GAM,
+                colormap=CMP,
+                invert=(INV is not None),
+                quality=QLT
+            )
+        else:
+            # has to be an image region
+            val = parse_pfl.findall(RGN)[0]
+            pix = tiled.get_encoded_region(
+                ((int(val[0]), int(val[1])), (int(val[2]), int(val[3]))),
+                BIN,
+                channel=CHAN[0] if CHAN else CHAN,
+                minmax=minmax,
+                mix=mix,
+                brightness=BRT,
+                contrast=CNT,
+                gamma=GAM,
+                colormap=CMP,
+                invert=(INV is not None),
+                quality=QLT
+            )
         if lock:
             lock.release_read()
         return responses.StreamingResponse(
