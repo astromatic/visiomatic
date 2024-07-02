@@ -12,7 +12,7 @@ from methodtools import lru_cache #type: ignore
 from math import isnan
 from os import path, unlink
 from sys import modules
-from typing import List, NamedTuple, Tuple
+from typing import Any, List, NamedTuple, Tuple
 from urllib.parse import quote, unquote
 
 import numpy as np
@@ -564,7 +564,7 @@ class Tiled(object):
         self.tiles_end = np.cumsum(self.counts, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
         self.tiles_filename = get_tiles_filename(self.filename)
-        self.tiles = np.memmap(
+        self.tiles: np.ndarray = np.memmap(
             self.tiles_filename,
             dtype=np.float32,
             mode='w+',
@@ -618,7 +618,7 @@ class Tiled(object):
             gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False,
-            **_) -> np.ndarray:
+            **_:  Any) -> np.ndarray:
         """
         Compute a gray-level or color image raster from a tile.
         
@@ -682,7 +682,7 @@ class Tiled(object):
             channel: int | None = None,
             colormap: str = 'grey',
             quality: int | None = None,
-            **_) -> bytes:
+            **_: Any) -> bytes:
         """
         Generate a JPEG bytestream from an image raster (e.g., a tile).
         
@@ -711,11 +711,11 @@ class Tiled(object):
 
     @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
     def get_encoded_tile(self,
-            *args,
+            *args: Any,
             channel: int | None = None,
             colormap: str = 'grey',
             quality: int | None = None,
-            **kwargs) -> bytes:
+            **kwargs: Any) -> bytes:
         """
         Return a JPEG bytestream of a specific image region by stitching
         tiles that fall in that region.
@@ -747,7 +747,7 @@ class Tiled(object):
             - Bounding box coordinates are inconsistent.
         """
         return self.encode(
-            self.get_tile_raster(
+            self.get_tile_raster(  #type: ignore
                 *args,
                 channel=channel,
                 colormap=colormap,
@@ -766,7 +766,7 @@ class Tiled(object):
             binning: int = 1,
             channel: int | None = None,
             colormap: str = 'grey',
-            **kwargs) -> bytes:
+            **kwargs: Any) -> bytes:
         """
         Return a JPEG bytestream of a specific image region by stitching
         tiles that fall in that region.
