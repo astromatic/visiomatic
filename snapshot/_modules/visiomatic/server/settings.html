@@ -221,6 +221,11 @@
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Extra data root directory&quot;</span>
         <span class="p">)</span>
+    <span class="n">max_region_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of image tiles for a single region query&quot;</span>
+        <span class="p">)</span>
     <span class="n">no_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

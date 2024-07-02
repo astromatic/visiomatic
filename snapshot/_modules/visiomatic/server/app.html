@@ -502,24 +502,36 @@
                 <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
                 <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
             <span class="p">)</span>
+            <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+                <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># has to be an image region</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">parse_pfl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">RGN</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">pix</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">get_encoded_region</span><span class="p">(</span>
-                <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">3</span><span class="p">]))),</span>
-                <span class="n">BIN</span><span class="p">,</span>
-                <span class="n">channel</span><span class="o">=</span><span class="n">CHAN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">CHAN</span> <span class="k">else</span> <span class="n">CHAN</span><span class="p">,</span>
-                <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
-                <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
-                <span class="n">brightness</span><span class="o">=</span><span class="n">BRT</span><span class="p">,</span>
-                <span class="n">contrast</span><span class="o">=</span><span class="n">CNT</span><span class="p">,</span>
-                <span class="n">gamma</span><span class="o">=</span><span class="n">GAM</span><span class="p">,</span>
-                <span class="n">colormap</span><span class="o">=</span><span class="n">CMP</span><span class="p">,</span>
-                <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
-                <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
-            <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pix</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">get_encoded_region</span><span class="p">(</span>
+                    <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">3</span><span class="p">]))),</span>
+                    <span class="n">BIN</span><span class="p">,</span>
+                    <span class="n">channel</span><span class="o">=</span><span class="n">CHAN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">CHAN</span> <span class="k">else</span> <span class="n">CHAN</span><span class="p">,</span>
+                    <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
+                    <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
+                    <span class="n">brightness</span><span class="o">=</span><span class="n">BRT</span><span class="p">,</span>
+                    <span class="n">contrast</span><span class="o">=</span><span class="n">CNT</span><span class="p">,</span>
+                    <span class="n">gamma</span><span class="o">=</span><span class="n">GAM</span><span class="p">,</span>
+                    <span class="n">colormap</span><span class="o">=</span><span class="n">CMP</span><span class="p">,</span>
+                    <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+                   <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
+               <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                    <span class="n">status_code</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span>
+                    <span class="n">detail</span><span class="o">=</span><span class="p">[{</span>
+                        <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="s2">&quot;RGN&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                    <span class="p">}]</span>
+                <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+                    <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">responses</span><span class="o">.</span><span class="n">StreamingResponse</span><span class="p">(</span>
             <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pix</span><span class="p">),</span>
             <span class="n">media_type</span><span class="o">=</span><span class="s2">&quot;image/jpg&quot;</span>

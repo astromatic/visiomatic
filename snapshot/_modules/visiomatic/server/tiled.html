@@ -268,10 +268,13 @@
             <span class="n">color_saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">gamma</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">max_region_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">nthreads</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span> <span class="o">=</span> <span class="n">max_region_tile_count</span> <span class="ow">or</span> \
+        	<span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_region_tile_count&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;thread_count&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;sphinx&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modules</span> <span class="k">else</span> <span class="mi">4</span>
         <span class="p">)</span>
@@ -631,6 +634,8 @@
                 	<span class="n">cv2</span><span class="o">.</span><span class="n">applyColorMap</span><span class="p">(</span><span class="n">ctile</span><span class="p">,</span> <span class="n">colordict</span><span class="p">[</span><span class="n">colormap</span><span class="p">]),</span>
                 	<span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span>
                 <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctile</span> <span class="o">=</span> <span class="n">ctile</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cminmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minmax</span>
             <span class="k">if</span> <span class="n">minmax</span><span class="p">:</span>
@@ -788,6 +793,7 @@
             <span class="n">brightness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brightness</span> <span class="k">if</span> <span class="n">brightness</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">brightness</span><span class="p">,</span>
             <span class="n">contrast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contrast</span> <span class="k">if</span> <span class="n">contrast</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">contrast</span><span class="p">,</span>
             <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
             <span class="n">invert</span><span class="o">=</span><span class="n">invert</span>
         <span class="p">)</span></div>
 
@@ -809,7 +815,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        raster:  ~numpy.ndarray</span>
 <span class="sd">            Input tile.</span>
-<span class="sd">       channel: int</span>
+<span class="sd">        channel: int, optional</span>
 <span class="sd">            Data channel (first channel is 1)</span>
 <span class="sd">        colormap: str, optional</span>
 <span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
@@ -821,16 +827,10 @@
 <span class="sd">        tile: bytes</span>
 <span class="sd">            JPEG bytestream of the tile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">channel</span> <span class="ow">and</span> <span class="n">channel</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">:</span>
-            <span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">encode_jpeg</span><span class="p">(</span>
-            <span class="n">raster</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span>
-            <span class="n">quality</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quality</span> <span class="k">if</span> <span class="n">quality</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">quality</span><span class="p">,</span>
-            <span class="n">colorspace</span><span class="o">=</span><span class="s1">&#39;Gray&#39;</span>
-        <span class="p">)</span> <span class="k">if</span> <span class="n">colormap</span><span class="o">==</span><span class="s1">&#39;grey&#39;</span> <span class="ow">and</span> <span class="n">channel</span> <span class="k">else</span> <span class="n">encode_jpeg</span><span class="p">(</span>
             <span class="n">raster</span><span class="p">,</span>
             <span class="n">quality</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quality</span> <span class="k">if</span> <span class="n">quality</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">quality</span><span class="p">,</span>
-            <span class="n">colorspace</span><span class="o">=</span><span class="s1">&#39;RGB&#39;</span>
+            <span class="n">colorspace</span><span class="o">=</span><span class="s1">&#39;Gray&#39;</span> <span class="k">if</span> <span class="n">colormap</span><span class="o">==</span><span class="s1">&#39;grey&#39;</span> <span class="ow">and</span> <span class="n">channel</span> <span class="k">else</span> <span class="s1">&#39;RGB&#39;</span>
         <span class="p">)</span></div>
 
 
@@ -838,11 +838,54 @@
 <div class="viewcode-block" id="Tiled.get_encoded_tile">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_encoded_tile">[docs]</a>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_tile_count&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">get_encoded_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_encoded_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Cached, encoded version of get_tile().</span>
+<span class="sd">        Return a JPEG bytestream of a specific image region by stitching</span>
+<span class="sd">        tiles that fall in that region.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args:</span>
+<span class="sd">            get_tile_raster() arguments.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        quality: int, optional</span>
+<span class="sd">            JPEG quality (0-100)</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            Additional get_tile_raster() keyword arguments.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tile: bytes</span>
+<span class="sd">            JPEG bytestream of the tile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError: exception</span>
+<span class="sd">            An error occurred because of unexpected bounding box coordinates.</span>
+<span class="sd">            It is raised if any of the following occur:</span>
+<span class="sd">            - The number of requested region tiles exceeds max_region_tile_count.</span>
+<span class="sd">            - Bounding box coordinates are inconsistent.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tile_raster</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_tile_raster</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+                <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">),</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="n">quality</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 
 
@@ -852,9 +895,11 @@
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
             <span class="n">binning</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a JPEG bytestream from a specific image region by stitching</span>
+<span class="sd">        Return a JPEG bytestream of a specific image region by stitching</span>
 <span class="sd">        tiles that fall in that region.</span>
 
 <span class="sd">        Parameters</span>
@@ -863,14 +908,29 @@
 <span class="sd">            Image boundaries in pixels.</span>
 <span class="sd">        binning: int, optional</span>
 <span class="sd">            Binning factor per axis, in pixels.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
 <span class="sd">        **kwargs:</span>
-<span class="sd">            get_tile_raster() and encode() keyword arguments.</span>
+<span class="sd">            Additional get_tile_raster() and encode() keyword arguments.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tile: bytes</span>
 <span class="sd">            JPEG bytestream of the tile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError: exception</span>
+<span class="sd">            An error occurred because of unexpected bounding box coordinates.</span>
+<span class="sd">            It is raised if any of the following occur:</span>
+<span class="sd">            - The number of requested region tiles exceeds max_region_tile_count.</span>
+<span class="sd">            - Bounding box coordinates are inconsistent.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">and</span> <span class="n">channel</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">:</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">colormap</span><span class="o">==</span><span class="s1">&#39;grey&#39;</span> <span class="ow">and</span> <span class="n">channel</span><span class="p">)</span>
         <span class="n">level</span> <span class="o">=</span> <span class="n">binning</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="c1"># Compute sub-tile margins to be trimmed around the tiled region</span>
         <span class="n">xmin</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span>
@@ -904,17 +964,31 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">ymax</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
+        <span class="k">if</span> <span class="n">txmax</span> <span class="o">&lt;=</span> <span class="n">txmin</span> <span class="ow">or</span> <span class="n">tymax</span> <span class="o">&lt;=</span> <span class="n">tymin</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s2">&quot;Inconsistent region bounding box coordinates&quot;</span>
+            <span class="p">)</span>
         <span class="n">tile_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="n">tymin</span><span class="p">:</span><span class="n">tymax</span><span class="p">,</span> <span class="n">txmin</span><span class="p">:</span><span class="n">txmax</span><span class="p">]</span>
-
+        <span class="k">if</span> <span class="n">tile_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s2">&quot;The requested image size exceeds the server limit of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="si">}</span><span class="s2"> tile&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;s&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="s2">&quot;Please zoom in or increase image binning&quot;</span>
+            <span class="p">)</span>
         <span class="n">merger</span> <span class="o">=</span> <span class="n">Merger</span><span class="p">(</span>
             <span class="n">Tiler</span><span class="p">(</span>
                 <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">(</span><span class="n">tymax</span> <span class="o">-</span> <span class="n">tymin</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                     <span class="p">(</span><span class="n">txmax</span> <span class="o">-</span> <span class="n">txmin</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="mi">3</span>
+                    <span class="mi">3</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="mi">1</span>
                 <span class="p">),</span>
-                <span class="n">tile_shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
-                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+                <span class="n">tile_shape</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="mi">3</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="p">),</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;irregular&#39;</span><span class="p">,</span>
                 <span class="n">channel_dimension</span><span class="o">=</span><span class="mi">2</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -925,6 +999,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_tile_raster</span><span class="p">(</span>
                     <span class="n">level</span><span class="p">,</span>
                     <span class="n">tile_id</span><span class="p">,</span>
+                    <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+                    <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -932,6 +1008,8 @@
             <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span>
                 <span class="n">merger</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="n">rymin</span><span class="p">:</span><span class="o">-</span><span class="n">rymax</span><span class="p">,</span> <span class="n">rxmin</span><span class="p">:</span><span class="o">-</span><span class="n">rxmax</span><span class="p">,</span> <span class="p">:]</span>
             <span class="p">),</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
