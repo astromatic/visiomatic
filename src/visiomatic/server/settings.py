@@ -137,7 +137,7 @@ class ServerSettings(BaseSettings):
     max_region_tile_count: int = SField(
         default=1024,
         ge=1,
-        description="Maximum number of image tiles for a single region query"
+        description="Maximum number of image tiles per snapshot"
         )
     no_browser: bool = SField(
         short='n',
