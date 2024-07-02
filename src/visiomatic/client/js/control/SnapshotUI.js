@@ -5,9 +5,11 @@
  * @requires util/VUtil.js
  * @requires control/UI.js
 
- * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2015-2024 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
+import html2canvas from 'html2canvas';
+
 import {Util} from 'leaflet';
 
 import {VUtil} from '../util';
@@ -52,16 +54,15 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 	 * @private
 	 */
 	_initDialog: function () {
-		const _this = this,
-			className = this._className,
+		const	className = this._className,
 			layer = this._layer,
 			visio = layer.visio,
 			map = this._map;
 
 		// Image snapshot
-		const	line = this._addDialogLine('Snap:', this._dialog),
+		const	line = this._addDialogLine('Image:', this._dialog),
 			elem = this._addDialogElement(line),
-			items = ['Screen pixels', 'Native pixels'];
+			items = ['current', 'native'];
 
 		this._snapType = 0;
 		this._snapSelect =  this._addSelectMenu(
@@ -76,44 +77,33 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 			}
 		);
 
-		const	hiddenlink = document.createElement('a');
-		const	button = this._addButton(
+		// Set up a hidden link and trigger download using the HTML5 attribute.
+		const	hiddenlink = document.createElement('a'),
+			elem2 = this._addDialogElement(line),
+			button = this._addButton(
 			className + '-button',
-			elem,
-			'snapshot',
-			'Take a snapshot of the displayed image',
+			elem2,
+			'snapimage',
+			'Snap the image within the current frame',
 			function (event) {
 				const	latlng = map.getCenter(),
 					bounds = map.getPixelBounds(),
-					wcs = map.options.crs;
-				let	z = map.getZoom();
-				var	zfac;
+					wcs = map.options.crs,
+					z = map.getZoom(),
+					zfac = z < visio.maxZoom ?
+						Math.pow(2, visio.maxZoom - z) : 1;
+				hiddenlink.href = this._layer._url.replace(/\&.*$/g, '') +
+					'&RGN=' +
+					zfac * bounds.min.x + ',' +
+					zfac * bounds.min.y + ':' +
+					zfac * bounds.max.x + ',' +
+					zfac * bounds.max.y +
+					'&BIN=' + (this._snapType ? zfac.toFixed(0) : 1)
 
-				if (z > visio.maxZoom) {
-					zfac = Math.pow(2, z - visio.maxZoom);
-					z = visio.maxZoom;
-				} else {
-					zfac = 1;
-				}
 
-				const	sizex = visio.imageSize[z].x * zfac,
-					sizey = visio.imageSize[z].y * zfac,
-					dx = (bounds.max.x - bounds.min.x),
-					dy = (bounds.max.y - bounds.min.y);
-
-				hiddenlink.href = layer.getTileUrl(
-					{x: 1, y: 1}
-				).replace(
-					/JTL\=\d+\,\d+/g,
-					'RGN=' + bounds.min.x / sizex + ',' +
-						bounds.min.y / sizey + ',' +
-						dx / sizex + ',' + dy / sizey +
-						'&WID=' + (this._snapType === 0 ?
-						Math.floor(dx / zfac) :
-						Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg'
-				);
-				hiddenlink.download = layer._title + '_' +
-					wcs.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+				hiddenlink.download = visio.imageName.replace(
+					/(\.fits)|(\.fit)|(\.fz)/g, ''
+				) + '_' + wcs.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
 					'.jpg';
 				hiddenlink.click();
 			}
@@ -121,14 +111,15 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 
 		document.body.appendChild(hiddenlink);
 
-		// Print snapshot
-		const	line2 = this._addDialogLine('Print:', this._dialog);
+		// Screen snapshot
+		const	line2 = this._addDialogLine('Screen:', this._dialog),
+			elem3 = this._addDialogElement(line2);
 
 		this._addButton(
 			className + '-button',
-			this._addDialogElement(line2),
-			'print',
-			'Print current map',
+			elem3,
+			'printscreen',
+			'Print current screen',
 			function (event) {
 				var	control = document.querySelector(
 					'#map > .leaflet-control-container'
@@ -138,9 +129,42 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 				control.style.display = 'unset';
 			}
 		);
+
+		// Set up a hidden link and trigger download using the HTML5 attribute
+		// and an output element for the screenshot.
+		const	hiddenlink2 = document.createElement('a'),
+			canvasoutput = document.createElement('div');
+
+		this._addButton(
+			className + '-button',
+			elem3,
+			'snapscreen',
+			'Snap current screen',
+			function (event) {
+				var	control = document.querySelector(
+					'#map > .leaflet-control-container'
+				);
+				control.style.display = 'none';
+				html2canvas(document.querySelector('#map')).then(
+					function (canvas) {
+						const	latlng = map.getCenter(),
+							wcs = map.options.crs;
+                		hiddenlink2.href = canvas.toDataURL();
+						hiddenlink2.download = visio.imageName.replace(
+							/(\.fits)|(\.fit)|(\.fz)/g, ''
+						) + '_' + wcs.latLngToHMSDMS(latlng).replace(
+							/[\s\:\.]/g, '') +'.jpg';
+						hiddenlink2.click();
+				});
+				control.style.display = 'unset';
+			}
+		);
+
+		document.body.appendChild(hiddenlink2);
 	}
 
 });
+
 
 /**
  * Instantiate a VisiOmatic dialog for taking snapshots.

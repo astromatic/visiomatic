@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -251,6 +251,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		 * VisiOmatic-specific TileLayer properties.
 		 * @type {object}
 		 * @instance
+		 * @property {string} imageName
+		   Image name (e.g., a filename).
+		 * @property {string} objectName
+		   Object name.
 		 * @property {number[][]} imageSize
 		   Image sizes at every resolution.
 		 * @property {object[]} gridSize
@@ -303,6 +307,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current animation framerate.
     	 */
 		this.visio = {
+			imageName: "",
+			objectName: "",
 			imageSize: [[this.tileSize]],
 			gridSize: [{x: 1, y: 1}],
 			bpp: 8,
@@ -329,8 +335,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			quality: options.quality,
 			framerate: options.framerate
 		}
-		this._title = options.title ? options.title :
-		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getMetaData(this._url);
 
 		// for https://github.com/Leaflet/Leaflet/issues/137
@@ -438,6 +442,29 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			if (!visio.framerate) {
 				visio.framerate = visioDefault.framerate;
 			}
+
+			// Image filename
+			if (meta.image_name) {
+				visio.imageName = meta.image_name;
+			}
+
+			// Object name
+			if (meta.object_name) {
+				visio.objectName = meta.object_name;
+			}
+
+			// Layer title
+			this._title = options.title ?
+				options.title
+				: (
+					visio.imageName ? (
+						visio.objectName ?  (
+							visio.imageName.replace(
+								/(\.fits)|(\.fit)|(\.fz)/g, ''
+							) + ' - ' + visio.objectName
+						) : visio.imageName
+					) : 'VisiOmatic'
+				);
 
 			// Images
 			images = meta.images;
