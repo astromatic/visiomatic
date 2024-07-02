@@ -38497,13 +38497,27 @@
         "snapimage",
         "Snap the image within the current frame",
         function(event) {
-          const latlng = map4.getCenter(), bounds3 = map4.getPixelBounds(), wcs2 = map4.options.crs, z = map4.getZoom(), zfac = z < visio.maxZoom ? Math.pow(2, visio.maxZoom - z) : 1;
-          hiddenlink.href = this._layer._url.replace(/\&.*$/g, "") + "&RGN=" + zfac * bounds3.min.x + "," + zfac * bounds3.min.y + ":" + zfac * bounds3.max.x + "," + zfac * bounds3.max.y + "&BIN=" + (this._snapType ? zfac.toFixed(0) : 1);
-          hiddenlink.download = visio.imageName.replace(
-            /(\.fits)|(\.fit)|(\.fz)/g,
-            ""
-          ) + "_" + wcs2.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, "") + ".jpg";
-          hiddenlink.click();
+          const latlng = map4.getCenter(), bounds3 = map4.getPixelBounds(), wcs2 = map4.options.crs, z = map4.getZoom(), binfac = Math.pow(2, visio.maxZoom - z), bin = binfac > 1 ? binfac : 1;
+          fetch(
+            layer.getTileSettingsURL() + "&RGN=" + (binfac * bounds3.min.x).toFixed(0) + "," + (binfac * bounds3.min.y).toFixed(0) + ":" + (binfac * bounds3.max.x).toFixed(0) + "," + (binfac * bounds3.max.y).toFixed(0) + "&BIN=" + (this._snapType ? 1 : bin.toFixed(0))
+          ).then(
+            (res) => res.status === 200 ? res.blob() : Promise.reject(res)
+          ).then((blob) => {
+            hiddenlink.href = window.URL.createObjectURL(
+              new Blob([blob], { type: "image/jpg" })
+            );
+            hiddenlink.download = visio.imageName.replace(
+              /(\.fits)|(\.fit)|(\.fz)/g,
+              ""
+            ) + "_" + wcs2.latLngToHMSDMS(latlng).replace(
+              /[\s\:\.]/g,
+              ""
+            ) + ".jpg";
+            hiddenlink.click();
+          }).catch(async (res) => {
+            const json = await res.json();
+            alert("Error " + res.status + ": " + json.detail[0].msg + ".");
+          });
         }
       );
       document.body.appendChild(hiddenlink);
@@ -40093,8 +40107,8 @@
       tile2.coords = coords2;
       return tile2;
     },
-    getTileUrl: function(coords2) {
-      const visio = this.visio, visioDefault = this.visioDefault, z = this._getZoomForUrl();
+    getTileSettingsURL: function() {
+      const visio = this.visio, visioDefault = this.visioDefault;
       let str2 = this._url;
       if (visio.cMap !== visioDefault.cMap) {
         str2 += "&CMP=" + visio.cMap;
@@ -40141,7 +40155,11 @@
       if (visio.quality !== visioDefault.quality) {
         str2 += "&QLT=" + visio.quality.toString();
       }
-      return str2 + "&JTL=" + z.toString() + "," + (coords2.x + visio.gridSize[z].x * coords2.y).toString();
+      return str2;
+    },
+    getTileUrl: function(coords2) {
+      const visio = this.visio, visioDefault = this.visioDefault, z = this._getZoomForUrl();
+      return this.getTileSettingsURL() + "&JTL=" + z.toString() + "," + (coords2.x + visio.gridSize[z].x * coords2.y).toString();
     },
     _initTile: function(tile2) {
       import_leaflet32.DomUtil.addClass(tile2, "leaflet-tile");

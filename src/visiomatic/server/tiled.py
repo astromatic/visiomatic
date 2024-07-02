@@ -175,10 +175,13 @@ class Tiled(object):
             color_saturation: float | None = None,
             gamma : float | None = None,
             quality: int | None = None,
+            max_region_tile_count: int | None = None,
             nthreads : int | None = None):
 
         self.filename = path.abspath(filename)
         self.image_name = path.basename(filename)
+        self.max_region_tile_count = max_region_tile_count or \
+        	config.settings["max_region_tile_count"]
         self.nthreads = nthreads or (
             config.settings["thread_count"] if 'sphinx' not in modules else 4
         )
@@ -515,6 +518,8 @@ class Tiled(object):
                 	cv2.applyColorMap(ctile, colordict[colormap]),
                 	cv2.COLOR_BGR2RGB
                 )
+            else:
+                ctile = ctile[:, :, np.newaxis]
         else:
             cminmax = self.minmax
             if minmax:
@@ -666,6 +671,7 @@ class Tiled(object):
             brightness=self.brightness if brightness is None else brightness,
             contrast=self.contrast if contrast is None else contrast,
             gamma=self.gamma if gamma is None else gamma,
+            colormap=colormap,
             invert=invert
         )
 
@@ -684,7 +690,7 @@ class Tiled(object):
         ----------
         raster:  ~numpy.ndarray
             Input tile.
-       channel: int
+        channel: int, optional
             Data channel (first channel is 1)
         colormap: str, optional
             Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
@@ -696,34 +702,73 @@ class Tiled(object):
         tile: bytes
             JPEG bytestream of the tile.
         """
-        if channel and channel > self.nchannels:
-            channel = 1
         return encode_jpeg(
-            raster[:, :, None],
-            quality=self.quality if quality is None else quality,
-            colorspace='Gray'
-        ) if colormap=='grey' and channel else encode_jpeg(
             raster,
             quality=self.quality if quality is None else quality,
-            colorspace='RGB'
+            colorspace='Gray' if colormap=='grey' and channel else 'RGB'
         )
 
 
     @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
-    def get_encoded_tile(self, *args, **kwargs):
+    def get_encoded_tile(self,
+            *args,
+            channel: int | None = None,
+            colormap: str = 'grey',
+            quality: int | None = None,
+            **kwargs) -> bytes:
         """
-        Cached, encoded version of get_tile().
+        Return a JPEG bytestream of a specific image region by stitching
+        tiles that fall in that region.
+
+        Parameters
+        ----------
+        *args:
+            get_tile_raster() arguments.
+        channel: int, optional
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
+        quality: int, optional
+            JPEG quality (0-100)
+        **kwargs:
+            Additional get_tile_raster() keyword arguments.
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+
+        Raises
+        ------
+        IndexError: exception
+            An error occurred because of unexpected bounding box coordinates.
+            It is raised if any of the following occur:
+            - The number of requested region tiles exceeds max_region_tile_count.
+            - Bounding box coordinates are inconsistent.
         """
-        return self.encode(self.get_tile_raster(*args, **kwargs), **kwargs)
+        return self.encode(
+            self.get_tile_raster(
+                *args,
+                channel=channel,
+                colormap=colormap,
+                **kwargs
+            ),
+            channel=channel,
+            colormap=colormap,
+            quality=quality,
+            **kwargs
+        )
 
 
     def get_encoded_region(
             self,
             bounds: Tuple[Tuple[int, int], Tuple[int, int]],
             binning: int = 1,
+            channel: int | None = None,
+            colormap: str = 'grey',
             **kwargs) -> bytes:
         """
-        Generate a JPEG bytestream from a specific image region by stitching
+        Return a JPEG bytestream of a specific image region by stitching
         tiles that fall in that region.
 
         Parameters
@@ -732,14 +777,29 @@ class Tiled(object):
             Image boundaries in pixels.
         binning: int, optional
             Binning factor per axis, in pixels.
+        channel: int, optional
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
         **kwargs:
-            get_tile_raster() and encode() keyword arguments.
+            Additional get_tile_raster() and encode() keyword arguments.
 
         Returns
         -------
         tile: bytes
             JPEG bytestream of the tile.
+
+        Raises
+        ------
+        IndexError: exception
+            An error occurred because of unexpected bounding box coordinates.
+            It is raised if any of the following occur:
+            - The number of requested region tiles exceeds max_region_tile_count.
+            - Bounding box coordinates are inconsistent.
         """
+        if channel and channel > self.nchannels:
+            channel = 1
+        color = not (colormap=='grey' and channel)
         level = binning.bit_length() - 1
         # Compute sub-tile margins to be trimmed around the tiled region
         xmin = (bounds[0][0] - 1) >> level
@@ -773,17 +833,31 @@ class Tiled(object):
         else:
             rymax = self.tile_shape[1] - (ymax % self.tile_shape[1])
 
+        if txmax <= txmin or tymax <= tymin:
+            raise IndexError(
+                "Inconsistent region bounding box coordinates"
+            )
         tile_grid = np.mgrid[tymin:tymax, txmin:txmax]
-
+        if tile_grid[0].size > self.max_region_tile_count:
+            raise IndexError(
+                "The requested image size exceeds the server limit of "
+                f"{self.max_region_tile_count} tile"
+                f"{'s' if self.max_region_tile_count > 1 else ''}."
+                "Please zoom in or increase image binning"
+            )
         merger = Merger(
             Tiler(
                 data_shape = (
                     (tymax - tymin) * self.tile_shape[1],
                     (txmax - txmin) * self.tile_shape[2],
-                    3
+                    3 if color else 1
                 ),
-                tile_shape = (self.tile_shape[1], self.tile_shape[2], 3),
-                mode='constant',
+                tile_shape = (
+                    self.tile_shape[1],
+                    self.tile_shape[2],
+                    3 if color else 1
+                ),
+                mode='irregular',
                 channel_dimension=2
             )
         )
@@ -794,6 +868,8 @@ class Tiled(object):
                 self.get_tile_raster(
                     level,
                     tile_id,
+                    channel=channel,
+                    colormap=colormap,
                     **kwargs
                 )
             )
@@ -801,6 +877,8 @@ class Tiled(object):
             np.ascontiguousarray(
                 merger.merge().astype(np.uint8)[rymin:-rymax, rxmin:-rxmax, :]
             ),
+            channel=channel,
+            colormap=colormap,
             **kwargs
         )
 

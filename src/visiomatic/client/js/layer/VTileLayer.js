@@ -460,7 +460,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 					visio.imageName ? (
 						visio.objectName ?  (
 							visio.imageName.replace(
-								/(\.fits)|(\.fit)|(\.fz)/g, ''
+								/(\.fits)|(\.fit)|(\.fz)/g,
+								''
 							) + ' - ' + visio.objectName
 						) : visio.imageName
 					) : 'VisiOmatic'
@@ -468,7 +469,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Images
 			images = meta.images;
-			
+
 			// Background level and MAD values
 			for (let c = 0; c < nchannel; c++) {
 				visio.backgroundLevel[c] = images[0].background_level[c];
@@ -914,17 +915,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
-	 * Generate a tile URL from its coordinates
-	 * @override
-	 * @param {point} coords - Tile coordinates.
-	 * @return {string} The tile URL.
+	 * Generate the settings part of a tile query URL based on current settings.
+	 * @return {string} The tile settings URL.
 	 */
-	getTileUrl: function (coords) {
+    getTileSettingsURL: function() {
 		const	visio = this.visio,
-			visioDefault = this.visioDefault,
-			z = this._getZoomForUrl();
-		let	str = this._url;
+			visioDefault = this.visioDefault;
 
+		let	str = this._url;
 
 		if (visio.cMap !== visioDefault.cMap) {
 			str += '&CMP=' + visio.cMap;
@@ -981,7 +979,22 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.quality !== visioDefault.quality) {
 			str += '&QLT=' + visio.quality.toString();
 		}
-		return str + '&JTL=' + z.toString() + ',' +
+
+		return str;
+	},
+
+	/**
+	 * Generate a tile URL from its coordinates
+	 * @override
+	 * @param {point} coords - Tile coordinates.
+	 * @return {string} The tile URL.
+	 */
+	getTileUrl: function (coords) {
+		const	visio = this.visio,
+			visioDefault = this.visioDefault,
+			z = this._getZoomForUrl();
+
+		return this.getTileSettingsURL() + '&JTL=' + z.toString() + ',' +
 		 (coords.x + visio.gridSize[z].x * coords.y).toString();
 	},
 

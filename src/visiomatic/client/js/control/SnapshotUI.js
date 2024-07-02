@@ -81,33 +81,44 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 		const	hiddenlink = document.createElement('a'),
 			elem2 = this._addDialogElement(line),
 			button = this._addButton(
-			className + '-button',
-			elem2,
-			'snapimage',
-			'Snap the image within the current frame',
-			function (event) {
-				const	latlng = map.getCenter(),
-					bounds = map.getPixelBounds(),
-					wcs = map.options.crs,
-					z = map.getZoom(),
-					zfac = z < visio.maxZoom ?
-						Math.pow(2, visio.maxZoom - z) : 1;
-				hiddenlink.href = this._layer._url.replace(/\&.*$/g, '') +
-					'&RGN=' +
-					zfac * bounds.min.x + ',' +
-					zfac * bounds.min.y + ':' +
-					zfac * bounds.max.x + ',' +
-					zfac * bounds.max.y +
-					'&BIN=' + (this._snapType ? zfac.toFixed(0) : 1)
-
-
-				hiddenlink.download = visio.imageName.replace(
-					/(\.fits)|(\.fit)|(\.fz)/g, ''
-				) + '_' + wcs.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-					'.jpg';
-				hiddenlink.click();
-			}
-		);
+				className + '-button',
+				elem2,
+				'snapimage',
+				'Snap the image within the current frame',
+				function (event) {
+					const	latlng = map.getCenter(),
+						bounds = map.getPixelBounds(),
+						wcs = map.options.crs,
+						z = map.getZoom(),
+						binfac = Math.pow(2, visio.maxZoom - z),
+						bin = binfac > 1 ? binfac : 1;
+            	   	fetch(
+                		layer.getTileSettingsURL() + '&RGN=' +
+						(binfac * bounds.min.x).toFixed(0) + ',' +
+						(binfac * bounds.min.y).toFixed(0) + ':' +
+						(binfac * bounds.max.x).toFixed(0) + ',' +
+						(binfac * bounds.max.y).toFixed(0) +
+						'&BIN=' + (this._snapType ? 1 : bin.toFixed(0))
+					).then((res) => res.status === 200 ?
+						res.blob() : Promise.reject(res)
+					).then((blob) => {
+						hiddenlink.href = window.URL.createObjectURL(
+							new Blob([blob], {type: "image/jpg"})
+						);
+						hiddenlink.download = visio.imageName.replace(
+							/(\.fits)|(\.fit)|(\.fz)/g,
+							''
+						) + '_' + wcs.latLngToHMSDMS(latlng).replace(
+							/[\s\:\.]/g,
+							'') + '.jpg';
+						hiddenlink.click();
+		        	}).catch(async (res) => {
+		        		const	json = await res.json();
+						alert('Error ' + res.status + ': ' +
+							json.detail[0].msg + '.');
+					});
+				}
+			);
 
 		document.body.appendChild(hiddenlink);
 

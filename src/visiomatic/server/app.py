@@ -421,24 +421,36 @@ def create_app() -> FastAPI:
                 invert=(INV is not None),
                 quality=QLT
             )
+            if lock:
+                lock.release_read()
         else:
             # has to be an image region
             val = parse_pfl.findall(RGN)[0]
-            pix = tiled.get_encoded_region(
-                ((int(val[0]), int(val[1])), (int(val[2]), int(val[3]))),
-                BIN,
-                channel=CHAN[0] if CHAN else CHAN,
-                minmax=minmax,
-                mix=mix,
-                brightness=BRT,
-                contrast=CNT,
-                gamma=GAM,
-                colormap=CMP,
-                invert=(INV is not None),
-                quality=QLT
-            )
-        if lock:
-            lock.release_read()
+            try:
+                pix = tiled.get_encoded_region(
+                    ((int(val[0]), int(val[1])), (int(val[2]), int(val[3]))),
+                    BIN,
+                    channel=CHAN[0] if CHAN else CHAN,
+                    minmax=minmax,
+                    mix=mix,
+                    brightness=BRT,
+                    contrast=CNT,
+                    gamma=GAM,
+                    colormap=CMP,
+                    invert=(INV is not None),
+                   quality=QLT
+               )
+            except Exception as err:
+                raise HTTPException(
+                    status_code=501,
+                    detail=[{
+                        "loc": ["query", "RGN"],
+                        "msg": str(err)
+                    }]
+                )
+            finally:
+                if lock:
+                    lock.release_read()
         return responses.StreamingResponse(
             io.BytesIO(pix),
             media_type="image/jpg"
