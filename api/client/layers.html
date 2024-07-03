@@ -109,7 +109,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- URL of the tile server</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
-<li><p><strong>options.title</strong> (<em>string</em>) -- Layer title. Defaults to the basename of the tile URL with extension removed.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Layer title. Defaults to the image filename with extension removed followed  by the OBJECT name if available.</p></li>
+<li><p><strong>options.setTitleBar</strong> (<em>boolean</em>) -- Update the document / webpage title using the layer title.</p></li>
 <li><p><strong>options.crs</strong> (<em>leaflet.CRS|WCS</em>) -- Coordinate Reference or World Coordinate System: extracted from the data header if available or raw pixel coordinates otherwise.</p></li>
 <li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- True if native coordinates (e.g., galactic coordinates) are to be used instead of equatorial coordinates.</p></li>
 <li><p><strong>options.center</strong> (<em>string</em>) -- World coordinates (either in RA,Dec decimal form or in <code class="docutils literal notranslate"><span class="pre">hh:mm:ss.s±dd:mm:ss.s</span></code> sexagesimal  format), or any [Sesame]{&#64;link <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Sesame">http://cds.u-strasbg.fr/cgi-bin/Sesame</a>}-compliant identifier defining the initial centering of the map upon layer initialization. Sexagesimal coordinates and identifier strings are sent to the Sesame resolver service for conversion to decimal coordinates. Assume x,y pixel coordinates if WCS information is missing. Defaults to image center.</p></li>
@@ -131,7 +132,7 @@
 <li><p><strong>options.channelLabelMatch</strong> (<em>string</em>) -- Regular expression matching the labels of channels that are given a color by default.</p></li>
 <li><p><strong>options.channelUnits</strong> (<em>Array.&lt;string&gt;</em>) -- Channel units. Defaults to <code class="docutils literal notranslate"><span class="pre">['ADU','ADU',...]</span></code>.</p></li>
 <li><p><strong>options.minMaxValues</strong> (<em>Array.&lt;Array.&lt;number&gt;&gt;</em>) -- Pairs of lower, higher clipping limits for every channel. Defaults to values extracted from the data header if available or <code class="docutils literal notranslate"><span class="pre">[[0.,255.],</span> <span class="pre">[0.,255.],</span> <span class="pre">...]</span></code> otherwise.</p></li>
-<li><p><strong>options.channel</strong> (<em>number</em>) -- Default active channel index in mono-channel mode.</p></li>
+<li><p><strong>options.channel</strong> (<em>number</em>) -- Default active channel index in mono-channel mixing mode.</p></li>
 <li><p><strong>options.framerate</strong> (<em>number</em>) -- Default animation framerate.</p></li>
 <li><p><strong>options.sesameURL</strong> (<em>string</em>) -- URL of the [Sesame]{&#64;link <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Sesame">http://cds.u-strasbg.fr/cgi-bin/Sesame</a>} resolver service.</p></li>
 <li><p><strong>options.credentials</strong> (<em>string</em>) -- For future use.</p></li>
@@ -338,6 +339,17 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- The full tile URL.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="VTileLayer.getTileSettingsURL">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">VTileLayer</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getTileSettingsURL</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VTileLayer.getTileSettingsURL" title="Link to this definition"></a></dt>
+<dd><p>Generate the settings part of a tile query URL based on current settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> -- The tile settings URL.</p>
 </dd>
 </dl>
 </dd></dl>

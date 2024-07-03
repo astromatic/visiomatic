@@ -80,50 +80,54 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Configuration settings for the application.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1"># Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay</span>
+<span class="c1"># Copyright UParisSaclay/CEA/CFHT/CNRS</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BaseSettings</span><span class="p">,</span>
-    <span class="n">Field</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">pydantic_settings</span> <span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
+
+<span class="k">def</span> <span class="nf">SField</span><span class="p">(</span><span class="n">short</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+     <span class="k">return</span> <span class="n">Field</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;short&#39;</span><span class="p">:</span> <span class="n">short</span><span class="p">})</span>
 
 <div class="viewcode-block" id="HostSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.HostSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">HostSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Host name or IP address&quot;</span>
         <span class="p">)</span>
-    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;p&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">8009</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mi">65535</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Port&quot;</span>
         <span class="p">)</span>
-    <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;R&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ASGI root_path&quot;</span>
         <span class="p">)</span>
-    <span class="n">access_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">access_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Display access log&quot;</span>
         <span class="p">)</span>
-    <span class="n">reload</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">reload</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Enable auto-reload (turns off multiple workers)&quot;</span>
         <span class="p">)</span>
-    <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">4</span> <span class="k">if</span> <span class="n">package</span><span class="o">.</span><span class="n">isonlinux</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -139,40 +143,40 @@
 <div class="viewcode-block" id="ImageSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.ImageSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ImageSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=-</span><span class="mf">100.</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default image brightness&quot;</span>
         <span class="p">)</span>
-    <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default image contrast&quot;</span>
         <span class="p">)</span>
-    <span class="n">color_saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">color_saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default color saturation&quot;</span>
         <span class="p">)</span>
-    <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default image gamma&quot;</span>
         <span class="p">)</span>
-    <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default image compression quality in </span><span class="si">%%</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-    <span class="n">tile_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">tile_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
-        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">le</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">le</span><span class="o">=</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span> <span class="mi">4096</span><span class="p">),</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Tile size&quot;</span>
         <span class="p">)</span>
 
@@ -185,48 +189,53 @@
 <div class="viewcode-block" id="ServerSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.ServerSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">ServerSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">api_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">api_path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;/api&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint URL for the webservice API&quot;</span>
         <span class="p">)</span>
-    <span class="n">banner_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">banner_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;banner.html&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the HTML template file for the service banner&quot;</span>
         <span class="p">)</span>
-    <span class="n">base_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">base_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;base.html&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the HTML template file for the web client&quot;</span>
         <span class="p">)</span>
-    <span class="n">client_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">client_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">src_dir</span><span class="p">,</span> <span class="s2">&quot;client&quot;</span><span class="p">),</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Directory containing the web client code, style and media&quot;</span>
         <span class="p">)</span>
-    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data root directory&quot;</span>
         <span class="p">)</span>
-    <span class="n">doc_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">doc_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">root_dir</span><span class="p">,</span> <span class="s2">&quot;doc/html&quot;</span><span class="p">),</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;HTML documentation root directory (after build)&quot;</span>
         <span class="p">)</span>
-    <span class="n">doc_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">doc_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;/manual&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint URL for the root of the HTML documentation&quot;</span>
         <span class="p">)</span>
-    <span class="n">extra_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">extra_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Extra data root directory&quot;</span>
         <span class="p">)</span>
-    <span class="n">no_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">max_region_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of image tiles per snapshot&quot;</span>
+        <span class="p">)</span>
+    <span class="n">no_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Do not start browser when providing image file&quot;</span>
         <span class="p">)</span>
-    <span class="n">template_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">template_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">src_dir</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">),</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Directory containing templates&quot;</span>
         <span class="p">)</span>
-    <span class="n">userdoc_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">userdoc_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">doc_path</span><span class="o">.</span><span class="n">default</span> <span class="o">+</span> <span class="s2">&quot;/interface.html&quot;</span><span class="p">,</span> <span class="c1">#type: ignore</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint URL for the user&#39;s HTML documentation&quot;</span>
         <span class="p">)</span>
@@ -243,7 +252,7 @@
 <div class="viewcode-block" id="EngineSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.EngineSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">EngineSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">thread_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">thread_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">ncpu</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">ncpu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -260,32 +269,32 @@
 <div class="viewcode-block" id="CacheSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.CacheSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">CacheSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Image cache directory&quot;</span>
         <span class="p">)</span>
-    <span class="n">clear_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">clear_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Clear image cache on startup&quot;</span>
         <span class="p">)</span>
-    <span class="n">max_cache_image_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">max_cache_image_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of images in disk cache&quot;</span>
         <span class="p">)</span>
-    <span class="n">max_cache_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">max_cache_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of image tiles in memory cache&quot;</span>
         <span class="p">)</span>
-    <span class="n">max_open_files</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">max_open_files</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">le</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum number of open files&quot;</span>
         <span class="p">)</span>
-    <span class="n">ultradict_cache_file</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">ultradict_cache_file</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;/dev/shm/visiomatic_cache_dict.pkl&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the pickled cache dictionary shared across processes&quot;</span>
         <span class="p">)</span>
@@ -299,11 +308,11 @@
 <div class="viewcode-block" id="AppSettings">
 <a class="viewcode-back" href="../../../api/server/settings.html#visiomatic.server.settings.AppSettings">[docs]</a>
 <span class="k">class</span> <span class="nc">AppSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="n">host</span> <span class="o">=</span> <span class="n">HostSettings</span><span class="p">()</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">ImageSettings</span><span class="p">()</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">ServerSettings</span><span class="p">()</span>
-    <span class="n">engine</span> <span class="o">=</span> <span class="n">EngineSettings</span><span class="p">()</span>
-    <span class="n">cache</span> <span class="o">=</span> <span class="n">CacheSettings</span><span class="p">()</span></div>
+    <span class="n">host</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">HostSettings</span><span class="p">()</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">ImageSettings</span><span class="p">()</span>
+    <span class="n">server</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">ServerSettings</span><span class="p">()</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">EngineSettings</span><span class="p">()</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">CacheSettings</span><span class="p">()</span></div>
 
 
 
