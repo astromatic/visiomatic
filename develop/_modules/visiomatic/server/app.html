@@ -134,9 +134,12 @@
 <span class="c1"># MIX (mixing matrix)</span>
 <span class="n">reg_mix</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$&quot;</span>
 <span class="n">parse_mix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">reg_mix</span><span class="p">)</span> 
-<span class="c1"># PFL (image profile(s)</span>
+<span class="c1"># PFL (image profile(s))</span>
 <span class="n">reg_pfl</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$&quot;</span>
 <span class="n">parse_pfl</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">reg_pfl</span><span class="p">)</span>
+<span class="c1"># RGN (image region)</span>
+<span class="n">reg_rgn</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$&quot;</span>
+<span class="n">parse_rgn</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">reg_rgn</span><span class="p">)</span>
 <span class="c1"># VAL (pixel value(s)</span>
 <span class="n">reg_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([+-]?\d+),([+-]?\d+)$&quot;</span>
 <span class="n">parse_val</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">reg_val</span><span class="p">)</span>
@@ -283,6 +286,12 @@
                 <span class="kc">None</span><span class="p">,</span>
                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Get image information instead of a tile&quot;</span>
                 <span class="p">),</span>
+            <span class="n">BIN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Pixel Binning size&quot;</span><span class="p">,</span>
+                <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">le</span><span class="o">=</span><span class="mi">65536</span>
+                <span class="p">),</span>
             <span class="n">CHAN</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Query</span><span class="p">(</span>
                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Channel index (mono-channel mode) or indices (measurements)&quot;</span>
                 <span class="p">)]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -356,6 +365,13 @@
                 <span class="n">min_length</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
                 <span class="n">max_length</span><span class="o">=</span><span class="mi">39</span><span class="p">,</span>
                 <span class="n">pattern</span><span class="o">=</span><span class="n">reg_pfl</span>
+                <span class="p">),</span>
+            <span class="n">RGN</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Get image region&quot;</span><span class="p">,</span> 
+                <span class="n">min_length</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                <span class="n">max_length</span><span class="o">=</span><span class="mi">39</span><span class="p">,</span>
+                <span class="n">pattern</span><span class="o">=</span><span class="n">reg_rgn</span>
                 <span class="p">),</span>
             <span class="n">VAL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span>
                 <span class="kc">None</span><span class="p">,</span>
@@ -439,7 +455,8 @@
             <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
                 <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">responses</span><span class="o">.</span><span class="n">JSONResponse</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">jsonable_encoder</span><span class="p">(</span><span class="n">resp</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">JTL</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">JTL</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">RGN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># No image data: return</span>
             <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
                 <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
             <span class="k">return</span>
@@ -465,26 +482,56 @@
                     <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
                 <span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">resp</span>
             <span class="p">)</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="n">parse_jtl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">JTL</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">tl</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">tl</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">tl</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">ti</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">pix</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">get_tile_cached</span><span class="p">(</span>
-            <span class="n">tl</span><span class="p">,</span>
-            <span class="n">ti</span><span class="p">,</span>
-            <span class="n">channel</span><span class="o">=</span><span class="n">CHAN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">CHAN</span> <span class="k">else</span> <span class="n">CHAN</span><span class="p">,</span>
-            <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
-            <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
-            <span class="n">brightness</span><span class="o">=</span><span class="n">BRT</span><span class="p">,</span>
-            <span class="n">contrast</span><span class="o">=</span><span class="n">CNT</span><span class="p">,</span>
-            <span class="n">gamma</span><span class="o">=</span><span class="n">GAM</span><span class="p">,</span>
-            <span class="n">colormap</span><span class="o">=</span><span class="n">CMP</span><span class="p">,</span>
-            <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
-            <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
-            <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">JTL</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Regular image tile</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">parse_jtl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">JTL</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tl</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">tl</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tl</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">pix</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">get_encoded_tile</span><span class="p">(</span>
+                <span class="n">tl</span><span class="p">,</span>
+                <span class="n">ti</span><span class="p">,</span>
+                <span class="n">channel</span><span class="o">=</span><span class="n">CHAN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">CHAN</span> <span class="k">else</span> <span class="n">CHAN</span><span class="p">,</span>
+                <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
+                <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
+                <span class="n">brightness</span><span class="o">=</span><span class="n">BRT</span><span class="p">,</span>
+                <span class="n">contrast</span><span class="o">=</span><span class="n">CNT</span><span class="p">,</span>
+                <span class="n">gamma</span><span class="o">=</span><span class="n">GAM</span><span class="p">,</span>
+                <span class="n">colormap</span><span class="o">=</span><span class="n">CMP</span><span class="p">,</span>
+                <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+                <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># has to be an image region</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">parse_pfl</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">RGN</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pix</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">get_encoded_region</span><span class="p">(</span>
+                    <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">3</span><span class="p">]))),</span>
+                    <span class="n">BIN</span><span class="p">,</span>
+                    <span class="n">channel</span><span class="o">=</span><span class="n">CHAN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">CHAN</span> <span class="k">else</span> <span class="n">CHAN</span><span class="p">,</span>
+                    <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
+                    <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
+                    <span class="n">brightness</span><span class="o">=</span><span class="n">BRT</span><span class="p">,</span>
+                    <span class="n">contrast</span><span class="o">=</span><span class="n">CNT</span><span class="p">,</span>
+                    <span class="n">gamma</span><span class="o">=</span><span class="n">GAM</span><span class="p">,</span>
+                    <span class="n">colormap</span><span class="o">=</span><span class="n">CMP</span><span class="p">,</span>
+                    <span class="n">invert</span><span class="o">=</span><span class="p">(</span><span class="n">INV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+                   <span class="n">quality</span><span class="o">=</span><span class="n">QLT</span>
+               <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                    <span class="n">status_code</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span>
+                    <span class="n">detail</span><span class="o">=</span><span class="p">[{</span>
+                        <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="s2">&quot;RGN&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                    <span class="p">}]</span>
+                <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+                    <span class="n">lock</span><span class="o">.</span><span class="n">release_read</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">responses</span><span class="o">.</span><span class="n">StreamingResponse</span><span class="p">(</span>
             <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pix</span><span class="p">),</span>
             <span class="n">media_type</span><span class="o">=</span><span class="s2">&quot;image/jpg&quot;</span>
