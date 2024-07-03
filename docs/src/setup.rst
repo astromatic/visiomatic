@@ -239,6 +239,10 @@ Server options configure various aspects of the web server and its endpoints.
   Provide an additional directory for storing extra data.
   The default is the current directory (:param:`.`).
 
+:param:`max_region_tile_count` `integer`
+  Set the maximum number of image tiles per snapshot.
+  The default is :param:`1024`.
+
 :param:`no_browser`
   Use this option to prevent the automatic opening of a web browser when an image filename is provided.
 

@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -251,6 +251,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		 * VisiOmatic-specific TileLayer properties.
 		 * @type {object}
 		 * @instance
+		 * @property {string} imageName
+		   Image name (e.g., a filename).
+		 * @property {string} objectName
+		   Object name.
 		 * @property {number[][]} imageSize
 		   Image sizes at every resolution.
 		 * @property {object[]} gridSize
@@ -303,6 +307,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current animation framerate.
     	 */
 		this.visio = {
+			imageName: "",
+			objectName: "",
 			imageSize: [[this.tileSize]],
 			gridSize: [{x: 1, y: 1}],
 			bpp: 8,
@@ -329,8 +335,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			quality: options.quality,
 			framerate: options.framerate
 		}
-		this._title = options.title ? options.title :
-		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getMetaData(this._url);
 
 		// for https://github.com/Leaflet/Leaflet/issues/137
@@ -439,9 +443,33 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				visio.framerate = visioDefault.framerate;
 			}
 
+			// Image filename
+			if (meta.image_name) {
+				visio.imageName = meta.image_name;
+			}
+
+			// Object name
+			if (meta.object_name) {
+				visio.objectName = meta.object_name;
+			}
+
+			// Layer title
+			this._title = options.title ?
+				options.title
+				: (
+					visio.imageName ? (
+						visio.objectName ?  (
+							visio.imageName.replace(
+								/(\.fits)|(\.fit)|(\.fz)/g,
+								''
+							) + ' - ' + visio.objectName
+						) : visio.imageName
+					) : 'VisiOmatic'
+				);
+
 			// Images
 			images = meta.images;
-			
+
 			// Background level and MAD values
 			for (let c = 0; c < nchannel; c++) {
 				visio.backgroundLevel[c] = images[0].background_level[c];
@@ -887,17 +915,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
-	 * Generate a tile URL from its coordinates
-	 * @override
-	 * @param {point} coords - Tile coordinates.
-	 * @return {string} The tile URL.
+	 * Generate the settings part of a tile query URL based on current settings.
+	 * @return {string} The tile settings URL.
 	 */
-	getTileUrl: function (coords) {
+	getTileSettingsURL: function() {
 		const	visio = this.visio,
-			visioDefault = this.visioDefault,
-			z = this._getZoomForUrl();
-		let	str = this._url;
+			visioDefault = this.visioDefault;
 
+		let	str = this._url;
 
 		if (visio.cMap !== visioDefault.cMap) {
 			str += '&CMP=' + visio.cMap;
@@ -954,7 +979,22 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.quality !== visioDefault.quality) {
 			str += '&QLT=' + visio.quality.toString();
 		}
-		return str + '&JTL=' + z.toString() + ',' +
+
+		return str;
+	},
+
+	/**
+	 * Generate a tile URL from its coordinates
+	 * @override
+	 * @param {point} coords - Tile coordinates.
+	 * @return {string} The tile URL.
+	 */
+	getTileUrl: function (coords) {
+		const	visio = this.visio,
+			visioDefault = this.visioDefault,
+			z = this._getZoomForUrl();
+
+		return this.getTileSettingsURL() + '&JTL=' + z.toString() + ',' +
 		 (coords.x + visio.gridSize[z].x * coords.y).toString();
 	},
 
