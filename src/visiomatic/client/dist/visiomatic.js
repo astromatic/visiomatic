@@ -39675,6 +39675,7 @@
   var VTileLayer = import_leaflet32.TileLayer.extend({
     options: {
       title: null,
+      setTitleBar: false,
       crs: null,
       nativeCelSys: false,
       center: null,
@@ -39849,6 +39850,9 @@
           /(\.fits)|(\.fit)|(\.fz)/g,
           ""
         ) + " - " + visio.objectName : visio.imageName : "VisiOmatic";
+        if (options.setTitleBar) {
+          document.title = this._title;
+        }
         images = meta.images;
         for (let c3 = 0; c3 < nchannel; c3++) {
           visio.backgroundLevel[c3] = images[0].background_level[c3];

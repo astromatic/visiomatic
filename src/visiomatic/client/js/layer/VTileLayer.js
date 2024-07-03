@@ -23,6 +23,7 @@ import {WCS} from '../crs';
 export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	options: {
 		title: null,
+		setTitleBar: false,
 		crs: null,
 		nativeCelSys: false,
 		center: null,
@@ -124,7 +125,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {object} [options] - Options.
 
 	 * @param {?string} [options.title=null]
-	   Layer title. Defaults to the basename of the tile URL with extension removed.
+	   Layer title. Defaults to the image filename with extension removed
+	   followed  by the OBJECT name if available.
+
+	 * @param {boolean} [options.setTitleBar=false]
+	   Update the document / webpage title using the layer title.
 
 	 * @param {?(leaflet.CRS|WCS)} [options.crs=null]
 	   Coordinate Reference or World Coordinate System: extracted from the data
@@ -466,6 +471,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 						) : visio.imageName
 					) : 'VisiOmatic'
 				);
+			// Update Title bar is requested
+			if (options.setTitleBar) {
+			    document.title = this._title;
+			}
 
 			// Images
 			images = meta.images;
