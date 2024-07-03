@@ -268,9 +268,16 @@ select.visiomatic-control-select {
 	width: 100%;
 }
 
+.visiomatic-control-select:first-child
+select.visiomatic-control-select {
+	border-bottom-left-radius: 4px;
+	border-top-left-radius: 4px;
+}
+
 .visiomatic-control-element:last-child
 select.visiomatic-control-select {
-	border-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-top-right-radius: 4px;
 }
 
 select.visiomatic-control-select:hover {
@@ -968,31 +975,43 @@ a#visiomatic-snapshot-toggle {
 	mask-image: url(../images/icon-camera.svg); -webkit-mask-image: url(../images/icon-camera.svg);
 }
 
-#visiomatic-control-button-snapshot {
-	border-radius: 4px 4px 4px 4px;
-}
-
-#visiomatic-control-button-snapshot > div {
-	mask-image: url(../images/icon-image.svg); -webkit-mask-image: url(../images/icon-image.svg);
-}
-
-#visiomatic-control-button-print {
-	border-radius: 4px 4px 4px 4px;
-}
-
-#visiomatic-control-button-print >div {
-	mask-image: url(../images/icon-print.svg); -webkit-mask-image: url(../images/icon-print.svg);
-}
-
 .sidebar.snapshot {
-	width: 224px;
+	width: 232px;
 }
 .sidebar-left.snapshot ~ .leaflet-left {
-	left: 238px;
+	left: 246px;
 }
 
 #visiomatic-snapshot div.visiomatic-control-select {
 	display: inline-block;
+}
+
+#visiomatic-control-button-snapimage {
+	width: 32px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#visiomatic-control-button-snapimage > div {
+	mask-image: url(../images/icon-image.svg); -webkit-mask-image: url(../images/icon-image.svg);
+}
+
+#visiomatic-control-button-printscreen {
+	width: 32px;
+	border-radius: 4px 0px 0px 4px;
+}
+
+#visiomatic-control-button-printscreen >div {
+	mask-image: url(../images/icon-print.svg); -webkit-mask-image: url(../images/icon-print.svg);
+}
+
+#visiomatic-control-button-snapscreen {
+	width: 32px;
+	margin-left: 4px;
+	border-radius: 0px 4px 4px 0px;
+}
+
+#visiomatic-control-button-snapscreen >div {
+	mask-image: url(../images/icon-image.svg); -webkit-mask-image: url(../images/icon-image.svg);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -1021,6 +1040,7 @@ a#visiomatic-doc-toggle {
 
 .sidebar.doc {
 	width: 530px;
+	max-width: 100%;
 }
 
 .sidebar-left.doc ~ .leaflet-left {

@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -23,6 +23,7 @@ import {WCS} from '../crs';
 export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	options: {
 		title: null,
+		setTitleBar: false,
 		crs: null,
 		nativeCelSys: false,
 		center: null,
@@ -124,7 +125,11 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {object} [options] - Options.
 
 	 * @param {?string} [options.title=null]
-	   Layer title. Defaults to the basename of the tile URL with extension removed.
+	   Layer title. Defaults to the image filename with extension removed
+	   followed  by the OBJECT name if available.
+
+	 * @param {boolean} [options.setTitleBar=false]
+	   Update the document / webpage title using the layer title.
 
 	 * @param {?(leaflet.CRS|WCS)} [options.crs=null]
 	   Coordinate Reference or World Coordinate System: extracted from the data
@@ -206,7 +211,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   ``[[0.,255.], [0.,255.], ...]`` otherwise.
 
 	 * @param {number} [options.channel=0]
-	   Default active channel index in mono-channel mode.
+	   Default active channel index in mono-channel mixing mode.
 
 	 * @param {number} options.framerate
 	   Default animation framerate.
@@ -251,6 +256,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		 * VisiOmatic-specific TileLayer properties.
 		 * @type {object}
 		 * @instance
+		 * @property {string} imageName
+		   Image name (e.g., a filename).
+		 * @property {string} objectName
+		   Object name.
 		 * @property {number[][]} imageSize
 		   Image sizes at every resolution.
 		 * @property {object[]} gridSize
@@ -303,6 +312,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current animation framerate.
     	 */
 		this.visio = {
+			imageName: "",
+			objectName: "",
 			imageSize: [[this.tileSize]],
 			gridSize: [{x: 1, y: 1}],
 			bpp: 8,
@@ -329,8 +340,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			quality: options.quality,
 			framerate: options.framerate
 		}
-		this._title = options.title ? options.title :
-		                this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getMetaData(this._url);
 
 		// for https://github.com/Leaflet/Leaflet/issues/137
@@ -439,9 +448,37 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				visio.framerate = visioDefault.framerate;
 			}
 
+			// Image filename
+			if (meta.image_name) {
+				visio.imageName = meta.image_name;
+			}
+
+			// Object name
+			if (meta.object_name) {
+				visio.objectName = meta.object_name;
+			}
+
+			// Layer title
+			this._title = options.title ?
+				options.title
+				: (
+					visio.imageName ? (
+						visio.objectName ?  (
+							visio.imageName.replace(
+								/(\.fits)|(\.fit)|(\.fz)/g,
+								''
+							) + ' - ' + visio.objectName
+						) : visio.imageName
+					) : 'VisiOmatic'
+				);
+			// Update Title bar is requested
+			if (options.setTitleBar) {
+			    document.title = this._title;
+			}
+
 			// Images
 			images = meta.images;
-			
+
 			// Background level and MAD values
 			for (let c = 0; c < nchannel; c++) {
 				visio.backgroundLevel[c] = images[0].background_level[c];
@@ -626,13 +663,13 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 	/**
 	 * @summary
-	   Switch the layer to ``'mono'`` mode for the current channel.
+	   Switch the layer to ``'mono'`` mixing mode for the current channel.
 	   @desc
 	   The current channel index defines the color mixing matrix elements in
 	   ``'mono'`` mode
 	 */
 	updateMono: function () {
-		this.visio.mode = 'mono';
+		this.visio.mixingMode = 'mono';
 	},
 
 	/**
@@ -648,7 +685,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	_this = layer ? layer : this,
 			visio = _this.visio;
 
-		visio.mode = 'color';
+		visio.mixingMode = 'color';
 		for (const c in visio.rgb) {
 			_this.rgbToMix(c);
 		}
@@ -887,17 +924,14 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
-	 * Generate a tile URL from its coordinates
-	 * @override
-	 * @param {point} coords - Tile coordinates.
-	 * @return {string} The tile URL.
+	 * Generate the settings part of a tile query URL based on current settings.
+	 * @return {string} The tile settings URL.
 	 */
-	getTileUrl: function (coords) {
+	getTileSettingsURL: function() {
 		const	visio = this.visio,
-			visioDefault = this.visioDefault,
-			z = this._getZoomForUrl();
-		let	str = this._url;
+			visioDefault = this.visioDefault;
 
+		let	str = this._url;
 
 		if (visio.cMap !== visioDefault.cMap) {
 			str += '&CMP=' + visio.cMap;
@@ -918,7 +952,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const nchannel = visio.nChannel,
 		    mix = visio.mix;
 
-		if (visio.mode === 'color') {
+		if (visio.mixingMode === 'color') {
 			for (let c = 0; c < visio.nChannel; c++) {
 				if (visio.minValue[c] !== visioDefault.minValue[c] ||
 				   visio.maxValue[c] !== visioDefault.maxValue[c]) {
@@ -954,7 +988,22 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.quality !== visioDefault.quality) {
 			str += '&QLT=' + visio.quality.toString();
 		}
-		return str + '&JTL=' + z.toString() + ',' +
+
+		return str;
+	},
+
+	/**
+	 * Generate a tile URL from its coordinates
+	 * @override
+	 * @param {point} coords - Tile coordinates.
+	 * @return {string} The tile URL.
+	 */
+	getTileUrl: function (coords) {
+		const	visio = this.visio,
+			visioDefault = this.visioDefault,
+			z = this._getZoomForUrl();
+
+		return this.getTileSettingsURL() + '&JTL=' + z.toString() + ',' +
 		 (coords.x + visio.gridSize[z].x * coords.y).toString();
 	},
 

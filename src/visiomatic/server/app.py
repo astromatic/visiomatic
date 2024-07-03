@@ -4,11 +4,13 @@ Application module
 # Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
+from __future__ import annotations
+
 import io, logging, pickle, re
 from glob import glob
 from os import getpid, getppid, path
 from sys import modules
-from typing import List, Literal, Optional, Union
+from typing import Annotated, List, Literal, Pattern
 
 import cv2
 from fastapi import FastAPI, Query, Request
@@ -18,6 +20,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 import numpy as np
+from pydantic import BeforeValidator
 
 from .. import package
 
@@ -35,6 +38,38 @@ from .cache import LRUCache, LRUSharedRWCache
 
 # True with multiple workers (multiprocessing).
 shared = config.settings["workers"] > 1 and not config.settings["reload"]
+
+# Prepare the RegExps; note that those with non-capturing groups do not
+# work with Rust
+# FIF (image filenames): discard filenames with ..
+# JTL (tile indices)
+reg_fif = r"(?!\.\.)(^.*$)"
+parse_fif = re.compile(reg_fif)
+reg_jtl = r"^(\d+),(\d+)$"
+parse_jtl = re.compile(reg_jtl)
+# MINMAX (intensity range)
+reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
+    r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
+    r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
+parse_minmax = re.compile(reg_minmax)
+# MIX (mixing matrix)
+reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
+parse_mix = re.compile(reg_mix) 
+# PFL (image profile(s))
+reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
+parse_pfl = re.compile(reg_pfl)
+# RGN (image region)
+reg_rgn = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
+parse_rgn = re.compile(reg_rgn)
+# VAL (pixel value(s)
+reg_val = r"^([+-]?\d+),([+-]?\d+)$"
+parse_val = re.compile(reg_val)
+
+def validate_pattern(s: str, pattern):
+    if not pattern.match(s):
+        raise ValueError(f"string does not match {pattern} pattern")
+    return s
+
 
 def create_app() -> FastAPI:
     """
@@ -93,9 +128,9 @@ def create_app() -> FastAPI:
         description=package.description,
         version=package.version,
         contact={
-            "name":  f"{package.contact_name} ({package.contact_affiliation})",
+            "name":  f"{package.contact['name']} ({package.contact['affiliation']})",
             "url":   package.url,
-            "email": package.contact_email
+            "email": package.contact['email']
         },
         license_info={
             "name": package.license_name,
@@ -153,47 +188,32 @@ def create_app() -> FastAPI:
         directory=path.join(package.src_dir, template_dir)
     )
 
-    # Prepare the RegExps
-    # FIF (image filenames): discard filenames with ..
-    reg_fif = r"(?!\.\.)(^.*$)"
-    # JTL (tile indices)
-    reg_jtl = r"^(\d+),(\d+)$"
-    parse_jtl = re.compile(reg_jtl)
-    # MINMAX (intensity range)
-    reg_minmax = r"^(\d+):([+-]?(?:\d+(?:[.]\d*)?(?:[eE][+-]?\d+)?" \
-        r"|[.]\d+(?:[eE][+-]?\d+)?)),([+-]?(?:\d+([.]\d*)" \
-        r"?(?:[eE][+-]?\d+)?|[.]\d+(?:[eE][+-]?\d+)?))$"
-    parse_minmax = re.compile(reg_minmax)
-    # MIX (mixing matrix)
-    reg_mix = r"^(\d+):([+-]?\d+\.?\d*),([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$"
-    parse_mix = re.compile(reg_mix) 
-    # PFL (image profile(s)
-    reg_pfl = r"^([+-]?\d+),([+-]?\d+):([+-]?\d+),([+-]?\d+)$"
-    parse_pfl = re.compile(reg_pfl)
-    # VAL (pixel value(s)
-    reg_val = r"^([+-]?\d+),([+-]?\d+)$"
-    parse_val = re.compile(reg_val)
-
     # Tile endpoint
     @app.get(api_path, tags=["services"])
     async def read_visio(
             request: Request,
-            FIF: str = Query(
-                None,
-                title="Image filename",
-                min_length=1,
-                max_length=1024,
-                regex=reg_fif
-                ),
+            FIF: Annotated[
+                str | None,
+                # Trick to use a true Python regexp instead of Rust's
+                BeforeValidator(lambda s: validate_pattern(s, parse_fif)),
+                Query(
+                    title="Image filename",
+                    min_length=1,
+                     max_length=1024
+                )] = None,
             obj: str = Query(
                 None,
                 title="Get image information instead of a tile"
                 ),
-            CHAN: list[int] =  Query(
-                None,
-                title="Channel index (mono-channel mode) or indices (measurements)",
-                ge=0
+            BIN: int = Query(
+                1,
+                title="Pixel Binning size",
+                ge=1,
+                le=65536
                 ),
+            CHAN: Annotated[List[int] | None, Query(
+                title="Channel index (mono-channel mode) or indices (measurements)"
+                )] = None,
             CMP: Literal[tuple(colordict.keys())] = Query( #type: ignore
                 'grey',
                 title="Name of the colormap"
@@ -235,35 +255,49 @@ def create_app() -> FastAPI:
                 title="Tile coordinates",
                 min_length=3,
                 max_length=14,
-                regex=reg_jtl
                 ),
-            MINMAX: list[str] = Query(
+            MINMAX: Annotated[
+            	list[str] | None,
+                # Trick to use a true Python regexp instead of Rust's
+                # on a list of strings
+                BeforeValidator(
+                    lambda l: [validate_pattern(s, parse_minmax) for s in l]),
+                Query(
+                    title="Modified minimum and Maximum intensity ranges",
+                    min_length=1,
+                    max_length=100
+                )] = None,
+            MIX: Annotated[
+                list[str] | None,
+                # Trick to use a true Python regexp instead of Rust's
+                # on a list of strings
+                BeforeValidator(
+                    lambda l: [validate_pattern(s, parse_mix) for s in l]),
+                Query(
+                    title="Slice of the mixing matrix",
+                    min_length=1,
+                    max_length=100
+                )] = None,
+            PFL: str = Query(
                 None,
-                title="Modified minimum and Maximum intensity ranges",
-                min_length=5,
-                max_length=38,
-                regex=reg_minmax
-                ),
-			MIX: list[str] = Query(
-			    None,
-			    title="Slice of the mixing matrix", 
-                min_length=7,
-                max_length=54,
-                regex=reg_mix
-                ),
-			PFL: str = Query(
-			    None,
-			    title="Get image profile(s)", 
+                title="Get image profile(s)", 
                 min_length=7,
                 max_length=39,
-                regex=reg_pfl
+                pattern=reg_pfl
+                ),
+            RGN: str = Query(
+                None,
+                title="Get image region", 
+                min_length=7,
+                max_length=39,
+                pattern=reg_rgn
                 ),
             VAL: str = Query(
                 None,
                 title="Pixel value(s)",
                 min_length=3,
                 max_length=32,
-                regex=reg_val
+                pattern=reg_val
                 )
             ):
         """
@@ -275,7 +309,7 @@ def create_app() -> FastAPI:
             [Streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse>)
             containing the JPEG image.
         """
-        if FIF == None:
+        if FIF is None:
 			# Just return the banner describing the service
             return templates.TemplateResponse(
                 banner_template,
@@ -284,7 +318,6 @@ def create_app() -> FastAPI:
                     "root_path": request.scope.get("root_path"),
                 }
             )
-
         image_filename = path.abspath(
             image_argname if image_argname \
                else path.join(data_dir, FIF)
@@ -311,17 +344,17 @@ def create_app() -> FastAPI:
                     "type": "value_error.str"
                 }]
             )
-        if obj != None:
+        if obj is not None:
             resp = tiled.get_iipheaderstr()
             if lock:
                 lock.release_read()
             return responses.PlainTextResponse(resp)
-        elif INFO != None:
+        elif INFO is not None:
             resp = tiled.get_model()
             if lock:
                 lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
-        elif PFL != None:
+        elif PFL is not None:
             val = parse_pfl.findall(PFL)[0]
             resp = tiled.get_profiles(
                 CHAN,
@@ -332,7 +365,7 @@ def create_app() -> FastAPI:
                 lock.release_read()
             # We use the ORJSON response to properly manage NaNs
             return responses.ORJSONResponse(content=jsonable_encoder(resp))
-        elif VAL != None:
+        elif VAL is not None:
             val = parse_val.findall(VAL)[0]
             resp = tiled.get_pixel_values(
                 CHAN,
@@ -341,13 +374,14 @@ def create_app() -> FastAPI:
             if lock:
                 lock.release_read()
             return responses.JSONResponse(content=jsonable_encoder(resp))
-        if JTL == None:
+        if JTL is None and RGN is None:
+            # No image data: return
             if lock:
                 lock.release_read()
             return
         # Update intensity cuts only if they correspond to the current channel
         minmax = None
-        if MINMAX != None:
+        if MINMAX is not None:
             resp = [parse_minmax.findall(m)[0] for m in MINMAX]
             minmax = tuple(
                 (
@@ -357,7 +391,7 @@ def create_app() -> FastAPI:
                 ) for r in resp
             )
         mix = None
-        if MIX != None:
+        if MIX is not None:
             resp = [parse_mix.findall(m)[0] for m in MIX]
             mix = tuple(
                 (
@@ -367,26 +401,56 @@ def create_app() -> FastAPI:
                     float(r[3])
                 ) for r in resp
             )
-        resp = parse_jtl.findall(JTL)[0]
-        tl = tiled.nlevels - 1 - int(resp[0])
-        if tl < 0:
-            tl = 0
-        ti = int(resp[1])
-        pix = tiled.get_tile_cached(
-            tl,
-            ti,
-            channel=CHAN[0] if CHAN else CHAN,
-            minmax=minmax,
-            mix=mix,
-            brightness=BRT,
-            contrast=CNT,
-            gamma=GAM,
-            colormap=CMP,
-            invert=(INV!=None),
-            quality=QLT
-        )
-        if lock:
-            lock.release_read()
+        if JTL is not None:
+            # Regular image tile
+            resp = parse_jtl.findall(JTL)[0]
+            tl = tiled.nlevels - 1 - int(resp[0])
+            if tl < 0:
+                tl = 0
+            ti = int(resp[1])
+            pix = tiled.get_encoded_tile(
+                tl,
+                ti,
+                channel=CHAN[0] if CHAN else CHAN,
+                minmax=minmax,
+                mix=mix,
+                brightness=BRT,
+                contrast=CNT,
+                gamma=GAM,
+                colormap=CMP,
+                invert=(INV is not None),
+                quality=QLT
+            )
+            if lock:
+                lock.release_read()
+        else:
+            # has to be an image region
+            val = parse_pfl.findall(RGN)[0]
+            try:
+                pix = tiled.get_encoded_region(
+                    ((int(val[0]), int(val[1])), (int(val[2]), int(val[3]))),
+                    BIN,
+                    channel=CHAN[0] if CHAN else CHAN,
+                    minmax=minmax,
+                    mix=mix,
+                    brightness=BRT,
+                    contrast=CNT,
+                    gamma=GAM,
+                    colormap=CMP,
+                    invert=(INV is not None),
+                   quality=QLT
+               )
+            except Exception as err:
+                raise HTTPException(
+                    status_code=501,
+                    detail=[{
+                        "loc": ["query", "RGN"],
+                        "msg": str(err)
+                    }]
+                )
+            finally:
+                if lock:
+                    lock.release_read()
         return responses.StreamingResponse(
             io.BytesIO(pix),
             media_type="image/jpg"

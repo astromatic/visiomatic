@@ -4,13 +4,15 @@ Image tiling module
 # Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
 # Licensed under the MIT licence
 
+from __future__ import annotations
+
 import glob, math, pickle
 
 from methodtools import lru_cache #type: ignore
 from math import isnan
 from os import path, unlink
 from sys import modules
-from typing import List, NamedTuple, Tuple, Union
+from typing import Any, List, NamedTuple, Tuple
 from urllib.parse import quote, unquote
 
 import numpy as np
@@ -21,7 +23,7 @@ from joblib import Parallel, delayed  #type: ignore
 from pydantic import BaseModel
 from simplejpeg import encode_jpeg  #type: ignore
 from skimage.draw import line
-from tiler import Tiler #type: ignore
+from tiler import Merger, Tiler #type: ignore
 
 from .. import package
 from .image import Image, ImageModel
@@ -44,10 +46,10 @@ class PixelValueModel(BaseModel):
 
     Parameters
     ----------
-    values: list[Union[float, None]]
+    values: list[float | None]
         Pixel values.
     """
-    values: list[Union[float, None]]
+    values: list[float | None]
 
 
 
@@ -61,12 +63,12 @@ class PixelModel(BaseModel):
         x coordinate of the pixel.
     y: int
         y coordinate of the pixel.
-    values: list[Union[float, None]]
+    values: list[float, None]
         Pixel values.
     """
     x: int
     y: int
-    values: list[Union[float, None]]
+    values: list[float | None]
 
 
 
@@ -120,6 +122,8 @@ class TiledModel(BaseModel):
     """
     type: str
     version: str
+    image_name: str
+    object_name: str
     full_size: Tuple[int, ...]
     tile_size: Tuple[int, ...]
     tile_levels: int
@@ -163,17 +167,21 @@ class Tiled(object):
     def __init__(
             self,
             filename: str,
-            extnum : Union[int, None] = None,
+            extnum : int | None = None,
             tilesize : Tuple[int, int] = (256,256),
-            minmax : Union[Tuple[int, int], None] = None,
-            brightness : Union[float, None] = None,
-            contrast : Union[float, None] = None,
-            color_saturation: Union[float, None] = None,
-            gamma : Union[float, None] = None,
-            quality: Union[int, None] = None,
-            nthreads : Union[int, None] = None):
+            minmax : Tuple[int, int] | None = None,
+            brightness : float | None = None,
+            contrast : float | None = None,
+            color_saturation: float | None = None,
+            gamma : float | None = None,
+            quality: int | None = None,
+            max_region_tile_count: int | None = None,
+            nthreads : int | None = None):
 
         self.filename = path.abspath(filename)
+        self.image_name = path.basename(filename)
+        self.max_region_tile_count = max_region_tile_count or \
+        	config.settings["max_region_tile_count"]
         self.nthreads = nthreads or (
             config.settings["thread_count"] if 'sphinx' not in modules else 4
         )
@@ -202,6 +210,7 @@ class Tiled(object):
         self.tile_shape = (self.nchannels, tilesize[0], tilesize[1]);
         self.make_mosaic(self.images)
         hdus.close()
+        self.object_name = self.header.get("OBJECT", "")
         self.brightness = config.settings["brightness"] if brightness is None \
             else brightness
         self.contrast = config.settings["contrast"] if contrast is None \
@@ -299,6 +308,8 @@ class Tiled(object):
         return TiledModel(
             type=package.name,
             version="3.0",
+            image_name=self.image_name,
+            object_name=self.object_name,
             full_size=self.shape[2:0:-1],
             tile_size=self.tile_shape[2:0:-1],
             tile_levels=self.nlevels,
@@ -443,12 +454,12 @@ class Tiled(object):
     def convert_tile(
             self,
             tile: np.ndarray,
-            channel: Union[int, None] = None,
-            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
-            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: Union[float, None] = None,
-            contrast: Union[float, None] = None,
-            gamma: Union[float, None] = None,
+            channel: int | None = None,
+            minmax: Tuple[Tuple[int, float, float], ...] | None = None,
+            mix: Tuple[Tuple[int, float, float, float], ...] | None = None,
+            brightness: float | None = None,
+            contrast: float | None = None,
+            gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False) -> np.ndarray:
         """
@@ -477,8 +488,8 @@ class Tiled(object):
 
         Returns
         -------
-        tile: ~numpy.ndarray
-            Processed tile.
+        raster: ~numpy.ndarray
+            Processed tile image raster.
         """
         if brightness is None:
             brightness = self.brightness
@@ -507,6 +518,8 @@ class Tiled(object):
                 	cv2.applyColorMap(ctile, colordict[colormap]),
                 	cv2.COLOR_BGR2RGB
                 )
+            else:
+                ctile = ctile[:, :, np.newaxis]
         else:
             cminmax = self.minmax
             if minmax:
@@ -551,7 +564,7 @@ class Tiled(object):
         self.tiles_end = np.cumsum(self.counts, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
         self.tiles_filename = get_tiles_filename(self.filename)
-        self.tiles = np.memmap(
+        self.tiles: np.ndarray = np.memmap(
             self.tiles_filename,
             dtype=np.float32,
             mode='w+',
@@ -593,21 +606,21 @@ class Tiled(object):
         self.tiles.flush()
 
 
-    def get_tile(
+    def get_tile_raster(
             self,
             tilelevel: int,
             tileindex: int,
-            channel: Union[int, None] = None,
-            minmax: Union[Tuple[Tuple[int, float, float], ...], None] = None,
-            mix: Union[Tuple[Tuple[int, float, float, float], ...], None] = None,
-            brightness: Union[float, None] = None,
-            contrast: Union[float, None] = None,
-            gamma: Union[float, None] = None,
+            channel: int | None = None,
+            minmax: Tuple[Tuple[int, float, float], ...] | None = None,
+            mix: Tuple[Tuple[int, float, float, float], ...] | None = None,
+            brightness: float | None = None,
+            contrast: float | None = None,
+            gamma: float | None = None,
             colormap: str = 'grey',
             invert: bool = False,
-            quality: Union[int, None]= None) -> bytes:
+            **_:  Any) -> np.ndarray:
         """
-        Generate a JPEG bytestream from a tile.
+        Compute a gray-level or color image raster from a tile.
         
         Parameters
         ----------
@@ -629,13 +642,11 @@ class Tiled(object):
             Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
         invert: bool, optional
             Invert the colormap.
-        quality: int, optional
-            JPEG quality (0-100)
 
         Returns
         -------
-        tile: bytes
-            JPEG bytestream of the tile.
+        raster: ~numpy.ndarray
+            The computed tile image raster.
         """
         if channel and channel > self.nchannels:
             channel = 1
@@ -649,48 +660,227 @@ class Tiled(object):
             self.tile_shape[2] if (tileindex+1) % self.shapes[tilelevel][2] \
                 else self.border_shapes[tilelevel][2],
         ]
+        return self.convert_tile(
+            self.get_tiles()[
+                self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
+                0:shape[2]
+            ],
+            channel=channel,
+            minmax=minmax,
+            mix=mix,
+            brightness=self.brightness if brightness is None else brightness,
+            contrast=self.contrast if contrast is None else contrast,
+            gamma=self.gamma if gamma is None else gamma,
+            colormap=colormap,
+            invert=invert
+        )
+
+
+    def encode(
+            self,
+            raster: np.ndarray,
+            channel: int | None = None,
+            colormap: str = 'grey',
+            quality: int | None = None,
+            **_: Any) -> bytes:
+        """
+        Generate a JPEG bytestream from an image raster (e.g., a tile).
+        
+        Parameters
+        ----------
+        raster:  ~numpy.ndarray
+            Input tile.
+        channel: int, optional
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
+        quality: int, optional
+            JPEG quality (0-100)
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+        """
         return encode_jpeg(
-            self.convert_tile(
-                self.get_tiles()[
-                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
-                    0:shape[2]
-                ],
-				channel=channel,
-                minmax=minmax,
-                mix=mix,
-                brightness=self.brightness if brightness is None else brightness,
-                contrast=self.contrast if contrast is None else contrast,
-                gamma=self.gamma if gamma is None else gamma,
-                invert=invert
-            )[:, :, None],
+            raster,
             quality=self.quality if quality is None else quality,
-            colorspace='Gray'
-        ) if colormap=='grey' and channel else encode_jpeg(
-            self.convert_tile(
-                self.get_tiles()[
-                    self.tiles_start[tilelevel] + tileindex][:,0:shape[1],
-                    0:shape[2]
-                ],
-				channel=channel,
-                minmax=minmax,
-                mix=mix,
-                brightness=self.brightness if brightness is None else brightness,
-                contrast=self.contrast if contrast is None else contrast,
-                gamma=self.gamma if gamma is None else gamma,
-                invert=invert,
-                colormap=colormap
-            ),
-            quality=self.quality if quality is None else quality,
-            colorspace='RGB'
+            colorspace='Gray' if colormap=='grey' and channel else 'RGB'
         )
 
 
     @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
-    def get_tile_cached(self, *args, **kwargs):
+    def get_encoded_tile(self,
+            *args: Any,
+            channel: int | None = None,
+            colormap: str = 'grey',
+            quality: int | None = None,
+            **kwargs: Any) -> bytes:
         """
-        Cached version of get_tile().
+        Return a JPEG bytestream of a specific image region by stitching
+        tiles that fall in that region.
+
+        Parameters
+        ----------
+        *args:
+            get_tile_raster() arguments.
+        channel: int, optional
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
+        quality: int, optional
+            JPEG quality (0-100)
+        **kwargs:
+            Additional get_tile_raster() keyword arguments.
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+
+        Raises
+        ------
+        IndexError: exception
+            An error occurred because of unexpected bounding box coordinates.
+            It is raised if any of the following occur:
+            - The number of requested region tiles exceeds max_region_tile_count.
+            - Bounding box coordinates are inconsistent.
         """
-        return self.get_tile(*args, **kwargs)
+        return self.encode(
+            self.get_tile_raster(  #type: ignore
+                *args,
+                channel=channel,
+                colormap=colormap,
+                **kwargs
+            ),
+            channel=channel,
+            colormap=colormap,
+            quality=quality,
+            **kwargs
+        )
+
+
+    def get_encoded_region(
+            self,
+            bounds: Tuple[Tuple[int, int], Tuple[int, int]],
+            binning: int = 1,
+            channel: int | None = None,
+            colormap: str = 'grey',
+            **kwargs: Any) -> bytes:
+        """
+        Return a JPEG bytestream of a specific image region by stitching
+        tiles that fall in that region.
+
+        Parameters
+        ----------
+        bounds: tuple[tuple[int, int], tuple[int, int]]
+            Image boundaries in pixels.
+        binning: int, optional
+            Binning factor per axis, in pixels.
+        channel: int, optional
+            Data channel (first channel is 1)
+        colormap: str, optional
+            Colormap: 'grey' (default), 'jet', 'cold', or 'hot'.
+        **kwargs:
+            Additional get_tile_raster() and encode() keyword arguments.
+
+        Returns
+        -------
+        tile: bytes
+            JPEG bytestream of the tile.
+
+        Raises
+        ------
+        IndexError: exception
+            An error occurred because of unexpected bounding box coordinates.
+            It is raised if any of the following occur:
+            - The number of requested region tiles exceeds max_region_tile_count.
+            - Bounding box coordinates are inconsistent.
+        """
+        if channel and channel > self.nchannels:
+            channel = 1
+        color = not (colormap=='grey' and channel)
+        level = binning.bit_length() - 1
+        # Compute sub-tile margins to be trimmed around the tiled region
+        xmin = (bounds[0][0] - 1) >> level
+        if (txmin := xmin // self.tile_shape[2]) < 0:
+             txmin = 0
+             rxmin = 0
+        else:
+             rxmin = xmin % self.tile_shape[2]
+        ymin = (bounds[0][1] - 1) >> level
+        if (tymin := ymin // self.tile_shape[1]) < 0:
+             tymin = 0
+             rymin = 0
+        else:
+             rymin = ymin % self.tile_shape[1]
+        xmax = (bounds[1][0] - 1) >> level
+        if (txmax := xmax // self.tile_shape[2] + 1) > self.shapes[level][2]:
+            txmax = self.shapes[level][2]
+            rxmax = self.tile_shape[2] - self.border_shapes[level][2]
+        elif txmax == self.shapes[level][2]:
+            rxmax = self.tile_shape[2] - \
+                min(xmax % self.tile_shape[2], self.border_shapes[level][2])
+        else:
+            rxmax = self.tile_shape[2] - (xmax % self.tile_shape[2])
+        ymax = (bounds[1][1] - 1) >> level
+        if (tymax := ymax // self.tile_shape[1] + 1) > self.shapes[level][1]:
+            tymax = self.shapes[level][1]
+            rymax = self.tile_shape[1] - self.border_shapes[level][1]
+        elif tymax == self.shapes[level][1]:
+            rymax = self.tile_shape[1] - \
+                min(ymax % self.tile_shape[1], self.border_shapes[level][1])
+        else:
+            rymax = self.tile_shape[1] - (ymax % self.tile_shape[1])
+
+        if txmax <= txmin or tymax <= tymin:
+            raise IndexError(
+                "Inconsistent region bounding box coordinates"
+            )
+        tile_grid = np.mgrid[tymin:tymax, txmin:txmax]
+        if tile_grid[0].size > self.max_region_tile_count:
+            raise IndexError(
+                "The requested image size exceeds the server limit of "
+                f"{self.max_region_tile_count} tile"
+                f"{'s' if self.max_region_tile_count > 1 else ''}."
+                "Please zoom in or increase image binning"
+            )
+        merger = Merger(
+            Tiler(
+                data_shape = (
+                    (tymax - tymin) * self.tile_shape[1],
+                    (txmax - txmin) * self.tile_shape[2],
+                    3 if color else 1
+                ),
+                tile_shape = (
+                    self.tile_shape[1],
+                    self.tile_shape[2],
+                    3 if color else 1
+                ),
+                mode='irregular',
+                channel_dimension=2
+            )
+        )
+        tile_ids = tile_grid[0].ravel() * self.shapes[level][2] + tile_grid[1].ravel()
+        for tile_id_rel, tile_id in enumerate(tile_ids):
+            merger.add(
+                tile_id_rel,
+                self.get_tile_raster(
+                    level,
+                    tile_id,
+                    channel=channel,
+                    colormap=colormap,
+                    **kwargs
+                )
+            )
+        return self.encode(
+            np.ascontiguousarray(
+                merger.merge().astype(np.uint8)[rymin:-rymax, rxmin:-rxmax, :]
+            ),
+            channel=channel,
+            colormap=colormap,
+            **kwargs
+        )
 
 
     def get_pixel_values(
@@ -709,7 +899,7 @@ class Tiled(object):
 
         Returns
         -------
-        value: numpy.ndarray
+        value: ~numpy.ndarray
             Pixel value at the given position, or NaN outside of the
             frame boundaries.
         """
@@ -732,7 +922,7 @@ class Tiled(object):
 
     def get_profiles(
             self,
-            channels: Union[Tuple[int, ...], None],
+            channels: Tuple[int, ...] | None,
             pos1: Tuple[int, int],
             pos2: Tuple[int, int]) -> ProfileModel:
         """
@@ -924,7 +1114,7 @@ def get_tiles_filename(image_filename: str) -> str:
 
 def get_image_filename(prefix: str) -> str:
     """
-    Return the name of the file containing the memory-mapped tile datacube.
+    Return the name of the file containing the memory-mapped image datacube.
     
     Parameters
     ----------
@@ -937,4 +1127,6 @@ def get_image_filename(prefix: str) -> str:
         Filename of the memory mapped tile datacube.
     """
     return unquote(path.basename(prefix))
+
+
 
