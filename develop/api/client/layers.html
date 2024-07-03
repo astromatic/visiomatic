@@ -109,7 +109,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>string</em>) -- URL of the tile server</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
-<li><p><strong>options.title</strong> (<em>string</em>) -- Layer title. Defaults to the basename of the tile URL with extension removed.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Layer title. Defaults to the image filename with extension removed followed  by the OBJECT name if available.</p></li>
+<li><p><strong>options.setTitleBar</strong> (<em>boolean</em>) -- Update the document / webpage title using the layer title.</p></li>
 <li><p><strong>options.crs</strong> (<em>leaflet.CRS|WCS</em>) -- Coordinate Reference or World Coordinate System: extracted from the data header if available or raw pixel coordinates otherwise.</p></li>
 <li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- True if native coordinates (e.g., galactic coordinates) are to be used instead of equatorial coordinates.</p></li>
 <li><p><strong>options.center</strong> (<em>string</em>) -- World coordinates (either in RA,Dec decimal form or in <code class="docutils literal notranslate"><span class="pre">hh:mm:ss.s±dd:mm:ss.s</span></code> sexagesimal  format), or any [Sesame]{&#64;link <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Sesame">http://cds.u-strasbg.fr/cgi-bin/Sesame</a>}-compliant identifier defining the initial centering of the map upon layer initialization. Sexagesimal coordinates and identifier strings are sent to the Sesame resolver service for conversion to decimal coordinates. Assume x,y pixel coordinates if WCS information is missing. Defaults to image center.</p></li>
