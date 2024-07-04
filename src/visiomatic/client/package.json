@@ -38,8 +38,8 @@
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
-		"build": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
-		"build-optim": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
+		"build": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
+		"build-pretty": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js",
 		"docs": "jsdoc -c jsdoc.json js",
 		"lint": "eslint js",
 		"test": "npm run unit"
