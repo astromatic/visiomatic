@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "VisiOmatic"
-version = "3.0.0-b4"
+version = "3.0.0"
 description = "A web application for visualizing astronomical images"
 authors = [
     {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
