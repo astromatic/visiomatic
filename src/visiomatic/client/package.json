@@ -1,6 +1,6 @@
 {
 	"name": "visiomatic",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Astronomical image client viewer",
 	"homepage": "https://github.com/astromatic/visiomatic",
 	"author": "Emmanuel Bertin (CFHT/IAP/CNRS/SorbonneU/CEA/UParisSaclay)",
@@ -38,6 +38,7 @@
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
+		"prebuild": "npm version --allow-same-version `grep 'version\\s*=' ../../../pyproject.toml| sed -E 's/version\\s*=\\s*\"(\\S*)\"/\\1/'`",
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
 		"build-pretty": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js",
 		"docs": "jsdoc -c jsdoc.json js",
