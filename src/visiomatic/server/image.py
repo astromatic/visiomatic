@@ -215,6 +215,12 @@ class Image(object):
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
         x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
+        # First, normalize to avoid overflows
+        norm = np.nanmean(x)
+        if abs(norm) > 0.:
+            x /= norm
+        else:
+            norm = 1.
         med = np.nanmedian(x, axis=1, keepdims=True)
         std = np.nanstd(x, axis=1)
         ax = np.abs(x-med)
@@ -226,7 +232,7 @@ class Image(object):
         # Handle cases where the MAD is tiny because of many identical values
         cond = 1e5 * mad < std
         mad[cond] = 0.1 * std[cond]
-        return np.nanmean(3.5*med - 2.5*x, axis=1), mad
+        return norm * np.nanmean(3.5*med - 2.5*x, axis=1), norm * mad
 
 
     def compute_minmax(
