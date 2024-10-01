@@ -354,7 +354,12 @@ class Tiled(object):
             )
             for image in images:
                 image.compute_geometry(start, shape)
-                self.data[image.detslice] = image.data[image.dataslice]
+                try:
+                    self.data[image.detslice] = image.data[image.dataslice]
+                except:
+                    raise IndexError(
+                        "Inconsistent DETSEC and/or DATASEC values"
+                    )
             self.shape = tuple(self.data.shape)
             self.minmax =  np.median(
                 np.array([image.minmax for image in images]),

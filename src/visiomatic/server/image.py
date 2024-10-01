@@ -194,7 +194,6 @@ class Image(object):
                 [dey[0] + 1, dey[1] + (2 if dey[2] < 0 else 0), dey[2]]
         ]
 
-
     def compute_background(self, skip : int = 15) -> tuple[np.ndarray, np.ndarray]:
         """
         Return background level and median absolute deviation
