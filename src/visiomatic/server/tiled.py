@@ -717,8 +717,7 @@ class Tiled(object):
             quality: int | None = None,
             **kwargs: Any) -> bytes:
         """
-        Return a JPEG bytestream of a specific image region by stitching
-        tiles that fall in that region.
+        Return a JPEG bytestream of a specific tile.
 
         Parameters
         ----------
