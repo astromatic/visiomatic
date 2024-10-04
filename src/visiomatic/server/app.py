@@ -24,7 +24,7 @@ from pydantic import BeforeValidator
 
 from .. import package
 
-from . import config
+from .config import config_filename, image_filename, settings
 
 from .tiled import (
     colordict,
@@ -37,7 +37,7 @@ from .tiled import (
 from .cache import LRUCache, LRUSharedRWCache
 
 # True with multiple workers (multiprocessing).
-shared = config.settings["workers"] > 1 and not config.settings["reload"]
+shared = settings["workers"] > 1 and not settings["reload"]
 
 # Prepare the RegExps; note that those with non-capturing groups do not
 # work with Rust
@@ -78,39 +78,39 @@ def create_app() -> FastAPI:
 
     worker_id = getpid()
 
-    banner_template = config.settings["banner_template"]
-    base_template = config.settings["base_template"]
-    template_dir = path.abspath(config.settings["template_dir"])
-    cache_dir = path.abspath(config.settings["cache_dir"])
-    client_dir = path.abspath(config.settings["client_dir"])
-    data_dir = path.abspath(config.settings["data_dir"])
-    extra_dir = path.abspath(config.settings["extra_dir"])
-    doc_dir = config.settings["doc_dir"]
-    doc_path = config.settings["doc_path"]
-    userdoc_url = config.settings["userdoc_url"]
-    api_path = config.settings["api_path"]
-    brightness = config.settings["brightness"]
-    contrast = config.settings["contrast"]
-    color_saturation = config.settings["color_saturation"]
-    gamma = config.settings["gamma"]
-    quality = config.settings["quality"]
-    tile_size = config.settings["tile_size"]
-    image_argname = config.image_filename
+    banner_template = settings["banner_template"]
+    base_template = settings["base_template"]
+    template_dir = path.abspath(settings["template_dir"])
+    cache_dir = path.abspath(settings["cache_dir"])
+    client_dir = path.abspath(settings["client_dir"])
+    data_dir = path.abspath(settings["data_dir"])
+    extra_dir = path.abspath(settings["extra_dir"])
+    doc_dir = settings["doc_dir"]
+    doc_path = settings["doc_path"]
+    userdoc_url = settings["userdoc_url"]
+    api_path = settings["api_path"]
+    brightness = settings["brightness"]
+    contrast = settings["contrast"]
+    color_saturation = settings["color_saturation"]
+    gamma = settings["gamma"]
+    quality = settings["quality"]
+    tile_size = settings["tile_size"]
+    image_argname = image_filename
 
     logger = logging.getLogger("uvicorn.error")
 
     # Provide an endpoint for the user's manual (if it exists)
-    if config.config_filename:
-        logger.info(f"Configuration read from {config.config_filename}.")
+    if config_filename:
+        logger.info(f"Configuration read from {config_filename}.")
     else:
         logger.warning(
-            f"Configuration file not found: {config.config_filename}!"
+            f"Configuration file not found: {config_filename}!"
         )
     # Get shared lock dictionary if processing in parallel
     cache = LRUSharedRWCache(
         pickledTiled,
         name=f"{package.title}.{getppid()}",
-        maxsize=config.settings["max_cache_image_count"],
+        maxsize=settings["max_cache_image_count"],
         removecall=delTiled,
         shared=shared,
         logger=logger

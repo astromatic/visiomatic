@@ -27,7 +27,7 @@ from tiler import Merger, Tiler #type: ignore
 
 from .. import package
 from .image import Image, ImageModel
-from . import config
+from .config import override, settings
 
 
 colordict = {
@@ -180,10 +180,12 @@ class Tiled(object):
 
         self.filename = path.abspath(filename)
         self.image_name = path.basename(filename)
-        self.max_region_tile_count = max_region_tile_count or \
-        	config.settings["max_region_tile_count"]
+        self.max_region_tile_count = override(
+            "max_region_tile_count",
+            max_region_tile_count
+        )
         self.nthreads = nthreads or (
-            config.settings["thread_count"] if 'sphinx' not in modules else 4
+            settings["thread_count"] if 'sphinx' not in modules else 4
         )
         try:
             hdus = fits.open(self.filename)
@@ -211,14 +213,11 @@ class Tiled(object):
         self.make_mosaic(self.images)
         hdus.close()
         self.object_name = self.header.get("OBJECT", "")
-        self.brightness = config.settings["brightness"] if brightness is None \
-            else brightness
-        self.contrast = config.settings["contrast"] if contrast is None \
-            else contrast
-        self.color_saturation = config.settings["color_saturation"] \
-            if color_saturation is None else color_saturation
-        self.gamma = config.settings["gamma"] if gamma is None else gamma
-        self.quality = config.settings["quality"] if quality is None else quality
+        self.brightness = override("brightness", brightness)
+        self.contrast = override("contrast", contrast)
+        self.color_saturation = override("color_saturation", color_saturation)
+        self.gamma = override("gamma", gamma)
+        self.quality = override("quality", quality)
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -714,7 +713,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
+    @lru_cache(maxsize=settings["max_cache_tile_count"] if settings else 0)
     def get_encoded_tile(self,
             *args: Any,
             channel: int | None = None,
@@ -1068,7 +1067,7 @@ def get_object_filename(image_filename: str) -> str:
         Pickled object filename.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".pkl"
     )
 
@@ -1089,7 +1088,7 @@ def get_data_filename(image_filename: str) -> str:
         Filename of the memory-mapped image data.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".data.np"
     )
 
@@ -1110,7 +1109,7 @@ def get_tiles_filename(image_filename: str) -> str:
         Filename of the memory mapped tile datacube.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".tiles.np"
     )
 
