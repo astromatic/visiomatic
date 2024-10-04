@@ -59,7 +59,7 @@
 <li class="toctree-l3"><a class="reference internal" href="tiled.html">Tiled</a></li>
 <li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Config</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#visiomatic.server.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visiomatic.server.config.override"><code class="docutils literal notranslate"><span class="pre">override()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="settings.html">Settings</a></li>
@@ -100,111 +100,29 @@
   <section id="module-visiomatic.server.config">
 <span id="config"></span><h1>Config<a class="headerlink" href="#module-visiomatic.server.config" title="Link to this heading"></a></h1>
 <p>Configure application.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/runner/.config/visiomatic/visiomatic.conf'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Manage application settings in groups.</p>
-<p>Settings are stored as Pydantic fields.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.grouped_dict">
-<span class="sig-name descname"><span class="pre">grouped_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.grouped_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.grouped_dict" title="Link to this definition"></a></dt>
-<dd><p>Return a dictionary of all settings, organized in groups.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gdict</strong> (<em>dict</em>) -- Dictionary of settings.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.flat_dict">
-<span class="sig-name descname"><span class="pre">flat_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.flat_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.flat_dict" title="Link to this definition"></a></dt>
-<dd><p>Return a flattened dictionary of all settings.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fdict</strong> (<em>dict</em>) -- Dictionary of settings.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.schema">
-<span class="sig-name descname"><span class="pre">schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.schema" title="Link to this definition"></a></dt>
-<dd><p>Return a schema of the settings as a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>schema</strong> (<em>dict</em>) -- Schema of the settings, as a dictionary.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.schema_json">
-<span class="sig-name descname"><span class="pre">schema_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.schema_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.schema_json" title="Link to this definition"></a></dt>
-<dd><p>Return a schema of the settings as a JSON string.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="visiomatic.server.config.override">
+<span class="sig-name descname"><span class="pre">override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#override"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.override" title="Link to this definition"></a></dt>
+<dd><p>Convenience function that returns the input value unless it is None,
+in which case the settings value from key is returned.</p>
+<p class="rubric">Examples</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+from .config import override</p>
+<p>print(f&quot;{override('a_setting', 10)}&quot;)</p>
+<p>#&gt; 10</p>
+<p>print(f&quot;{override('a_setting', None)}&quot;)</p>
+<p>#&gt; 3</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) -- Number of indentation spaces.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) -- Key to settings value.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) -- Input value.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>schema</strong> (<em>str</em>) -- JSON schema of the settings.</p>
+<dd class="field-even"><p><strong>value</strong> (<em>Any</em>) -- Input value or settings value.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.parse_args">
-<span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.parse_args" title="Link to this definition"></a></dt>
-<dd><p>Return a dictionary of all settings, with values updated from the
-command line.</p>
-<p>Extra settings are ignored.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gdict</strong> (<em>dict</em>) -- Dictionary of all settings, organized in groups.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.parse_config">
-<span class="sig-name descname"><span class="pre">parse_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.parse_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.parse_config" title="Link to this definition"></a></dt>
-<dd><p>Return a dictionary of all settings, with values updated from a
-configuration file in INI format.</p>
-<p>Extra settings are ignored.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><em>Path</em></a>) -- Configuration filename.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>gdict</strong> (<em>dict</em>) -- Dictionary of all settings, organized in groups.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.save_config">
-<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.save_config" title="Link to this definition"></a></dt>
-<dd><p>Save all settings as a configuration file in INI format.</p>
-<p>Extra settings are ignored.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><em>Path</em></a>) -- Configuration filename.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="visiomatic.server.config.Config.update_from_dict">
-<span class="sig-name descname"><span class="pre">update_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/visiomatic/server/config.html#Config.update_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#visiomatic.server.config.Config.update_from_dict" title="Link to this definition"></a></dt>
-<dd><p>Update internal settings based on a dictionary (in groups)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>settings_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) -- Input dictionary.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
