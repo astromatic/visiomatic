@@ -29,7 +29,8 @@
 					reuseTiles: true
 				}).addTo(map);
 
-        V.control.fullScreen().addTo(map);
+        V.control.installExit('{{root_path}}');
+		V.control.fullScreen().addTo(map);
 		V.control.scale({pixels: false}).addTo(map);
 		V.control.reticle().addTo(map);
 		V.control.coords({position: 'topright'}).addTo(map);

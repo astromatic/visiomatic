@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import io, logging, pickle, re
 from glob import glob
-from os import getpid, getppid, path
+from os import getpid, getppid, kill, path
+from signal import SIGTERM
 from sys import modules
 from typing import Annotated, List, Literal, Pattern
 
@@ -38,6 +39,7 @@ from .cache import LRUCache, LRUSharedRWCache
 
 # True with multiple workers (multiprocessing).
 shared = settings["workers"] > 1 and not settings["reload"]
+local = image_filename and not settings["no_browser"]
 
 # Prepare the RegExps; note that those with non-capturing groups do not
 # work with Rust
@@ -456,6 +458,15 @@ def create_app() -> FastAPI:
             media_type="image/jpg"
         )
 
+    # Kill server option (only in local mode)
+    @app.get("/kill", tags=["local"])
+    async def kill_server(request: Request):
+        """
+        Kill server (active only in local mode).
+        """
+        if local:
+            kill(getppid(), SIGTERM)
+
 
     # VisiOmatic client endpoint
     @app.get("/", tags=["UI"], response_class=responses.HTMLResponse)
@@ -476,6 +487,7 @@ def create_app() -> FastAPI:
                 "package": package.title
             }
         )
+        
 
     return app
 

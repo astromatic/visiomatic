@@ -108,7 +108,7 @@ class ImageSettings(BaseSettings):
 
 
 class ServerSettings(BaseSettings):
-    api_path : str = SField(
+    api_path: str = SField(
         default="/api",
         description="Endpoint URL for the webservice API"
         )
