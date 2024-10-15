@@ -80,6 +80,7 @@ pre_install = {composite = ["doc", "mypy"]}
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
+tmp_path_retention_policy = "none"
 
 [tool.coverage.run]
 source_pkgs = ["visiomatic"]

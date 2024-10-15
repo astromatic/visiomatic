@@ -1,9 +1,13 @@
 """
 Image tiling module tests
 """
-# Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay
+# Copyright CFHT/CNRS/CEA/UParisSaclay
 # Licensed under the MIT licence
 
+from os.path import join
+
+from astropy.io import fits
+import numpy as np
 import pytest
 
 from visiomatic.server import config
@@ -74,4 +78,40 @@ def test_get_image_filename():
     prefix = "/cache/%2Ftmp%2Ftest.fits"
     assert tiled.get_image_filename(prefix) == "/tmp/test.fits"
 
+
+@pytest.fixture(scope='session')
+def tmp_cachedir(tmp_path_factory) -> str:
+    """
+    Generate a tempory cache directory for the whole testing session.
+
+    Returns
+    -------
+    cache_dir: str
+        Temporary cache directory name.
+    """
+    return str(tmp_path_factory.mktemp('cache'))
+
+
+@pytest.fixture(scope='session')
+def tmp_image(tmp_path_factory) -> str:
+    """
+    Generate a tempory test image for the whole testing session.
+
+    Returns
+    -------
+    image_filename: str
+        Test image filename.
+    """
+    # A pair of prime numbers as image dimensions make things more fun!
+    shape = (983, 1061)
+    data = np.random.random(shape)
+    hdu = fits.PrimaryHDU(data)
+    image_filename = str(join(tmp_path_factory.getbasetemp(), 'test.fits'))
+    hdu.writeto(image_filename)
+    return image_filename
+
+
+def test_tiled(tmp_image, tmp_cachedir):
+    config.settings["cache_dir"] = tmp_cachedir
+    assert tiled.pickledTiled(tmp_image)
 
