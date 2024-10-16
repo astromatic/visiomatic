@@ -502,6 +502,7 @@ class Tiled(object):
         if gamma is None:
            gamma = self.gamma
         if channel is not None:
+            # Mono mode
             chan = channel - 1
             cminmax = minmax[0][1:] \
                 if minmax is not None and int(minmax[0][0]) == channel \
@@ -525,6 +526,7 @@ class Tiled(object):
             else:
                 ctile = ctile[:, :, np.newaxis]
         else:
+            # Color mode
             cminmax = self.minmax
             if minmax:
                 iminmax = np.array(minmax, dtype=int)[:, 0] - 1
@@ -1032,11 +1034,14 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
             path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
             tiled = pickle.load(f)
-            tiled.brightness = kwargs['brightness']
-            tiled.contrast = kwargs['contrast']
-            tiled.color_saturation = kwargs['color_saturation']
-            tiled.gamma = kwargs['gamma']
-            tiled.quality = kwargs['quality']
+            tiled.brightness = kwargs.get('brightness', settings['brightness'])
+            tiled.contrast = kwargs.get('contrast', settings['contrast'])
+            tiled.color_saturation = kwargs.get(
+                'color_saturation',
+                settings['color_saturation']
+            )
+            tiled.gamma = kwargs.get('gamma', 1. / settings['gamma'])
+            tiled.quality = kwargs.get('quality', settings['quality'])
             return tiled
     else:
         return Tiled(filename, **kwargs)
