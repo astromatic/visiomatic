@@ -215,8 +215,8 @@ class Image(object):
         # Speed up ~x8 by using only a fraction of the lines
         x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
         # First, normalize to avoid overflows
-        norm = np.nanmean(x)
-        if abs(norm) > 0.:
+        norm = abs(np.nanmean(x))
+        if norm > 0.:
             x /= norm
         else:
             norm = 1.
