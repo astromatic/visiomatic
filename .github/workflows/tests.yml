@@ -19,15 +19,19 @@ jobs:
     name: Test Python API
     continue-on-error: false
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.9', '3.10', '3.11', '3.12' ]
+    name: Python ${{ matrix.python-version }} sample
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -39,7 +43,7 @@ jobs:
           pytest --cov
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
