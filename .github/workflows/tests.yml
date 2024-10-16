@@ -17,11 +17,12 @@ jobs:
 #############################
   test:
     continue-on-error: false
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: [ ubuntu-latest ]
         python-version: [ '3.10', '3.11', '3.12', '3.13' ]
     name: Test Python ${{ matrix.python-version }} API
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -45,4 +46,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+		if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.12
 
