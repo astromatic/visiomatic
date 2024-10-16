@@ -259,7 +259,6 @@ class Image(object):
         minmax: ~numpy.ndarray
             Intensity cuts for displaying the image.
         """
-        self.compute_background()
         low = self.background_level + nmadmin * self.background_mad
         high = self.background_level + nmadmax * self.background_mad
         return np.array([low, high]).T
