@@ -616,6 +616,7 @@
         <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
            <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
         <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Mono mode</span>
             <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="n">cminmax</span> <span class="o">=</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> \
                 <span class="k">if</span> <span class="n">minmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">channel</span> \
@@ -639,6 +640,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ctile</span> <span class="o">=</span> <span class="n">ctile</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Color mode</span>
             <span class="n">cminmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minmax</span>
             <span class="k">if</span> <span class="n">minmax</span><span class="p">:</span>
                 <span class="n">iminmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">minmax</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1177,11 +1179,14 @@
             <span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">oname</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">afilename</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">oname</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">tiled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">tiled</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;brightness&#39;</span><span class="p">]</span>
-            <span class="n">tiled</span><span class="o">.</span><span class="n">contrast</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;contrast&#39;</span><span class="p">]</span>
-            <span class="n">tiled</span><span class="o">.</span><span class="n">color_saturation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color_saturation&#39;</span><span class="p">]</span>
-            <span class="n">tiled</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span>
-            <span class="n">tiled</span><span class="o">.</span><span class="n">quality</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;brightness&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;brightness&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">contrast</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;contrast&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;contrast&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">color_saturation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;color_saturation&#39;</span><span class="p">,</span>
+                <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;color_saturation&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">quality</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;quality&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">tiled</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Tiled</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
