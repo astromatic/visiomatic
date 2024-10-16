@@ -16,13 +16,12 @@ jobs:
 # Build and test Python API #
 #############################
   test:
-    name: Test Python API
     continue-on-error: false
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [ '3.9', '3.10', '3.11', '3.12' ]
-    name: Python ${{ matrix.python-version }} sample
+    name: Test Python ${{ matrix.python-version }} API
 
     steps:
       - name: Checkout
