@@ -44,7 +44,7 @@ class QuantityAnnotation:
     from astropy import units as u
     from pydantic import BaseModel
 
-    from dancelib.quantity import QuantityAnnotation
+    from .config.quantity import QuantityAnnotation
 
     class Coordinates(BaseModel):
         latitude: Annotated[
@@ -57,7 +57,7 @@ class QuantityAnnotation:
     coord = Coordinates(
         latitude="39.905705 deg",
         longitude="-75.166519 deg",
-        altitude="12 m",
+        altitude="12 m"
     )
 
     print(coord)
@@ -75,7 +75,7 @@ class QuantityAnnotation:
     coord = Coordinates(
         latitude="99.905705 deg",
         longitude="-75.166519 deg",
-        altitude="12 m",
+        altitude="12 m"
     )
 
     #> Traceback (most recent call last):

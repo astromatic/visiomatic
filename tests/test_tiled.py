@@ -58,18 +58,6 @@ def test_ProfileModel():
         )
 
 
-def test_get_data_filename():
-    """
-    Test retrieval of data mosaic from original image filename.
-    """
-    cache_dir = config.settings["cache_dir"]
-    config.settings["cache_dir"] = "/cache"
-    filename = "/tmp/test.fits"
-    result = tiled.get_data_filename(filename)
-    config.settings["cache_dir"] = cache_dir
-    assert  result == "/cache/%2Ftmp%2Ftest.fits.data.np"
-
-
 def test_get_object_filename():
     """
     Test retrieval of tiled object from original image filename.
@@ -79,8 +67,20 @@ def test_get_object_filename():
     filename = "/tmp/test.fits"
     result = tiled.get_object_filename(filename)
     config.settings["cache_dir"] = cache_dir
-    assert  result == "/cache/%2Ftmp%2Ftest.fits.pkl"
+    assert result == "/cache/%2Ftmp%2Ftest.fits.pkl"
     
+
+def test_get_data_filename():
+    """
+    Test retrieval of data mosaic from original image filename.
+    """
+    cache_dir = config.settings["cache_dir"]
+    config.settings["cache_dir"] = "/cache"
+    filename = "/tmp/test.fits"
+    result = tiled.get_data_filename(filename)
+    config.settings["cache_dir"] = cache_dir
+    assert result == "/cache/%2Ftmp%2Ftest.fits.data.np"
+
 
 def test_get_tiles_filename():
     """
@@ -92,7 +92,7 @@ def test_get_tiles_filename():
     filename = "/tmp/test.fits"
     result = tiled.get_tiles_filename(filename)
     config.settings["cache_dir"] = cache_dir
-    assert  result == "/cache/%2Ftmp%2Ftest.fits.tiles.np"
+    assert result == "/cache/%2Ftmp%2Ftest.fits.tiles.np"
 
 
 def test_get_image_filename():
@@ -116,25 +116,95 @@ def test_tiled(tmp_image, tmp_cachedir):
     assert np.all(
         tiled_image.get_data() == tiled.pickledTiled(tmp_image).get_data()
     )
+    # Wrong filename
+    with pytest.raises(Exception):
+        assert tiled.pickledTiled("do_not_exist")
+
+
+def test_delTiled(tmp_image, tmp_cachedir):
+    """
+    Test tiling of tiled object and data.
+    """
+    config.settings["cache_dir"] = tmp_cachedir
+    tiled_image = tiled.pickledTiled(tmp_image)
+    assert tiled.delTiled(tmp_image) is None
+
+
+def test_get_iipheaderstr(tmp_image, tmp_cachedir):
+    """
+    Test legacy IIP header retrieval.
+    """
+    config.settings["cache_dir"] = tmp_cachedir
+    tiled_image = tiled.pickledTiled(tmp_image)
+    assert "IIP:1.0" in tiled_image.get_iipheaderstr()
 
 
 def test_get_tile_raster(tmp_image, tmp_cachedir):
     """
     Test tile raster retrieval at two different resolution levels.
     """
+    config.settings["cache_dir"] = tmp_cachedir
     tiled_image = tiled.pickledTiled(tmp_image)
+    # First tile with default settings
     raster = tiled_image.get_tile_raster(0, 0, channel=1)
     assert np.any(raster != tiled_image.get_tile_raster(1, 0, channel=1))
+    # Non-gray colormap should generate RGB data (3 channels)
+    raster = tiled_image.get_tile_raster(0, 0, channel=1, colormap='jet')
+    assert raster.shape[2] == 3
+    # Color mix should generate RGB data (3 channels)
+    raster = raster = tiled_image.get_tile_raster(0, 0, mix=((1, 0.5, 0.5, 0.5),))
+    assert raster.shape[2] == 3
 
 
 def test_get_encoded_tile(tmp_image, tmp_cachedir):
     """
-    Test tile raster retrieval and encoding.
+    Test encoded tile (e.g., JPEG) retrieval and encoding.
     """
+    config.settings["cache_dir"] = tmp_cachedir
     tiled_image = tiled.pickledTiled(tmp_image)
     tile = tiled_image.get_encoded_tile(0, 0)
     # A second time to pick up the cached encoded tile
     assert np.all(tiled_image.get_encoded_tile(0, 0) == tile)
     # Check that it differs from another  encoded tile
     assert np.any(tiled_image.get_encoded_tile(1, 0) != tile)
+
+
+def test_get_encoded_region(tmp_image, tmp_cachedir):
+    """
+    Test encoded region (e.g., JPEG) retrieval and encoding.
+    """
+    config.settings["cache_dir"] = tmp_cachedir
+    tiled_image = tiled.pickledTiled(tmp_image)
+    # Use overflowed coordinates to test for clipping
+    region = tiled_image.get_encoded_region([(-1,-3), (2261,3255)], binning=1)
+    # Check that it differs from another  encoded tile
+    assert np.any(
+        tiled_image.get_encoded_region([(4,11), (264,263)], binning=2) != region)
+    # Check that inconsistent coordinates trigger exception
+    with pytest.raises(Exception):
+        assert tiled_image.get_encoded_region([(500,11), (26,263)], binning=1)
+
+
+def test_get_pixel_values(tmp_image, tmp_cachedir):
+    """
+    Test pixel value retrieval.
+    """
+    config.settings["cache_dir"] = tmp_cachedir
+    tiled_image = tiled.pickledTiled(tmp_image)
+    # Get pixel value at the first image pixel
+    val = tiled_image.get_pixel_values((1), (1,1)).values[0]
+    # Check that the pixel value is different at a different position
+    assert tiled_image.get_pixel_values((1), (1,2)).values[0] != val
+    # Check that pixel values outside the raster area are None
+    assert tiled_image.get_pixel_values((1), (-1, 10)).values[0] == None
+    assert tiled_image.get_pixel_values((1), (10000,20000)).values[0] == None
+
+
+def test_get_profiles(tmp_image, tmp_cachedir):
+    """
+    Test image profile retrieval.
+    """
+    config.settings["cache_dir"] = tmp_cachedir
+    tiled_image = tiled.pickledTiled(tmp_image)
+    assert tiled_image.get_profiles((1,), (1,4), (101,420))
 
