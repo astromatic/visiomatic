@@ -449,7 +449,7 @@ class Tiled(object):
         string += f"Tile-size:{self.tile_shape[1]} {self.tile_shape[2]}\n"
         string += f"Resolution-number:{self.nlevels}\n"
         string += f"Bits-per-channel:{self.bitdepth}\n"
-        string += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
+        string += f"Min-Max-sample-values:{self.minmax[:,0]} {self.minmax[:,1]}\n"
         string2 = self.header.tostring()
         string += f"subject/{len(string2)}:{string2}"
         return string
