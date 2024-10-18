@@ -40,13 +40,26 @@ def test_QuantityAnnotation():
         coord = Coordinates(lat="-99.905 deg", lon="-75.166 deg", alt="12 m")
     with pytest.raises(Exception):
         coord = Coordinates(lat="-99.905 deg", lon="-75.166 deg", alt="12")
+    with pytest.raises(Exception):
+        coord = Coordinates(
+        lat="[39.905, 38.2] deg",
+        lon="-75.166 deg",
+        alt="12 m"
+    )
     # The following instantiation using dictionaries should validate
     assert Coordinates(
         lat={'value': 39.905, 'unit': "deg"},
         lon={'value': -75.166, 'unit': "deg"},
         alt={'value': 12., 'unit': "m"}
     )
-        
+    # The following instantiation using dictionaries should NOT validate
+    with pytest.raises(Exception):
+        coord = Coordinates(
+            lat={'value': 39.905},
+            lon={'value': -75.166, 'unit': "deg"},
+            alt={'value': 12., 'unit': "m"}
+        )
+
 
 def test_AnnotatedQuantity():
     """
@@ -56,17 +69,23 @@ def test_AnnotatedQuantity():
         size: quantity.AnnotatedQuantity( 
             short='S', 
             description="an arbitrary length", 
-            default=10. * u.m, 
+            default=10. * u.m,
             gt=1. * u.micron, 
-            lt=1. * u.km 
+            lt=1. * u.km,
+            min_shape=(2,),
+            max_shape=(2,)
         ) 
     # The following instantiation should validate 
-    assert Settings(size="3. cm")
+    assert Settings(size="[3., 4.] cm")
     # The following instantiations should NOT validate 
     with pytest.raises(Exception):
-        s = Settings(size="4 deg")
+        s = Settings(size="[3., 4.] deg")
     with pytest.raises(Exception):
-        s = Settings(size="0.001 mm")
+        s = Settings(size="[0.001, 4.] mm")
     with pytest.raises(Exception):
-        s = Settings(size="1. au")
+        s = Settings(size="[3., 4.] au")
+    with pytest.raises(Exception):
+        s = Settings(size="3. cm")
+    with pytest.raises(Exception):
+        s = Settings(size="[3., 4., 5.] cm")
 
