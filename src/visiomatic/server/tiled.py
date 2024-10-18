@@ -915,7 +915,7 @@ class Tiled(object):
         vals = np.full(nchans, np.nan, dtype=np.float32)
         xpos = pos[0] - 1
         ypos = pos[1] - 1
-        if (0 < xpos < shape[2]) and (0 < ypos < shape[1]):
+        if (0 <= xpos < shape[2]) and (0 <= ypos < shape[1]):
             vals[chanexists] = self.get_data()[
                 chans[chanexists],
                 ypos,
