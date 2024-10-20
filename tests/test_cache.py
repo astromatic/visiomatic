@@ -4,13 +4,8 @@ Data caching module tests
 # Copyright CFHT/CNRS/CEA/UParisSaclay
 # Licensed under the MIT licence
 
-from os.path import join
-
-from astropy.io import fits
-import numpy as np
 import pytest
 
-from visiomatic.server import config
 from visiomatic.server import cache
 
 def test_LRUCache():
