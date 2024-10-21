@@ -44,6 +44,7 @@ classifiers = [
 
 [project.optional-dependencies]
 test = [
+    "httpx",
     "mypy",
     "pytest-cov"
 ]

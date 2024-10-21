@@ -37,10 +37,10 @@ def tmp_image(tmp_path_factory) -> str:
     # A pair of prime numbers as image dimensions make things more fun!
     shape = (983, 1061)
     rng = np.random.default_rng()
-    data = rng.normal(size=shape)
+    data = rng.normal(size=shape).astype(np.float32)
     hdu = fits.PrimaryHDU(data)
     image_filename = str(join(tmp_path_factory.getbasetemp(), 'test.fits'))
-    hdu.writeto(image_filename)
+    hdu.writeto(image_filename, overwrite=True)
     return image_filename
 
 

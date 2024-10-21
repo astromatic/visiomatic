@@ -39,7 +39,7 @@ class Config(object):
         self.config_filename = config_file
 
         # Skip argument parsing if Sphinx or PyTest are involved
-        if 'sphinx' in modules or 'pytest' in modules:
+        if 'sphinx' in modules:
             args = False
         # Parse command line
         if args:

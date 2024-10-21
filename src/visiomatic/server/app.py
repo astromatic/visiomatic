@@ -24,8 +24,7 @@ import numpy as np
 from pydantic import BeforeValidator
 
 from .. import package
-
-from .config import config_filename, image_filename, settings
+from . import config
 
 from .tiled import (
     colordict,
@@ -37,9 +36,11 @@ from .tiled import (
 )
 from .cache import LRUCache, LRUSharedRWCache
 
+settings = config.settings
+config_filename = config.config_filename
+
 # True with multiple workers (multiprocessing).
 shared = settings["workers"] > 1 and not settings["reload"]
-local = image_filename and not settings["no_browser"]
 
 # Prepare the RegExps; note that those with non-capturing groups do not
 # work with Rust
@@ -78,7 +79,10 @@ def create_app() -> FastAPI:
     Create FASTAPI application
     """
 
+    # Get process ID
     worker_id = getpid()
+    # True if VisiOmatic is used for local use.
+    local = config.image_filename and not settings["no_browser"]
 
     banner_template = settings["banner_template"]
     base_template = settings["base_template"]
@@ -97,7 +101,7 @@ def create_app() -> FastAPI:
     gamma = settings["gamma"]
     quality = settings["quality"]
     tile_size = settings["tile_size"]
-    image_argname = image_filename
+    image_argname = config.image_filename
 
     logger = logging.getLogger("uvicorn.error")
 

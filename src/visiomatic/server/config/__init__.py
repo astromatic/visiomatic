@@ -51,7 +51,7 @@ def override(key: str, value: Any) -> Any:
 
 
 
-if 'sphinx' not in modules and 'pytest' not in modules:
+if 'sphinx' not in modules:
      config_filename = config.config_filename
      image_filename = config.image_filename
 
