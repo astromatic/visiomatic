@@ -374,7 +374,7 @@ export const ZEA = Zenithal.extend( /** @lends ZEA */ {
 	 * @param {projParam} [options]
 	   Projection options: see {@link Zenithal}.
 
-	 * @returns {ZEA} Instance of a TAN projection.
+	 * @returns {ZEA} Instance of a ZEA projection.
 	 */
 	// Initialize() is inherited from the parent class
 
