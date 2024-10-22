@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>VisiOmatic web client: crs/WCS.js</title>
+    <title>VisiOmatic web client: MER</title>
     
       <link type="text/css" rel="stylesheet" href="styles/vendor/prism-tomorrow-night.css">
     
@@ -24,529 +24,569 @@
 </header>
 
 
-<main class="layout-main  layout-content--source">
+<main class="layout-main ">
   <div class="container">
-    <p class="page-kind">source</p>
-    <h1 class="page-title">crs/WCS.js</h1>
+    <p class="page-kind">Class</p>
+    <h1 class="page-title">MER</h1>
     
 
 
 
-    
 
 <section>
-    <article>
-        <pre id="source" class="source-page line-numbers"><code class="language-js">/**
- #	This file part of:	VisiOmatic
- * @file Support for the WCS (World Coordinate System).
- * @requires crs/Conical.js
- * @requires crs/Cylindrical.js
- * @requires crs/Pixel.js
- * @requires crs/Zenithal.js
-
- * @copyright (c) 2014-2024 CFHT/CNRS/CEA/AIM/UParisSaclay
- * @author Emmanuel Bertin &lt;bertin@cfht.hawaii.edu>
- */
-import {
-	Class,
-	CRS,
-	Transformation,
-	Util,
-	extend,
-	latLng,
-	point,
-} from 'leaflet';
-
-import {COE} from './Conical';
-import {AIT, CAR, CEA, MER, MOL} from './Cylindrical';
-import {TAN, TPV, ZEA} from './Zenithal';
-import {Pixel} from './Pixel';
 
 
-// Document the "image" object that stores image metadata
-/**
- * Image metadata sent in JSON by the VisiOmatic server.
- * @typedef image
- * @property {number[]} size
-   Shape of the image (FITS convention: NAXIS1 first).
- * @property {number[][]} dataslice
-   Start index, end index, and direction (+1 only) of the used section of the
-   image data for each axis. The range notation follows the FITS convention
-   (start at index 1 and include the end index).
- * @property {number[][]} detslice
-   Start index, end index, and direction (+1 or -1) of the used section of the
-   detector in the merged image for each axis. The range notation follows the
-   FITS convention (start at index 1 and include the end index).
- * @property {number[][]} min_max
-   Minimum and maximum clipping limits of the pixel values on each image plane.
- * @property {object} header
-   JSON representation of the merged image header.
- */
+<header class="class">
 
 
-// Make a class out of the CRS object before extending it
-CRSclass = Class.extend(CRS);
+    
+        
+        <!-- <h2>MER</h2> -->
+
+        
+            <h5>Extends</h5>
+            
 
 
-export const WCS = CRSclass.extend( /** @lends WCS */ {
-	/**
-	   Codename of the WCS coordinate reference system.
-	   @default
-	 */
-	code: 'WCS',
-
-	options: {
-		nzoom: 9,
-		// If true, world coordinates are returned
-		// in the native celestial system
-		nativeCelSys: false
-	},
-
-	/**
-	 * Create a new coordinate reference system that emulates the WCS
-	 * (World Coordinate System) used in astronomy.
-	 *
-	 * @extends leaflet.CRS
-	 * @memberof module:crs/WCS.js
-	 * @constructs
-	 * @param {object} header - JSON representation of the merged image header.
-	 * @param {image[]} images - Array of image extension metadata.
-	 * @param {object} [options] - Options.
-
-	 * @param {number} [options.nzoom=9]
-	   Number of zoom levels.
-
-	 * @param {boolean} [options.nativeCelSys=false]
-	   Return world coordinates in their native celestial system?
-
-	 * @returns {WCS} Instance of a World Coordinate System.
-	 */
-	initialize: function (header, images, options) {
-		const	nimages = images.length;
-
-		options = Util.setOptions(this, options);
-		this.nzoom = options.nzoom;
-		this.projection = this.getProjection(header, options);
-
-		const merged_proj = this.projection;
-		if (nimages > 1) {
-			this.projections = new Array(nimages);
-			for (const [i, image] of images.entries()) {
-				var	proj = this.getProjection(
-					image.header,
-					{
-						nativeCelSys: options.nativeCelSys,
-						dataslice: image.dataslice,
-						detslice: image.detslice
-					}
-				);
-				if (proj.name === '') {
-					proj.name = '#' + str(i+1);
-				}
-				proj.centerPnt = proj._getCenter(merged_proj);
-				this.projections[i] = proj;
-			}
-
-			this.latLngToPoint = this.multiLatLngToPoint
-			this.pointToLatLng = this.multiPointToLatLng
-			this.project = this.multiProject;
-			this.unproject = this.multiUnproject;
-		}
-
-		// Propagate some projection properties.
-		this.naxis = merged_proj.projparam.naxis;
-		this.centerLatLng = merged_proj.unproject(
-			merged_proj._getCenter(merged_proj)
-		);
-		// Default limits of validity for coordinates
-		this.wrapLng = [0.5, this.naxis.x - 0.5];
-		this.wrapLat = [this.naxis.y - 0.5, 0.5];
-		// Leaflet's transformation parameters to deal with the FITS standard:
-		// y increases from bottom to top, center coords of 1st pixel are 1.,1.
-		this.transformation = new Transformation(
-			1.0, -0.5,
-			-1.0, this.naxis.y + 0.5
-		);
-		// Custom projection code, e.g., WCS-TAN
-		this.code += ':' + merged_proj.code;
-		this.equatorialFlag = merged_proj.equatorialFlag;
-		this.celSysCode = merged_proj.projparam._celsyscode;
-		this.pixelFlag = merged_proj.projparam._pixelFlag;
-		this.infinite = merged_proj.projparam._infinite;
-		this.jd = merged_proj.projparam.jd;
-		this.obslatlng = merged_proj.projparam.obslatlng;
-	},
-
-	/**
-	 * Convert pixel (image) coordinates to layer coordinates.
-	 * @param {leaflet.Point} pnt - Pixel coordinates.
-	 * @param {number} zoom - Zoom level.
-	 * @returns {leaflet.Point}
-	   Layer coordinates at the given zoom level.
-	 */
-	transform(pnt, zoom) {
-		return this.transformation._transform(pnt, this.scale(zoom));
-	},
+    <ul>
+        <li><a href="Cylindrical.html">Cylindrical</a></li>
+    </ul>
 
 
-	/**
-	 * Convert layer coordinates to pixel (image) coordinates.
-	 * @param {leaflet.Point} layerpnt - Layer coordinates.
-	 * @param {number} zoom - Zoom level.
-	 * @returns {leaflet.Point}
-	   Pixel (image) coordinates
-	 */
-	untransform(layerpnt, zoom) {
-		return this.transformation.untransform(layerpnt, this.scale(zoom));
-	},
+        
 
-	/**
-	 * Multi-WCS version of the projection to layer coordinates.
-	 * @param {leaflet.LatLng} latlng - Input world coordinates.
-	 * @param {number} zoom - Zoom level.
-	 * @returns {leaflet.Point}
-	   Layer coordinates at the given zoom level.
-	 */
-	multiLatLngToPoint(latlng, zoom) {
-		return this.transform(this.multiProject(latlng), zoom);
-	},
+        
 
-	/**
-	 * Multi-WCS version of the de-projection from layer coordinates.
-	 * @param {leaflet.Point} pnt
-	   Input layer coordinates at the given zoom level.
-	 * @param {number} zoom
-	   Zoom level.
-	 * @returns {leaflet.LatLng}
-	   De-projected world coordinates.
-	 */
-	multiPointToLatLng(pnt, zoom) {
-		return this.multiUnproject(this.untransform(pnt, zoom));
-	},
+        
+    
+</header>
 
-	/**
-	 * Multi-WCS astrometric projection.
-	 * @param {leaflet.LatLng} latlng - Input world coordinates.
-	 * @returns {leaflet.Point} Projected (merged) pixel coordinates.
-	 */
-	multiProject(latlng) {
-		const	proj1 = this.projections[this.multiLatLngToIndex(latlng)],
-			pnt = proj1._pixToMulti(proj1.project(latlng)),
-			proj2 = this.projections[this.multiPntToIndex(pnt)];
+<article>
+    <div class="container-overview">
 
-		return proj2._pixToMulti(proj2.project(latlng));
-	},
-	
-	/**
-	 * Multi-WCS version of the astrometric de-projection.
-	 * @param {leaflet.Point} pnt - Input (merged) pixel coordinates.
-	 * @returns {leaflet.LatLng} De-projected world coordinates.
-	 */
-	multiUnproject(pnt) {
-		const	proj = this.projections[this.multiPntToIndex(pnt)];
 
-		return proj.unproject(proj._multiToPix(pnt));
-	},
 
-	/**
-	 * Return index of chip closest to the given world coordinates in a
-	   multi-WCS setting.
-	 * @param {leaflet.LatLng} latlng - Input world coordinates.
-	 * @returns {number} Index of the closest chip (extension).
-	 */
-	multiLatLngToIndex(latlng) {
-		return this.multiPntToIndex(this.projection.project(latlng));
-	},
+    
+        
 
-	/**
-	 * Return index of chip closest to the given pixel coordinates in a
-	   multi-WCS setting.
-	 * @param {leaflet.Point} pnt - Input (merged) pixel coordinates.
-	 * @returns {number} Index of the closest chip (extension).
-	 */
-	multiPntToIndex(pnt) {
-		let	dc = 1e+30,
-			pc = -1;
-		for (var p in this.projections) {
-			var	pntc = this.projections[p].centerPnt;
-			if ((d = pnt.distanceTo(pntc)) &lt; dc) {
-				pc = p;
-				dc = d;
-			}
-		}
-		return pc;
-	},
-	
-	/**
-	 * Extract the WCS projection code from a JSON-encoded image header.
-	 * @param {object} header - JSON representation of the image header.
-	 * @param {object} [options] - Projection options.
-	 * @returns {string} WCS projection code.
-	 */
-	getProjection: function (header, options) {
-		const	ctype1 = header['CTYPE1'] || 'PIXEL';
 
-		switch (ctype1.substr(5, 3)) {
-		case 'ZEA':
-			proj = new ZEA(header, options);
-			break;
-		case 'TAN':
-			proj = new TAN(header, options);
-			break;
-		case 'TPV':
-			proj = new TPV(header, options);
-			break;
-		case 'CAR':
-			proj = new CAR(header, options);
-			break;
-		case 'CEA':
-			proj = new CEA(header, options);
-			break;
-		case 'COE':
-			proj = new COE(header, options);
-			break;
-		default:
-			proj = new Pixel(header, options);
-			break;
-		}
-		return proj;
-	},
 
-	/**
-	 * Convert zoom level to relative scale.
-	 * @override
-	 * @param {number} zoom - Zoom level.
-	 * @returns {number} Relative scale.
-	 */
-	scale: function (zoom) {
-		return Math.pow(2, zoom - this.nzoom + 1);
-	},
 
-	/**
-	 * Convert relative scale to zoom level.
-	 * @override
-	 * @param {number} scale - Relative scale.
-	 * @returns {number} Zoom level.
-	 */
-	zoom: function (scale) {
-		return Math.log(scale) / Math.LN2 + this.nzoom - 1;
-	},
 
-	/**
-	 * Compute the image pixel scale at the given world coordinates.
-	 * @param {leaflet.LatLng} latlng - World coordinates.
-	 * @returns {number} Pixel scale (in degrees per pixel).
-	 */
-	rawPixelScale: function (latlng) {
-		const	p0 = this.projection.project(latlng),
-			latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
-			latlngdy = this.projection.unproject(p0.add([0.0, 10.0]));
-		let	dlngdx = latlngdx.lng - latlng.lng,
-			dlngdy = latlngdy.lng - latlng.lng;
+    
 
-		if (dlngdx > 180.0) { dlngdx -= 360.0; }
-		else if (dlngdx &lt; -180.0) { dlngdx += 360.0; }
-		if (dlngdy > 180.0) { dlngdy -= 360.0; }
-		else if (dlngdy &lt; -180.0) { dlngdy += 360.0; }
 
-		return 0.1 * Math.sqrt(Math.abs((dlngdx * (latlngdy.lat - latlng.lat) -
-		  dlngdy * (latlngdx.lat - latlng.lat))) *
-		  Math.cos(latlng.lat * Math.PI / 180.0));
-	},
+    
 
-	/**
-	 * Compute the layer pixel scale at the given world coordinates.
-	 * @param {number} zoom - Zoom level.
-	 * @param {leaflet.LatLng} latlng - World coordinates.
-	 * @returns {number} Layer pixel scale (in degrees per pixel).
-	 */
-	pixelScale: function (zoom, latlng) {
-		return this.rawPixelScale(latlng) / this.scale(zoom);
-	},
+    <div class="method-type">
+    
+    </div>
 
-	/**
-	 * Compute the zoom level that corresponds to a given FoV at the provided
-	   coordinates.
-	 * @param {leaflet.Map} map - Leaflet map.
-	 * @param {number} fov - Field of View in degrees.
-	 * @param {leaflet.LatLng} latlng - World coordinates.
-	 * @returns {number} Zoom level.
-	 */
-	fovToZoom: function (map, fov, latlng) {
-		const	size = map.getSize();
-		let	scale = this.rawPixelScale(latlng);
+    <h4 class="method-name" id="MER">new MER<span class="signature">(header, options<span class="signature-attributes">opt</span>)</span><span class="return-type-signature"> &rarr; {<a href="MER.html">MER</a>}</span>
+    </h4>
 
-		if (fov &lt; scale) { fov = scale; }
-		scale *= Math.sqrt(size.x * size.x + size.y * size.y);
-		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
-	},
 
-	/**
-	 * Compute the FoV that corresponds to a given zoom level at the provided
-	 * coordinates.
-	 * @param {leaflet.Map} map - Leaflet map.
-	 * @param {number} zoom - Zoom level.
-	 * @param {leaflet.LatLng} latlng - World coordinates.
-	 * @returns {number} Field of View in degrees.
-	 */
-	zoomToFov: function (map, zoom, latlng) {
-		const	size = map.getSize(),
-			scale = this.rawPixelScale(latlng) *
-			  Math.sqrt(size.x * size.x + size.y * size.y),
-			zscale = this.scale(zoom);
-		return  zscale > 0.0 ? scale / zscale : scale;
-	},
 
-	/**
-	 * Compute the distance between two points on the sphere.
-	 * @param {leaflet.LatLng} latlng1 - World coordinates of the first point.
-	 * @param {leaflet.LatLng} latlng2 - World coordinates of the second point.
-	 * @returns {number} Spherical distance between the two points in degrees.
-	 */
-	distance: function (latlng1, latlng2) {
-		const	rad = Math.PI / 180.0,
-			lat1 = latlng1.lat * rad,
-			lat2 = latlng2.lat * rad,
-			a = Math.sin(lat1) * Math.sin(lat2) +
-				Math.cos(lat1) * Math.cos(lat2) * Math.cos(
-					(latlng2.lng - latlng1.lng) * rad
-			    );
 
-		return 180.0 / Math.PI * Math.acos(Math.min(a, 1));
-	},
 
-	/**
-	 * Parse a string of world coordinates.
-	 * @param {string} str
-	   Input string.
-	 * @returns {leaflet.LatLng|undefined}
-	   World coordinates, or `undefined` if conversion failed.
-	 */
-	parseCoords: function (str) {
-		// Try VisiOmatic sexagesimal first
-		let	latlng = this.hmsDMSToLatLng(str);
+<div class="method-description">
+    
+    <p>Mercator projection.</p>
+</div>
 
-		if (typeof latlng === 'undefined') {
-			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
-			let	result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
-			if (result &amp;&amp; result.length >= 3) {
-				latlng = latLng(Number(result[2]), Number(result[1]));
-			}
-		}
-		if (latlng) {
-			if (this.projection.celSysConvFlag) {
-				latlng = this.projection.eqToCelSys(latlng);
-			}
-			return latlng;
-		} else {
-			return undefined;
-		}
-	},
 
-	/**
-	 * Convert world coordinates to an HMSDMS string
-	   (DMS code from the Leaflet-Coordinates plug-in).
-	 * @param {leaflet.LatLng} latlng
-	   Input world coordinates.
-	 * @returns {string}
-	   Coordinate string in HMSDMS.
-	 */
-	latLngToHMSDMS : function (latlng) {
-		let	lng = (latlng.lng + 360.0) / 360.0;
-		lng = (lng - Math.floor(lng)) * 24.0;
 
-		let h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
 
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		const	str = (h &lt; 10 ? '0' : '') + h.toString() + ':' +
-			(m &lt; 10 ? '0' : '') + m.toString() +
-			':' + (sf &lt; 10.0 ? '0' : '') + sf.toFixed(3),
-			lat = Math.abs(latlng.lat),
-			sgn = latlng.lat &lt; 0.0 ? '-' : '+',
-			d = Math.floor(lat);
 
-		mf = (lat - d) * 60.0;
-		m = Math.floor(mf);
-		sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		return str + ' ' + sgn + (d &lt; 10 ? '0' : '') + d.toString() + ':' +
-		 (m &lt; 10 ? '0' : '') + m.toString() + ':' +
-		 (sf &lt; 10.0 ? '0' : '') + sf.toFixed(2);
-	},
 
-	/**
-	 * Convert an HMSDMS string to world coordinates.
-	 * @param {string}
-	   Coordinate string in HMSDMS.
-	 * @return {leaflet.LatLng|undefined}
-	   World coordinates, or `undefined` if the input string could not be
-	   translated.
-	 */
-	hmsDMSToLatLng: function (str) {
-		var result;
 
-		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?)(\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
-		if (result &amp;&amp; result.length >= 8) {
-			const	sgn = Number(result[4] + '1');
 
-			return latLng(
-				sgn * (Number(result[5]) + Number(result[6]) / 60.0 +
-					Number(result[7]) / 3600.0),
-				Number(result[1]) * 15.0 + Number(result[2]) / 4.0 +
-					Number(result[3]) / 240.0
-			);
-		} else {
-			return undefined;
-		}
-	},
 
-	/**
-	 * Compute the longitude of a point with respect to a reference point.
-	 * @param {leaflet.LatLng} latLng
-	   World coordinates of the point.
-	 * @param {leaflet.LatLng} latLng0
-	   World coordinates of the reference point.
-	 * @returns {number}
-	   Difference in longitude (in degrees) in the interval -180 to 180 deg.
-	 */
-	_deltaLng: function (latLng, latLng0) {
-		const	dlng = latLng.lng - latLng0.lng;
+    <h4 class="method-heading">Parameters</h4>
+    
 
-		return dlng > 180.0 ? dlng - 360.0 : (dlng &lt; -180.0 ? dlng + 360.0 : dlng);
-	}
-});
+<ul class="method-params">
+    
 
-/**
- * Instantiate a World Coordinate System.
- * @function
- * @param {object} header - JSON representation of the merged image header.
- * @param {Image[]} images - Array of image extensions.
- * @param {object} [options] - Options: see {@link WCS}.
- * @returns {WCS} WCS instance.
-*/
-export const wcs = function (header, images, options) {
-	return new WCS(header, images, options);
-};
+        <li>
+            
+                <span class="param-name">header</span>
+            
 
-</code></pre>
+            
+                
+
+
+    <span class="param-type">
+        <code>object</code>
+    </span>
+    
+
+            
+
+            
+                <span class="param-attributes">
+                
+
+                
+
+                
+                </span>
+            
+
+            
+
+            <div class="param-description"><p>JSON representation of the image header.</p></div>
+            
+        </li>
+
+    
+
+        <li>
+            
+                <span class="param-name">options</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code><a href="global.html#projParam">projParam</a></code>
+    </span>
+    
+
+            
+
+            
+                <span class="param-attributes">
+                
+                    &lt;optional&gt;<br>
+                
+
+                
+
+                
+                </span>
+            
+
+            
+
+            <div class="param-description"><p>Projection options: see <a href="Cylindrical.html"><code>Cylindrical</code></a>.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h4 class="method-heading">See</h4>
+        <ul>
+            
+                <li><a href="https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=16">https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=16</a></li>
+            
+        </ul>
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>MER</code>
+            
+            
+                <p>Instance of a MER projection.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.181">, line 181</a>
+        </li>
+    </ul>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+     
+
+    
+
+    
+
+
+    
+
+    
+        <h3 class="subtitle">Methods</h3>
+
+        
+            
+
+
+    <article class="method">
+
+
+
+
+    
+
+
+    
+
+    <div class="method-type">
+    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
+    </div>
+
+    <h4 class="method-name" id="._phiRToRed">_phiRToRed<span class="signature">(phiR)</span><span class="return-type-signature"> &rarr; {leaflet.Point}</span>
+    </h4>
+
+
+
+
+
+<div class="method-description">
+    
+    <p>Convert MER (phi,R) coordinates to reduced coordinates.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">phiR</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>leaflet.LatLng</code>
+    </span>
+    
+
+            
+
+            
+
+            
+
+            <div class="param-description"><p>(phi,R) MER coordinates in degrees.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>leaflet.Point</code>
+            
+            
+                <p>Reduced coordinates.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.226">, line 226</a>
+        </li>
+    </ul>
+
+
+
     </article>
+
+        
+            
+
+
+    <article class="method">
+
+
+
+
+    
+
+
+    
+
+    <div class="method-type">
+    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
+    </div>
+
+    <h4 class="method-name" id="._redToPhiR">_redToPhiR<span class="signature">(red)</span><span class="return-type-signature"> &rarr; {leaflet.LatLng}</span>
+    </h4>
+
+
+
+
+
+<div class="method-description">
+    
+    <p>Convert reduced coordinates to MER (phi,R) coordinates.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">red</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>leaflet.Point</code>
+    </span>
+    
+
+            
+
+            
+
+            
+
+            <div class="param-description"><p>Reduced coordinates.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>leaflet.LatLng</code>
+            
+            
+                <p>(phi,R) MER coordinates in degrees.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.206">, line 206</a>
+        </li>
+    </ul>
+
+
+
+    </article>
+
+        
+    
+
+    
+
+    
+</article>
+
 </section>
 
 
