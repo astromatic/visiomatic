@@ -267,13 +267,27 @@ export const MOL = Cylindrical.extend( /** @lends MOL */ {
 	 */
 	_redToPhiR: function (red) {
 		const	deg = Math.PI / 180.0,
-			sqr = Math.sqrt(2. - (red.y * deg) ** 2);
-
+			eps = 1e-12,
+		    a = 2. - (red.y * deg) ** 2,
+			sqr = Math.sqrt(a > eps ? a : eps);
 		return latLng(
 			Math.asin(
-				Math.asin(red.y * Math.sqrt(0.5) * deg) / (90. * deg) +
-				red.y * sqr / 180.
-			),
+				Math.max(
+					-1.,
+					Math.min(
+						Math.asin(
+							Math.max(
+								-1.,
+								Math.min(
+									red.y * Math.sqrt(0.5) * deg,
+									1.
+								)
+							)
+						) / (90. * deg) + red.y * sqr / 180.,
+						1.
+					)
+				)
+			) / deg,
 			Math.PI * red.x / (2. * sqr)
 		);
 	},
@@ -289,22 +303,29 @@ export const MOL = Cylindrical.extend( /** @lends MOL */ {
 	_phiRToRed: function (phiR) {
 		const	deg = Math.PI / 180.0,
 			pstheta = Math.PI * Math.sin(phiR.lat * deg),
-			eps = 1.e-9,
+			eps = 1.e-15,
 			tsqr2opi = 2. * Math.sqrt(2.) / Math.PI;
 
-		let	g = phiR.lat * deg;
-		// Iteratively solve 2 g + sin 2 g = pi * sin(lat) to find g
-		// (only if lat != +/- pi/2)
-		if (90. - Math.abs(phiR.lat) <= eps) {
-			let	go = g;
-			for (let niter = 20; niter-- && Math.abs(g - go) < eps; go = g) {
-				tg = 2. * g;
-				g -= (tg + Math.sin(tg) - pstheta) / (2. + 2. * Math.cos(tg));
+		// Iteratively solve g + sin g = pi * sin(lat) to find gamma = g / 2
+		// (only if lat != +/- pi/2). 
+		if (90. - Math.abs(phiR.lat) >= eps) {
+			// Initial guess for g
+			let	g = 2. * Math.asin(phiR.lat / 90.),
+				go = Math.PI;
+			for (
+				let niter = 50;
+				niter-- && Math.abs(g - go) > eps;
+				g -= (g + Math.sin(g) - pstheta) / (1. + Math.cos(g))
+			) {
+				go = g;
 			}
+			gamma = g / 2.;
+		} else {
+			gamma = phiR.lat;
 		}
 		return point(
-			tsqr2opi * phiR.lng * Math.cos(g),
-			tsqr2opi * 90. * Math.sin(g)
+			tsqr2opi * phiR.lng * Math.cos(gamma),
+			tsqr2opi * 90. * Math.sin(gamma)
 		);
 	}
 });

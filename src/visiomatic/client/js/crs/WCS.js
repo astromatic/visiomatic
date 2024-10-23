@@ -258,11 +258,20 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		case 'TPV':
 			proj = new TPV(header, options);
 			break;
+		case 'AIT':
+			proj = new AIT(header, options);
+			break;
 		case 'CAR':
 			proj = new CAR(header, options);
 			break;
 		case 'CEA':
 			proj = new CEA(header, options);
+			break;
+		case 'MER':
+			proj = new MER(header, options);
+			break;
+		case 'MOL':
+			proj = new MOL(header, options);
 			break;
 		case 'COE':
 			proj = new COE(header, options);
