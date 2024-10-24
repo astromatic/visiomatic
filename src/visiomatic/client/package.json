@@ -40,7 +40,7 @@
 	"scripts": {
 		"prebuild": "npm version --allow-same-version `grep 'version\\s*=' ../../../pyproject.toml| sed -E 's/version\\s*=\\s*\"(\\S*)\"/\\1/'`",
 		"build": "esbuild js/VisiomaticGlobal.js --bundle --minify --outfile=dist/visiomatic.js --watch",
-		"build-pretty": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js",
+		"build-pretty": "esbuild js/VisiomaticGlobal.js --bundle --outfile=dist/visiomatic.js --watch",
 		"docs": "jsdoc -c jsdoc.json js",
 		"lint": "eslint js",
 		"test": "npm run unit"
