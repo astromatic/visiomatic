@@ -41,7 +41,7 @@ export const Coords = Control.extend( /** @lends Coords */ {
 				type: 'world',
 				label: 'RA, Dec',
 				units: 'HMS',
-				nativeCelSys: true
+				nativeCelSys: false
 			},
 			{
 				type: 'pixel',

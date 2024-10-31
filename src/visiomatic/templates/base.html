@@ -19,7 +19,7 @@
 	<script>
 		var args = V.util.VUtil.parseURL(window.location.search.substring(1)),
 				url = '{{root_path}}' + '{{ api_path }}?FIF=' + (args['image'] ? args['image'] : '{{ image }}'),
-				map = L.map('map', {fullscreenControl: true, zoom: 1}),
+				map = L.map('map', {fullscreenControl: true, zoom: 1, preferCanvas: false}),
 				vlayer = V.layer.vTileLayer(url, {
 					setTitleBar: true,
 					center: args['center'] ? args['center'] : false,

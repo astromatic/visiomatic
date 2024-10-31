@@ -24,9 +24,11 @@
 	"dependencies": {
 		"chart.js": "=4.3.0",
 		"chartjs-plugin-zoom": "^2.0.1",
+		"dom-to-image": "^2.6.0",
 		"help": "^3.0.2",
 		"html2canvas": "~1.4.1",
 		"leaflet": "~1.9.4",
+		"leaflet-image": "^0.4.0",
 		"npm": "^9.2.0",
 		"spectrum-vanilla": "^1.1.0",
 		"tidy-jsdoc": "^1.4.1"
