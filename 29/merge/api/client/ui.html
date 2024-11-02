@@ -1,0 +1,2255 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Interface &mdash; VisiOmatic 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Utils" href="utils.html" />
+    <link rel="prev" title="Layers" href="layers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../server/index.html">Python server</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">JS client</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="catalogs.html">Catalogs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry.html">Geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">User Interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui-base-class">UI base class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catalog-ui">Catalog UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#channel-ui">Channel UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#doc-ui">Doc UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#image-ui">Image UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preferences-ui">Preferences UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile-ui">Profile UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#region-ui">Region UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#snapshot-ui">Snapshot UI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coords">Coords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extramap">ExtraMap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fullscreen">FullScreen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reticle">Reticle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sidebar">Sidebar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#widgets">Widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wcs.html">World Coordinate System</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">JS client</a></li>
+      <li class="breadcrumb-item active">User Interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/client/ui.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-interface">
+<h1>User Interface<a class="headerlink" href="#user-interface" title="Link to this heading"></a></h1>
+<section id="ui-base-class">
+<h2>UI base class<a class="headerlink" href="#ui-base-class" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="UI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">UI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseLayers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI" title="Link to this definition"></a></dt>
+<dd><p>Base class for VisiOmatic dialog controls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseLayers</strong> (<em>Array.&lt;VTileLayer&gt;</em>) -- Array of layers</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Layer title. Defaults to the basename of the tile URL with extension removed.</p></li>
+<li><p><strong>options.collapsed</strong> (<em>boolean</em>) -- Start dialog in the collapsed state?</p></li>
+<li><p><strong>options.position</strong> (<em>boolean</em>) -- Position of the dialog on the map.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>UI</strong> -- VisiOmatic UI instance.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addButton</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subClassName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addButton" title="Link to this definition"></a></dt>
+<dd><p>Add a new button to the provided parent element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>className</strong> (<em>string</em>) -- Class name for the button.</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) -- The parent element.</p></li>
+<li><p><strong>subClassName</strong> (<em>string</em>) -- Sub-class name for the button (will be combined with ClassName to generate a unique element id).</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the button (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>fn</strong> (<em>UI~controlCallback</em>) -- Callback function for when the button is pressed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created button.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addColorPicker">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addColorPicker</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subClassName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultColor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storageKey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addColorPicker" title="Link to this definition"></a></dt>
+<dd><p>Add a new color picker to the provided parent element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>className</strong> (<em>string</em>) -- Class name for the color picker.</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) -- The parent element.</p></li>
+<li><p><strong>subClassName</strong> (<em>string</em>) -- Sub-class name for the color picker (will be combined with ClassName to generate a unique element id).</p></li>
+<li><p><strong>defaultColor</strong> (<em>string</em>) -- Default color picked by default.</p></li>
+<li><p><strong>storageKey</strong> (<em>string</em>) -- String to be used as a local browser storage key.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the color picker (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>fn</strong> (<em>UI~colorCallback</em>) -- Callback function for when a color has been picked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created color picker.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addDialogBox">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addDialogBox</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addDialogBox" title="Link to this definition"></a></dt>
+<dd><p>Add a new dialog box to the UI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>string</em>) -- DOM id property of the box element.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created dialog box.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addDialogElement">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addDialogElement</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addDialogElement" title="Link to this definition"></a></dt>
+<dd><p>Add a new dialog element to the provided dialog line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line</strong> (<em>object</em>) -- The destination dialog line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created dialog element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addDialogLine">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addDialogLine</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialogBox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addDialogLine" title="Link to this definition"></a></dt>
+<dd><p>Add a new dialog line to the provided dialog box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>string</em>) -- Default text in the dialog line.</p></li>
+<li><p><strong>dialogBox</strong> (<em>object</em>) -- The destination dialog box.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created dialog line.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addLayerItem">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addLayerItem</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addLayerItem" title="Link to this definition"></a></dt>
+<dd><p>Add control item element for the provided layer parent object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>object</em>) -- Layer parent object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The control item element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addNumericalInput">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addNumericalInput</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addNumericalInput" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add a new numerical input widget to the provided box element for</dt><dd><p>updating a layer attribute .</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- Layer affected by the numerical update.</p></li>
+<li><p><strong>attr</strong> (<em>string</em>) -- Name of the (numerical) layer attribute to be updated.</p></li>
+<li><p><strong>box</strong> (<em>object</em>) -- The parent box element.</p></li>
+<li><p><strong>label</strong> (<em>string</em>) -- Text for the created dialog line.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the numerical input (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>initValue</strong> (<em>number</em>) -- Initial numerical value.</p></li>
+<li><p><strong>step</strong> (<em>number</em>) -- Starting step value.</p></li>
+<li><p><strong>min</strong> (<em>number</em>) -- Minimum value.</p></li>
+<li><p><strong>max</strong> (<em>number</em>) -- Maximum value.</p></li>
+<li><p><strong>fn</strong> (<em>UI~layerCallback</em>) -- Callback function for when the numerical input has been updated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created numerical input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addRadioButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addRadioButton</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addRadioButton" title="Link to this definition"></a></dt>
+<dd><p>Add a new radio button to the provided parent element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>className</strong> (<em>string</em>) -- Class name for the radio button.</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) -- The parent element.</p></li>
+<li><p><strong>value</strong> (<em>*</em>) -- Value associated with the radio button (e.g., button index or label).</p></li>
+<li><p><strong>checked</strong> (<em>boolean</em>) -- Initial status of the button.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the button (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>fn</strong> (<em>UI~controlCallback</em>) -- Callback function for when the button is pressed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created radio button.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addSelectMenu">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addSelectMenu</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addSelectMenu" title="Link to this definition"></a></dt>
+<dd><p>Add a new selection menu to the provided parent element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>className</strong> (<em>string</em>) -- Class name for the selection menu.</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) -- The parent element.</p></li>
+<li><p><strong>Item</strong> (<em>Array.&lt;string&gt;</em>) -- list.</p></li>
+<li><p><strong>disabled</strong> (<em>Array.&lt;boolean&gt;</em>) -- Item-disabling flag list.</p></li>
+<li><p><strong>selected</strong> (<em>number</em>) -- Selected item index.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the selection menu (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>fn</strong> (<em>UI~controlCallback</em>) -- Callback function for when an item is selected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created selection menu.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._addSwitchInput">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addSwitchInput</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checked</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._addSwitchInput" title="Link to this definition"></a></dt>
+<dd><p>Add a new layer attribute flip switch to the provided box element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- Layer affected by the flip switch action.</p></li>
+<li><p><strong>attr</strong> (<em>string</em>) -- Name of the (boolean) layer attribute to be flipped.</p></li>
+<li><p><strong>box</strong> (<em>object</em>) -- The parent box element.</p></li>
+<li><p><strong>label</strong> (<em>string</em>) -- Text for the created dialog line.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the flip switch (for, e.g., display as a tooltip).</p></li>
+<li><p><strong>checked</strong> (<em>boolean</em>) -- Initial switch position.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created flip switch.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._checkVisiomatic">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_checkVisiomatic</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._checkVisiomatic" title="Link to this definition"></a></dt>
+<dd><p>Check that the layer being loaded is a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.LayerEvent</em>) -- Leaflet layer event object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._collapse">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_collapse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._collapse" title="Link to this definition"></a></dt>
+<dd><p>Collapse a DOM element (by removing '-expanded' from its class name).</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._expand">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_expand</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._expand" title="Link to this definition"></a></dt>
+<dd><p>Expand a DOM element (by adding '-expanded' to its class name).</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._findActiveBaseLayer">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_findActiveBaseLayer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._findActiveBaseLayer" title="Link to this definition"></a></dt>
+<dd><p>Find the base VisiOmatic layer currently active on the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object</strong> -- The active VisiOmatic layer, or <cite>undefined</cite> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the UI dialog (dummy in the base class, just a placeholder).</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._onLayerChange">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onLayerChange</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._onLayerChange" title="Link to this definition"></a></dt>
+<dd><p>Trigger layer list update when an (overlay) layer is added or removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.LayerEvent</em>) -- Leaflet layer event object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._resetDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_resetDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._resetDialog" title="Link to this definition"></a></dt>
+<dd><p>Reset the UI dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._spinboxStep">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_spinboxStep</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._spinboxStep" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Compute a step for the spinbox widget from the provided min and max</dt><dd><p>values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min</strong> (<em>number</em>) -- Minimum value.</p></li>
+<li><p><strong>max</strong> (<em>number</em>) -- Maximum value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>number</strong> -- The computed step value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._updateInput">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateInput</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI._updateInput" title="Link to this definition"></a></dt>
+<dd><p>Update the value stored in a widget element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> (<em>object</em>) -- Widget element.</p></li>
+<li><p><strong>value</strong> (<em>*</em>) -- New value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI._updateLayerList">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateLayerList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI._updateLayerList" title="Link to this definition"></a></dt>
+<dd><p>Update the control list of layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object</strong> -- This (control).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI.addLayer">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.addLayer" title="Link to this definition"></a></dt>
+<dd><p>Add (overlay) layer from the present control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>leaflet.Layer</em>) -- Layer to be added.</p></li>
+<li><p><strong>name</strong> (<em>string</em>) -- Layer name.</p></li>
+<li><p><strong>index</strong> (<em>number</em>) -- Layer depth index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- This (control).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI.addTo">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTo</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.addTo" title="Link to this definition"></a></dt>
+<dd><p>Add the control to the map or to a sidebar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dest</strong> (<em>object</em>) -- Destination map or sidebar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- Destination object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI.getActiveBaseLayer">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getActiveBaseLayer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI.getActiveBaseLayer" title="Link to this definition"></a></dt>
+<dd><p>Get the base layer currently active on the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object</strong> -- Tile- or overlay layer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI.onAdd">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onAdd</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.onAdd" title="Link to this definition"></a></dt>
+<dd><p>Add the control dialog directly to the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>object</em>) -- Leaflet map the control has been added to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created container of the dialog.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="UI.removeLayer">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">removeLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.removeLayer" title="Link to this definition"></a></dt>
+<dd><p>Remove (overlay) layer from the present control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>leaflet.Layer</em>) -- Layer to be removed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- This (control).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="UI.colorCallback">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">colorCallback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#UI.colorCallback" title="Link to this definition"></a></dt>
+<dd><p>Callbacks for color picker changes.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="UI.controlCallback">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">controlCallback</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UI</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.controlCallback" title="Link to this definition"></a></dt>
+<dd><p>Callbacks for UI control changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>UI</strong> (<em>object</em>) -- control object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="UI.layerCallback">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">UI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">layerCallback</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#UI.layerCallback" title="Link to this definition"></a></dt>
+<dd><p>Callbacks for layer attribute changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>:any:<a href="#id1"><span class="problematic" id="id2">`</span></a>[Leaflet API reference]{&#64;link <a class="reference external" href="https://leafletjs.com/reference.html#control">https://leafletjs.com/reference.html#control</a>}</dt><dd><p>for additional control options.`</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ui">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ui</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseLayers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ui" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic UI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseLayers</strong> (<em>Array.&lt;VTileLayer&gt;</em>) -- Array of layers</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> UI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>UI</strong> -- VisiOmatic UI instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="catalog-ui">
+<h2>Catalog UI<a class="headerlink" href="#catalog-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="CatalogUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">CatalogUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalogs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CatalogUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for catalog queries and catalog overlays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catalogs</strong> (<em>Array.&lt;Catalog&gt;</em>) -- Array of catalogs</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+<li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- Use native coordinates (e.g., galactic coordinates) instead of equatorial coordinates?</p></li>
+<li><p><strong>options.color</strong> (<em>string</em>) -- Default catalog overlay color.</p></li>
+<li><p><strong>options.timeOut</strong> (<em>number</em>) -- Time out delay for catalog queries, in seconds.</p></li>
+<li><p><strong>options.authenticate</strong> (<em>boolean</em>) -- Force authentication for querying catalogs?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>CatalogUI</strong> -- VisiOmatic CatalogUI instance.</p>
+</dd>
+</dl>
+<dl class="js attribute">
+<dt class="sig sig-object js" id="CatalogUI.defaultCatalogs">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">CatalogUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">defaultCatalogs</span></span></span><a class="headerlink" href="#CatalogUI.defaultCatalogs" title="Link to this definition"></a></dt>
+<dd><p><strong>type:</strong> Array.&lt;Catalog&gt;</p>
+<p>Default array of catalogs.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="CatalogUI._getCatalog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CatalogUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getCatalog</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CatalogUI._getCatalog" title="Link to this definition"></a></dt>
+<dd><p>Query catalog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catalog</strong> (<a class="reference internal" href="catalogs.html#Catalog" title="Catalog"><em>Catalog</em></a>) -- Catalog.</p></li>
+<li><p><strong>timeout</strong> (<em>number</em>) -- Query time out delay, in seconds. Defaults to no time out.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="CatalogUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CatalogUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CatalogUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the catalog query dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="CatalogUI._loadCatalog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CatalogUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_loadCatalog</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">templayer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#CatalogUI._loadCatalog" title="Link to this definition"></a></dt>
+<dd><p>Load catalog data and display the overlay layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catalog</strong> (<a class="reference internal" href="catalogs.html#Catalog" title="Catalog"><em>Catalog</em></a>) -- Catalog.</p></li>
+<li><p><strong>templayer</strong> (<em>leaflet.Layer</em>) -- &quot;Dummy&quot; layer to activate a spinner sign.</p></li>
+<li><p><strong>response</strong> (<em>object</em>) -- Response object from the fetch() request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="CatalogUI._resetDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">CatalogUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_resetDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CatalogUI._resetDialog" title="Link to this definition"></a></dt>
+<dd><p>Reset the catalog query dialog.</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="catalogUI">
+<span class="sig-name descname"><span class="n"><span class="pre">catalogUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalogs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#catalogUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for catalog queries and catalog overlays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catalogs</strong> (<em>Array.&lt;Catalog&gt;</em>) -- Array of catalogs</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> CatalogUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>CatalogUI</strong> -- Instance of a VisiOmatic catalog interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="channel-ui">
+<h2>Channel UI<a class="headerlink" href="#channel-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="ChannelUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ChannelUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for managing the VisiOmatic layer channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+<li><p><strong>options.color</strong> (<em>'grey'|'jet'|'cool'|'hot'</em>) -- Default color map in <code class="docutils literal notranslate"><span class="pre">'mono'</span></code> mixing mode.</p></li>
+<li><p><strong>options.mixingMode</strong> (<em>'mono'|'color'</em>) -- Mixing mode: single channel (<code class="docutils literal notranslate"><span class="pre">'mono'</span></code>) or color mix (<code class="docutils literal notranslate"><span class="pre">'color'</span></code>). Defaults to [layer settings]{&#64;link VTileLayer}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ChannelUI</strong> -- Instance of a channel mixing user interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._activateChanElem">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_activateChanElem</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trashElem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._activateChanElem" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add listener to a channel element for setting the current channel</dt><dd><p>of a given VisiOmatic layer.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trashElem</strong> (<em>object</em>) -- Trash element.</p></li>
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._activateTrashElem">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_activateTrashElem</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trashElem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._activateTrashElem" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add listener to a trash element for blackening the current channel color</dt><dd><p>of a given VisiOmatic layer.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trashElem</strong> (<em>object</em>) -- Trash element.</p></li>
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._addMinMax">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addMinMax</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._addMinMax" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add a pair of spinboxes for setting the min and max clipping limits of</dt><dd><p>pixel values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+<li><p><strong>box</strong> (<em>object</em>) -- The parent box element.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._gotoChannel">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_gotoChannel</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel=0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._gotoChannel" title="Link to this definition"></a></dt>
+<dd><p>Set current channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._initColorDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initColorDialog</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._initColorDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the <code class="docutils literal notranslate"><span class="pre">'color'</span></code> flavor of the channel mixing dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>box</strong> (<em>object</em>) -- The parent box element.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the channel mixing dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._initMonoDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initMonoDialog</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._initMonoDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the <code class="docutils literal notranslate"><span class="pre">'mono'</span></code> flavor of the channel mixing dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>box</strong> (<em>object</em>) -- The parent box element.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._pauseAnimation">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_pauseAnimation</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._pauseAnimation" title="Link to this definition"></a></dt>
+<dd><p>Pause Animation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._playAnimation">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_playAnimation</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">{boolean)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._playAnimation" title="Link to this definition"></a></dt>
+<dd><p>Play Animation by iterating over channels/slices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>{boolean)</strong> -- [reverse=false] Play in reverse?</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._updateChannel">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateChannel</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">{boolean)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._updateChannel" title="Link to this definition"></a></dt>
+<dd><p>Set/update the channel controls for a given channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+<li><p><strong>{boolean)</strong> -- [updateColor=false] Update Color patch element?</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._updateChannelList">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateChannelList</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._updateChannelList" title="Link to this definition"></a></dt>
+<dd><p>Update the list of channels in the dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._updateChannelMix">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateChannelMix</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._updateChannelMix" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Update the color mixing matrix with the RGB contribution of a given</dt><dd><p>channel and redraw the VisiOmatic layer.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+<li><p><strong>channel_rgb</strong> (<a class="reference internal" href="utils.html#RGB" title="RGB"><em>RGB</em></a>) -- RGB color.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI._updateColPick">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateColPick</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI._updateColPick" title="Link to this definition"></a></dt>
+<dd><p>Update the color picker value based on the given channel color.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>number</em>) -- VisiOmatic layer.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI.loadSettings">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">loadSettings</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepChannel=false</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI.loadSettings" title="Link to this definition"></a></dt>
+<dd><p>Copy channel mixing settings to a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>settings</strong> (<em>object</em>) -- Object where to save the settings properties.</p></li>
+<li><p><strong>mode</strong> (<em>'mono'|'color'</em>) -- Mixing mode: single channel (<code class="docutils literal notranslate"><span class="pre">'mono'</span></code>) or color mix (<code class="docutils literal notranslate"><span class="pre">'color'</span></code>).</p></li>
+<li><p><strong>keepChannel</strong> (<em>boolean</em>) -- Overwrite the current layer channel?</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ChannelUI.saveSettings">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ChannelUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">saveSettings</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ChannelUI.saveSettings" title="Link to this definition"></a></dt>
+<dd><p>Copy channel mixing settings from a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>settings</strong> (<em>object</em>) -- Object where to save the settings properties.</p></li>
+<li><p><strong>mode</strong> (<em>'mono'|'color'</em>) -- Mixing mode: single channel (<code class="docutils literal notranslate"><span class="pre">'mono'</span></code>) or color mix (<code class="docutils literal notranslate"><span class="pre">'color'</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="channelUI">
+<span class="sig-name descname"><span class="n"><span class="pre">channelUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#channelUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for managing channels in a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> ChannelUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ChannelUI</strong> -- Instance of a channel mixing user interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="doc-ui">
+<h2>Doc UI<a class="headerlink" href="#doc-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="DocUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">DocUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DocUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for the online documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>string</em>) -- Documentation URL.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+<li><p><strong>options.pdflink</strong> (<em>string</em>) -- URL of the PDF version of the documentation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>DocUI</strong> -- Instance of a VisiOmatic documentation user interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._backNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_backNav</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._backNav" title="Link to this definition"></a></dt>
+<dd><p>Navigate back in the IFrame.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">http://stackoverflow.com/a/7704305}.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._disableNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_disableNav</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._disableNav" title="Link to this definition"></a></dt>
+<dd><p>Disable navigation buttons on both sides of history positions.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._forwardNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_forwardNav</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._forwardNav" title="Link to this definition"></a></dt>
+<dd><p>Navigate forward in the IFrame.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">http://stackoverflow.com/a/7704305}.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._homeNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_homeNav</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._homeNav" title="Link to this definition"></a></dt>
+<dd><p>Navigate home in the IFrame.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">http://stackoverflow.com/a/7704305}.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the documentation dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._onloadNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onloadNav</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._onloadNav" title="Link to this definition"></a></dt>
+<dd><p>Triggered on IFrame load.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">http://stackoverflow.com/a/7704305}.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="DocUI._updateNav">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">DocUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateNav</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newPos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DocUI._updateNav" title="Link to this definition"></a></dt>
+<dd><p>Update navigation buttons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>newPos</strong> (<em>number</em>) -- Position in navigation history.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">http://stackoverflow.com/a/7704305}.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="docUI">
+<span class="sig-name descname"><span class="n"><span class="pre">docUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#docUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for the online documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>string</em>) -- Documentation URL.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> DocUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>DocUI</strong> -- Instance of a VisiOmatic documentation user interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="image-ui">
+<h2>Image UI<a class="headerlink" href="#image-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="ImageUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ImageUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ImageUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for setting the VisiOmatic layer rendering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImageUI</strong> -- Instance of a user interface for the rendering preferences.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ImageUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ImageUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ImageUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the rendering preference dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ImageUI.loadSettings">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ImageUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">loadSettings</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ImageUI.loadSettings" title="Link to this definition"></a></dt>
+<dd><p>Copy rendering settings to a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>settings</strong> (<em>object</em>) -- Object where to save the settings properties.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ImageUI.saveSettings">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ImageUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">saveSettings</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ImageUI.saveSettings" title="Link to this definition"></a></dt>
+<dd><p>Copy rendering settings from a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>settings</strong> (<em>object</em>) -- Object where to save the settings properties.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="imageUI">
+<span class="sig-name descname"><span class="n"><span class="pre">imageUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imageUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for setting the rendering of a VisiOmatic
+layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> ImageUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImageUI</strong> -- Instance of a user interface for the rendering preferences.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="preferences-ui">
+<h2>Preferences UI<a class="headerlink" href="#preferences-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="PreferencesUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">PreferencesUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PreferencesUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for managing preferences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PreferencesUI</strong> -- Instance of a VisiOmatic preference interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="PreferencesUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">PreferencesUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#PreferencesUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the Preferences dialog.</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="preferencesUI">
+<span class="sig-name descname"><span class="n"><span class="pre">preferencesUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preferencesUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for managing preferences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> PreferencesUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PreferencesUI</strong> -- Instance of a VisiOmatic preference interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="profile-ui">
+<h2>Profile UI<a class="headerlink" href="#profile-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="ProfileUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ProfileUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI" title="Link to this definition"></a></dt>
+<dd><p>Create a VisiOmatic dialog for plotting image profiles and spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+<li><p><strong>options.profile</strong> (<em>boolean</em>) -- Include Profile plotting dialog?</p></li>
+<li><p><strong>options.profileColor</strong> (<em>string</em>) -- Default profile overlay color</p></li>
+<li><p><strong>options.spectrum</strong> (<em>boolean</em>) -- Include spectrum plotting dialog?</p></li>
+<li><p><strong>options.spectrumColor</strong> (<em>string</em>) -- Default spectrumoverlay color</p></li>
+<li><p><strong>options.chartZoomOptions</strong> (<em>string</em>) -- Default options for the chartjs-plugin-zoom Chart plug-in.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ProfileUI</strong> -- Instance of a VisiOmatic profile and spectrum plotting user interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._extractAverage">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_extractAverage</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawprof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._extractAverage" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Extract the average pixel value in a given channel from the multichannel</dt><dd><p>profiles of a given VisiOmatic layer.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>rawprof</strong> (<em>Array.&lt;number&gt;</em>) -- Input &quot;raw&quot; (multiplexed) image profiles.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>number</strong> -- Average value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._extractProfile">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_extractProfile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawprof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._extractProfile" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Extract the image profile in a given channel from the multichannel</dt><dd><p>profiles of a given VisiOmatic layer.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<a class="reference internal" href="layers.html#VTileLayer" title="VTileLayer"><em>VTileLayer</em></a>) -- VisiOmatic layer.</p></li>
+<li><p><strong>rawprof</strong> (<em>Array.&lt;number&gt;</em>) -- Input &quot;raw&quot; (multiplexed) image profiles.</p></li>
+<li><p><strong>channel</strong> (<em>number</em>) -- Image channel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Array.&lt;number&gt;</strong> -- Extracted image profile.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._getDistanceString">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getDistanceString</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._getDistanceString" title="Link to this definition"></a></dt>
+<dd><p>Compute distance and set up measurement string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> -- Measurement string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the profile/spectrum plotting dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._plotProfile">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_plotProfile</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._plotProfile" title="Link to this definition"></a></dt>
+<dd><p>Load and plot image profile data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>response</strong> (<em>object</em>) -- HTTP response object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._plotSpectrum">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_plotSpectrum</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">httpRequest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._plotSpectrum" title="Link to this definition"></a></dt>
+<dd><p>Load and plot spectrum data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) -- Calling control object (<code class="docutils literal notranslate"><span class="pre">this</span></code>).</p></li>
+<li><p><strong>httpRequest</strong> (<em>object</em>) -- HTTP request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._profileEnd">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_profileEnd</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._profileEnd" title="Link to this definition"></a></dt>
+<dd><p>End interactive profile line definition and do the profile query.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ProfileUI._updateLine">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ProfileUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateLine</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProfileUI._updateLine" title="Link to this definition"></a></dt>
+<dd><p>Update plotted line parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>event</em>) -- Triggering event (e.g., <code class="docutils literal notranslate"><span class="pre">'drag'</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">https://www.chartjs.org/chartjs-plugin-zoom/latest/guide/options.html}</span></code></p></li>
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="profileUI">
+<span class="sig-name descname"><span class="n"><span class="pre">profileUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profileUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for plotting image profiles and spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> ProfileUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ProfileUI</strong> -- Instance of a VisiOmatic profile and spectrum plotting user interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="region-ui">
+<h2>Region UI<a class="headerlink" href="#region-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="RegionUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">RegionUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Create a VisiOmatic dialog for overlaying region and Point of Interest</dt><dd><p>(PoI).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regions</strong> (<em>Array.&lt;region&gt;</em>) -- Regions to overlay.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+<li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- Use native coordinates (e.g., galactic coordinates) instead of equatorial coordinates?</p></li>
+<li><p><strong>options.color</strong> (<em>string</em>) -- Default region overlay color.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ProfileUI</strong> -- Instance of a VisiOmatic profile and spectrum plotting user interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="RegionUI._getRegion">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">RegionUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getRegion</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI._getRegion" title="Link to this definition"></a></dt>
+<dd><p>Query a region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>region</em>) -- Region.</p></li>
+<li><p><strong>timeout</strong> (<em>number</em>) -- Query time out delay, in seconds. Defaults to no time out.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="RegionUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">RegionUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the region overlay dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="RegionUI._loadRegion">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">RegionUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_loadRegion</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">templayer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">httpRequest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI._loadRegion" title="Link to this definition"></a></dt>
+<dd><p>Load region data and display the overlay layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<em>region</em>) -- Region.</p></li>
+<li><p><strong>templayer</strong> (<em>leaflet.Layer</em>) -- &quot;Dummy&quot; layer to activate a spinner sign.</p></li>
+<li><p><strong>self</strong> (<em>object</em>) -- Calling control object (<code class="docutils literal notranslate"><span class="pre">this</span></code>).</p></li>
+<li><p><strong>httpRequest</strong> (<em>object</em>) -- HTTP request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="RegionUI._resetDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">RegionUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_resetDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI._resetDialog" title="Link to this definition"></a></dt>
+<dd><p>Reset the region query dialog (do nothing actually).</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="RegionUI.drawCallback">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">RegionUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">drawCallback</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#RegionUI.drawCallback" title="Link to this definition"></a></dt>
+<dd><p>Callback for custom drawing of a GeoJSON point feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature</strong> (<em>object</em>) -- GeoJSON feature.</p></li>
+<li><p><strong>latlng</strong> (<em>LatLng</em>) -- World coordinates of the point.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="regionUI">
+<span class="sig-name descname"><span class="n"><span class="pre">regionUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regionUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for region overlays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regions</strong> (<em>Array.&lt;region&gt;</em>) -- Regions to overlay.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RegionUI</strong> -- Instance of a VisiOmatic region interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="snapshot-ui">
+<h2>Snapshot UI<a class="headerlink" href="#snapshot-ui" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="SnapshotUI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">SnapshotUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SnapshotUI" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Create a VisiOmatic dialog for taking snapshots of the current</dt><dd><p>screen/image.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the dialog window or panel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SnapshotUI</strong> -- Instance of a VisiOmatic snapshot interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="SnapshotUI._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">SnapshotUI</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SnapshotUI._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the snapshot dialog.</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref any docutils literal notranslate"><span class="pre">{&#64;link</span> <span class="pre">UI}</span> <span class="pre">for</span> <span class="pre">additional</span> <span class="pre">control</span> <span class="pre">options.</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="snapshotUI">
+<span class="sig-name descname"><span class="n"><span class="pre">snapshotUI</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#snapshotUI" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a VisiOmatic dialog for taking snapshots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> SnapshotUI}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SnapshotUI</strong> -- Instance of a VisiOmatic snapshot interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="coords">
+<h2>Coords<a class="headerlink" href="#coords" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="Coords">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Coords</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords" title="Link to this definition"></a></dt>
+<dd><p>Create a new coordinate display/control interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the control.</p></li>
+<li><p><strong>options.position</strong> (<em>'bottomleft'|'bottomright'|'topleft'|'topright'</em>) -- Position of the coordinate display.</p></li>
+<li><p><strong>options.coordinates</strong> (<em>Array.&lt;coordinate&gt;</em>) -- Coordinate settings for every instance of coordinates.</p></li>
+<li><p><strong>options.centerQueryKey</strong> (<em>string</em>) -- Web query key for map centering.</p></li>
+<li><p><strong>options.fovQueryKey</strong> (<em>string</em>) -- Web query key for setting the Field of View.</p></li>
+<li><p><strong>options.sesameURL</strong> (<em>string</em>) -- URL for Sesame queries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Coords</strong> -- Instance of a coordinate display/control interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords._checkVisiomatic">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_checkVisiomatic</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords._checkVisiomatic" title="Link to this definition"></a></dt>
+<dd><p>Check that the layer being loaded is a VisiOmatic layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.LayerEvent</em>) -- Leaflet layer event object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords._getCoordinates">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_getCoordinates</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">httpRequest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords._getCoordinates" title="Link to this definition"></a></dt>
+<dd><p>Move map to the sky coordinates resolved by Sesame service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) -- Calling control object (<code class="docutils literal notranslate"><span class="pre">this</span></code>).</p></li>
+<li><p><strong>httpRequest</strong> (<em>object</em>) -- HTTP request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords._initDialog">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_initDialog</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coords._initDialog" title="Link to this definition"></a></dt>
+<dd><p>Initialize the coordinate display/control dialog.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords._onDrag">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onDrag</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords._onDrag" title="Link to this definition"></a></dt>
+<dd><p>Update coordinates when the map is being dragged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.LayerEvent</em>) -- Leaflet layer event object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords.onRemove">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onRemove</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords.onRemove" title="Link to this definition"></a></dt>
+<dd><p>Remove map dragging event when the coordinate display/control is removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>leaflet.map</em>) -- The parent map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Coords.panTo">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Coords</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">panTo</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coords.panTo" title="Link to this definition"></a></dt>
+<dd><p>Move map to a given source or coordinate position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str</strong> (<em>string</em>) -- Source name or coordinates.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="coords">
+<span class="sig-name descname"><span class="n"><span class="pre">coords</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#coords" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a coordinate display/control .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Coords}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Coords</strong> -- Instance of a coordinate display/control interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="extramap">
+<h2>ExtraMap<a class="headerlink" href="#extramap" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="ExtraMap">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">ExtraMap</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap" title="Link to this definition"></a></dt>
+<dd><p>Create an extra map display/control interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>leaflet.Layer</em>) -- Layer displayed in the extra map.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the map.</p></li>
+<li><p><strong>options.position</strong> (<em>'bottomleft'|'bottomright'|'topleft'|'topright'</em>) -- Position of the map.</p></li>
+<li><p><strong>options.width</strong> (<em>number</em>) -- Map width in screen pixels.</p></li>
+<li><p><strong>options.height</strong> (<em>number</em>) -- Map height in screen pixels.</p></li>
+<li><p><strong>options.width</strong> -- Map width in collapsed state, in screen pixels.</p></li>
+<li><p><strong>options.height</strong> -- Map height in collapsed state, in screen pixels.</p></li>
+<li><p><strong>options.toggleDisplay</strong> (<em>boolean</em>) -- Add a map toggle display button?</p></li>
+<li><p><strong>options.autoToggleDisplay</strong> (<em>boolean</em>) -- Automatically toggle the map display when hovering the map icon?</p></li>
+<li><p><strong>options.zoomLevelFixed</strong> (<em>number|false</em>) -- Fixed extra map zoom level. Defaults to dynamic zooming.</p></li>
+<li><p><strong>options.zoomLevelOffset</strong> (<em>number</em>) -- Zoom level offset with respect to that of the main map.</p></li>
+<li><p><strong>options.zoomAnimation</strong> (<em>boolean</em>) -- Animate when zooming in/out (warning: adds some lag)?</p></li>
+<li><p><strong>options.aimingRectOptions</strong> (<em>rectangleOptions</em>) -- Display options for the aiming rectangle.</p></li>
+<li><p><strong>options.shadowRectOptions</strong> (<em>rectangleOptions</em>) -- Display options for the shadow rectangle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ExtraMap</strong> -- Instance of an extra map display/control interface.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._addButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addButton</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._addButton" title="Link to this definition"></a></dt>
+<dd><p>Add a button to the extra map window/icon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object</strong> -- Button element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._addToggleButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addToggleButton</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._addToggleButton" title="Link to this definition"></a></dt>
+<dd><p>Add a display toggle button to the extra map window/icon.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._decideMinimized">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_decideMinimized</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._decideMinimized" title="Link to this definition"></a></dt>
+<dd><p>Decide if the extra map must be minimized.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._decideZoom">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_decideZoom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fromMaintoExtra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._decideZoom" title="Link to this definition"></a></dt>
+<dd><p>Decide the extra map zoom level depending on current conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fromMaintoExtra</strong> (<em>boolean</em>) -- Is zooming triggered from the main map?</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._isDefined">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_isDefined</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._isDefined" title="Link to this definition"></a></dt>
+<dd><p>Testing for <code class="docutils literal notranslate"><span class="pre">undefined</span></code> type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>number</em>) -- Input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>boolean</strong> -- True if the input value is strictly <code class="docutils literal notranslate"><span class="pre">undefined</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._isInteger">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_isInteger</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._isInteger" title="Link to this definition"></a></dt>
+<dd><p>Testing for <code class="docutils literal notranslate"><span class="pre">number</span></code> type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>number</em>) -- Input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>boolean</strong> -- True if the input value is a number.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._isZoomLevelFixed">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_isZoomLevelFixed</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._isZoomLevelFixed" title="Link to this definition"></a></dt>
+<dd><p>Update the main map as the extra map has stopped moving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Extra map <code class="docutils literal notranslate"><span class="pre">moveend</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._minimize">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_minimize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._minimize" title="Link to this definition"></a></dt>
+<dd><p>Minimize the extra map window.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._onExtraMapMoveStarted">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onExtraMapMoveStarted</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._onExtraMapMoveStarted" title="Link to this definition"></a></dt>
+<dd><p>Set up the aiming polygon footprint as the extra map starts moving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Extra map <code class="docutils literal notranslate"><span class="pre">movestart</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._onExtraMapMoved">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onExtraMapMoved</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._onExtraMapMoved" title="Link to this definition"></a></dt>
+<dd><p>Update the main map as the extra map has stopped moving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Extra map <code class="docutils literal notranslate"><span class="pre">moveend</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._onExtraMapMoving">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onExtraMapMoving</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._onExtraMapMoving" title="Link to this definition"></a></dt>
+<dd><p>Update the shadow polygon footprint as the extra map is moving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Extra map <code class="docutils literal notranslate"><span class="pre">move</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._onMainMapMoved">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onMainMapMoved</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._onMainMapMoved" title="Link to this definition"></a></dt>
+<dd><p>Follow the main map after it has moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Main map <code class="docutils literal notranslate"><span class="pre">moveend</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._onMainMapMoving">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onMainMapMoving</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._onMainMapMoving" title="Link to this definition"></a></dt>
+<dd><p>Replicate the main map moves using the aiming polygon footprint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>leaflet.Event</em>) -- Main map <code class="docutils literal notranslate"><span class="pre">move</span></code> event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._restore">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_restore</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._restore" title="Link to this definition"></a></dt>
+<dd><p>Restore the extra map window.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._setDisplay">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_setDisplay</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimize</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._setDisplay" title="Link to this definition"></a></dt>
+<dd><p>Toggle display of the extra map window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minimize</strong> (<em>boolean</em>) -- Minimize the map?</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap._toggleDisplayButtonClicked">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_toggleDisplayButtonClicked</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap._toggleDisplayButtonClicked" title="Link to this definition"></a></dt>
+<dd><p>Actions performed when the display toggle button is clicked.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap.changeLayer">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">changeLayer</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap.changeLayer" title="Link to this definition"></a></dt>
+<dd><p>Update content when the layer is changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>leaflet.Layer</em>) -- The new layer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap.onAdd">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onAdd</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap.onAdd" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add the extra map display/control directly to the map and wait for</dt><dd><p>the layer to be ready.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>object</em>) -- Leaflet map the control has been added to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created container of the control.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="ExtraMap.onRemove">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">ExtraMap</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onRemove</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ExtraMap.onRemove" title="Link to this definition"></a></dt>
+<dd><p>Remove map move event when the extra map display/control is removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>leaflet.map</em>) -- The parent map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="extraMap">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">extraMap</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#extraMap" title="Link to this definition"></a></dt>
+<dd><p>Instantiate an extra map display/control interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> ExtraMap}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ExtraMap</strong> -- Instance of an extra map display/control interface.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fullscreen">
+<h2>FullScreen<a class="headerlink" href="#fullscreen" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="FullScreen">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">FullScreen</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FullScreen" title="Link to this definition"></a></dt>
+<dd><p>Create a new full-screen toggle button.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the panel.</p></li>
+<li><p><strong>options.position</strong> (<em>'bottomleft'|'bottomright'|'topleft'|'topright'</em>) -- Position of the full-screen button.</p></li>
+<li><p><strong>options.forceSeparateButton</strong> (<em>boolean</em>) -- Sidebar button separate from zoom control?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FullScreen</strong> -- Full screen toggle control.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="FullScreen._addButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">FullScreen</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addButton</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FullScreen._addButton" title="Link to this definition"></a></dt>
+<dd><p>Add a button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the button.</p></li>
+<li><p><strong>className</strong> (<em>string</em>) -- Class name of the button.</p></li>
+<li><p><strong>container</strong> (<em>object</em>) -- Element containing the button.</p></li>
+<li><p><strong>fn</strong> (<em>function</em>) -- Callback function to call when the button is pressed.</p></li>
+<li><p><strong>context</strong> (<em>object</em>) -- Context (this) for the callback function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- New link (button) element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="FullScreen._handleEscKey">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">FullScreen</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_handleEscKey</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FullScreen._handleEscKey" title="Link to this definition"></a></dt>
+<dd><p>Exit full-screen mode when ESC key is pressed.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="FullScreen.onAdd">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">FullScreen</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onAdd</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FullScreen.onAdd" title="Link to this definition"></a></dt>
+<dd><p>Add this full screen toggle to the specified map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>L.Map</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- Element containing the full screen toggle button.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="FullScreen.toogleFullScreen">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">FullScreen</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">toogleFullScreen</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FullScreen.toogleFullScreen" title="Link to this definition"></a></dt>
+<dd><p>Toggle full-screen mode.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="fullScreen">
+<span class="sig-name descname"><span class="n"><span class="pre">fullScreen</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fullScreen" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a full-screen control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> FullScreen}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FullScreen</strong> -- Instance of a full-screen control.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="reticle">
+<h2>Reticle<a class="headerlink" href="#reticle" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="Reticle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Reticle</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Reticle" title="Link to this definition"></a></dt>
+<dd><p>Create a new reticle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Reticle</strong> -- Instance of a reticle.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Reticle.onRemove">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Reticle</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">onRemove</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Reticle.onRemove" title="Link to this definition"></a></dt>
+<dd><p>Remove the reticle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>leaflet.map</em>) -- The parent map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="reticle">
+<span class="sig-name descname"><span class="n"><span class="pre">reticle</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reticle" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a reticle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Reticle</strong> -- Instance of a reticle.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">reticle</span><span class="p">().</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="sidebar">
+<h2>Sidebar<a class="headerlink" href="#sidebar" title="Link to this heading"></a></h2>
+<dl class="js class">
+<dt class="sig sig-object js" id="Sidebar">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Sidebar</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar" title="Link to this definition"></a></dt>
+<dd><p>Create a new sidebar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.title</strong> (<em>string</em>) -- Title of the panel.</p></li>
+<li><p><strong>options.position</strong> (<em>'left'|'right'</em>) -- Position of the sidebar.</p></li>
+<li><p><strong>options.collapsed</strong> (<em>boolean</em>) -- Sidebar initially in closed position?</p></li>
+<li><p><strong>options.forceSeparateButton</strong> (<em>boolean</em>) -- Sidebar button separate from zoom control?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sidebar</strong> -- Instance of a sidebar.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar._addButton">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_addButton</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar._addButton" title="Link to this definition"></a></dt>
+<dd><p>Add a button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the button.</p></li>
+<li><p><strong>className</strong> (<em>string</em>) -- Class name of the button.</p></li>
+<li><p><strong>container</strong> (<em>object</em>) -- Element containing the button.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- New link (button) element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar._onClick">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onClick</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar._onClick" title="Link to this definition"></a></dt>
+<dd><p>Actions performed when clicking on the sidebar toggle button.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar._onCloseClick">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_onCloseClick</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar._onCloseClick" title="Link to this definition"></a></dt>
+<dd><p>Actions performed when clicking on the sidebar close button.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.addTab">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTab</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sideClass</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.addTab" title="Link to this definition"></a></dt>
+<dd><p>Add sidebar tab and its pane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>string</em>) -- Element id of the tab pane (and part of the tab id).</p></li>
+<li><p><strong>className</strong> (<em>string</em>) -- Class name of the tab.</p></li>
+<li><p><strong>title</strong> (<em>string</em>) -- Title of the tab.</p></li>
+<li><p><strong>content</strong> (<em>object</em>) -- Element containing the tab content.</p></li>
+<li><p><strong>sideClass</strong> (<em>string</em>) -- Class name of an additional element which may be opened or close in parallel to the tab.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> -- The newly created tab pane.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.addTabList">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTabList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.addTabList" title="Link to this definition"></a></dt>
+<dd><p>Add sidebar tab list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object</strong> -- Tab list element.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.addTo">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">addTo</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.addTo" title="Link to this definition"></a></dt>
+<dd><p>Add this sidebar to the specified map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>L.Map</em>) -- Leaflet map the control is to be added to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sidebar</strong> -- The sidebar (this).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.close">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">close</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.close" title="Link to this definition"></a></dt>
+<dd><p>Close the sidebar (if necessary).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Sidebar</strong> -- The sidebar (this).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.open">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">open</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.open" title="Link to this definition"></a></dt>
+<dd><p>Open sidebar (if necessary) and show the specified tab.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>string</em>) -- The id of the tab to show (without the # character)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sidebar</strong> -- The sidebar (this).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.removeFrom">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">removeFrom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.removeFrom" title="Link to this definition"></a></dt>
+<dd><p>Remove this sidebar from the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>map</strong> (<em>L.Map</em>) -- Leaflet map the control had been added to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sidebar</strong> -- The sidebar (this).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Sidebar.toggle">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Sidebar</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">toggle</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Sidebar.toggle" title="Link to this definition"></a></dt>
+<dd><p>Collapse/Expand the sidebar.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="sidebar">
+<span class="sig-name descname"><span class="n"><span class="pre">sidebar</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sidebar" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a sidebar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Sidebar}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sidebar</strong> -- Instance of a sidebar.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sidebar</span><span class="p">({</span><span class="nx">position</span><span class="o">:</span><span class="w"> </span><span class="nx">right</span><span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="widgets">
+<h2>Widgets<a class="headerlink" href="#widgets" title="Link to this heading"></a></h2>
+<dl class="js function">
+<dt class="sig sig-object js" id="control.widget.FlipSwitch.flipSwitch">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">control</span></span><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">FlipSwitch</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">flipSwitch</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#control.widget.FlipSwitch.flipSwitch" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a flip switch widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>object</em>) -- Parent element.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> FlipSwitch}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FlipSwitch</strong> -- Flip switch widget element.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">elem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">DomUtil</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myelement&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">divParent</span><span class="p">);</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">flipElem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">flipSwitch</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">checked</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">});</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="control.widget.Spinbox.spinbox">
+<span class="sig-prename descclassname"><span class="n"><span class="pre">control</span></span><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">Spinbox</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">spinbox</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#control.widget.Spinbox.spinbox" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a spinbox widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>object</em>) -- Parent element.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Spinbox}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Spinbox</strong> -- Spinbox widget element.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">elem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">DomUtil</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myelement&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">divParent</span><span class="p">);</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">spinElem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Spinbox</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">initValue</span><span class="o">:</span><span class="w"> </span><span class="mf">42.0</span><span class="p">,</span><span class="w"> </span><span class="nx">step</span><span class="o">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">});</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="layers.html" class="btn btn-neutral float-left" title="Layers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 Emmanuel Bertin, Hervé Bouy.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
