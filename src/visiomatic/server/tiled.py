@@ -27,7 +27,7 @@ from tiler import Merger, Tiler #type: ignore
 
 from .. import package
 from .image import Image, ImageModel
-from . import config
+from .config import override, settings
 
 
 colordict = {
@@ -180,10 +180,12 @@ class Tiled(object):
 
         self.filename = path.abspath(filename)
         self.image_name = path.basename(filename)
-        self.max_region_tile_count = max_region_tile_count or \
-        	config.settings["max_region_tile_count"]
+        self.max_region_tile_count = override(
+            "max_region_tile_count",
+            max_region_tile_count
+        )
         self.nthreads = nthreads or (
-            config.settings["thread_count"] if 'sphinx' not in modules else 4
+            settings["thread_count"] if 'sphinx' not in modules else 4
         )
         try:
             hdus = fits.open(self.filename)
@@ -211,14 +213,11 @@ class Tiled(object):
         self.make_mosaic(self.images)
         hdus.close()
         self.object_name = self.header.get("OBJECT", "")
-        self.brightness = config.settings["brightness"] if brightness is None \
-            else brightness
-        self.contrast = config.settings["contrast"] if contrast is None \
-            else contrast
-        self.color_saturation = config.settings["color_saturation"] \
-            if color_saturation is None else color_saturation
-        self.gamma = config.settings["gamma"] if gamma is None else gamma
-        self.quality = config.settings["quality"] if quality is None else quality
+        self.brightness = override("brightness", brightness)
+        self.contrast = override("contrast", contrast)
+        self.color_saturation = override("color_saturation", color_saturation)
+        self.gamma = override("gamma", gamma)
+        self.quality = override("quality", quality)
         self.maxfac = 1.0e30
         self.nlevels = self.compute_nlevels()
         self.shapes = np.array(
@@ -354,7 +353,12 @@ class Tiled(object):
             )
             for image in images:
                 image.compute_geometry(start, shape)
-                self.data[image.detslice] = image.data[image.dataslice]
+                try:
+                    self.data[image.detslice] = image.data[image.dataslice]
+                except:
+                    raise IndexError(
+                        "Inconsistent DETSEC and/or DATASEC values"
+                    )
             self.shape = tuple(self.data.shape)
             self.minmax =  np.median(
                 np.array([image.minmax for image in images]),
@@ -445,7 +449,7 @@ class Tiled(object):
         string += f"Tile-size:{self.tile_shape[1]} {self.tile_shape[2]}\n"
         string += f"Resolution-number:{self.nlevels}\n"
         string += f"Bits-per-channel:{self.bitdepth}\n"
-        string += f"Min-Max-sample-values:{self.minmax[0]} {self.minmax[1]}\n"
+        string += f"Min-Max-sample-values:{self.minmax[:,0]} {self.minmax[:,1]}\n"
         string2 = self.header.tostring()
         string += f"subject/{len(string2)}:{string2}"
         return string
@@ -498,6 +502,7 @@ class Tiled(object):
         if gamma is None:
            gamma = self.gamma
         if channel is not None:
+            # Mono mode
             chan = channel - 1
             cminmax = minmax[0][1:] \
                 if minmax is not None and int(minmax[0][0]) == channel \
@@ -521,6 +526,7 @@ class Tiled(object):
             else:
                 ctile = ctile[:, :, np.newaxis]
         else:
+            # Color mode
             cminmax = self.minmax
             if minmax:
                 iminmax = np.array(minmax, dtype=int)[:, 0] - 1
@@ -709,7 +715,7 @@ class Tiled(object):
         )
 
 
-    @lru_cache(maxsize=config.settings["max_cache_tile_count"] if config.settings else 0)
+    @lru_cache(maxsize=settings["max_cache_tile_count"] if settings else 0)
     def get_encoded_tile(self,
             *args: Any,
             channel: int | None = None,
@@ -717,8 +723,7 @@ class Tiled(object):
             quality: int | None = None,
             **kwargs: Any) -> bytes:
         """
-        Return a JPEG bytestream of a specific image region by stitching
-        tiles that fall in that region.
+        Return a JPEG bytestream of a specific tile.
 
         Parameters
         ----------
@@ -910,7 +915,7 @@ class Tiled(object):
         vals = np.full(nchans, np.nan, dtype=np.float32)
         xpos = pos[0] - 1
         ypos = pos[1] - 1
-        if (0 < xpos < shape[2]) and (0 < ypos < shape[1]):
+        if (0 <= xpos < shape[2]) and (0 <= ypos < shape[1]):
             vals[chanexists] = self.get_data()[
                 chans[chanexists],
                 ypos,
@@ -1029,11 +1034,14 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
             path.getmtime(oname) > path.getmtime(afilename):
         with open(oname, "rb") as f:
             tiled = pickle.load(f)
-            tiled.brightness = kwargs['brightness']
-            tiled.contrast = kwargs['contrast']
-            tiled.color_saturation = kwargs['color_saturation']
-            tiled.gamma = kwargs['gamma']
-            tiled.quality = kwargs['quality']
+            tiled.brightness = kwargs.get('brightness', settings['brightness'])
+            tiled.contrast = kwargs.get('contrast', settings['contrast'])
+            tiled.color_saturation = kwargs.get(
+                'color_saturation',
+                settings['color_saturation']
+            )
+            tiled.gamma = kwargs.get('gamma', 1. / settings['gamma'])
+            tiled.quality = kwargs.get('quality', settings['quality'])
             return tiled
     else:
         return Tiled(filename, **kwargs)
@@ -1064,7 +1072,7 @@ def get_object_filename(image_filename: str) -> str:
         Pickled object filename.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".pkl"
     )
 
@@ -1085,7 +1093,7 @@ def get_data_filename(image_filename: str) -> str:
         Filename of the memory-mapped image data.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".data.np"
     )
 
@@ -1106,7 +1114,7 @@ def get_tiles_filename(image_filename: str) -> str:
         Filename of the memory mapped tile datacube.
     """
     return path.join(
-        config.settings["cache_dir"],
+        settings["cache_dir"],
         quote(image_filename, safe='') + ".tiles.np"
     )
 

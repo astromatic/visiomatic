@@ -22,6 +22,7 @@
 	--icon-color-hover: rgba(240, 240, 240, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(50, 50, 50, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
 	--button-background-color: rgba(50, 50, 50, 1);
 	--button-color: rgba(180, 180, 180, 1);
 	--button-background-color-hover: rgba(60, 60, 60, 1);
@@ -55,6 +56,14 @@
 	--icon-color-hover: rgba(0, 0, 0, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(0, 0, 0, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
+	--button-background-color: rgba(240, 240, 240, 1);
+	--button-color: rgba(50, 50, 50, 1);
+	--button-background-color-hover: rgba(180, 180, 180, 1);
+	--button-color-hover: rgba(0, 0, 0, 1);
+	--button-background-color-checked: rgba(180, 180, 180, 1);
+	--button-color-checked: rgba(0, 0, 0, 1);
+	--button-color-on: rgba(208, 0, 0, 1);
 	--input-background-color: rgba(240, 240, 240, 1);
 	--input-color: rgba(50, 50, 50, 1);
 	--input-background-color-hover: rgba(255, 255, 255, 1);
@@ -65,7 +74,6 @@
 	--dialog-color: rgba(50, 50, 50, 1);
 	--header-background-color: rgba(180, 180, 180, 1);
 	--header-color: rgba(50, 50, 50, 1);
-	--icon-color-on: rgba(208, 0, 0, 1);
 	--border-color: rgba(0, 0, 0, 1);
 	--shadow-color: rgba(0, 0, 0, 0.2);
 	--scale-color: rgba(255, 255, 255, 0.66);
@@ -82,6 +90,14 @@
 		--icon-color-hover: rgba(240, 240, 240, 1);
 		--icon-background-color-checked: rgba(180, 180, 180, 1);
 		--icon-color-checked: rgba(50, 50, 50, 1);
+		--icon-color-on: rgba(208, 0, 0, 1);
+		--button-background-color: rgba(50, 50, 50, 1);
+		--button-color: rgba(180, 180, 180, 1);
+		--button-background-color-hover: rgba(60, 60, 60, 1);
+		--button-color-hover: rgba(240, 240, 240, 1);
+		--button-background-color-checked: rgba(180, 180, 180, 1);
+		--button-color-checked: rgba(50, 50, 50, 1);
+		--button-color-on: rgba(208, 0, 0, 1);
 		--input-background-color: rgba(60, 60, 60, 1);
 		--input-color: rgba(200, 200, 200, 1);
 		--input-background-color-hover: rgba(180, 180, 180, 1);
@@ -92,7 +108,6 @@
 		--dialog-color: rgba(240, 240, 240, 1);
 		--header-background-color: rgba(180, 180, 180, 1);
 		--header-color: rgba(50, 50, 50, 1);
-		--icon-color-on: rgba(208, 0, 0, 1);
 		--border-color: rgba(0, 0, 0, 1);
 		--shadow-color: rgba(0, 0, 0, 0.5);
 		--scale-color: rgba(255, 255, 255, 0.66);
@@ -108,6 +123,7 @@
 	--icon-color-hover: rgba(240, 240, 240, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(50, 50, 50, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
 	--button-background-color: rgba(50, 50, 50, 1);
 	--button-color: rgba(180, 180, 180, 1);
 	--button-background-color-hover: rgba(60, 60, 60, 1);
@@ -139,8 +155,7 @@
 	--icon-color-hover: rgba(0, 0, 0, 1);
 	--icon-background-color-checked: rgba(180, 180, 180, 1);
 	--icon-color-checked: rgba(0, 0, 0, 1);
-	--input-background-color: rgba(240, 240, 240, 1);
-	--input-color: rgba(50, 50, 50, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
 	--button-background-color: rgba(240, 240, 240, 1);
 	--button-color: rgba(50, 50, 50, 1);
 	--button-background-color-hover: rgba(180, 180, 180, 1);
@@ -172,6 +187,7 @@
 	--icon-color-hover: rgba(0, 0, 0, 1);
 	--icon-background-color-checked: rgba(222, 232, 237, 1);
 	--icon-color-checked: rgba(0, 0, 0, 1);
+	--icon-color-on: rgba(208, 0, 0, 1);
 	--button-background-color: rgba(64, 148, 193, 1);
 	--button-color: rgba(237, 227, 222, 1);
 	--button-background-color-hover: rgba(222, 232, 237, 1);

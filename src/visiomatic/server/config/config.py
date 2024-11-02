@@ -4,16 +4,20 @@ Configure application.
 # Copyright CEA/CFHT/CNRS/UParisSaclay
 # Licensed under the MIT licence
 
+from argparse import ArgumentParser, SUPPRESS
+from configparser import ConfigParser
 from os import makedirs, path
 from pathlib import Path
+from pprint import pprint
 from sys import exit, modules
 from time import localtime, strftime
 from typing import Tuple
-from argparse import ArgumentParser, SUPPRESS
-from configparser import ConfigParser
+
+from astropy import units as u  #type: ignore[import-untyped]
 from pydantic import ValidationError
 
-from .. import package
+from ... import package
+from .quantity import str_to_quantity_array
 from .settings import AppSettings
 
 
@@ -23,16 +27,20 @@ class Config(object):
 
     Settings are stored as Pydantic fields.
     """
-    def __init__(self, args: bool=True, config_file: str=package.config_file):
+    def __init__(
+            self,
+            settings: AppSettings,
+            args: bool=True,
+            config_file: str=package.config_file):
 
-        self.settings = AppSettings()
+        self.settings = settings
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
         self.config_filename = config_file
 
-        # Skip argument parsing and stuff if Sphinx or PyTest are involved
-        if 'sphinx' in modules or 'pytest' in modules:
-            return
+        # Skip argument parsing if Sphinx or PyTest are involved
+        if 'sphinx' in modules:
+            args = False
         # Parse command line
         if args:
             args_dict = self.parse_args()
@@ -46,6 +54,12 @@ class Config(object):
                 self.save_config(self.config_filename)
                 exit(0)
             self.config_filename = args_dict['config']
+            image_filename = args_dict['file']
+            if Path(image_filename).exists():
+                self.image_filename = image_filename
+            else:
+                exit(f"*Error*: {image_filename} not found!")
+
 
         # Parse configuration file
         if Path(self.config_filename).exists():
@@ -56,14 +70,10 @@ class Config(object):
         # Update settings from the command line (overriding config file values)
         if args:
             self.update_from_dict(args_dict)
-
-        image_filename = args_dict['file']
-        if Path(image_filename).exists():
-            self.image_filename = image_filename
-        else:
-            exit(f"*Error*: {image_filename} not found!")
-
-
+            if args_dict['show_config']:
+                pprint(self.flat_dict())
+ 
+ 
     def grouped_dict(self) -> dict:
         """
         Return a dictionary of all settings, organized in groups.
@@ -134,29 +144,35 @@ class Config(object):
         gdict: dict
             Dictionary of all settings, organized in groups.
         """
-        config = ArgumentParser(
+        parser = ArgumentParser(
             description=f"{package.title} v{package.version} : {package.summary}"
         )
         # Add options not relevant to configuration itself
-        config.add_argument(
+        parser.add_argument(
             "-V", "--version",
             default=False,
             help="Return the version of the package and exit", 
             action='store_true'
         )
-        config.add_argument(
+        parser.add_argument(
             "-c", "--config",
             type=str, default=package.config_file,
             help=f"Configuration filename (default={package.config_file})", 
             metavar="FILE"
         )
-        config.add_argument(
+        parser.add_argument(
             "-s", "--save_config",
             default=False,
             help=f"Save a default {package.title} configuration file and exit",
             action='store_true'
         )
-        config.add_argument(
+        parser.add_argument(
+            "-S", "--show_config",
+            default=False,
+            help=f"Print the actual {package.title} configuration settings",
+            action='store_true'
+        )
+        parser.add_argument(
             "file",
             default="",
             type=str,
@@ -164,42 +180,56 @@ class Config(object):
             nargs="?"
         )
         for group in self.groups:
-            args_group = config.add_argument_group(group.title())
-            settings = getattr(self.settings, group).schema()['properties']
+            args_group = parser.add_argument_group(group.title())
+            groupsettings = getattr(self.settings, group)
+            settings = groupsettings.schema()['properties']
+            defaults = groupsettings.dict()
             for setting in settings:
                 props = settings[setting]
                 arg = ["-" + props['short'], "--" + setting] \
                     if props.get('short') else ["--" + setting]
-                default = props['default']
-                if props['type']=='boolean':
+                default = defaults[setting]
+                # Booleans don't have units
+                help = props.get('description', "")
+                if props.get('type', 'unit')=='boolean':
                     args_group.add_argument(
                         *arg,
                         default=SUPPRESS,
-                        help=props['description'], 
+                        help=props.get('description', ""), 
                         action='store_true'
                     )
-                elif props['type']=='array':
+                elif props.get('type', 'unit')=='array':
                     deftype = type(default[0])
                     args_group.add_argument(
                         *arg,
                         default=SUPPRESS,
-                        type=lambda s: tuple([deftype(val) for val in s.split(',')]),
-                        help=f"{props['description']} (default={props['default']})"
+                        type=(lambda s: tuple([int(val) for val in s.split(',')]))
+                            if deftype==int
+                            else (lambda s: tuple([float(val) for val in s.split(',')])),
+                        help=f"{help} (default={default})"
                     )
+                elif isinstance(default, u.Quantity):
+                    args_group.add_argument(
+                        *arg,
+                        default=SUPPRESS,
+                        type=u.Quantity if default.isscalar else str_to_quantity_array,
+                        help=f"{help} (default={default})"
+                    )  
                 else:
                     args_group.add_argument(
                         *arg,
                         default=SUPPRESS,
                         type=type(default),
-                        help=f"{props['description']} (default={props['default']})"
+                        help=f"{help} (default={default})"
                     )  
         # Generate dictionary of args grouped by section
-        fdict = vars(config.parse_args())
+        fdict = vars(parser.parse_args())
         gdict = {}
         # Command-line specific arguments
         gdict['version'] = fdict['version']
         gdict['config'] = fdict['config']
         gdict['save_config'] = fdict['save_config']
+        gdict['show_config'] = fdict['show_config']
         gdict['file'] = fdict['file']
         for group in self.groups:
             gdict[group] = {}
@@ -237,12 +267,15 @@ class Config(object):
             settings = getattr(self.settings, group).dict()
             for setting in settings:
                 if (value := config.get(group, setting, fallback=None)) is not None:
-                    stype = type(settings[setting])
+                    default = settings[setting]
+                    stype = type(default)
                     gdictg[setting] = tuple(
                         type(settings[setting][i])(val.strip()) \
                             for i, val in enumerate(value[1:-1].split(','))
                     )  if stype == tuple \
                         else value.lower() in ("yes", "true", "t", "1") if stype == bool \
+                        else str_to_quantity_array(value) if \
+                            isinstance(default, u.Quantity) and not default.isscalar \
                         else stype(value)
         return gdict
 
@@ -304,14 +337,4 @@ class Config(object):
             except Exception as other_exception:
                 print(other_exception)
                 exit(1)
-
-# Initialize global dictionary
-# Set up settings by instantiating a configuration object
-config = Config()
-config_filename = None
-image_filename = None
-settings = config.flat_dict()
-if 'sphinx' not in modules and 'pytest' not in modules:
-    config_filename = config.config_filename
-    image_filename = config.image_filename
 

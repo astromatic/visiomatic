@@ -16,18 +16,22 @@ jobs:
 # Build and test Python API #
 #############################
   test:
-    name: Test Python API
     continue-on-error: false
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.10', '3.11', '3.12', '3.13' ]
+    name: Test Python ${{ matrix.python-version }} API
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -36,10 +40,11 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           mypy -p visiomatic
-          pytest --cov
+          coverage run
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 

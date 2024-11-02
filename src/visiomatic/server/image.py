@@ -194,7 +194,6 @@ class Image(object):
                 [dey[0] + 1, dey[1] + (2 if dey[2] < 0 else 0), dey[2]]
         ]
 
-
     def compute_background(self, skip : int = 15) -> tuple[np.ndarray, np.ndarray]:
         """
         Return background level and median absolute deviation
@@ -215,6 +214,12 @@ class Image(object):
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
         x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
+        # First, normalize to avoid overflows
+        norm = abs(np.nanmean(x))
+        if norm > 0.:
+            x /= norm
+        else:
+            norm = 1.
         med = np.nanmedian(x, axis=1, keepdims=True)
         std = np.nanstd(x, axis=1)
         ax = np.abs(x-med)
@@ -226,7 +231,7 @@ class Image(object):
         # Handle cases where the MAD is tiny because of many identical values
         cond = 1e5 * mad < std
         mad[cond] = 0.1 * std[cond]
-        return np.nanmean(3.5*med - 2.5*x, axis=1), mad
+        return norm * np.nanmean(3.5*med - 2.5*x, axis=1), norm * mad
 
 
     def compute_minmax(
@@ -254,7 +259,6 @@ class Image(object):
         minmax: ~numpy.ndarray
             Intensity cuts for displaying the image.
         """
-        self.compute_background()
         low = self.background_level + nmadmin * self.background_mad
         high = self.background_level + nmadmax * self.background_mad
         return np.array([low, high]).T

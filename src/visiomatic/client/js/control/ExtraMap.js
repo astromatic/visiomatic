@@ -35,8 +35,9 @@ import {
 	DomUtil,
 	LatLngBounds,
 	Map,
+	Point,
 	Util,
-	rectangle
+	polygon
 } from 'leaflet';
 
 
@@ -188,9 +189,9 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 
 		this._mainMap.whenReady(Util.bind(function () {
 			this._extraMap.whenReady(Util.bind(function () {
-				this._aimingRect = rectangle(this._mainMap.getBounds(),
+				this._aimingRect = polygon(this._getAimingCoords(this._mainMap),
 					this.options.aimingRectOptions).addTo(this._extraMap);
-				this._shadowRect = rectangle(this._mainMap.getBounds(),
+				this._shadowRect = polygon(this._getAimingCoords(this._mainMap),
 					this.options.shadowRectOptions).addTo(this._extraMap);
 				this._mainMap.on('moveend', this._onMainMapMoved, this);
 				this._mainMap.on('move', this._onMainMapMoving, this);
@@ -338,6 +339,31 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 		this._minimized = false;
 	},
 
+	_getAimingCoords: function(map, center) {
+		const	z = map.getZoom(),
+			bounds = map.getPixelBounds();
+		if (center) {
+			const	pcenter = map.project(center, z),
+				size = bounds.getSize(),
+				delta1 = size.divideBy(2.),
+				delta2 = new Point(delta1.x, -delta1.y);
+
+			return [
+				map.unproject(pcenter.add(delta1), z),
+				map.unproject(pcenter.add(delta2), z),
+				map.unproject(pcenter.subtract(delta1), z),
+				map.unproject(pcenter.subtract(delta2), z)
+			];
+		} else {
+			return [
+				map.unproject(bounds.getBottomLeft(), z),
+				map.unproject(bounds.getTopLeft(), z),
+				map.unproject(bounds.getTopRight(), z),
+				map.unproject(bounds.getBottomRight(), z)
+			];
+		}
+	},
+
 	/**
 	 * Follow the main map after it has moved.
 	 * @private
@@ -355,53 +381,40 @@ export const ExtraMap = Control.extend( /** @lends ExtraMap */ {
 		} else {
 			this._extraMapMoving = false;
 		}
-		this._aimingRect.setBounds(this._mainMap.getBounds());
+		this._aimingRect.setLatLngs(this._getAimingCoords(this._mainMap));
 	},
 
 	/**
-	 * Replicate the main map moves using the aiming rectangle footprint.
+	 * Replicate the main map moves using the aiming polygon footprint.
 	 * @private
 	 * @param {leaflet.Event} e
 	   Main map ``move`` event.
 	 */
 	_onMainMapMoving: function (e) {
-		this._aimingRect.setBounds(this._mainMap.getBounds());
+		this._aimingRect.setLatLngs(this._getAimingCoords(this._mainMap));
 	},
 
 	/**
-	 * Set up the aiming rectangle footprint as the extra map starts moving.
+	 * Set up the aiming polygon footprint as the extra map starts moving.
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``movestart`` event.
 	 */
 	_onExtraMapMoveStarted: function (e) {
-		const	lastAimingRect = this._aimingRect.getBounds(),
-			sw = this._extraMap.latLngToContainerPoint(
-				lastAimingRect.getSouthWest()
-			),
-			ne = this._extraMap.latLngToContainerPoint(
-				lastAimingRect.getNorthEast()
-			);
-
-		this._lastAimingRectPosition = {sw: sw, ne: ne};
+		this._lastAimingRect = this._aimingRect.getLatLngs();
 	},
 
 	/**
-	 * Update the shadow rectangle footprint as the extra map is moving.
+	 * Update the shadow polygon footprint as the extra map is moving.
 	 * @private
 	 * @param {leaflet.Event} e
 	   Extra map ``move`` event.
 	 */
 	_onExtraMapMoving: function (e) {
-		if (!this._mainMapMoving && this._lastAimingRectPosition) {
-			this._shadowRect.setBounds(new LatLngBounds(
-				this._extraMap.containerPointToLatLng(
-					this._lastAimingRectPosition.sw
-				),
-				this._extraMap.containerPointToLatLng(
-					this._lastAimingRectPosition.ne
-				)
-			));
+		if (!this._mainMapMoving && this._lastAimingRect) {
+			this._shadowRect.setLatLngs(
+				this._getAimingCoords(this._mainMap, this._extraMap.getCenter())
+			);
 			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
 		}
 	},

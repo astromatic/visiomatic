@@ -13,10 +13,10 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-from .. import package
+from ... import package
+from .fields import SField
 
-def SField(short: str | None = None, **kwargs) -> Any:
-     return Field(**kwargs, json_schema_extra={'short': short})
+
 
 class HostSettings(BaseSettings):
     host: str = SField(
@@ -53,9 +53,11 @@ class HostSettings(BaseSettings):
         description="Number of workers"
         )
 
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_prefix = f"{package.name}_",
+        extra = 'ignore',
+    )
+
 
 
 class ImageSettings(BaseSettings):
@@ -93,16 +95,20 @@ class ImageSettings(BaseSettings):
         default=(256, 256),
         ge=(1, 1),
         le=(4096, 4096),
+        min_length=2,
+        max_length=2,
         description="Tile size"
         )
 
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_prefix = f"{package.name}_",
+        extra = 'ignore',
+    )
+
 
 
 class ServerSettings(BaseSettings):
-    api_path : str = SField(
+    api_path: str = SField(
         default="/api",
         description="Endpoint URL for the webservice API"
         )
@@ -153,12 +159,15 @@ class ServerSettings(BaseSettings):
         description="Endpoint URL for the user's HTML documentation"
         )
 
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_prefix = f"{package.name}_",
+        extra = 'ignore',
+    )
+
 
 
 ncpu = cpu_count()
+
 
 
 class EngineSettings(BaseSettings):
@@ -170,9 +179,11 @@ class EngineSettings(BaseSettings):
         description="Number of engine threads"
         )
 
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_prefix = f"{package.name}_",
+        extra = 'ignore',
+    )
+
 
 
 class CacheSettings(BaseSettings):
@@ -206,9 +217,11 @@ class CacheSettings(BaseSettings):
         description="Name of the pickled cache dictionary shared across processes"
         )
 
-    class Config:
-        env_prefix = f"{package.name}_"
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_prefix = f"{package.name}_",
+        extra = 'ignore',
+    )
+
 
 
 class AppSettings(BaseSettings):

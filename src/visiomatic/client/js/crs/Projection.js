@@ -94,7 +94,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		      0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
 		npv: 0,
 		jd: [0., 0.],
-		obslatlng: [0., 0.]
+		obslatlng: [0., 0.],
+		nativeCelSys: false
 	},
 
 	/**
@@ -145,7 +146,9 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			this.celSysConvFlag = !projparam.nativeCelSys &&
 				projparam._celsyscode !== 'equatorial';
 			if (this.celSysConvFlag) {
-				projparam._celsysmat = this._celsysmatInit(this.celsyscode);
+				projparam._celsysmat = this._celsysmatInit(
+					projparam._celsyscode
+				);
 			}
 		}
 	},
@@ -201,6 +204,9 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			projparam.obslatlng = [
 				paramsrc.obslatlng[0], paramsrc.obslatlng[1]
 			];
+		}
+		if (typeof(paramsrc.nativeCelSys) !== 'undefined') {
+			projparam.nativeCelSys = paramsrc.nativeCelSys;
 		}
 
 		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice

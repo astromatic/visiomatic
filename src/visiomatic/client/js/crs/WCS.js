@@ -6,7 +6,7 @@
  * @requires crs/Pixel.js
  * @requires crs/Zenithal.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2024 CFHT/CNRS/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -20,7 +20,7 @@ import {
 } from 'leaflet';
 
 import {COE} from './Conical';
-import {CAR, CEA} from './Cylindrical';
+import {AIT, CAR, CEA, MER, MOL} from './Cylindrical';
 import {TAN, TPV, ZEA} from './Zenithal';
 import {Pixel} from './Pixel';
 
@@ -258,11 +258,20 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		case 'TPV':
 			proj = new TPV(header, options);
 			break;
+		case 'AIT':
+			proj = new AIT(header, options);
+			break;
 		case 'CAR':
 			proj = new CAR(header, options);
 			break;
 		case 'CEA':
 			proj = new CEA(header, options);
+			break;
+		case 'MER':
+			proj = new MER(header, options);
+			break;
+		case 'MOL':
+			proj = new MOL(header, options);
 			break;
 		case 'COE':
 			proj = new COE(header, options);

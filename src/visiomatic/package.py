@@ -28,7 +28,7 @@ authors = meta['Author-email'].split(", ")
 if authors:
     m = match(
         r'\"?\s*(?P<name>[A-Za-zÀ-ÖØ-öø-ÿ\s]*?)\s*(?:\(\s*'
-        '(?P<affiliation>[^)]+?)\s*\))?\"?\s*<\s*(?P<email>[^>]+?)\s*>?\s*$',
+        r'(?P<affiliation>[^)]+?)\s*\))?\"?\s*<\s*(?P<email>[^>]+?)\s*>?\s*$',
         authors[0]
     )
     contact = m.groupdict() if m is not None else {

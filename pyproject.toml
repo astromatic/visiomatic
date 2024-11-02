@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "VisiOmatic"
-version = "3.0.0"
+version = "3.0.3"
 description = "A web application for visualizing astronomical images"
 authors = [
     {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
@@ -33,18 +33,18 @@ dependencies = [
     "ultradict >= 0.0.6; platform_system=='Linux'",
     "uvicorn[standard] >= 0.30"
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"
 ]
 
 [project.optional-dependencies]
 test = [
+    "httpx",
     "mypy",
     "pytest-cov"
 ]
@@ -80,6 +80,7 @@ pre_install = {composite = ["doc", "mypy"]}
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
+tmp_path_retention_policy = "none"
 
 [tool.coverage.run]
 source_pkgs = ["visiomatic"]

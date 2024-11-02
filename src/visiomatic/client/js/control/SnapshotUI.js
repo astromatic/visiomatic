@@ -152,11 +152,25 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 			'snapscreen',
 			'Snap current screen',
 			function (event) {
-				var	control = document.querySelector(
-					'#map > .leaflet-control-container'
-				);
+				const	control = document.querySelector(
+						'#map > .leaflet-control-container'
+					),
+					popup = document.querySelector(
+						'.leaflet-popup-content-wrapper'
+					);
 				control.style.display = 'none';
-				html2canvas(document.querySelector('#map')).then(
+				// Backup popup box shadow style, as it is not
+				// supported by html2canvas yet.
+				if (popup) {
+					var	popup_style = popup.style.boxShadow;
+					popup.style.boxShadow = 'none';
+				}
+				// Re-render to canvas (for best results map option
+				// preferCanvas should be set to true)
+				html2canvas(
+					document.querySelector('#map'),
+					{backgroundColor: '#000000'}
+				).then(
 					function (canvas) {
 						const	latlng = map.getCenter(),
 							wcs = map.options.crs;
@@ -168,6 +182,9 @@ export const SnapshotUI = UI.extend( /** @lends SnapshotUI */ {
 						hiddenlink2.click();
 					}
 				);
+				if (popup) {
+					popup.style.boxShadow = popup_style;
+				}
 				control.style.display = 'unset';
 			}
 		);
