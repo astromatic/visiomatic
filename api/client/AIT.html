@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>VisiOmatic web client: control/RegionUI.js</title>
+    <title>VisiOmatic web client: AIT</title>
     
       <link type="text/css" rel="stylesheet" href="styles/vendor/prism-tomorrow-night.css">
     
@@ -24,292 +24,569 @@
 </header>
 
 
-<main class="layout-main  layout-content--source">
+<main class="layout-main ">
   <div class="container">
-    <p class="page-kind">source</p>
-    <h1 class="page-title">control/RegionUI.js</h1>
+    <p class="page-kind">Class</p>
+    <h1 class="page-title">AIT</h1>
     
 
 
 
-    
 
 <section>
-    <article>
-        <pre id="source" class="source-page line-numbers"><code class="language-js">/**
- #	This file part of:	VisiOmatic
- * @file User Interface for region and Point of Interest (PoI) overlays.
-
- * @requires util/VUtil.js
- * @requires control/UI.js
-
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
- * @author Emmanuel Bertin &lt;bertin@cfht.hawaii.edu>
-*/
-import {
-	DomEvent,
-	LatLng,
-	LayerGroup,
-	Util,
-	geoJson,
-	latLng,
-	marker
-} from 'leaflet';
-
-import {VUtil} from '../util';
-import {UI} from './UI';
 
 
-// Callback definitions
-/**
- * Callback for custom drawing of a GeoJSON point feature.
- * @callback RegionUI~drawCallback
- * @param {object} feature - GeoJSON feature.
- * @param {LatLng} latlng - World coordinates of the point.
- */
+<header class="class">
 
-export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
-	options: {
-		title: 'Region overlays',
-		nativeCelSys: true,
-		color: '#00FFFF',
-		timeOut: 30,	// seconds
-		collapsed: true,
-		position: 'topleft'
-	},
+    
+        
+        <!-- <h2>AIT</h2> -->
 
-	/**
-	 * Region object.
-	 * @typedef region
-	 * @property {string} url
-	   URL for accessing the GeoJSON data.
-	 * @property {string} name
-	   Name of the region (as it will appear in the selection menu of the
-	   interface).
-	 * @property {string} [description]
-	   Description of the region (as it will appear in a popup marker on the
-	   overlay).
-	 * @property {number} index
-	   Position in the selection menu.
-	 * @property {RGB} [color]
-	   Default color of the region (as it will appear on the overlay).
-	 * @property {boolean} load
-	   Is the region loaded yet?
-	 * @property {RegionUI~drawCallback} [drawPoint]
-	   Callback function for custom drawing of a GeoJSON point feature.
-	 */
+        
+            <h5>Extends</h5>
+            
 
-	/**
-	 * Create a VisiOmatic dialog for overlaying region and Point of Interest
-	   (PoI).
-	 * @extends UI
-	 * @memberof module:control/RegionUI.js
-	 * @constructs
-	 * @param {region[]} [regions] - Regions to overlay.
-	 * @param {object} [options] - Options.
 
-	 * @param {string} [options.title='Region overlays']
-	   Title of the dialog window or panel.
+    <ul>
+        <li><a href="Cylindrical.html">Cylindrical</a></li>
+    </ul>
 
-	 * @param {boolean} [options.nativeCelSys=false]
-	   Use native coordinates (e.g., galactic coordinates) instead of
-	   equatorial coordinates?
 
-	 * @param {string} [options.color='#00FFFF']
-	   Default region overlay color.
+        
 
-	 * @see {@link UI} for additional control options.
+        
 
-	 * @returns {ProfileUI} Instance of a VisiOmatic profile and spectrum
-	   plotting user interface.
-	 */
-	initialize: function (regions, options) {
-		// Regions is an array of {url, name [, description]} objects
-		Util.setOptions(this, options);
-		this._className = 'visiomatic-control';
-		this._id = 'visiomatic-region';
-		this._layers = {};
-		this._handlingClick = false;
-		this._sideClass = 'region';
-		this._regions =	regions &amp;&amp; regions[0] ? regions : [];
-	},
+        
+    
+</header>
 
-	/**
-	 * Initialize the region overlay dialog.
-	 * @private
-	 */
-	_initDialog: function () {
-		const	className = this._className,
-			regions = this._regions,
-			box = this._addDialogBox(),
-			line = this._addDialogLine('Regions:', box),
-			elem = this._addDialogElement(line),
-			colpick = this._addColorPicker(
-				className + '-color',
-				elem,
-				'region',
-				this.options.color,
-				'visiomaticRegion',
-				title='Click to set region color'
-			);
+<article>
+    <div class="container-overview">
 
-		const	select = this._regionSelect = this._addSelectMenu(
-			this._className + '-select',
-			elem,
-			regions.map(function (o) { return o.name; }),
-			regions.map(function (o) { return (o.load ? true : false); }),
-			-1,
-			'Select region'
-		);
 
-		this._addButton(className + '-button',
-			this._addDialogElement(line),
-			'region',
-			'Display region',
-			function () {
-				// Ignore 'Choose region' entry
-				const	index = select.selectedIndex - 1;
-				if (index >= 0) {
-					const	region = this._regions[index];
-					region.color = colpick.value;
-					select.selectedIndex = 0;
-					select.opt[index].disabled = true;
-					this._getRegion(region, this.options.timeOut);
-				}
-			}
-		);
 
-		// Load regions that have the 'load' option set.
-		for (var index = 0; index &lt; regions.length; index++) {
-			var	region = regions[index];
-			region.index = index;
-			if (region.load === true) {
-				if (!region.color) {
-					region.color = this.options.color;
-				}
-				this._getRegion(regions[index], this.options.timeOut);
-			}
-		}
-	},
+    
+        
 
-	/**
-	 * Reset the region query dialog (do nothing actually).
-	 * @private
-	 */
-	_resetDialog: function () {
-	// Do nothing: no need to reset with layer changes
-	},
 
-	/**
-	 * Query a region.
-	 * @private
-	 * @param {region} region
-	   Region.
-	 * @param {number} [timeout]
-	   Query time out delay, in seconds. Defaults to no time out.
-	 */
-	_getRegion: function (region, timeout) {
-		const	_this = this,
-			map = this._map,
-			wcs = map.options.crs,
-			sysflag = !wcs.equatorialFlag &amp;&amp; !this.options.nativeCelSys,
-		    templayer = new LayerGroup(null);
 
-		// Add a temporary "dummy" layer to activate a spinner sign
-		templayer.notReady = true;
-		this.addLayer(templayer, region.name);
 
-		VUtil.requestURL(region.url, 'loading ' + region.name + ' data',
-			function (context, httpRequest) {
-				_this._loadRegion(region, templayer, context, httpRequest);
-			}, this, this.options.timeOut);
-	},
 
-	/**
-	 * Load region data and display the overlay layer.
-	 * @private
-	 * @param {region} region
-	   Region.
-	 * @param {leaflet.Layer} templayer
-	   "Dummy" layer to activate a spinner sign.
-	 * @param {object} self
-	   Calling control object (``this``).
-	 * @param {object} httpRequest
-	   HTTP request.
-	 */
-	_loadRegion: function (region, templayer, _this, httpRequest) {
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				const	wcs = _this._map.options.crs,
-					response = httpRequest.responseText,
-					geoRegion = geoJson(
-						JSON.parse(response), {
-							onEachFeature: function (feature, layer) {
-								if (feature.properties &amp;&amp; feature.properties.description) {
-									layer.bindPopup(feature.properties.description);
-								} else if (region.description) {
-									layer.bindPopup(region.description);
-								}
-							},
-							coordsToLatLng: function (coords) {
-								if (wcs.equatorialFlag) {
-									return new LatLng(coords[1], coords[0], coords[2]);
-								} else {
-									const	latLng = wcs.eqToCelSys(
-										latLng(coords[1], coords[0])
-									);
-									return new LatLng(
-										latLng.lat,
-										latLng.lng,
-										coords[2]
-									);
-								}
-							},
-							style: function (feature) {
-								return {color: region.color, weight: 2};
-							},
-							pointToLayer: function (feature, latlng) {
-								return region.drawPoint ?
-									region.drawPoint(feature, latlng) : marker(latlng);
-							}
-						}
-					);
-				geoRegion.nameColor = region.color;
-				geoRegion.addTo(_this._map);
-				_this.removeLayer(templayer);
-				_this.addLayer(geoRegion, region.name, region.index);
-				DomEvent.on(geoRegion, 'trash', function (e) {
-					if (e.index || e.index === 0) {
-						_this._regionSelect.opt[e.index].disabled = false;
-					}
-				}, _this);
-			} else {
-				if (httpRequest.status !== 0) {
-					alert('Error ' + httpRequest.status + ' while downloading ' +
-					  region.url + '.');
-				}
-				_this.removeLayer(templayer);
-				_this._regionSelect.opt[region.index].disabled = false;
-			}
-		}
-	}
+    
 
-});
 
-/**
- * Instantiate a VisiOmatic dialog for region overlays.
- * @function
- * @param {region[]} [regions] - Regions to overlay.
- * @param {object} [options] - Options.
- * @returns {RegionUI} Instance of a VisiOmatic region interface.
- */
-export const regionUI = function (regions, options) {
-	return new RegionUI(regions, options);
-};
+    
 
-</code></pre>
+    <div class="method-type">
+    
+    </div>
+
+    <h4 class="method-name" id="AIT">new AIT<span class="signature">(header, options<span class="signature-attributes">opt</span>)</span><span class="return-type-signature"> &rarr; {<a href="AIT.html">AIT</a>}</span>
+    </h4>
+
+
+
+
+
+<div class="method-description">
+    
+    <p>Hammer-Aitoff equal-area projection (not formally pseudo-cylindrical).</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">header</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>object</code>
+    </span>
+    
+
+            
+
+            
+                <span class="param-attributes">
+                
+
+                
+
+                
+                </span>
+            
+
+            
+
+            <div class="param-description"><p>JSON representation of the image header.</p></div>
+            
+        </li>
+
+    
+
+        <li>
+            
+                <span class="param-name">options</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code><a href="global.html#projParam">projParam</a></code>
+    </span>
+    
+
+            
+
+            
+                <span class="param-attributes">
+                
+                    &lt;optional&gt;<br>
+                
+
+                
+
+                
+                </span>
+            
+
+            
+
+            <div class="param-description"><p>Projection options: see <a href="Cylindrical.html"><code>Cylindrical</code></a>.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h4 class="method-heading">See</h4>
+        <ul>
+            
+                <li><a href="https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=18">https://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf#page=18</a></li>
+            
+        </ul>
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>AIT</code>
+            
+            
+                <p>Instance of an AIT projection.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.336">, line 336</a>
+        </li>
+    </ul>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+     
+
+    
+
+    
+
+
+    
+
+    
+        <h3 class="subtitle">Methods</h3>
+
+        
+            
+
+
+    <article class="method">
+
+
+
+
+    
+
+
+    
+
+    <div class="method-type">
+    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
+    </div>
+
+    <h4 class="method-name" id="._phiRToRed">_phiRToRed<span class="signature">(phiR)</span><span class="return-type-signature"> &rarr; {leaflet.Point}</span>
+    </h4>
+
+
+
+
+
+<div class="method-description">
+    
+    <p>Convert AIT (phi,R) coordinates to reduced coordinates.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">phiR</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>leaflet.LatLng</code>
+    </span>
+    
+
+            
+
+            
+
+            
+
+            <div class="param-description"><p>(phi,R) AIT coordinates in degrees.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>leaflet.Point</code>
+            
+            
+                <p>Reduced coordinates.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.379">, line 379</a>
+        </li>
+    </ul>
+
+
+
     </article>
+
+        
+            
+
+
+    <article class="method">
+
+
+
+
+    
+
+
+    
+
+    <div class="method-type">
+    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
+    </div>
+
+    <h4 class="method-name" id="._redToPhiR">_redToPhiR<span class="signature">(red)</span><span class="return-type-signature"> &rarr; {leaflet.LatLng}</span>
+    </h4>
+
+
+
+
+
+<div class="method-description">
+    
+    <p>Convert reduced coordinates to AIT (phi,R) coordinates.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">red</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>leaflet.Point</code>
+    </span>
+    
+
+            
+
+            
+
+            
+
+            <div class="param-description"><p>Reduced coordinates.</p></div>
+            
+        </li>
+
+    
+</ul>
+
+
+
+
+
+<div class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+    <h4 class="method-heading">Returns</h4>
+    <ul>
+    
+        <li class="method-returns">
+            
+                <code>leaflet.LatLng</code>
+            
+            
+                <p>(phi,R) AIT coordinates in degrees.</p>
+            
+        </li>
+    
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h4 class="method-heading">Source</h4>
+    <ul>
+        <li class="method-source">
+            <a href="crs_Cylindrical.js.html">crs/Cylindrical.js</a><a href="crs_Cylindrical.js.html#source.361">, line 361</a>
+        </li>
+    </ul>
+
+
+
+    </article>
+
+        
+    
+
+    
+
+    
+</article>
+
 </section>
 
 

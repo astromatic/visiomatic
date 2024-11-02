@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -5,19 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.app &mdash; VisiOmatic 3.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -87,7 +85,8 @@
 
 <span class="kn">import</span> <span class="nn">io</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getpid</span><span class="p">,</span> <span class="n">getppid</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getpid</span><span class="p">,</span> <span class="n">getppid</span><span class="p">,</span> <span class="n">kill</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">SIGTERM</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">modules</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Pattern</span>
 
@@ -102,7 +101,6 @@
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BeforeValidator</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
-
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">config</span>
 
 <span class="kn">from</span> <span class="nn">.tiled</span> <span class="kn">import</span> <span class="p">(</span>
@@ -115,8 +113,11 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.cache</span> <span class="kn">import</span> <span class="n">LRUCache</span><span class="p">,</span> <span class="n">LRUSharedRWCache</span>
 
+<span class="n">settings</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span>
+<span class="n">config_filename</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">config_filename</span>
+
 <span class="c1"># True with multiple workers (multiprocessing).</span>
-<span class="n">shared</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;workers&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;reload&quot;</span><span class="p">]</span>
+<span class="n">shared</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;workers&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;reload&quot;</span><span class="p">]</span>
 
 <span class="c1"># Prepare the RegExps; note that those with non-capturing groups do not</span>
 <span class="c1"># work with Rust</span>
@@ -157,41 +158,44 @@
 <span class="sd">    Create FASTAPI application</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Get process ID</span>
     <span class="n">worker_id</span> <span class="o">=</span> <span class="n">getpid</span><span class="p">()</span>
+    <span class="c1"># True if VisiOmatic is used for local use.</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">image_filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;no_browser&quot;</span><span class="p">]</span>
 
-    <span class="n">banner_template</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;banner_template&quot;</span><span class="p">]</span>
-    <span class="n">base_template</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;base_template&quot;</span><span class="p">]</span>
-    <span class="n">template_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;template_dir&quot;</span><span class="p">])</span>
-    <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">])</span>
-    <span class="n">client_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;client_dir&quot;</span><span class="p">])</span>
-    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;data_dir&quot;</span><span class="p">])</span>
-    <span class="n">extra_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;extra_dir&quot;</span><span class="p">])</span>
-    <span class="n">doc_dir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;doc_dir&quot;</span><span class="p">]</span>
-    <span class="n">doc_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;doc_path&quot;</span><span class="p">]</span>
-    <span class="n">userdoc_url</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;userdoc_url&quot;</span><span class="p">]</span>
-    <span class="n">api_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;api_path&quot;</span><span class="p">]</span>
-    <span class="n">brightness</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;brightness&quot;</span><span class="p">]</span>
-    <span class="n">contrast</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;contrast&quot;</span><span class="p">]</span>
-    <span class="n">color_saturation</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;color_saturation&quot;</span><span class="p">]</span>
-    <span class="n">gamma</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span>
-    <span class="n">quality</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span>
-    <span class="n">tile_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;tile_size&quot;</span><span class="p">]</span>
+    <span class="n">banner_template</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;banner_template&quot;</span><span class="p">]</span>
+    <span class="n">base_template</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;base_template&quot;</span><span class="p">]</span>
+    <span class="n">template_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;template_dir&quot;</span><span class="p">])</span>
+    <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">])</span>
+    <span class="n">client_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;client_dir&quot;</span><span class="p">])</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;data_dir&quot;</span><span class="p">])</span>
+    <span class="n">extra_dir</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;extra_dir&quot;</span><span class="p">])</span>
+    <span class="n">doc_dir</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;doc_dir&quot;</span><span class="p">]</span>
+    <span class="n">doc_path</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;doc_path&quot;</span><span class="p">]</span>
+    <span class="n">userdoc_url</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;userdoc_url&quot;</span><span class="p">]</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;api_path&quot;</span><span class="p">]</span>
+    <span class="n">brightness</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;brightness&quot;</span><span class="p">]</span>
+    <span class="n">contrast</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;contrast&quot;</span><span class="p">]</span>
+    <span class="n">color_saturation</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;color_saturation&quot;</span><span class="p">]</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span>
+    <span class="n">quality</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span>
+    <span class="n">tile_size</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;tile_size&quot;</span><span class="p">]</span>
     <span class="n">image_argname</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">image_filename</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;uvicorn.error&quot;</span><span class="p">)</span>
 
     <span class="c1"># Provide an endpoint for the user&#39;s manual (if it exists)</span>
-    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">config_filename</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration read from </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config_filename</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration read from </span><span class="si">{</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Configuration file not found: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Configuration file not found: </span><span class="si">{</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">!&quot;</span>
         <span class="p">)</span>
     <span class="c1"># Get shared lock dictionary if processing in parallel</span>
     <span class="n">cache</span> <span class="o">=</span> <span class="n">LRUSharedRWCache</span><span class="p">(</span>
         <span class="n">pickledTiled</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">getppid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_image_count&quot;</span><span class="p">],</span>
+        <span class="n">maxsize</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_image_count&quot;</span><span class="p">],</span>
         <span class="n">removecall</span><span class="o">=</span><span class="n">delTiled</span><span class="p">,</span>
         <span class="n">shared</span><span class="o">=</span><span class="n">shared</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
@@ -537,6 +541,15 @@
             <span class="n">media_type</span><span class="o">=</span><span class="s2">&quot;image/jpg&quot;</span>
         <span class="p">)</span>
 
+    <span class="c1"># Kill server option (only in local mode)</span>
+    <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/kill&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">])</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">kill_server</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kill server (active only in local mode).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">getppid</span><span class="p">(),</span> <span class="n">SIGTERM</span><span class="p">)</span>
+
 
     <span class="c1"># VisiOmatic client endpoint</span>
     <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;UI&quot;</span><span class="p">],</span> <span class="n">response_class</span><span class="o">=</span><span class="n">responses</span><span class="o">.</span><span class="n">HTMLResponse</span><span class="p">)</span>
@@ -557,6 +570,7 @@
                 <span class="s2">&quot;package&quot;</span><span class="p">:</span> <span class="n">package</span><span class="o">.</span><span class="n">title</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        
 
     <span class="k">return</span> <span class="n">app</span></div>
 
