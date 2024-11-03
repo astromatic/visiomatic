@@ -37,17 +37,17 @@ class QuantityAnnotation:
     >>> from .quantity import QuantityAnnotation
 
     >>> class Coordinates(BaseModel):
-    ...    latitude: Annotated[
-    ...        u.Quantity, QuantityAnnotation("deg", ge=-90.*u.deg, le=90.*u.deg)
-    ...    ]
-    ...    longitude: Annotated[u.Quantity, QuantityAnnotation("deg")]
-    ...    altitude: Annotated[u.Quantity, QuantityAnnotation("km")]
+    ...     latitude: Annotated[
+    ...         u.Quantity, QuantityAnnotation("deg", ge=-90.*u.deg, le=90.*u.deg)
+    ...     ]
+    ...     longitude: Annotated[u.Quantity, QuantityAnnotation("deg")]
+    ...     altitude: Annotated[u.Quantity, QuantityAnnotation("km")]
 
-    # The following instantiation validates
+    >>> # The following instantiation validates
     >>> coord = Coordinates(
-    ...    latitude="39.905705 deg",
-    ...    longitude="-75.166519 deg",
-    ...    altitude="12 m"
+    ...     latitude="39.905705 deg",
+    ...     longitude="-75.166519 deg",
+    ...     altitude="12 m"
     ... )
 
     >>> coord
@@ -69,19 +69,19 @@ class QuantityAnnotation:
     >>> coord.model_dump_json()
     '{"latitude":"39.905705 deg","longitude":"-75.166519 deg","altitude":"0.012 km"}'
 
-    # The following instantiation does not validate
+    >>> # The following instantiation does not validate
     >>> coord = Coordinates(
-    ...    latitude="99.905705 deg",
-    ...    longitude="-75.166519 deg",
-    ...    altitude="12 m"
+    ...     latitude="99.905705 deg",
+    ...     longitude="-75.166519 deg",
+    ...     altitude="12 m"
     ... )
     Traceback (most recent call last):
     ...
     pydantic_core._pydantic_core.ValidationError: 1 validation error for Coordinates
     latitude
-      Value error, greater than 90.0 deg
-      [type=value_error, input_value='99.905705 deg', input_type=str]
-        For further information visit https://errors.pydantic.dev/2.7/v/value_error
+    Value error, greater than 90.0 deg
+    [type=value_error, input_value='99.905705 deg', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.7/v/value_error
 
     Parameters
     ----------
@@ -356,15 +356,15 @@ def AnnotatedQuantity(
     >>> from .quantity import AnnotatedQuantity
 
     >>> class Settings(BaseSettings):
-    ...    size: AnnotatedQuantity(
-    ...        short='S',
-    ...        description="an arbitrary length",
-    ...        default=10. * u.m,
-    ...        ge=1. * u.micron,
-    ...        lt=1. * u.km
-    ...    )
+    ...     size: AnnotatedQuantity(
+    ...         short='S',
+    ...         description="an arbitrary length",
+    ...         default=10. * u.m,
+    ...         ge=1. * u.micron,
+    ...         lt=1. * u.km
+    ...     )
         
-    # The following instantiation validates
+    >>> # The following instantiation validates
     >>> s = Settings(size="3. cm")
 
     >>> s
@@ -386,15 +386,15 @@ def AnnotatedQuantity(
     'title': 'Size', 'type': 'string'}}, 'title': 'Settings', 'type':
     'object'}
 
-    # The following instantiation does not validate
+    >>> # The following instantiation does not validate
     >>> s = Settings(size="4 deg")
     Traceback (most recent call last):
     ...
     pydantic_core._pydantic_core.ValidationError: 1 validation error for Settings
     size
-      Value error, 'deg' (angle) and 'm' (length) are not convertible
-      [type=value_error, input_value='4 deg', input_type=str]
-        For further information visit https://errors.pydantic.dev/2.8/v/value_error
+    Value error, 'deg' (angle) and 'm' (length) are not convertible
+    [type=value_error, input_value='4 deg', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.8/v/value_error
 
     Parameters
     ----------

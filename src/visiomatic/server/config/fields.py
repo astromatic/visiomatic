@@ -22,11 +22,11 @@ def SField(short: str | None = None, **kwargs) -> Any:
     >>> from pydantic_settings import BaseSettings
 
     >>> class Settings(BaseSettings):
-    ...    parameter: float = SField(
-    ...        short='p',
-    ...        description="an arbitrary parameter",
-    ...        default=10.,
-    ...    )
+    ...     parameter: float = SField(
+    ...         short='p',
+    ...         description="an arbitrary parameter",
+    ...         default=10.,
+    ...     )
     
     >>> s = Settings(parameter=3.)
     
