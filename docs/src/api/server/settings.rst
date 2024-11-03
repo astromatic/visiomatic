@@ -1,7 +1,7 @@
 Settings
 ========
 
-.. automodule:: visiomatic.server.settings
+.. automodule:: visiomatic.server.config.settings
    :members:
    :show-inheritance:
 
