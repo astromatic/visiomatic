@@ -20,11 +20,11 @@ import adsarxiv
 # -- Project information -----------------------------------------------------
 
 project = 'VisiOmatic'
-copyright = '2024 Emmanuel Bertin, Hervé Bouy'
+copyright = '2024 CEA/CFHT/CNRS/UParisSaclay'
 author = 'Emmanuel Bertin, Hervé Bouy'
 
 # The full version, including alpha/beta/rc tags
-release = '3.0.0'
+release = '3.0.4'
 
 
 # -- General configuration ---------------------------------------------------
@@ -42,6 +42,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sphinxcontrib.autodoc_pydantic',
     'sphinxcontrib.bibtex'
 ]
 

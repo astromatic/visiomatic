@@ -65,8 +65,7 @@ export const UI = Control.extend( /** @lends UI */ {
 	 * @param {boolean} [options.position='topleft']
 	   Position of the dialog on the map.
 
-	 * @see [Leaflet API reference]{@link https://leafletjs.com/reference.html#control} 
-	   for additional control options.
+	 * @see Leaflet API reference]{@link https://leafletjs.com/reference.html#control}
 
 	 * @returns {UI} VisiOmatic UI instance.
 	 */
@@ -855,10 +854,10 @@ export const UI = Control.extend( /** @lends UI */ {
  * Instantiate a VisiOmatic UI.
  * @memberof module:control/UI.js
  * @function
- * @param {VTileLayer[]} baseLayers - Array of layers
- * @param {object} [options] - Options: see {@link UI}
+ * @param {VTileLayer[]} baseLayers - Array of layers.
+ * @param {object} [options] - Options: see {@link UI}.
  * @returns {UI} VisiOmatic UI instance.
-*/
+ */
 export const ui = function (baseLayers, options) {
 	return new UI(baseLayers, options);
 };

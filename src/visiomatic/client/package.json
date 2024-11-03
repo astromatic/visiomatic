@@ -1,6 +1,6 @@
 {
 	"name": "visiomatic",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"description": "Astronomical image client viewer",
 	"homepage": "https://github.com/astromatic/visiomatic",
 	"author": "Emmanuel Bertin (CFHT/IAP/CNRS/SorbonneU/CEA/UParisSaclay)",

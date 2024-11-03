@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "VisiOmatic"
-version = "3.0.3"
+version = "3.0.4"
 description = "A web application for visualizing astronomical images"
 authors = [
     {name = "Emmanuel Bertin", email = "bertin@cfht.hawaii.edu"},
@@ -49,6 +49,7 @@ test = [
     "pytest-cov"
 ]
 doc = [
+    "autodoc_pydantic >= 2.2.0",
     "sphinx >= 7.0",
     "sphinx-rtd-theme >= 1.2",
     "sphinxcontrib-bibtex >= 2.4.0",
@@ -76,7 +77,16 @@ mypy = "mypy src"
 pre_build = {composite = ["doc", "mypy"]}
 pre_install = {composite = ["doc", "mypy"]}
 
+[tool.mypy]
+exclude = ["docs", "tests"]
+
 [tool.pytest.ini_options]
+norecursedirs = [
+    "tests/performance",
+    "src/visiomatic/client",
+]
+addopts = "--doctest-modules --doctest-continue-on-failure"
+doctest_optionflags = "NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL ELLIPSIS"
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
