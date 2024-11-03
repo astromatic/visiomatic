@@ -10,4 +10,5 @@ Python server
    tiled
    image
    config
+   settings
 
