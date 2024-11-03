@@ -83,6 +83,7 @@ norecursedirs = [
     "src/visiomatic/client",
 ]
 addopts = "--doctest-modules --doctest-continue-on-failure"
+doctest_optionflags = "NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL ELLIPSIS"
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]

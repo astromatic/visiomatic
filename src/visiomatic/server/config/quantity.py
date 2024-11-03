@@ -24,13 +24,6 @@ u.imperial.enable()
 
 
 class QuantityAnnotation:
-    min_shape: np.ndarray | None = None
-    max_shape: np.ndarray | None = None
-    ge: u.Quantity | str | None = None
-    gt: u.Quantity | str | None = None
-    le: u.Quantity | str | None = None
-    lt: u.Quantity | str | None = None
-    description: str = ""
     """
     Pydantic compatible annotation for validating and serializing AstroPy
     Quantity fields.
@@ -38,53 +31,57 @@ class QuantityAnnotation:
 
     Examples
     --------
-    ```python
-    from typing import Annotated
+    >>> from typing import Annotated
+    >>> from astropy import units as u
+    >>> from pydantic import BaseModel
+    >>> from .quantity import QuantityAnnotation
 
-    from astropy import units as u
-    from pydantic import BaseModel
-
-    from .config.quantity import QuantityAnnotation
-
-    class Coordinates(BaseModel):
-        latitude: Annotated[
-            u.Quantity, QuantityAnnotation("deg", ge=-90.*u.deg, le=90.*u.deg)
-        ]
-        longitude: Annotated[u.Quantity, QuantityAnnotation("deg")]
-        altitude: Annotated[u.Quantity, QuantityAnnotation("km")]
+    >>> class Coordinates(BaseModel):
+    ...    latitude: Annotated[
+    ...        u.Quantity, QuantityAnnotation("deg", ge=-90.*u.deg, le=90.*u.deg)
+    ...    ]
+    ...    longitude: Annotated[u.Quantity, QuantityAnnotation("deg")]
+    ...    altitude: Annotated[u.Quantity, QuantityAnnotation("km")]
 
     # The following instantiation validates
-    coord = Coordinates(
-        latitude="39.905705 deg",
-        longitude="-75.166519 deg",
-        altitude="12 m"
-    )
+    >>> coord = Coordinates(
+    ...    latitude="39.905705 deg",
+    ...    longitude="-75.166519 deg",
+    ...    altitude="12 m"
+    ... )
 
-    print(coord)
-    #> latitude=<Quantity 39.905705 deg> longitude=<Quantity -75.166519 deg> altitude=<Quantity 0.012 km>
-    print(f"{coord!r}")
-    #> Coordinates(latitude=<Quantity 39.905705 deg>, longitude=<Quantity -75.166519 deg>, altitude=<Quantity 0.012 km>)
-    print(coord.model_dump())
-    #> {'latitude': <Quantity 39.905705 deg>, 'longitude': <Quantity -75.166519 deg>, 'altitude': <Quantity 0.012 km>}
-    print(coord.model_dump(mode="json"))
-    #> {'latitude': '39.905705 deg', 'longitude': '-75.166519 deg', 'altitude': '0.012 km'}
-    print(f"{coord.model_dump_json()!r}")
-    #> '{"latitude":"39.905705 deg","longitude":"-75.166519 deg","altitude":"0.012 km"}'
+    >>> coord
+    Coordinates(latitude=<Quantity 39.905705 deg>,
+    longitude=<Quantity -75.166519 deg>, altitude=<Quantity 0.012 km>)
+
+    >>> f"{coord!r}"
+    'Coordinates(latitude=<Quantity 39.905705 deg>,
+    longitude=<Quantity -75.166519 deg>, altitude=<Quantity 0.012 km>)'
+
+    >>> coord.model_dump()
+    {'latitude': <Quantity 39.905705 deg>, 'longitude': <Quantity -75.166519 deg>,
+    'altitude': <Quantity 0.012 km>}
+
+    >>> coord.model_dump(mode="json")
+    {'latitude': '39.905705 deg', 'longitude': '-75.166519 deg',
+    'altitude': '0.012 km'}
+
+    >>> coord.model_dump_json()
+    '{"latitude":"39.905705 deg","longitude":"-75.166519 deg","altitude":"0.012 km"}'
 
     # The following instantiation does not validate
-    coord = Coordinates(
-        latitude="99.905705 deg",
-        longitude="-75.166519 deg",
-        altitude="12 m"
-    )
-
-    #> Traceback (most recent call last):
-    #> ...
-    #> pydantic_core._pydantic_core.ValidationError: 1 validation error for Coordinates
-    #> latitude
-    #>   Value error, greater than 90.0 deg [type=value_error, input_value='99.905705 deg', input_type=str]
-    #>     For further information visit https://errors.pydantic.dev/2.7/v/value_error
-    ```
+    >>> coord = Coordinates(
+    ...    latitude="99.905705 deg",
+    ...    longitude="-75.166519 deg",
+    ...    altitude="12 m"
+    ... )
+    Traceback (most recent call last):
+    ...
+    pydantic_core._pydantic_core.ValidationError: 1 validation error for Coordinates
+    latitude
+      Value error, greater than 90.0 deg
+      [type=value_error, input_value='99.905705 deg', input_type=str]
+        For further information visit https://errors.pydantic.dev/2.7/v/value_error
 
     Parameters
     ----------
@@ -113,6 +110,13 @@ class QuantityAnnotation:
         If disabled, a value without units - provided by the user - will be
         treated as the base units of the `QuantityUnit`.
     """
+    min_shape: np.ndarray | None = None
+    max_shape: np.ndarray | None = None
+    ge: u.Quantity | str | None = None
+    gt: u.Quantity | str | None = None
+    le: u.Quantity | str | None = None
+    lt: u.Quantity | str | None = None
+    description: str = ""
     def __init__(
             self,
             unit: str,
@@ -175,7 +179,8 @@ class QuantityAnnotation:
             - An unknown type for value was provided.
         TypeError: exception
               An error occurred from unit registry or unit registry context.
-              It is not propagated as a `pydantic.ValidationError` because it does not stem from a user error.
+              It is not propagated as a `pydantic.ValidationError` because
+              it does not stem from a user error.
         """
         try:
             if isinstance(v, dict):
@@ -200,9 +205,10 @@ class QuantityAnnotation:
             if isinstance(v, u.Quantity):
                 v = v.to(self.unit)
  
-                # Check array shape if any
+                # Check array shape if any.
                 shape = np.array(np.array(v.value).shape)
-                if np.any(shape < self.min_shape):
+                if (len(shape)==0 and np.any(self.min_shape > 1)) \
+                	or np.any(shape < self.min_shape):
                     raise ValueError(
                         f"missing components (found {shape}, "
                         f"{self.min_shape} expected)")
@@ -346,49 +352,49 @@ def AnnotatedQuantity(
 
     Examples
     --------
-    ```python
-    from pydantic_settings import BaseSettings
+    >>> from pydantic_settings import BaseSettings
+    >>> from .quantity import AnnotatedQuantity
 
-    from dancelib.quantity import AnnotatedQuantity
-
-    class Settings(BaseSettings):
-        size: AnnotatedQuantity(
-            short='S',
-            description="an arbitrary length",
-            default=10. * u.m,
-            ge=1. * u.micron,
-            lt=1. * u.km
-        )
+    >>> class Settings(BaseSettings):
+    ...    size: AnnotatedQuantity(
+    ...        short='S',
+    ...        description="an arbitrary length",
+    ...        default=10. * u.m,
+    ...        ge=1. * u.micron,
+    ...        lt=1. * u.km
+    ...    )
         
-
     # The following instantiation validates
-    s = Settings(size="3. cm")
+    >>> s = Settings(size="3. cm")
 
-    print(s)
-    #> size=<Quantity 0.03 m>
+    >>> s
+    Settings(size=<Quantity 0.03 m>)
 
-    print(f"{s!r}")
-    #> Settings(size=<Quantity 0.03 m>)
+    >>> f"{s!r}"
+    'Settings(size=<Quantity 0.03 m>)'
 
-    print(s.model_dump())
-    #> {'size': <Quantity 0.03 m>}
+    >>> s.model_dump()
+    {'size': <Quantity 0.03 m>}
 
-    print(s.model_dump(mode="json"))
-    #> {'size': '0.03 m'}
+    >>> s.model_dump(mode="json")
+    {'size': '0.03 m'}
 
-    print(s.model_schema_json())
-    #> {'additionalProperties': False, 'properties': {'size': {'default':
-    # '10.0 m', 'description': 'an arbitrary length', 'exclusiveMaximum':
-    # '1.0 km', 'minimum': '1.0 micron', 'physType': 'length', 'short': 'S',
-    # 'title': 'Size', 'type': 'string'}}, 'title': 'Settings', 'type':
-    # 'object'}
+    >>> s.model_json_schema()
+    {'additionalProperties': False, 'properties': {'size': {'default':
+    '10.0 m', 'description': 'an arbitrary length', 'exclusiveMaximum':
+    '1.0 km', 'minimum': '1.0 micron', 'physType': 'length', 'short': 'S',
+    'title': 'Size', 'type': 'string'}}, 'title': 'Settings', 'type':
+    'object'}
 
     # The following instantiation does not validate
-    s = Settings(size="4 deg")
-    #> size
-         Value error, 'deg' (angle) and 'm' (length) are not convertible
-         [type=value_error, input_value='4. deg', input_type=str]
-           For further information visit https://errors.pydantic.dev/2.8/v/value_error
+    >>> s = Settings(size="4 deg")
+    Traceback (most recent call last):
+    ...
+    pydantic_core._pydantic_core.ValidationError: 1 validation error for Settings
+    size
+      Value error, 'deg' (angle) and 'm' (length) are not convertible
+      [type=value_error, input_value='4 deg', input_type=str]
+        For further information visit https://errors.pydantic.dev/2.8/v/value_error
 
     Parameters
     ----------
@@ -469,12 +475,10 @@ def str_to_quantity_array(s: str) -> u.Quantity | None:
 
     Examples
     --------
-    ```python
-    from dancelib.quantity import str_to_quantity_array
+    >>> from .quantity import str_to_quantity_array
 
-    print(f"{str_to_quantity_array("[3.14, 1e+06] m")!r}")
-
-    #> <Quantity [3.14e+00, 1.00e+06] m>
+    >>> str_to_quantity_array("[3.14, 1e+06] m")
+    <Quantity [3.14e+00, 1.00e+06] m>
 
     Parameters
     ----------
@@ -494,11 +498,12 @@ def str_to_quantity_array(s: str) -> u.Quantity | None:
     if found is None:
         return None
     # Return result with largest number of components
+    value = max(
+        [np.fromstring(found[0][0], sep=sep) for sep in [' ', ',', ';']],
+        key=lambda x: len(x)
+    )
     return u.Quantity(
-        value=max(
-            [np.fromstring(found[0][0], sep=sep) for sep in [' ', ',', ';']],
-            key=lambda x: len(x)
-        ),
+        value=value if len(value) > 1 else float(value),
         unit=found[0][1]
     )
 
