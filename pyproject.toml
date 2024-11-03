@@ -77,6 +77,9 @@ mypy = "mypy src"
 pre_build = {composite = ["doc", "mypy"]}
 pre_install = {composite = ["doc", "mypy"]}
 
+[tool.mypy]
+exclude = ["docs", "tests"]
+
 [tool.pytest.ini_options]
 norecursedirs = [
     "tests/performance",

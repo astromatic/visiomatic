@@ -207,8 +207,8 @@ class QuantityAnnotation:
  
                 # Check array shape if any.
                 shape = np.array(np.array(v.value).shape)
-                if (len(shape)==0 and np.any(self.min_shape > 1)) \
-                	or np.any(shape < self.min_shape):
+                if (len(shape) == 0 and self.min_shape is not None and \
+                    np.any(self.min_shape > 1)) or np.any(shape < self.min_shape):
                     raise ValueError(
                         f"missing components (found {shape}, "
                         f"{self.min_shape} expected)")
