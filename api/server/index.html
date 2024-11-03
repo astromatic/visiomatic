@@ -6,15 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python server &mdash; VisiOmatic 3.0.0 documentation</title>
+  <title>Python server &mdash; VisiOmatic 3.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/documentation_options.js?v=50b65552"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -101,131 +102,20 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cache.html">Cache</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUCache"><code class="docutils literal notranslate"><span class="pre">LRUCache</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.call_unshared"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.call_unshared()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.call_shared"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.call_shared()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache.remove"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache.remove()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock"><code class="docutils literal notranslate"><span class="pre">SharedRWLock</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.acquire_read"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.acquire_read()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.acquire_write"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.acquire_write()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.release_read"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.release_read()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.release_write"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.release_write()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock.remove"><code class="docutils literal notranslate"><span class="pre">SharedRWLock.remove()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.LRUSharedRWCache"><code class="docutils literal notranslate"><span class="pre">LRUSharedRWCache</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cache.html#visiomatic.server.cache.SharedRWLock"><code class="docutils literal notranslate"><span class="pre">SharedRWLock</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd.html">cmd</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cmd.html#module-visiomatic.cmd.start">start</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="cmd.html#visiomatic.cmd.start.start_server"><code class="docutils literal notranslate"><span class="pre">start_server()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="cmd.html#visiomatic.cmd.start.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="cmd.html#module-visiomatic.cmd.start">start</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tiled.html">Tiled</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel"><code class="docutils literal notranslate"><span class="pre">PixelValueModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.copy"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_computed_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_config"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_construct"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_construct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_copy"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_dump"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_dump()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_dump_json"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_dump_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_extra"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_extra</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_fields"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_fields_set"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_fields_set</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_json_schema"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_json_schema()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_parametrized_name"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_parametrized_name()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_rebuild"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_rebuild()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_validate"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_validate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_validate_json"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_validate_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel.model_validate_strings"><code class="docutils literal notranslate"><span class="pre">PixelValueModel.model_validate_strings()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel"><code class="docutils literal notranslate"><span class="pre">PixelModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.copy"><code class="docutils literal notranslate"><span class="pre">PixelModel.copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_computed_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_config"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_construct"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_construct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_copy"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_dump"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_dump()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_dump_json"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_dump_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_extra"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_extra</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_fields"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_fields_set"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_fields_set</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_json_schema"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_json_schema()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_parametrized_name"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_parametrized_name()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_rebuild"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_rebuild()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_validate"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_validate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_validate_json"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_validate_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel.model_validate_strings"><code class="docutils literal notranslate"><span class="pre">PixelModel.model_validate_strings()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel"><code class="docutils literal notranslate"><span class="pre">ProfileModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.copy"><code class="docutils literal notranslate"><span class="pre">ProfileModel.copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_computed_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_config"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_construct"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_construct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_copy"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_dump"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_dump()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_dump_json"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_dump_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_extra"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_extra</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_fields"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_fields_set"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_fields_set</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_json_schema"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_json_schema()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_parametrized_name"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_parametrized_name()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_rebuild"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_rebuild()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_validate"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_validate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_validate_json"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_validate_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel.model_validate_strings"><code class="docutils literal notranslate"><span class="pre">ProfileModel.model_validate_strings()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel"><code class="docutils literal notranslate"><span class="pre">TiledModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.copy"><code class="docutils literal notranslate"><span class="pre">TiledModel.copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_computed_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_config"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_construct"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_construct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_copy"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_copy()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_dump"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_dump()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_dump_json"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_dump_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_extra"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_extra</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_fields"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_fields_set"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_fields_set</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_json_schema"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_json_schema()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_parametrized_name"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_parametrized_name()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_rebuild"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_rebuild()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_validate"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_validate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_validate_json"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_validate_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel.model_validate_strings"><code class="docutils literal notranslate"><span class="pre">TiledModel.model_validate_strings()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled"><code class="docutils literal notranslate"><span class="pre">Tiled</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_nlevels"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_nlevels()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_grid_shape"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_grid_shape()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.compute_tile_bordershape"><code class="docutils literal notranslate"><span class="pre">Tiled.compute_tile_bordershape()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_model"><code class="docutils literal notranslate"><span class="pre">Tiled.get_model()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_mosaic"><code class="docutils literal notranslate"><span class="pre">Tiled.make_mosaic()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_header"><code class="docutils literal notranslate"><span class="pre">Tiled.make_header()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_iipheaderstr"><code class="docutils literal notranslate"><span class="pre">Tiled.get_iipheaderstr()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.convert_tile"><code class="docutils literal notranslate"><span class="pre">Tiled.convert_tile()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.make_tiles"><code class="docutils literal notranslate"><span class="pre">Tiled.make_tiles()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_tile_raster"><code class="docutils literal notranslate"><span class="pre">Tiled.get_tile_raster()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.encode"><code class="docutils literal notranslate"><span class="pre">Tiled.encode()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_encoded_tile"><code class="docutils literal notranslate"><span class="pre">Tiled.get_encoded_tile</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_encoded_region"><code class="docutils literal notranslate"><span class="pre">Tiled.get_encoded_region()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_pixel_values"><code class="docutils literal notranslate"><span class="pre">Tiled.get_pixel_values()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_profiles"><code class="docutils literal notranslate"><span class="pre">Tiled.get_profiles()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_data"><code class="docutils literal notranslate"><span class="pre">Tiled.get_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled.get_tiles"><code class="docutils literal notranslate"><span class="pre">Tiled.get_tiles()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelValueModel"><code class="docutils literal notranslate"><span class="pre">PixelValueModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.PixelModel"><code class="docutils literal notranslate"><span class="pre">PixelModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.ProfileModel"><code class="docutils literal notranslate"><span class="pre">ProfileModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.TiledModel"><code class="docutils literal notranslate"><span class="pre">TiledModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.Tiled"><code class="docutils literal notranslate"><span class="pre">Tiled</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.pickledTiled"><code class="docutils literal notranslate"><span class="pre">pickledTiled()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_object_filename"><code class="docutils literal notranslate"><span class="pre">get_object_filename()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tiled.html#visiomatic.server.tiled.get_data_filename"><code class="docutils literal notranslate"><span class="pre">get_data_filename()</span></code></a></li>
@@ -234,28 +124,28 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="image.html">Image</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel"><code class="docutils literal notranslate"><span class="pre">ImageModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ImageModel.model_computed_fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel.model_config"><code class="docutils literal notranslate"><span class="pre">ImageModel.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel.model_fields"><code class="docutils literal notranslate"><span class="pre">ImageModel.model_fields</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.Image"><code class="docutils literal notranslate"><span class="pre">Image</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.get_model"><code class="docutils literal notranslate"><span class="pre">Image.get_model()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.get_header_string"><code class="docutils literal notranslate"><span class="pre">Image.get_header_string()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.parse_2dslice"><code class="docutils literal notranslate"><span class="pre">Image.parse_2dslice()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_geometry"><code class="docutils literal notranslate"><span class="pre">Image.compute_geometry()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_background"><code class="docutils literal notranslate"><span class="pre">Image.compute_background()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html#visiomatic.server.image.Image.compute_minmax"><code class="docutils literal notranslate"><span class="pre">Image.compute_minmax()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.ImageModel"><code class="docutils literal notranslate"><span class="pre">ImageModel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html#visiomatic.server.image.Image"><code class="docutils literal notranslate"><span class="pre">Image</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Config</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.fields.SField"><code class="docutils literal notranslate"><span class="pre">SField()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.quantity.QuantityAnnotation"><code class="docutils literal notranslate"><span class="pre">QuantityAnnotation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.quantity.AnnotatedQuantity"><code class="docutils literal notranslate"><span class="pre">AnnotatedQuantity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.quantity.str_to_quantity_array"><code class="docutils literal notranslate"><span class="pre">str_to_quantity_array()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="config.html#visiomatic.server.config.override"><code class="docutils literal notranslate"><span class="pre">override()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.HostSettings"><code class="docutils literal notranslate"><span class="pre">HostSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.ImageSettings"><code class="docutils literal notranslate"><span class="pre">ImageSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.ServerSettings"><code class="docutils literal notranslate"><span class="pre">ServerSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.EngineSettings"><code class="docutils literal notranslate"><span class="pre">EngineSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.CacheSettings"><code class="docutils literal notranslate"><span class="pre">CacheSettings</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#visiomatic.server.config.settings.AppSettings"><code class="docutils literal notranslate"><span class="pre">AppSettings</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -271,7 +161,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Emmanuel Bertin, Hervé Bouy.</p>
+    <p>&#169; Copyright 2024 CEA/CFHT/CNRS/UParisSaclay.</p>
   </div>
 
    
