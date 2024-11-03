@@ -77,6 +77,11 @@ pre_build = {composite = ["doc", "mypy"]}
 pre_install = {composite = ["doc", "mypy"]}
 
 [tool.pytest.ini_options]
+norecursedirs = [
+    "tests/performance",
+    "src/visiomatic/client",
+]
+addopts = "--doctest-modules --doctest-continue-on-failure"
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
