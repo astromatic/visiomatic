@@ -1,4 +1,4 @@
-# ![VisiOmatic logo](https://github.com/astromatic/visiomatic/blob/main/src/visiomatic/client/images/visiomatic.png) VisiOmatic 3
+# ![VisiOmatic logo](https://raw.githubusercontent.com/astromatic/visiomatic/refs/heads/main/src/visiomatic/client/images/visiomatic.png) VisiOmatic 3
 
 [![Documentation](https://github.com/astromatic/visiomatic/actions/workflows/doc.yml/badge.svg)](https://github.com/astromatic/visiomatic/actions/workflows/doc.yml)[![Tests](https://github.com/astromatic/visiomatic/actions/workflows/tests.yml/badge.svg)](https://github.com/astromatic/visiomatic/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/astromatic/visiomatic/graph/badge.svg?token=DodRbYmlWZ)](https://codecov.io/gh/astromatic/visiomatic)
