@@ -66,7 +66,7 @@ class Image(object):
         # Small hack to translate compressed FITS headers
         self.header = fits.Header.fromstring(hdu.header.tostring())
         shape = hdu.data.shape
-        self.data = hdu.data.astype(np.float32).reshape(-1,shape[-2], shape[-1])
+        self.data = hdu.data.reshape(-1,shape[-2], shape[-1])
         self.shape = self.data.shape
         self.bitpix = self.header["BITPIX"]
         self.bitdepth = 32
@@ -213,7 +213,7 @@ class Image(object):
         """
         # NumPy version
         # Speed up ~x8 by using only a fraction of the lines
-        x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).copy()
+        x = self.data[:, ::(skip + 1), :].reshape(self.data.shape[0],-1).astype(np.float32)
         # First, normalize to avoid overflows
         norm = abs(np.nanmean(x))
         if norm > 0.:
