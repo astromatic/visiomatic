@@ -601,7 +601,9 @@ class Tiled(object):
             np.s_[:, tshape[1]:, tshape[2]:]
         ]
         # Initialize empty tile twice the size of a regular one, for rebinning
-        tile_in = np.zeros((tshape[0], tshape[1] * 2, tshape[2] * 2))
+        tile = np.zeros((tshape[0], tshape[1] * 2, tshape[2] * 2))
+        xdither = np.array((0, 1, 0, 1), dtype=np.int32)
+        ydither = np.array((0, 0, 1, 1), dtype=np.int32)
         # Bin tiles down on subsequent levels
         for r in range(1, self.nlevels):
             # Previous resolution level
@@ -612,31 +614,24 @@ class Tiled(object):
             wp = self.shapes[rp, 2]
             hp = self.shapes[rp, 1]
             for n in range(nt):
-                x = n % w
-                y = n // w
-                xp = x * 2
-                yp = y * 2
-                xps = np.array((xp, xp+1, xp, xp+1))
-                yps = np.array((yp, yp, yp+1, yp+1))
+                xp = (n % w) * 2
+                yp = (n // w) * 2
+                xps = xp + xdither
+                yps = yp + ydither
                 nps = yps * wp + xps
                 nps[np.logical_or(xps >= wp, yps >= hp)] = -1
                 for i in range(4):
-                    tile_in[slices[i]] = self.tiles[self.tiles_start[rp] + nps[i]] \
-                        if nps[i] >= 0 else 0
-                self.tiles[self.tiles_start[r] + n] = tile_in.reshape(
-                    tshape[0],
-                    tshape[1],
-                    2,
-                    -1,
-                    2
-                ).mean(axis=2).mean(axis=3)            
-            #cv2.resize(
-            #        tile_in[0],
-            #        fx=0.5,
-            #        fy=0.5,
-            #        dsize=(tshape[2], tshape[1]),
-            #        interpolation=cv2.INTER_AREA
-            #    )[None,:,:]
+                    tile[slices[i]] = self.tiles[self.tiles_start[rp] + nps[i]] \
+                        if nps[i] >= 0 else 0.
+                tile_out = self.tiles[self.tiles_start[r] + n]
+                for c in range(tshape[0]):
+                    tile_out[c] = cv2.resize(
+                    tile[c],
+                    fx=0.5,
+                    fy=0.5,
+                    dsize=(tshape[2], tshape[1]),
+                    interpolation=cv2.INTER_AREA
+                )
         del ima, tiler
         # Make sure that memory has been completely mapped before exiting
         self.tiles.flush()
