@@ -300,7 +300,7 @@ class LRUSharedRWCache:
                     del self.cache[hargs]
                 del self.locks[hargs]
                 result = None
-                msg = e.args[0]
+                msg = str(e)
             else:
                 with self.cache.lock:
                     self.cache[hargs] = [firstarg, time_ns()]
@@ -313,7 +313,7 @@ class LRUSharedRWCache:
                 result = self.results(*args, **kwargs)
             except Exception as e:
                 result = None
-                msg = e.args[0]
+                msg = str(e)
             else:
                 with self.cache.lock:
                     self.cache[hargs][1] = time_ns()                
