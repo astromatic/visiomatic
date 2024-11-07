@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geometry &mdash; VisiOmatic 3.0.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=3ff5e572" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=50b65552"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Layers" href="layers.html" />
+    <link rel="prev" title="Catalogs" href="catalogs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../server/index.html">Python server</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">JS client</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="catalogs.html">Catalogs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Geometry</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#EllipseMarker"><code class="docutils literal notranslate"><span class="pre">EllipseMarker</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ellipseMarker"><code class="docutils literal notranslate"><span class="pre">ellipseMarker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Ellipse"><code class="docutils literal notranslate"><span class="pre">Ellipse</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ellipse"><code class="docutils literal notranslate"><span class="pre">ellipse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ui.html">User Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wcs.html">World Coordinate System</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">JS client</a></li>
+      <li class="breadcrumb-item active">Geometry</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/client/geometry.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="geometry">
+<h1>Geometry<a class="headerlink" href="#geometry" title="Link to this heading"></a></h1>
+<dl class="js class">
+<dt class="sig sig-object js" id="EllipseMarker">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">EllipseMarker</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker" title="Link to this definition"></a></dt>
+<dd><p>Create a new ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the center of the marker.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.majAxis</strong> (<em>number</em>) -- Length of the ellipse major axis in pixels.</p></li>
+<li><p><strong>options.minAxis</strong> (<em>number</em>) -- Length of the ellipse minor axis in pixels.</p></li>
+<li><p><strong>options.posAngle</strong> (<em>number</em>) -- Ellipse position angle in degrees (CCW from x axis).</p></li>
+<li><p><strong>options.fill</strong> (<em>boolean</em>) -- Fill the ellipse?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>EllipseMarker</strong> -- Instance of an ellipse marker.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker._containsPoint">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_containsPoint</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker._containsPoint" title="Link to this definition"></a></dt>
+<dd><p>Test if the marker contains the given  point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>leaflet.Point</em>) -- Coordinates of the point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>boolean</strong> -- True if the marker contains the point, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker._project">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_project</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker._project" title="Link to this definition"></a></dt>
+<dd><p>Project the marker to pixel coordinates.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker._update">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_update</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker._update" title="Link to this definition"></a></dt>
+<dd><p>Update the marker.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker._updateBounds">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updateBounds</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker._updateBounds" title="Link to this definition"></a></dt>
+<dd><p>Project the boundaries of the marker.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker._updatePath">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_updatePath</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker._updatePath" title="Link to this definition"></a></dt>
+<dd><p>Update the rendering of the marker.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker.getLatLng">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getLatLng</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker.getLatLng" title="Link to this definition"></a></dt>
+<dd><p>Return the world coordinates of the ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>leaflet.LatLng</strong> -- World coordinates of the marker.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker.getParams">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getParams</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker.getParams" title="Link to this definition"></a></dt>
+<dd><p>Set/update the shape parameters of the ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ellipseShape</strong> -- Ellipse shape parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker.setLatLng">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">setLatLng</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker.setLatLng" title="Link to this definition"></a></dt>
+<dd><p>Set/update the world coordinates of the ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the marker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>EllipseMarker</strong> -- this.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="EllipseMarker.setParams">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">EllipseMarker</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">setParams</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellipseParams</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EllipseMarker.setParams" title="Link to this definition"></a></dt>
+<dd><p>Set/update the shape parameters of the ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ellipseParams</strong> (<em>ellipseShape</em>) -- Ellipse shape parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>EllipseMarker</strong> -- this.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="ellipseMarker">
+<span class="sig-name descname"><span class="n"><span class="pre">ellipseMarker</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ellipseMarker" title="Link to this definition"></a></dt>
+<dd><p>Instantiate an ellipse marker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the center of the marker.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> EllipseMarker}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>EllipseMarker</strong> -- Instance of an ellipse marker.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">marker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ellipseMarker</span><span class="p">(</span><span class="nx">latLng</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span><span class="w"> </span><span class="mf">24.0</span><span class="p">),</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                          </span><span class="nx">majAxis</span><span class="o">:</span><span class="w"> </span><span class="mf">24.7</span><span class="p">,</span>
+<span class="w">                          </span><span class="nx">minAxis</span><span class="o">:</span><span class="w"> </span><span class="mf">12.1</span><span class="p">,</span>
+<span class="w">                          </span><span class="nx">posAngle</span><span class="o">:</span><span class="w"> </span><span class="mf">47.3</span>
+<span class="w">  </span><span class="p">});</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="js class">
+<dt class="sig sig-object js" id="Ellipse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="n"><span class="pre">Ellipse</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Ellipse" title="Link to this definition"></a></dt>
+<dd><p>Create a new ellipse marker with a shape that scales with zooming.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the center of the marker.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
+<li><p><strong>options.fill</strong> (<em>boolean</em>) -- Fill the ellipse?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Ellipse</strong> -- Instance of an ellipse.</p>
+</dd>
+</dl>
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Ellipse._project">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Ellipse</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_project</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Ellipse._project" title="Link to this definition"></a></dt>
+<dd><p>Project the marker to pixel coordinates.</p>
+</dd></dl>
+
+<dl class="js staticfunction">
+<dt class="sig sig-object js" id="Ellipse.getBounds">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Ellipse</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">getBounds</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Ellipse.getBounds" title="Link to this definition"></a></dt>
+<dd><p>Get the bounds of the ellipse in world coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>leaflet.LatLngBounds</strong> -- Boundary box in world coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="ellipse">
+<span class="sig-name descname"><span class="n"><span class="pre">ellipse</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ellipse" title="Link to this definition"></a></dt>
+<dd><p>Instantiate an ellipse marker with a shape that scales with zooming.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latlng</strong> (<em>leaflet.LatLng</em>) -- World coordinates of the center of the marker.</p></li>
+<li><p><strong>options</strong> (<em>object</em>) -- Options: see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> Ellipse}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Ellipse</strong> -- Instance of an ellipse marker.</p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">marker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ellipse</span><span class="p">(</span><span class="nx">latLng</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span><span class="w"> </span><span class="mf">24.0</span><span class="p">),</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                          </span><span class="nx">majAxis</span><span class="o">:</span><span class="w"> </span><span class="mf">4.3</span><span class="p">,</span>
+<span class="w">                          </span><span class="nx">minAxis</span><span class="o">:</span><span class="w"> </span><span class="mf">2.1</span><span class="p">,</span>
+<span class="w">                          </span><span class="nx">posAngle</span><span class="o">:</span><span class="w"> </span><span class="mf">47.3</span>
+<span class="w">  </span><span class="p">});</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="catalogs.html" class="btn btn-neutral float-left" title="Catalogs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="layers.html" class="btn btn-neutral float-right" title="Layers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 CEA/CFHT/CNRS/UParisSaclay.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
