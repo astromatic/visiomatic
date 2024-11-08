@@ -945,8 +945,9 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		if (visio.contrast !== visioDefault.contrast) {
 			str += '&CNT=' + visio.contrast.toString();
 		}
+
 		if (visio.gamma !== visioDefault.gamma) {
-			str += '&GAM=' + (1.0 / visio.gamma).toFixed(4);
+			str += '&GAM=' + visio.gamma.toFixed(4);
 		}
 
 		const nchannel = visio.nChannel,

@@ -501,6 +501,7 @@ class Tiled(object):
            contrast = self.contrast
         if gamma is None:
            gamma = self.gamma
+        invgamma = 1./gamma if gamma > 0.01 else 0.01
         if channel is not None:
             # Mono mode
             chan = channel - 1
@@ -515,7 +516,7 @@ class Tiled(object):
             ) * fac + offset
             ctile[ctile < 0.] = 0.
             ctile[ctile > 1.] = 1.
-            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
+            ctile = (255.49 * np.power(ctile, invgamma)).astype(np.uint8)
        	    if invert:
                 ctile = 255 - ctile
             if (colormap != 'grey'):
@@ -556,7 +557,7 @@ class Tiled(object):
             ).T.reshape(tile.shape[1], ctile.shape[2], 3).copy()
             ctile[ctile < 0.0] = 0.0
             ctile[ctile > 1.0] = 1.0
-            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
+            ctile = (255.49 * np.power(ctile, invgamma)).astype(np.uint8)
        	    if invert:
                 ctile = 255 - ctile
         return ctile
@@ -1065,7 +1066,7 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
                 'color_saturation',
                 settings['color_saturation']
             )
-            tiled.gamma = kwargs.get('gamma', 1. / settings['gamma'])
+            tiled.gamma = kwargs.get('gamma', settings['gamma'])
             tiled.quality = kwargs.get('quality', settings['quality'])
             return tiled
     else:
