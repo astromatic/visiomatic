@@ -5,7 +5,7 @@
  * @requires util/RGB.js
  * @requires crs/WCS.js
 
- * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/UParisSaclay
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -25,7 +25,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		title: null,
 		setTitleBar: false,
 		crs: null,
-		nativeCelSys: false,
 		center: null,
 		fov: null,
 		minZoom: 0,
@@ -134,10 +133,6 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	 * @param {?(leaflet.CRS|WCS)} [options.crs=null]
 	   Coordinate Reference or World Coordinate System: extracted from the data
 	   header if available or raw pixel coordinates otherwise.
-
-	 * @param {boolean} [options.nativeCelSys=false]
-	   True if native coordinates (e.g., galactic coordinates) are to be used
-	   instead of equatorial coordinates.
 
 	 * @param {?string} [options.center=null]
 	   World coordinates (either in RA,Dec decimal form or in
@@ -601,8 +596,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 				meta.header,
 				meta.images,
 				{
-					nativeCelSys: this.options.nativeCelSys,
-					nzoom: visio.maxZoom + 1,
+					nzoom: visio.maxZoom + 1
 				}
 			);
 			visio.metaReady = true;

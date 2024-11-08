@@ -3,7 +3,7 @@
  * @file Coordinate display/control interface
  * @requires util/VUtil.js
 
- * @copyright (c) 2015-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2015-2024 CNRS/IAP/CFHT/SorbonneU/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 
@@ -15,6 +15,7 @@ import {
 	Util
 } from 'leaflet';
 
+import {CelSys} from '../crs';
 import {VUtil} from '../util'
 
 
@@ -31,9 +32,8 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		   Coordinate name.
 		 * @property {'deg'|'HMS'|''} units
 		   Coordinate units.
-		 * @property {boolean} [nativeCelSys=false]
-		   Use native coordinates (e.g., galactic coordinates) instead of
-		   equatorial coordinates?
+		 * @property {'equatorial'|'ecliptic'|'galactic'|'supergalactic'} celsyscode
+		   Coordinate system.
 		 * @default
 		 */
 		coordinates: [
@@ -41,13 +41,24 @@ export const Coords = Control.extend( /** @lends Coords */ {
 				type: 'world',
 				label: 'RA, Dec',
 				units: 'HMS',
-				nativeCelSys: false
+				celsyscode: 'equatorial'
+			},
+			{
+				type: 'world',
+				label: 'ELon, ELat',
+				units: 'deg',
+				celsyscode: 'ecliptic'
+			},
+			{
+				type: 'world',
+				label: 'GLon, GLat',
+				units: 'deg',
+				celsyscode: 'galactic'
 			},
 			{
 				type: 'pixel',
 				label: 'x, y',
-				units: '',
-				nativeCelSys: false
+				units: ''
 			}
 		],
 		centerQueryKey: 'center',
@@ -178,8 +189,13 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		coordSelect.id = 'leaflet-coord-select';
 		coordSelect.title = 'Switch coordinate system';
 		for (var c in coordinates) {
+			var	coord = coordinates[c];
+
+			if (!wcs.pixelFlag && coord.celsyscode != 'equatorial') {
+				coord.celsys = new CelSys(coord.celsyscode);
+			}
 			coordOpt[c] = document.createElement('option');
-			coordOpt[c].text = coordinates[c].label;
+			coordOpt[c].text = coord.label;
 			var	coordIndex = parseInt(c, 10);
 			coordOpt[c].value = coordIndex;
 			if (coordIndex === 0) {
@@ -287,13 +303,12 @@ export const Coords = Control.extend( /** @lends Coords */ {
 				wcs.projections[extindex].unproject(pnt) :
 				this._map.getCenter();
 			if (wcs.pixelFlag) {
-				this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' +
-					latlng.lat.toFixed(0);
+				const	prec = (wcs.nzoom - this._map._zoom) > 0 ? 0 : 2;
+				this._wcsinput.value = latlng.lng.toFixed(prec) + ' , ' +
+					latlng.lat.toFixed(prec);
 			} else {
-				if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
-					latlng = wcs.celSysToEq(latlng);
-				} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
-					latlng = wcs.eqToCelSys(latlng);
+				if (coordinate.celsys) {
+					latlng = coordinate.celsys.fromEq(latlng);
 				}
 				switch (coordinate.units) {
 				case 'HMS':
@@ -322,16 +337,10 @@ export const Coords = Control.extend( /** @lends Coords */ {
 		let	latlng = wcs.parseCoords(str);
 
 		if (latlng) {
-			if (wcs.pixelFlag) {
-				this._map.panTo(latlng);
-			} else {
-				if (!coordinate.nativeCelSys && !wcs.equatorialFlag) {
-					latlng = wcs.eqToCelSys(latlng);
-				} else if (coordinate.nativeCelSys && wcs.equatorialFlag) {
-					latlng = wcs.celSysToEq(latlng);
-				}
-				this._map.panTo(latlng);
+			if (coordinate.celsys) {
+				latlng = coordinate.celsys.toEq(latlng);
 			}
+			this._map.panTo(latlng);
 		} else {
 			// If not, ask Sesame@CDS!
 			VUtil.requestURL(this.options.sesameURL + '/-oI/A?' + str,

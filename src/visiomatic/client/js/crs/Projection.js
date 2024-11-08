@@ -3,7 +3,7 @@
  * @file Common WCS (World Coordinate System) (de-)projection assets.
  * @requires util/VUtil.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
  */
 import {
@@ -13,6 +13,7 @@ import {
 	point
 } from 'leaflet';
 
+import {CelSys} from './CelSys';
 import {VUtil} from '../util';
 
 
@@ -61,18 +62,14 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	   Start index, end index, and direction (+1 or -1) of the used section of
 	   the detector in the merged image for each axis. The range notation
 	   follows the FITS convention (start at index 1 and include the end index).
-	 * @property {boolean} nativeCelSys
-	   Return world coordinates in their native celestial system?
 	 * @property {number[][]} _cdinv
 	   Jacobian matrix of the projection (inverse of the `CD` matrix).
 	 * @property {number[]} _natrval
 	   Native latitude and longitude of the projection center.
 	 * @property {boolean} _pixelFlag
 	   True for a Cartesian projection.
-	 * @property {'equatorial'|'galactic'|'ecliptic'|'supergalactic'} _celsyscode
+	 * @property {'equatorial'|'galactic'|'ecliptic'|'supergalactic'} celsyscode
 	   Type of celestial system.
-	 * @property {number[][]} _celsysmat
-	   Celestial system transformation matrix
 	 */
 
 	/**
@@ -95,7 +92,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		npv: 0,
 		jd: [0., 0.],
 		obslatlng: [0., 0.],
-		nativeCelSys: false
 	},
 
 	/**
@@ -127,28 +123,21 @@ export const Projection = Class.extend( /** @lends Projection */ {
 			// Identify the native celestial coordinate system
 			switch (projparam.ctype.x.substr(0, 1)) {
 			case 'G':
-				projparam._celsyscode = 'galactic';
+				projparam.celsyscode = 'galactic';
 				break;
 			case 'E':
-				projparam._celsyscode = 'ecliptic';
+				projparam.celsyscode = 'ecliptic';
 				break;
 			case 'S':
-				projparam._celsyscode = 'supergalactic';
+				projparam.celsyscode = 'supergalactic';
 				break;
 			default:
-				projparam._celsyscode = 'equatorial';
+				projparam.celsyscode = 'equatorial';
 				break;
 			}
-			// true if world coordinates are equatorial.
-			this.equatorialFlag = !projparam.nativeCelSys ||
-				projparam._celsyscode == 'equatorial';
 			// true if a celestial system transformation is required.
-			this.celSysConvFlag = !projparam.nativeCelSys &&
-				projparam._celsyscode !== 'equatorial';
-			if (this.celSysConvFlag) {
-				projparam._celsysmat = this._celsysmatInit(
-					projparam._celsyscode
-				);
+			if (projparam.celsyscode && projparam.celsyscode !== 'equatorial') {
+				this.celsys = new CelSys(projparam.celsyscode);
 			}
 		}
 	},
@@ -205,8 +194,8 @@ export const Projection = Class.extend( /** @lends Projection */ {
 				paramsrc.obslatlng[0], paramsrc.obslatlng[1]
 			];
 		}
-		if (typeof(paramsrc.nativeCelSys) !== 'undefined') {
-			projparam.nativeCelSys = paramsrc.nativeCelSys;
+		if (typeof(paramsrc.celsyscode) !== 'undefined') {
+			projparam.celsyscode = paramsrc.celsyscode;
 		}
 
 		projparam.dataslice = paramsrc.dataslice ? paramsrc.dataslice
@@ -298,47 +287,6 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	},
 
 	/**
-	 * Return the transformation matrix between celestial coordinates for the
-	 * given system and equatorial coordinates.
-	 * @private
-	 * @param {'galactic'|'ecliptic'|'supergalactic'} celsyscode
-	   Type of celestial system.
-	 * @returns {number[][]}
-	   Transformation matrix.
-	 */
-	_celsysmatInit: function (celsyscode) {
-		const	deg = Math.PI / 180.0,
-			cmat = [];
-		var	corig, cpole;
-
-		switch (celsyscode) {
-		case 'galactic':
-			corig = latLng(-28.93617242, 266.40499625);
-			cpole = latLng(27.12825120, 192.85948123);
-			break;
-		case 'ecliptic':
-			corig = latLng(0.0, 0.0);
-			cpole = latLng(66.99111111, 273.85261111);
-			break;
-		case 'supergalactic':
-			corig = latLng(59.52315, 42.29235);
-			cpole = latLng(15.70480, 283.7514);
-			break;
-		default:
-			corig = latLng(0.0, 0.0);
-			cpole = latLng(0.0, 0.0);
-			break;
-		}
-		cmat[0] = cpole.lng * deg;
-		cmat[1] = Math.asin(Math.cos(corig.lat * deg) *
-			Math.sin((cpole.lng - corig.lng) * deg));
-		cmat[2] = Math.cos(cpole.lat * deg);
-		cmat[3] = Math.sin(cpole.lat * deg);
-
-		return cmat;
-	},
-
-	/**
 	 * Project world coordinates to pixel (image) coordinates.
 	 * @param {leaflet.LatLng} latlng
 	   World coordinates.
@@ -347,7 +295,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 	 */
 	project: function (latlng) {
 		const	phiTheta = this._raDecToPhiTheta(
-			this.celSysConvFlag ? this.eqToCelSys(latlng) : latlng
+			this.celsys ? this.celsys.fromEq(latlng) : latlng
 		);
 		phiTheta.lat = this._thetaToR(phiTheta.lat);
 		return this._redToPix(this._phiRToRed(phiTheta));
@@ -368,49 +316,7 @@ export const Projection = Class.extend( /** @lends Projection */ {
 		if (latlng.lng < -180.0) {
 			latlng.lng += 360.0;
 		}
-		return this.celSysConvFlag ? this.celSysToEq(latlng) : latlng;
-	},
-
-	/**
-	 * Convert celestial (angular) coordinates to equatorial.
-	 * @param {leaflet.LagLng} latlng
-	   Celestial coordinates (e.g., ecliptic latitude and longitude).
-	 * @returns {leaflet.LatLng}
-	   Equatorial coordinates.
-	 */
-	celSysToEq: function (latlng) {
-		const	cmat = this.projparam._celsysmat,
-		    deg = Math.PI / 180.0,
-			invdeg = 180.0 / Math.PI,
-			a2 = latlng.lng * deg - cmat[1],
-			d2 = latlng.lat * deg,
-			sd2 = Math.sin(d2),
-			cd2cp = Math.cos(d2) * cmat[2],
-			sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
-		return L.latLng(Math.asin(sd) * invdeg,
-		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
-		                 cmat[0]) * invdeg + 360.0) % 360.0);
-	},
-
-	/**
-	 * Convert equatorial coordinates to another celestial system.
-	 * @param {leaflet.LagLng} latlng
-	   Equatorial coordinates.
-	 * @returns {leaflet.LatLng}
-	   Celestial coordinates (e.g., ecliptic latitude and longitude).
-	 */
-	eqToCelSys: function (latlng) {
-		const	cmat = this.projparam._celsysmat,
-			deg = Math.PI / 180.0,
-			invdeg = 180.0 / Math.PI,
-			a = latlng.lng * deg - cmat[0],
-			sd = Math.sin(latlng.lat * deg),
-			cdcp = Math.cos(latlng.lat * deg) * cmat[2],
-			sd2 = sd * cmat[3] + cdcp * Math.cos(a);
-
-		return L.latLng(Math.asin(sd2) * invdeg,
-		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
-		                 cmat[1]) * invdeg + 360.0) % 360.0);
+		return this.celsys ? this.celsys.ToEq(latlng) : latlng;
 	},
 
 	/**
