@@ -786,10 +786,10 @@ a#visiomatic-image-toggle {
 }
 
 .sidebar.image {
-	width: 220px;
+	width: 240px;
 }
 .sidebar-left.image ~ .leaflet-left {
-	left: 234px;
+	left: 254px;
 }
 
 #visiomatic-control-button-image-reset >div {
@@ -1161,7 +1161,7 @@ iframe.visiomatic-control-doc {
 }
 
 .leaflet-control-coords-input {
-	padding: 2px 6px 2px 6px;
+	padding: 2px 12px 2px 6px;
 	border-radius: 0px 4px 4px 0px;
 	box-sizing : border-box;
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;
@@ -1249,7 +1249,7 @@ iframe.visiomatic-control-doc {
 }
 
 .leaflet-control-values-input {
-	padding: 2px 6px 2px 6px;
+	padding: 2px 12px 2px 6px;
 	border-radius: 0px 4px 4px 0px;
 	box-sizing : border-box;
 	appearance: textfield; -moz-appearance: textfield; -webkit-appearance: texfield;

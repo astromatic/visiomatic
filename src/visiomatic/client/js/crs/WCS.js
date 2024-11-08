@@ -58,10 +58,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 	code: 'WCS',
 
 	options: {
-		nzoom: 9,
-		// If true, world coordinates are returned
-		// in the native celestial system
-		nativeCelSys: false
+		nzoom: 9
 	},
 
 	/**
@@ -77,9 +74,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 
 	 * @param {number} [options.nzoom=9]
 	   Number of zoom levels.
-
-	 * @param {boolean} [options.nativeCelSys=false]
-	   Return world coordinates in their native celestial system?
 
 	 * @returns {WCS} Instance of a World Coordinate System.
 	 */
@@ -97,7 +91,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 				var	proj = this.getProjection(
 					image.header,
 					{
-						nativeCelSys: options.nativeCelSys,
 						dataslice: image.dataslice,
 						detslice: image.detslice
 					}
@@ -131,8 +124,6 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 		);
 		// Custom projection code, e.g., WCS-TAN
 		this.code += ':' + merged_proj.code;
-		this.equatorialFlag = merged_proj.equatorialFlag;
-		this.celSysCode = merged_proj.projparam._celsyscode;
 		this.pixelFlag = merged_proj.projparam._pixelFlag;
 		this.infinite = merged_proj.projparam._infinite;
 		this.jd = merged_proj.projparam.jd;
@@ -280,6 +271,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 			proj = new Pixel(header, options);
 			break;
 		}
+
 		return proj;
 	},
 
@@ -404,14 +396,7 @@ export const WCS = CRSclass.extend( /** @lends WCS */ {
 				latlng = latLng(Number(result[2]), Number(result[1]));
 			}
 		}
-		if (latlng) {
-			if (this.projection.celSysConvFlag) {
-				latlng = this.projection.eqToCelSys(latlng);
-			}
-			return latlng;
-		} else {
-			return undefined;
-		}
+		return latlng? latlng : undefined;
 	},
 
 	/**

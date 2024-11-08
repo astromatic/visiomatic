@@ -6,7 +6,7 @@
  * @requires control/UI.js
  * @requires catalog/catalogs.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
@@ -48,7 +48,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	options: {
 		title: 'Catalog overlays',
-		nativeCelSys: true,
 		color: '#FFFF00',
 		timeOut: 30,	// seconds
 		authenticate: false, // Force authentication
@@ -67,10 +66,6 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 	 * @param {string} [options.title='Catalog overlays']
 	   Title of the dialog window or panel.
-
-	 * @param {boolean} [options.nativeCelSys=false]
-	   Use native coordinates (e.g., galactic coordinates) instead of
-	   equatorial coordinates?
 
 	 * @param {string} [options.color='#FFFF00']
 	   Default catalog overlay color.
@@ -186,8 +181,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 		const	_this = this,
 		    map = this._map,
 			wcs = map.options.crs,
-			sysflag = !wcs.equatorialFlag && !this.options.nativeCelSys,
-		    center = sysflag ? wcs.celSysToEq(map.getCenter()) : map.getCenter(),
+		    center = map.getCenter(),
 		    b = map.getPixelBounds(),
 		    z = map.getZoom(),
 		    templayer = new LayerGroup(null);
@@ -204,39 +198,13 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 		// Compute the search cone
 		const	lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
-			c = sysflag ?
-				[
-					wcs.celSysToEq(map.unproject(b.min, z)),
-					wcs.celSysToEq(map.unproject(point(b.min.x, b.max.y), z)),
-					wcs.celSysToEq(map.unproject(b.max, z)),
-					wcs.celSysToEq(map.unproject(point(b.max.x, b.min.y), z))
-				] : [
-					map.unproject(b.min, z),
-					map.unproject(point(b.min.x, b.max.y), z),
-					map.unproject(b.max, z),
-					map.unproject(point(b.max.x, b.min.y), z)
-				];
-		var	  response,
-			sys;
-
-		if (!wcs.equatorialFlag && this.options.nativeCelSys) {
-			switch (wcs.celSysCode) {
-			case 'ecliptic':
-				sys = 'E2000.0';
-				break;
-			case 'galactic':
-				sys = 'G';
-				break;
-			case 'supergalactic':
-				sys = 'S';
-				break;
-			default:
-				sys = 'J2000.0';
-				break;
-			}
-		} else {
-			sys = 'J2000.0';
-		}
+			c = [
+				map.unproject(b.min, z),
+				map.unproject(point(b.min.x, b.max.y), z),
+				map.unproject(b.max, z),
+				map.unproject(point(b.max.x, b.min.y), z)
+			];
+		var	  response;
 
 		// Mean Julian date during the exposure
 		const	jdmean = 0.5 * (wcs.jd[0] + wcs.jd[1]),
@@ -266,7 +234,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 
 			response = await fetch(
 				Util.template(catalog.url, Util.extend({
-					sys: sys,
+					sys: 'J2000.0',
 					jd: jdmean,
 					observer: 568,
 					lng: center.lng.toFixed(6),
@@ -285,7 +253,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 				                wcs.distance(c[0], center));
 			response = await fetch(
 				Util.template(catalog.url, Util.extend({
-					sys: sys,
+					sys: 'J2000.0',
 					jd: jdmean,
 					observer: 568,
 					lng: center.lng.toFixed(6),
@@ -331,14 +299,7 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 					}
 				},
 				coordsToLatLng: function (coords) {
-					if (wcs.equatorialFlag) {
-						return new L.LatLng(coords[1],coords[0],coords[2]);
-					} else {
-						const	latLng = wcs.eqToCelSys(
-							L.latLng(coords[1], coords[0])
-						);
-						return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
-					}
+					return new L.LatLng(coords[1],coords[0],coords[2]);
 				},
 				filter: function (feature) {
 					return catalog.filter(feature);

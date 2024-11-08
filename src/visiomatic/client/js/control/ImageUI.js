@@ -127,7 +127,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Brightness:',
 			'Adjust brightness. 0.0: normal',
 			visio.brightness,
-			0.1,
+			0.05,
 			-10.0, 10.0
 		);
 
@@ -140,7 +140,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Adjust Contrast. 1.0: normal',
 			visio.contrast,
 			0.1,
-			0.0, 100.0
+			0.0, 1000.0
 		);
 
 		// Colour saturation
@@ -191,9 +191,7 @@ export const ImageUI = UI.extend( /** @lends ImageUI */ {
 			'Reset image settings',
 			function () {
 				_this.loadSettings(layer, _this._initsettings);
-				if (layer.visio.mixingMode === 'color') {
-					layer.updateMix();
-				}
+				layer.updateMix();
 				layer.redraw();
 			}
 		);

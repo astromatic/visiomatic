@@ -188,7 +188,7 @@ class Tiled(object):
             settings["thread_count"] if 'sphinx' not in modules else 4
         )
         try:
-            hdus = fits.open(self.filename)
+            hdus = fits.open(self.filename, mode='denywrite')
         except:
             raise(FileNotFoundError(f"Cannot open {filename}")) from None
             return
@@ -347,7 +347,7 @@ class Tiled(object):
             self.data_filename = get_data_filename(self.filename)
             self.data = np.memmap(
                 self.data_filename,
-                dtype=images[0].data.dtype,
+                dtype=np.float32,
                 mode='w+',
                 shape=shape
             )
@@ -501,6 +501,7 @@ class Tiled(object):
            contrast = self.contrast
         if gamma is None:
            gamma = self.gamma
+        invgamma = 1./gamma if gamma > 0.01 else 0.01
         if channel is not None:
             # Mono mode
             chan = channel - 1
@@ -515,7 +516,7 @@ class Tiled(object):
             ) * fac + offset
             ctile[ctile < 0.] = 0.
             ctile[ctile > 1.] = 1.
-            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
+            ctile = (255.49 * np.power(ctile, invgamma)).astype(np.uint8)
        	    if invert:
                 ctile = 255 - ctile
             if (colormap != 'grey'):
@@ -556,7 +557,7 @@ class Tiled(object):
             ).T.reshape(tile.shape[1], ctile.shape[2], 3).copy()
             ctile[ctile < 0.0] = 0.0
             ctile[ctile > 1.0] = 1.0
-            ctile = (255.49 * np.power(ctile, gamma)).astype(np.uint8)
+            ctile = (255.49 * np.power(ctile, invgamma)).astype(np.uint8)
        	    if invert:
                 ctile = 255 - ctile
         return ctile
@@ -570,43 +571,68 @@ class Tiled(object):
         self.tiles_end = np.cumsum(self.counts, dtype=np.int32)
         self.tiles_start[1:] = self.tiles_end[:-1]
         self.tiles_filename = get_tiles_filename(self.filename)
+        tshape = self.tile_shape
         self.tiles: np.ndarray = np.memmap(
             self.tiles_filename,
             dtype=np.float32,
             mode='w+',
-            shape=(
-                self.ntiles,
-                self.tile_shape[0],
-                self.tile_shape[1],
-                self.tile_shape[2]
-            )
+            shape=(self.ntiles, *tshape)
         )
         ima = np.flip(self.data, axis=1)
-        for r in range(self.nlevels):
-            tiler = Tiler(
-                data_shape = ima.shape,
-                tile_shape = self.tile_shape,
-                mode='constant',
-                channel_dimension=0
-            )
-            self.tiles[self.tiles_start[r]:self.tiles_end[r]] = \
-                tiler.get_all_tiles(ima, copy_data=False)
-            # Pure NumPy approach if in multichannel mode
-            # else use OpenCV (faster but does not work with multiplanar data)
-            ima = ima[
-                :,
-                :(-1 if ima.shape[1]%2 else None),
-                :(-1 if ima.shape[2]%2 else None)
-            ].reshape(
-                ima.shape[0], ima.shape[1]//2, 2, -1, 2
-            ).mean(axis=2).mean(axis=3) if self.nchannels > 1 else \
-            cv2.resize(
-                ima[0].squeeze(),
-                fx=0.5,
-                fy=0.5,
-                dsize=(ima.shape[1]//2, ima.shape[0]//2),
-                interpolation=cv2.INTER_AREA
-            )[None,:,:]
+        tiler = Tiler(
+            data_shape = ima.shape,
+            tile_shape = tshape,
+            mode='constant',
+            channel_dimension=0
+        )
+        # We don't use get_all_tiles() as it does not work inplace
+        np.stack(
+            [
+                tiler.get_tile(ima, x, copy_data=False) \
+                    for x in range(tiler.n_tiles)
+            ],
+            axis=0,
+            out=self.tiles[self.tiles_start[0]:self.tiles_end[0]]
+        )
+        # Prepare array of 4 multidimensional numpy slices
+        slices = [
+            np.s_[:, :tshape[1], :tshape[2]],
+            np.s_[:, :tshape[1], tshape[2]:],
+            np.s_[:, tshape[1]:, :tshape[2]],
+            np.s_[:, tshape[1]:, tshape[2]:]
+        ]
+        # Initialize empty tile twice the size of a regular one, for rebinning
+        tile = np.zeros((tshape[0], tshape[1] * 2, tshape[2] * 2))
+        xdither = np.array((0, 1, 0, 1), dtype=np.int32)
+        ydither = np.array((0, 0, 1, 1), dtype=np.int32)
+        # Bin tiles down on subsequent levels
+        for r in range(1, self.nlevels):
+            # Previous resolution level
+            rp = r - 1
+            nt = self.counts[r]
+            ntp = self.counts[rp]
+            w = self.shapes[r, 2]
+            wp = self.shapes[rp, 2]
+            hp = self.shapes[rp, 1]
+            for n in range(nt):
+                xp = (n % w) * 2
+                yp = (n // w) * 2
+                xps = xp + xdither
+                yps = yp + ydither
+                nps = yps * wp + xps
+                nps[np.logical_or(xps >= wp, yps >= hp)] = -1
+                for i in range(4):
+                    tile[slices[i]] = self.tiles[self.tiles_start[rp] + nps[i]] \
+                        if nps[i] >= 0 else 0.
+                tile_out = self.tiles[self.tiles_start[r] + n]
+                for c in range(tshape[0]):
+                    tile_out[c] = cv2.resize(
+                    tile[c],
+                    fx=0.5,
+                    fy=0.5,
+                    dsize=(tshape[2], tshape[1]),
+                    interpolation=cv2.INTER_AREA
+                )
         del ima, tiler
         # Make sure that memory has been completely mapped before exiting
         self.tiles.flush()
@@ -1040,7 +1066,7 @@ def pickledTiled(filename: str, **kwargs) -> Tiled:
                 'color_saturation',
                 settings['color_saturation']
             )
-            tiled.gamma = kwargs.get('gamma', 1. / settings['gamma'])
+            tiled.gamma = kwargs.get('gamma', settings['gamma'])
             tiled.quality = kwargs.get('quality', settings['quality'])
             return tiled
     else:

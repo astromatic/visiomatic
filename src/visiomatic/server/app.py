@@ -228,13 +228,13 @@ def create_app() -> FastAPI:
                 contrast,
                 title="Relative contrast",
                 ge=0.,
-                le=100.
+                le=1000.
                 ),
             GAM: float = Query(
-                1.0/gamma,
-                title="Inverse display gamma",
+                gamma,
+                title="Display gamma",
                 ge=0.2,
-                le=2.
+                le=5.
                 ),
             INFO: str = Query(
                 None,

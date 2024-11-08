@@ -5,7 +5,7 @@
  * @requires util/VUtil.js
  * @requires control/UI.js
 
- * @copyright (c) 2014-2023 CNRS/IAP/CFHT/SorbonneU
+ * @copyright (c) 2014-2024 CNRS/IAP/CFHT/SorbonneU/CEA/AIM/UParisSaclay
  * @author Emmanuel Bertin <bertin@cfht.hawaii.edu>
 */
 import {
@@ -34,7 +34,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	options: {
 		title: 'Region overlays',
-		nativeCelSys: true,
 		color: '#00FFFF',
 		timeOut: 30,	// seconds
 		collapsed: true,
@@ -73,10 +72,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 
 	 * @param {string} [options.title='Region overlays']
 	   Title of the dialog window or panel.
-
-	 * @param {boolean} [options.nativeCelSys=false]
-	   Use native coordinates (e.g., galactic coordinates) instead of
-	   equatorial coordinates?
 
 	 * @param {string} [options.color='#00FFFF']
 	   Default region overlay color.
@@ -175,7 +170,6 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 		const	_this = this,
 			map = this._map,
 			wcs = map.options.crs,
-			sysflag = !wcs.equatorialFlag && !this.options.nativeCelSys,
 		    templayer = new LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
@@ -215,18 +209,7 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 								}
 							},
 							coordsToLatLng: function (coords) {
-								if (wcs.equatorialFlag) {
-									return new LatLng(coords[1], coords[0], coords[2]);
-								} else {
-									const	latLng = wcs.eqToCelSys(
-										latLng(coords[1], coords[0])
-									);
-									return new LatLng(
-										latLng.lat,
-										latLng.lng,
-										coords[2]
-									);
-								}
+								return new LatLng(coords[1], coords[0], coords[2]);
 							},
 							style: function (feature) {
 								return {color: region.color, weight: 2};

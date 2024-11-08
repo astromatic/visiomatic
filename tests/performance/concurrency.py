@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # (c) 2013-2023
 # E.Bertin <emmanuel.bertin@universite-paris-saclay.fr>
 import argparse
@@ -23,7 +23,7 @@ import numpy as np
 from math import log10, pow
 from matplotlib import pyplot as plt
 
-regroup = re.compile('^http://([^/]*)($|/.*)').search(args['url'])
+regroup = re.compile(r'^http://([^/]*)($|/.*)').search(args['url'])
 url = regroup.group(1)
 uri = regroup.group(2)
 if uri=="":
@@ -46,7 +46,7 @@ if resetflag == 0:
 		output = subprocess.check_output(["./ab","-r","-c", "200","-n", "%d" %tilerange,"-L","req.log"]) 
 
 print("Starting %d batch requests..." %nconcur, file=sys.stderr)
-timereg = re.compile('\D*([0-9]+([.][0-9]*)?|[.][0-9]+)\D*')
+timereg = re.compile(r'\D*([0-9]+([.][0-9]*)?|[.][0-9]+)\D*')
 ffile = open(ofile, 'w')
 for c in range(0,nconcur):
 	iconcur = int(pow(10.0,random.uniform(0.0,log10(maxconcur))))
