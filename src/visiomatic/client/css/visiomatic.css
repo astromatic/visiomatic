@@ -786,10 +786,10 @@ a#visiomatic-image-toggle {
 }
 
 .sidebar.image {
-	width: 220px;
+	width: 240px;
 }
 .sidebar-left.image ~ .leaflet-left {
-	left: 234px;
+	left: 254px;
 }
 
 #visiomatic-control-button-image-reset >div {
