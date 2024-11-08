@@ -214,7 +214,10 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			className = this._className;
 
 
-		layer.updateMono();
+		layer.setMono();
+		if (visio.cMap === undefined) {
+			layer._setAttr('cMap', this.options.cMap);
+		}
 
 		if (visio.nChannel > 1) {
 			const	line = this._addDialogLine('Channel:', box),
@@ -377,7 +380,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				'leaflet-cmap',
 				cmapinput,
 				cmaps[c],
-				(cmaps[c] === this.options.cMap),
+				(cmaps[c] === visio.cMap),
 				'Select "' + cmaps[c].charAt(0).toUpperCase() +
 				    cmaps[c].substr(1) + '" color-map',
 				_changeMap
@@ -416,7 +419,8 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 				}
 			);
 
-		layer._setAttr('cMap', 'grey');
+		this._pauseAnimation(layer);
+		layer.setColor()
 		layer.updateMix();
 
 		this._chanSelect = this._addSelectMenu(

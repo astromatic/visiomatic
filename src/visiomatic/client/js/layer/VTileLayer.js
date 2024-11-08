@@ -662,8 +662,19 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	   The current channel index defines the color mixing matrix elements in
 	   ``'mono'`` mode
 	 */
-	updateMono: function () {
+	setMono: function () {
 		this.visio.mixingMode = 'mono';
+	},
+
+	/**
+	 * @summary
+	   Switch the layer to ``'color'`` mixing mode.
+	   @desc
+	   RGB colors and saturation settings define mixing matrix elements in
+	   ``'color'`` mode
+	 */
+	setColor: function () {
+		this.visio.mixingMode = 'color';
 	},
 
 	/**
@@ -679,9 +690,10 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	_this = layer ? layer : this,
 			visio = _this.visio;
 
-		visio.mixingMode = 'color';
-		for (const c in visio.rgb) {
-			_this.rgbToMix(c);
+		if (visio.mixingMode === 'color') {
+			for (const c in visio.rgb) {
+				_this.rgbToMix(c);
+			}
 		}
 	},
 
