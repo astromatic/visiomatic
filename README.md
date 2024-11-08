@@ -2,6 +2,7 @@
 
 [![Documentation](https://github.com/astromatic/visiomatic/actions/workflows/doc.yml/badge.svg)](https://github.com/astromatic/visiomatic/actions/workflows/doc.yml)[![Tests](https://github.com/astromatic/visiomatic/actions/workflows/tests.yml/badge.svg)](https://github.com/astromatic/visiomatic/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/astromatic/visiomatic/graph/badge.svg?token=DodRbYmlWZ)](https://codecov.io/gh/astromatic/visiomatic)
+[![PyPI](https://img.shields.io/pypi/v/PACKAGE?label=pypi%20visiomatic)](https://pypi.org/project/VisiOmatic/)[![PyPI - Downloads](https://img.shields.io/pypi/dm/PACKAGE)](https://pypi.org/project/VisiOmatic/)
 
 VisiOmatic is a web application for visualizing astronomical images. This is the version 3 of the package. Code from the older versions can still be accessed through the [``legacy``](https://github.com/astromatic/visiomatic/tree/legacy) branch.
 
