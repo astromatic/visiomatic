@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>VisiOmatic web client: EllipseMarker</title>
+    <title>VisiOmatic web client: CelSys</title>
     
       <link type="text/css" rel="stylesheet" href="styles/vendor/prism-tomorrow-night.css">
     
@@ -27,7 +27,7 @@
 <main class="layout-main ">
   <div class="container">
     <p class="page-kind">Class</p>
-    <h1 class="page-title">EllipseMarker</h1>
+    <h1 class="page-title">CelSys</h1>
     
 
 
@@ -41,7 +41,7 @@
 
     
         
-        <!-- <h2>EllipseMarker</h2> -->
+        <!-- <h2>CelSys</h2> -->
 
         
             <h5>Extends</h5>
@@ -49,7 +49,7 @@
 
 
     <ul>
-        <li>leaflet.Path</li>
+        <li>leaflet.Class</li>
     </ul>
 
 
@@ -82,7 +82,7 @@
     
     </div>
 
-    <h4 class="method-name" id="EllipseMarker">new EllipseMarker<span class="signature">(latlng, options<span class="signature-attributes">opt</span>)</span><span class="return-type-signature"> &rarr; {<a href="EllipseMarker.html">EllipseMarker</a>}</span>
+    <h4 class="method-name" id="CelSys">new CelSys<span class="signature">(code<span class="signature-attributes">opt</span>)</span><span class="return-type-signature"> &rarr; {<a href="CelSys.html">CelSys</a>}</span>
     </h4>
 
 
@@ -91,7 +91,7 @@
 
 <div class="method-description">
     
-    <p>Create a new ellipse marker.</p>
+    <p>Instantiate a celestial system.</p>
 </div>
 
 
@@ -110,7 +110,7 @@
 
         <li>
             
-                <span class="param-name">latlng</span>
+                <span class="param-name">code</span>
             
 
             
@@ -118,79 +118,17 @@
 
 
     <span class="param-type">
-        <code>leaflet.LatLng</code>
+        <code>'galactic'</code>
     </span>
-    
-
-            
-
-            
-                <span class="param-attributes">
-                
-
-                
-
-                
-                </span>
-            
-
-            
-
-            <div class="param-description"><p>World coordinates of the center of the marker.</p></div>
-            
-        </li>
-
-    
-
-        <li>
-            
-                <span class="param-name">options</span>
-            
-
-            
-                
-
+    |
 
     <span class="param-type">
-        <code>object</code>
+        <code>'ecliptic'</code>
     </span>
-    
-
-            
-
-            
-                <span class="param-attributes">
-                
-                    &lt;optional&gt;<br>
-                
-
-                
-
-                
-                </span>
-            
-
-            
-
-            <div class="param-description"><p>Options.</p></div>
-            
-                <p class="param-properties">Properties</p>
-                
-
-<ul class="method-params">
-    
-
-        <li>
-            
-                <span class="param-name">majAxis</span>
-            
-
-            
-                
-
+    |
 
     <span class="param-type">
-        <code>number</code>
+        <code>'supergalactic'</code>
     </span>
     
 
@@ -211,143 +149,12 @@
             
                 
                     <span class="param-default">
-                        10
+                        'equatorial'
                     </span>
                 
             
 
-            <div class="param-description"><p>Length of the ellipse major axis in pixels.</p></div>
-            
-        </li>
-
-    
-
-        <li>
-            
-                <span class="param-name">minAxis</span>
-            
-
-            
-                
-
-
-    <span class="param-type">
-        <code>number</code>
-    </span>
-    
-
-            
-
-            
-                <span class="param-attributes">
-                
-                    &lt;optional&gt;<br>
-                
-
-                
-
-                
-                </span>
-            
-
-            
-                
-                    <span class="param-default">
-                        10
-                    </span>
-                
-            
-
-            <div class="param-description"><p>Length of the ellipse minor axis in pixels.</p></div>
-            
-        </li>
-
-    
-
-        <li>
-            
-                <span class="param-name">posAngle</span>
-            
-
-            
-                
-
-
-    <span class="param-type">
-        <code>number</code>
-    </span>
-    
-
-            
-
-            
-                <span class="param-attributes">
-                
-                    &lt;optional&gt;<br>
-                
-
-                
-
-                
-                </span>
-            
-
-            
-                
-                    <span class="param-default">
-                        0
-                    </span>
-                
-            
-
-            <div class="param-description"><p>Ellipse position angle in degrees (CCW from x axis).</p></div>
-            
-        </li>
-
-    
-
-        <li>
-            
-                <span class="param-name">fill</span>
-            
-
-            
-                
-
-
-    <span class="param-type">
-        <code>boolean</code>
-    </span>
-    
-
-            
-
-            
-                <span class="param-attributes">
-                
-                    &lt;optional&gt;<br>
-                
-
-                
-
-                
-                </span>
-            
-
-            
-                
-                    <span class="param-default">
-                        true
-                    </span>
-                
-            
-
-            <div class="param-description"><p>Fill the ellipse?</p></div>
-            
-        </li>
-
-    
-</ul>
+            <div class="param-description"><p>Celestial system.</p></div>
             
         </li>
 
@@ -397,10 +204,10 @@
     
         <li class="method-returns">
             
-                <code>EllipseMarker</code>
+                <code>CelSys</code>
             
             
-                <p>Instance of an ellipse marker.</p>
+                <p>Instance of a celestial system.</p>
             
         </li>
     
@@ -424,7 +231,7 @@
     <h4 class="method-heading">Source</h4>
     <ul>
         <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.65">, line 65</a>
+            <a href="crs_CelSys.js.html">crs/CelSys.js</a><a href="crs_CelSys.js.html#source.26">, line 26</a>
         </li>
     </ul>
 
@@ -467,7 +274,7 @@
     <span class="method-type-signature is-static">static</span>
     </div>
 
-    <h4 class="method-name" id="._containsPoint">_containsPoint<span class="signature">(p)</span><span class="return-type-signature"> &rarr; {boolean}</span>
+    <h4 class="method-name" id=".ToEq">ToEq<span class="signature">(latlng)</span><span class="return-type-signature"> &rarr; {leaflet.LatLng}</span>
     </h4>
 
 
@@ -476,7 +283,7 @@
 
 <div class="method-description">
     
-    <p>Test if the marker contains the given  point.</p>
+    <p>Convert celestial (angular) coordinates to equatorial.</p>
 </div>
 
 
@@ -495,7 +302,7 @@
 
         <li>
             
-                <span class="param-name">p</span>
+                <span class="param-name">latlng</span>
             
 
             
@@ -503,7 +310,7 @@
 
 
     <span class="param-type">
-        <code>leaflet.Point</code>
+        <code>leaflet.LagLng</code>
     </span>
     
 
@@ -513,536 +320,12 @@
 
             
 
-            <div class="param-description"><p>Coordinates of the point.</p></div>
+            <div class="param-description"><p>Celestial coordinates (e.g., ecliptic latitude and longitude).</p></div>
             
         </li>
 
     
 </ul>
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-    <h4 class="method-heading">Returns</h4>
-    <ul>
-    
-        <li class="method-returns">
-            
-                <code>boolean</code>
-            
-            
-                <p>True if the marker contains the point, false otherwise.</p>
-            
-        </li>
-    
-    </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.198">, line 198</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id="._project">_project<span class="signature">()</span><span class="return-type-signature"></span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Project the marker to pixel coordinates.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.153">, line 153</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id="._update">_update<span class="signature">()</span><span class="return-type-signature"></span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Update the marker.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.172">, line 172</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id="._updateBounds">_updateBounds<span class="signature">()</span><span class="return-type-signature"></span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Project the boundaries of the marker.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.162">, line 162</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id="._updatePath">_updatePath<span class="signature">()</span><span class="return-type-signature"></span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Update the rendering of the marker.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.182">, line 182</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id=".getLatLng">getLatLng<span class="signature">()</span><span class="return-type-signature"> &rarr; {leaflet.LatLng}</span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Return the world coordinates of the ellipse marker.</p>
-</div>
-
-
-
-
-
-
-
-
 
 
 
@@ -1090,7 +373,7 @@
                 <code>leaflet.LatLng</code>
             
             
-                <p>World coordinates of the marker.</p>
+                <p>Equatorial coordinates.</p>
             
         </li>
     
@@ -1114,7 +397,7 @@
     <h4 class="method-heading">Source</h4>
     <ul>
         <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.115">, line 115</a>
+            <a href="crs_CelSys.js.html">crs/CelSys.js</a><a href="crs_CelSys.js.html#source.37">, line 37</a>
         </li>
     </ul>
 
@@ -1137,10 +420,10 @@
     
 
     <div class="method-type">
-    <span class="method-type-signature is-static">static</span>
+    <span class="method-type-signature is-private">private</span><span class="method-type-signature is-static">static</span>
     </div>
 
-    <h4 class="method-name" id=".getParams">getParams<span class="signature">()</span><span class="return-type-signature"> &rarr; {<a href="global.html#ellipseShape">ellipseShape</a>}</span>
+    <h4 class="method-name" id="._celsysmatInit">_celsysmatInit<span class="signature">(celsys)</span><span class="return-type-signature"> &rarr; {Array.&lt;Array.&lt;number>>}</span>
     </h4>
 
 
@@ -1149,7 +432,8 @@
 
 <div class="method-description">
     
-    <p>Set/update the shape parameters of the ellipse marker.</p>
+    <p>Return the transformation matrix between celestial coordinates for the
+given system and equatorial coordinates.</p>
 </div>
 
 
@@ -1159,6 +443,49 @@
 
 
 
+
+    <h4 class="method-heading">Parameters</h4>
+    
+
+<ul class="method-params">
+    
+
+        <li>
+            
+                <span class="param-name">celsys</span>
+            
+
+            
+                
+
+
+    <span class="param-type">
+        <code>'galactic'</code>
+    </span>
+    |
+
+    <span class="param-type">
+        <code>'ecliptic'</code>
+    </span>
+    |
+
+    <span class="param-type">
+        <code>'supergalactic'</code>
+    </span>
+    
+
+            
+
+            
+
+            
+
+            <div class="param-description"><p>Type of celestial system.</p></div>
+            
+        </li>
+
+    
+</ul>
 
 
 
@@ -1203,10 +530,10 @@
     
         <li class="method-returns">
             
-                <code>ellipseShape</code>
+                <code>Array.&lt;Array.&lt;number>></code>
             
             
-                <p>Ellipse shape parameters.</p>
+                <p>Transformation matrix.</p>
             
         </li>
     
@@ -1230,7 +557,7 @@
     <h4 class="method-heading">Source</h4>
     <ul>
         <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.136">, line 136</a>
+            <a href="crs_CelSys.js.html">crs/CelSys.js</a><a href="crs_CelSys.js.html#source.81">, line 81</a>
         </li>
     </ul>
 
@@ -1256,7 +583,7 @@
     <span class="method-type-signature is-static">static</span>
     </div>
 
-    <h4 class="method-name" id=".setLatLng">setLatLng<span class="signature">(latlng)</span><span class="return-type-signature"> &rarr; {<a href="EllipseMarker.html">EllipseMarker</a>}</span>
+    <h4 class="method-name" id=".fromEq">fromEq<span class="signature">(latlng)</span><span class="return-type-signature"> &rarr; {leaflet.LatLng}</span>
     </h4>
 
 
@@ -1265,7 +592,7 @@
 
 <div class="method-description">
     
-    <p>Set/update the world coordinates of the ellipse marker.</p>
+    <p>Convert equatorial coordinates to another celestial system.</p>
 </div>
 
 
@@ -1292,7 +619,7 @@
 
 
     <span class="param-type">
-        <code>leaflet.LatLng</code>
+        <code>leaflet.LagLng</code>
     </span>
     
 
@@ -1302,7 +629,7 @@
 
             
 
-            <div class="param-description"><p>World coordinates of the marker.</p></div>
+            <div class="param-description"><p>Equatorial coordinates.</p></div>
             
         </li>
 
@@ -1352,159 +679,10 @@
     
         <li class="method-returns">
             
-                <code>EllipseMarker</code>
+                <code>leaflet.LatLng</code>
             
             
-                <p>this.</p>
-            
-        </li>
-    
-    </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Source</h4>
-    <ul>
-        <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.105">, line 105</a>
-        </li>
-    </ul>
-
-
-
-    </article>
-
-        
-            
-
-
-    <article class="method">
-
-
-
-
-    
-
-
-    
-
-    <div class="method-type">
-    <span class="method-type-signature is-static">static</span>
-    </div>
-
-    <h4 class="method-name" id=".setParams">setParams<span class="signature">(ellipseParams)</span><span class="return-type-signature"> &rarr; {<a href="EllipseMarker.html">EllipseMarker</a>}</span>
-    </h4>
-
-
-
-
-
-<div class="method-description">
-    
-    <p>Set/update the shape parameters of the ellipse marker.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h4 class="method-heading">Parameters</h4>
-    
-
-<ul class="method-params">
-    
-
-        <li>
-            
-                <span class="param-name">ellipseParams</span>
-            
-
-            
-                
-
-
-    <span class="param-type">
-        <code><a href="global.html#ellipseShape">ellipseShape</a></code>
-    </span>
-    
-
-            
-
-            
-
-            
-
-            <div class="param-description"><p>Ellipse shape parameters.</p></div>
-            
-        </li>
-
-    
-</ul>
-
-
-
-
-
-<div class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-
-
-    <h4 class="method-heading">Returns</h4>
-    <ul>
-    
-        <li class="method-returns">
-            
-                <code>EllipseMarker</code>
-            
-            
-                <p>this.</p>
+                <p>Celestial coordinates (e.g., ecliptic latitude and longitude).</p>
             
         </li>
     
@@ -1528,7 +706,7 @@
     <h4 class="method-heading">Source</h4>
     <ul>
         <li class="method-source">
-            <a href="vector_EllipseMarker.js.html">vector/EllipseMarker.js</a><a href="vector_EllipseMarker.js.html#source.125">, line 125</a>
+            <a href="crs_CelSys.js.html">crs/CelSys.js</a><a href="crs_CelSys.js.html#source.58">, line 58</a>
         </li>
     </ul>
 

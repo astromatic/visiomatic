@@ -113,7 +113,6 @@
 <li><p><strong>images</strong> (<em>Array.&lt;image&gt;</em>) -- Array of image extension metadata.</p></li>
 <li><p><strong>options</strong> (<em>object</em>) -- Options.</p></li>
 <li><p><strong>options.nzoom</strong> (<em>number</em>) -- Number of zoom levels.</p></li>
-<li><p><strong>options.nativeCelSys</strong> (<em>boolean</em>) -- Return world coordinates in their native celestial system?</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -520,23 +519,6 @@ coordinates.</p>
 </dd></dl>
 
 <dl class="js staticfunction">
-<dt class="sig sig-object js" id="Projection._celsysmatInit">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_celsysmatInit</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">celsyscode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection._celsysmatInit" title="Link to this definition"></a></dt>
-<dd><p>Return the transformation matrix between celestial coordinates for the
-given system and equatorial coordinates.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Arguments<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>celsyscode</strong> (<em>'galactic'|'ecliptic'|'supergalactic'</em>) -- Type of celestial system.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Array.&lt;Array.&lt;number&gt;&gt;</strong> -- Transformation matrix.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="js staticfunction">
 <dt class="sig sig-object js" id="Projection._cpole">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">_cpole</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Projection._cpole" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
@@ -726,38 +708,6 @@ exist.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>projparam</strong> (<em>projParam</em>) -- Projection parameters.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="js staticfunction">
-<dt class="sig sig-object js" id="Projection.celSysToEq">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">celSysToEq</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.celSysToEq" title="Link to this definition"></a></dt>
-<dd><p>Convert celestial (angular) coordinates to equatorial.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Arguments<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Celestial coordinates (e.g., ecliptic latitude and longitude).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Equatorial coordinates.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="js staticfunction">
-<dt class="sig sig-object js" id="Projection.eqToCelSys">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="n"><span class="pre">Projection</span></span><span class="p"><span class="pre">.</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">eqToCelSys</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlng</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Projection.eqToCelSys" title="Link to this definition"></a></dt>
-<dd><p>Convert equatorial coordinates to another celestial system.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Arguments<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>latlng</strong> (<em>leaflet.LagLng</em>) -- Equatorial coordinates.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>leaflet.LatLng</strong> -- Celestial coordinates (e.g., ecliptic latitude and longitude).</p>
 </dd>
 </dl>
 </dd></dl>
