@@ -1,0 +1,1352 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>visiomatic.server.tiled &mdash; VisiOmatic 3.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f4ced14b"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interface.html">How to use VisiOmatic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">visiomatic.server.tiled</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for visiomatic.server.tiled</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Image tiling module</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay</span>
+<span class="c1"># Licensed under the MIT licence</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">pickle</span>
+
+<span class="kn">from</span> <span class="nn">methodtools</span> <span class="kn">import</span> <span class="n">lru_cache</span> <span class="c1">#type: ignore</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">unlink</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">modules</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span><span class="p">,</span> <span class="n">unquote</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="c1">#type: ignore</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>  <span class="c1">#type: ignore</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">simplejpeg</span> <span class="kn">import</span> <span class="n">encode_jpeg</span>  <span class="c1">#type: ignore</span>
+<span class="kn">from</span> <span class="nn">skimage.draw</span> <span class="kn">import</span> <span class="n">line</span>
+<span class="kn">from</span> <span class="nn">tiler</span> <span class="kn">import</span> <span class="n">Merger</span><span class="p">,</span> <span class="n">Tiler</span> <span class="c1">#type: ignore</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span> <span class="nn">.image</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageModel</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">settings</span>
+
+
+<span class="n">colordict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;grey&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_BONE</span><span class="p">,</span> <span class="c1"># equivalent to grayscale</span>
+    <span class="s1">&#39;jet&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_JET</span><span class="p">,</span>
+    <span class="s1">&#39;cold&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_COOL</span><span class="p">,</span> <span class="c1"># cold actually corresponds to COOL</span>
+    <span class="s1">&#39;cool&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_COOL</span><span class="p">,</span>
+    <span class="s1">&#39;hot&#39;</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_HOT</span>
+<span class="p">}</span>
+
+
+
+<div class="viewcode-block" id="PixelValueModel">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.PixelValueModel">[docs]</a>
+<span class="k">class</span> <span class="nc">PixelValueModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic model class for VisiOmatic pixel values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values: list[float | None]</span>
+<span class="sd">        Pixel values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span></div>
+
+
+
+
+<div class="viewcode-block" id="PixelModel">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.PixelModel">[docs]</a>
+<span class="k">class</span> <span class="nc">PixelModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic model class for pixels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x: int</span>
+<span class="sd">        x coordinate of the pixel.</span>
+<span class="sd">    y: int</span>
+<span class="sd">        y coordinate of the pixel.</span>
+<span class="sd">    values: list[float, None]</span>
+<span class="sd">        Pixel values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span></div>
+
+
+
+
+<div class="viewcode-block" id="ProfileModel">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.ProfileModel">[docs]</a>
+<span class="k">class</span> <span class="nc">ProfileModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic model class for VisiOmatic profiles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    profile: list[PixelModel]</span>
+<span class="sd">        List of pixel models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">profile</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PixelModel</span><span class="p">]</span></div>
+
+
+
+
+<div class="viewcode-block" id="TiledModel">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.TiledModel">[docs]</a>
+<span class="k">class</span> <span class="nc">TiledModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pydantic tiled model class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type: str</span>
+<span class="sd">        Name of the web service.</span>
+<span class="sd">    version: str</span>
+<span class="sd">        Version of the web service.</span>
+<span class="sd">    full_size: List[int]</span>
+<span class="sd">        Full raster size, FITS style (x comes first).</span>
+<span class="sd">    tile_size: List[int]</span>
+<span class="sd">        Tile size, FITS style.</span>
+<span class="sd">    tile_levels: int</span>
+<span class="sd">        Number of levels in the image pyramid.</span>
+<span class="sd">    channels: int</span>
+<span class="sd">        Number of channels.</span>
+<span class="sd">    bits_per_channel: int </span>
+<span class="sd">        Number of bits per pixel.</span>
+<span class="sd">    brightness:  float</span>
+<span class="sd">        Relative tile brightness (black level).</span>
+<span class="sd">    contrast:  float</span>
+<span class="sd">        Relative tile contrast.</span>
+<span class="sd">    color_saturation:  float</span>
+<span class="sd">        Tile color saturation.</span>
+<span class="sd">    gamma: float</span>
+<span class="sd">        Tile display gamma.</span>
+<span class="sd">    quality: int</span>
+<span class="sd">        JPEG quality (0-100).</span>
+<span class="sd">    header: dict</span>
+<span class="sd">        Image header keyword/value pairs.</span>
+<span class="sd">    images: List[ImageModel]</span>
+<span class="sd">        List of image model objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">image_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">object_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">full_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">tile_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">tile_levels</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">bits_per_channel</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">color_saturation</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">header</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">images</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageModel</span><span class="p">]</span></div>
+
+
+
+
+<div class="viewcode-block" id="Tiled">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled">[docs]</a>
+<span class="k">class</span> <span class="nc">Tiled</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for the tiled image pyramid to be visualized.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str | ~pathlib.Path,</span>
+<span class="sd">        Path to the image.</span>
+<span class="sd">    extnum: int, optional</span>
+<span class="sd">        Extension number (for Multi-Extension FITS files).</span>
+<span class="sd">    tilesize: tuple[int, int], optional</span>
+<span class="sd">        shape of the served tiles.</span>
+<span class="sd">    minmax: tuple[float, float], optional</span>
+<span class="sd">        Intensity cuts of the served tiles.</span>
+<span class="sd">    brightness:  float, optional</span>
+<span class="sd">        Relative tile black level of the served tiles.</span>
+<span class="sd">    contrast:  float, optional</span>
+<span class="sd">        Relative tile contrast of the served tiles.</span>
+<span class="sd">    color_saturation:  float, optional</span>
+<span class="sd">        Default color saturation of the served tiles.</span>
+<span class="sd">    gamma: float, optional</span>
+<span class="sd">        Display gamma of the served tiles.</span>
+<span class="sd">    nthreads: int, optional</span>
+<span class="sd">        Number of compute threads for parallelized operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">extnum</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">tilesize</span> <span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">),</span>
+            <span class="n">minmax</span> <span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">brightness</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">contrast</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">color_saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">gamma</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">max_region_tile_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">nthreads</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span>
+            <span class="s2">&quot;max_region_tile_count&quot;</span><span class="p">,</span>
+            <span class="n">max_region_tile_count</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;thread_count&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;sphinx&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modules</span> <span class="k">else</span> <span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">hdus</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;denywrite&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot open </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="c1"># Collect Header Data Units that contain 2D+ image data (&quot;HDIs&quot;)</span>
+        <span class="k">if</span> <span class="n">extnum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hdus</span> <span class="o">=</span> <span class="p">[</span><span class="n">hdus</span><span class="p">[</span><span class="n">extnum</span><span class="p">]]</span>
+        <span class="n">hdis</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdus</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">hdis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span> <span class="n">prefer</span><span class="o">=</span><span class="s2">&quot;threads&quot;</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">Image</span><span class="p">)(</span><span class="n">hdi</span><span class="p">)</span> <span class="k">for</span> <span class="n">hdi</span> <span class="ow">in</span> <span class="n">hdis</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nimages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nimages</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No 2D+ data found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="c1"># Number of image dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmix</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">,</span> <span class="n">tilesize</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tilesize</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_mosaic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">hdus</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OBJECT&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span><span class="s2">&quot;brightness&quot;</span><span class="p">,</span> <span class="n">brightness</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contrast</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span><span class="s2">&quot;contrast&quot;</span><span class="p">,</span> <span class="n">contrast</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_saturation</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span><span class="s2">&quot;color_saturation&quot;</span><span class="p">,</span> <span class="n">color_saturation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quality</span> <span class="o">=</span> <span class="n">override</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">,</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxfac</span> <span class="o">=</span> <span class="mf">1.0e30</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_nlevels</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_grid_shape</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="p">)],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ntiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_tile_bordershape</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="p">)],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_tiles</span><span class="p">()</span>
+        <span class="c1"># Delete tiles reference (tiles buffer has been memory mapped)</span>
+        <span class="c1"># after measuring size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="o">.</span><span class="n">nbytes</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span>
+        <span class="c1"># Delete mosaic reference (mosaic data have been memory mapped)</span>
+        <span class="c1"># after measuring size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nbytes</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="c1"># Delete individual image data (no longer needed)</span>
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span>
+        <span class="c1"># Pickle-save current object</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_object_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Tiled.compute_nlevels">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_nlevels">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_nlevels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of image resolution levels.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nlevels: int</span>
+<span class="sd">            Number of image resolution levels in the pyramid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.compute_grid_shape">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_grid_shape">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_grid_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of tiles per axis at a given image resolution level.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        shape: tuple[int, int, int]</span>
+<span class="sd">            Number of tiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.compute_tile_bordershape">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_tile_bordershape">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_tile_bordershape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the border shape of tiles at a given image resolution level.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        shape: tuple[int, int, int]</span>
+<span class="sd">            Border shape.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_model">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TiledModel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a Pydantic model of the tiled object.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        model: TiledModel</span>
+<span class="sd">            Pydantic model instance of the tiled object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TiledModel</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="s2">&quot;3.0&quot;</span><span class="p">,</span>
+            <span class="n">image_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">,</span>
+            <span class="n">object_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object_name</span><span class="p">,</span>
+            <span class="n">full_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">tile_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">tile_levels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="p">,</span>
+            <span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">bits_per_channel</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">brightness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brightness</span><span class="p">,</span>
+            <span class="n">contrast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contrast</span><span class="p">,</span>
+            <span class="n">color_saturation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color_saturation</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quality</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+            <span class="n">images</span><span class="o">=</span><span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.make_mosaic">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_mosaic">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_mosaic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span> <span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stitch together several images to make a mosaic</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        images: list[Image]</span>
+<span class="sd">            list of input images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">detsec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span> \
+            <span class="o">+</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">detsec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">detsec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span> \
+            <span class="o">+</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">detsec</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Compute the chip corner position in the mosaic, Python style</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Compute the mosaic shape</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_filename</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_filename</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">shape</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+                <span class="n">image</span><span class="o">.</span><span class="n">compute_geometry</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">detslice</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">dataslice</span><span class="p">]</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                        <span class="s2">&quot;Inconsistent DETSEC and/or DATASEC values&quot;</span>
+                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">minmax</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">image</span><span class="o">.</span><span class="n">minmax</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bitdepth</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bitdepth</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_header</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.make_header">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fits</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a FITS header with a global WCS for the mosaic.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        header: ~astropy.io.fits.Header</span>
+<span class="sd">            FITS header for the mosaic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Update parameters so that they apply to the mosaic</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;NAXIS1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;NAXIS2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;NAXIS3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">datainfo</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">datasliceinfo</span>
+        <span class="n">detinfo</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">detsliceinfo</span>
+        <span class="n">crpix1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CRPIX1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">crpix2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CRPIX2&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CRPIX1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> \
+            <span class="o">+</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">crpix1</span> <span class="o">-</span> <span class="n">datainfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CRPIX2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> \
+            <span class="o">+</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">crpix2</span> <span class="o">-</span> <span class="n">datainfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="c1"># Recover CD matrix, possibly from obsolete WCS parameters</span>
+        <span class="k">if</span> <span class="s2">&quot;CD1_1&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">cd1_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CD1_1&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">cd1_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CD1_2&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">cd2_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CD2_1&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CD2_2&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cdelt1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CDELT1&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">cdelt2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CDELT2&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;PC1_1&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">cd1_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC1_1&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt1</span>
+                <span class="n">cd1_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC1_2&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt1</span>
+                <span class="n">cd2_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC2_1&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt2</span>
+                <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC2_2&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt2</span>
+            <span class="k">elif</span> <span class="s2">&quot;PC001001&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">cd1_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC001001&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt1</span>
+                <span class="n">cd1_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC001002&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt1</span>
+                <span class="n">cd2_1</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC002001&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt2</span>
+                <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PC002002&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdelt2</span>
+            <span class="k">elif</span> <span class="s2">&quot;CROTA2&quot;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">crota2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CROTA2&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+                <span class="n">ccrota2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">crota2</span><span class="p">)</span>
+                <span class="n">scrota2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">crota2</span><span class="p">)</span>
+                <span class="n">cd1_1</span> <span class="o">=</span> <span class="n">cdelt1</span> <span class="o">*</span> <span class="n">ccrota2</span>
+                <span class="n">cd1_2</span> <span class="o">=</span> <span class="o">-</span><span class="n">cdelt1</span> <span class="o">*</span> <span class="n">scrota2</span>
+                <span class="n">cd2_1</span> <span class="o">=</span> <span class="n">cdelt2</span> <span class="o">*</span> <span class="n">scrota2</span>
+                <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">cdelt2</span> <span class="o">*</span> <span class="n">ccrota2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cd1_1</span> <span class="o">=</span> <span class="n">cdelt1</span>
+                <span class="n">cd1_2</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="n">cd2_1</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">cdelt2</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CD1_1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cd1_1</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CD1_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cd1_2</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CD2_1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cd2_1</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CD2_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cd2_2</span><span class="p">;</span>
+        <span class="c1"># Remove obsolete headers to avoid confusion</span>
+        <span class="k">del</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CDELT?&quot;</span><span class="p">],</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;CROTA?&quot;</span><span class="p">],</span> \
+            <span class="n">header</span><span class="p">[</span><span class="s2">&quot;PC?_?&quot;</span><span class="p">],</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;PC0??0??&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">header</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_iipheaderstr">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_iipheaderstr">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_iipheaderstr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate an IIP image header.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        header: str</span>
+<span class="sd">            IIP image header.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;IIP:1.0</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Max-size:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Tile-size:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Resolution-number:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Bits-per-channel:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bitdepth</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Min-Max-sample-values:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minmax</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minmax</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;subject/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">string2</span><span class="p">)</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">string2</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">string</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.convert_tile">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.convert_tile">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_tile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">tile</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">mix</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process the dynamic range of a tile.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tile:  ~numpy.ndarray</span>
+<span class="sd">            Input tile.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Image channel</span>
+<span class="sd">        minmax: list[float, float], optional</span>
+<span class="sd">            Tile intensity cuts.</span>
+<span class="sd">        mix: list[int, float, float, float], optional</span>
+<span class="sd">            Tile slice RGB colors.</span>
+<span class="sd">        brightness:  float, optional</span>
+<span class="sd">            Relative tile brightness (black level).</span>
+<span class="sd">        contrast:  float, optional</span>
+<span class="sd">            Relative tile contrast.</span>
+<span class="sd">        gamma:  float, optional</span>
+<span class="sd">            Inverse tile display gamma.</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        invert: bool, optional</span>
+<span class="sd">            Invert the colormap.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        raster: ~numpy.ndarray</span>
+<span class="sd">            Processed tile image raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">brightness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">brightness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brightness</span>
+        <span class="k">if</span> <span class="n">contrast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+           <span class="n">contrast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrast</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+           <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">invgamma</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">gamma</span> <span class="k">if</span> <span class="n">gamma</span> <span class="o">&gt;</span> <span class="mf">0.01</span> <span class="k">else</span> <span class="mf">0.01</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Mono mode</span>
+            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">cminmax</span> <span class="o">=</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> \
+                <span class="k">if</span> <span class="n">minmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">channel</span> \
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">minmax</span><span class="p">[</span><span class="n">chan</span><span class="p">]</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="n">cminmax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cminmax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">/</span> <span class="n">fac</span> <span class="k">if</span> <span class="n">fac</span> <span class="o">&gt;</span> <span class="mf">0.</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxfac</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">contrast</span> <span class="o">*</span> <span class="n">brightness</span>
+            <span class="n">ctile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+                <span class="n">tile</span><span class="p">[</span><span class="n">chan</span><span class="p">]</span> <span class="o">-</span> <span class="n">cminmax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">fac</span> <span class="o">+</span> <span class="n">offset</span>
+            <span class="n">ctile</span><span class="p">[</span><span class="n">ctile</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">ctile</span><span class="p">[</span><span class="n">ctile</span> <span class="o">&gt;</span> <span class="mf">1.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+            <span class="n">ctile</span> <span class="o">=</span> <span class="p">(</span><span class="mf">255.49</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">ctile</span><span class="p">,</span> <span class="n">invgamma</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+       	    <span class="k">if</span> <span class="n">invert</span><span class="p">:</span>
+                <span class="n">ctile</span> <span class="o">=</span> <span class="mi">255</span> <span class="o">-</span> <span class="n">ctile</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">colormap</span> <span class="o">!=</span> <span class="s1">&#39;grey&#39;</span><span class="p">):</span>
+                <span class="n">ctile</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span>
+                	<span class="n">cv2</span><span class="o">.</span><span class="n">applyColorMap</span><span class="p">(</span><span class="n">ctile</span><span class="p">,</span> <span class="n">colordict</span><span class="p">[</span><span class="n">colormap</span><span class="p">]),</span>
+                	<span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctile</span> <span class="o">=</span> <span class="n">ctile</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Color mode</span>
+            <span class="n">cminmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minmax</span>
+            <span class="k">if</span> <span class="n">minmax</span><span class="p">:</span>
+                <span class="n">iminmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">minmax</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">cminmax</span><span class="p">[</span><span class="n">iminmax</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">minmax</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="n">cminmax</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cminmax</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+       	    <span class="n">fac</span><span class="p">[</span><span class="n">fac</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxfac</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="p">(</span><span class="n">contrast</span> <span class="o">/</span> <span class="n">fac</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">contrast</span> <span class="o">*</span> <span class="n">brightness</span>
+            <span class="n">ctile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+                <span class="n">tile</span> <span class="o">-</span> <span class="n">cminmax</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">nan</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
+                <span class="n">copy</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">fac</span> <span class="o">+</span> <span class="n">offset</span>
+            <span class="n">cmix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmix</span>
+            <span class="k">if</span> <span class="n">mix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">imix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">npmix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">:]</span>
+                <span class="n">cmix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">imix</span><span class="p">,</span> <span class="n">npmix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span>
+                <span class="n">cmix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">imix</span><span class="p">,</span> <span class="n">npmix</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span>
+                <span class="n">cmix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">imix</span><span class="p">,</span> <span class="n">npmix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span>
+            <span class="n">ctile</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">cmix</span> <span class="o">@</span> <span class="n">ctile</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">ctile</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">ctile</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">ctile</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ctile</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">ctile</span><span class="p">[</span><span class="n">ctile</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">ctile</span><span class="p">[</span><span class="n">ctile</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">ctile</span> <span class="o">=</span> <span class="p">(</span><span class="mf">255.49</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">ctile</span><span class="p">,</span> <span class="n">invgamma</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+       	    <span class="k">if</span> <span class="n">invert</span><span class="p">:</span>
+                <span class="n">ctile</span> <span class="o">=</span> <span class="mi">255</span> <span class="o">-</span> <span class="n">ctile</span>
+        <span class="k">return</span> <span class="n">ctile</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.make_tiles">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_tiles">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate all tiles from the image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles_end</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles_filename</span> <span class="o">=</span> <span class="n">get_tiles_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">tshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tiles_filename</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntiles</span><span class="p">,</span> <span class="o">*</span><span class="n">tshape</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">ima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tiler</span> <span class="o">=</span> <span class="n">Tiler</span><span class="p">(</span>
+            <span class="n">data_shape</span> <span class="o">=</span> <span class="n">ima</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">tile_shape</span> <span class="o">=</span> <span class="n">tshape</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+            <span class="n">channel_dimension</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="c1"># We don&#39;t use get_all_tiles() as it does not work inplace</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">tiler</span><span class="o">.</span><span class="n">get_tile</span><span class="p">(</span><span class="n">ima</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">copy_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> \
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tiler</span><span class="o">.</span><span class="n">n_tiles</span><span class="p">)</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles_end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="p">)</span>
+        <span class="c1"># Prepare array of 4 multidimensional numpy slices</span>
+        <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:,</span> <span class="p">:</span><span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:</span><span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:,</span> <span class="p">:</span><span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">]:],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:,</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:,</span> <span class="p">:</span><span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:,</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:,</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">]:]</span>
+        <span class="p">]</span>
+        <span class="c1"># Initialize empty tile twice the size of a regular one, for rebinning</span>
+        <span class="n">tile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">tshape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">xdither</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">ydither</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="c1"># Bin tiles down on subsequent levels</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span><span class="p">):</span>
+            <span class="c1"># Previous resolution level</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+            <span class="n">ntp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">rp</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">wp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">rp</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">hp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">rp</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nt</span><span class="p">):</span>
+                <span class="n">xp</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+                <span class="n">yp</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+                <span class="n">xps</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">+</span> <span class="n">xdither</span>
+                <span class="n">yps</span> <span class="o">=</span> <span class="n">yp</span> <span class="o">+</span> <span class="n">ydither</span>
+                <span class="n">nps</span> <span class="o">=</span> <span class="n">yps</span> <span class="o">*</span> <span class="n">wp</span> <span class="o">+</span> <span class="n">xps</span>
+                <span class="n">nps</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">xps</span> <span class="o">&gt;=</span> <span class="n">wp</span><span class="p">,</span> <span class="n">yps</span> <span class="o">&gt;=</span> <span class="n">hp</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="n">tile</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span><span class="p">[</span><span class="n">rp</span><span class="p">]</span> <span class="o">+</span> <span class="n">nps</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> \
+                        <span class="k">if</span> <span class="n">nps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.</span>
+                <span class="n">tile_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tshape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">tile_out</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+                    <span class="n">tile</span><span class="p">[</span><span class="n">c</span><span class="p">],</span>
+                    <span class="n">fx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">fy</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">dsize</span><span class="o">=</span><span class="p">(</span><span class="n">tshape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">tshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span>
+                <span class="p">)</span>
+        <span class="k">del</span> <span class="n">ima</span><span class="p">,</span> <span class="n">tiler</span>
+        <span class="c1"># Make sure that memory has been completely mapped before exiting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_tile_raster">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_tile_raster">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_tile_raster</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">tilelevel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">tileindex</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">minmax</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">mix</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_</span><span class="p">:</span>  <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a gray-level or color image raster from a tile.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tilelevel:  int</span>
+<span class="sd">            Tile resolution level.</span>
+<span class="sd">        tileindex:  int</span>
+<span class="sd">            Tile index.</span>
+<span class="sd">        channel: int</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        minmax: list[float, float], optional</span>
+<span class="sd">            Tile intensity cuts.</span>
+<span class="sd">        brightness:  float, optional</span>
+<span class="sd">            Relative tile brightness.</span>
+<span class="sd">        contrast:  float, optional</span>
+<span class="sd">            Relative tile contrast.</span>
+<span class="sd">        gamma:  float, optional</span>
+<span class="sd">            Inverse tile display gamma.</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        invert: bool, optional</span>
+<span class="sd">            Invert the colormap.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        raster: ~numpy.ndarray</span>
+<span class="sd">            The computed tile image raster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">and</span> <span class="n">channel</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">:</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># Compute final tile shape depending on position in grid</span>
+        <span class="c1"># Note that tileindex increases first with x (Numpy index #2)</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">tileindex</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>\
+                    <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> \
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">tileindex</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> \
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_tiles</span><span class="p">()[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tiles_start</span><span class="p">[</span><span class="n">tilelevel</span><span class="p">]</span> <span class="o">+</span> <span class="n">tileindex</span><span class="p">][:,</span><span class="mi">0</span><span class="p">:</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="mi">0</span><span class="p">:</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="p">],</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">minmax</span><span class="o">=</span><span class="n">minmax</span><span class="p">,</span>
+            <span class="n">mix</span><span class="o">=</span><span class="n">mix</span><span class="p">,</span>
+            <span class="n">brightness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">brightness</span> <span class="k">if</span> <span class="n">brightness</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">brightness</span><span class="p">,</span>
+            <span class="n">contrast</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contrast</span> <span class="k">if</span> <span class="n">contrast</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">contrast</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+            <span class="n">invert</span><span class="o">=</span><span class="n">invert</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.encode">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.encode">[docs]</a>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">raster</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a JPEG bytestream from an image raster (e.g., a tile).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster:  ~numpy.ndarray</span>
+<span class="sd">            Input tile.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        quality: int, optional</span>
+<span class="sd">            JPEG quality (0-100)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tile: bytes</span>
+<span class="sd">            JPEG bytestream of the tile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">encode_jpeg</span><span class="p">(</span>
+            <span class="n">raster</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quality</span> <span class="k">if</span> <span class="n">quality</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">quality</span><span class="p">,</span>
+            <span class="n">colorspace</span><span class="o">=</span><span class="s1">&#39;Gray&#39;</span> <span class="k">if</span> <span class="n">colormap</span><span class="o">==</span><span class="s1">&#39;grey&#39;</span> <span class="ow">and</span> <span class="n">channel</span> <span class="k">else</span> <span class="s1">&#39;RGB&#39;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_encoded_tile">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_encoded_tile">[docs]</a>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_tile_count&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">settings</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_encoded_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a JPEG bytestream of a specific tile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args:</span>
+<span class="sd">            get_tile_raster() arguments.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        quality: int, optional</span>
+<span class="sd">            JPEG quality (0-100)</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            Additional get_tile_raster() keyword arguments.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tile: bytes</span>
+<span class="sd">            JPEG bytestream of the tile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError: exception</span>
+<span class="sd">            An error occurred because of unexpected bounding box coordinates.</span>
+<span class="sd">            It is raised if any of the following occur:</span>
+<span class="sd">            - The number of requested region tiles exceeds max_region_tile_count.</span>
+<span class="sd">            - Bounding box coordinates are inconsistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_tile_raster</span><span class="p">(</span>  <span class="c1">#type: ignore</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+                <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">),</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="n">quality</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_encoded_region">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_encoded_region">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_encoded_region</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+            <span class="n">binning</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a JPEG bytestream of a specific image region by stitching</span>
+<span class="sd">        tiles that fall in that region.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bounds: tuple[tuple[int, int], tuple[int, int]]</span>
+<span class="sd">            Image boundaries in pixels.</span>
+<span class="sd">        binning: int, optional</span>
+<span class="sd">            Binning factor per axis, in pixels.</span>
+<span class="sd">        channel: int, optional</span>
+<span class="sd">            Data channel (first channel is 1)</span>
+<span class="sd">        colormap: str, optional</span>
+<span class="sd">            Colormap: &#39;grey&#39; (default), &#39;jet&#39;, &#39;cold&#39;, or &#39;hot&#39;.</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            Additional get_tile_raster() and encode() keyword arguments.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tile: bytes</span>
+<span class="sd">            JPEG bytestream of the tile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError: exception</span>
+<span class="sd">            An error occurred because of unexpected bounding box coordinates.</span>
+<span class="sd">            It is raised if any of the following occur:</span>
+<span class="sd">            - The number of requested region tiles exceeds max_region_tile_count.</span>
+<span class="sd">            - Bounding box coordinates are inconsistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">and</span> <span class="n">channel</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">:</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">colormap</span><span class="o">==</span><span class="s1">&#39;grey&#39;</span> <span class="ow">and</span> <span class="n">channel</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">binning</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="c1"># Compute sub-tile margins to be trimmed around the tiled region</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">txmin</span> <span class="o">:=</span> <span class="n">xmin</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+             <span class="n">txmin</span> <span class="o">=</span> <span class="mi">0</span>
+             <span class="n">rxmin</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="n">rxmin</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tymin</span> <span class="o">:=</span> <span class="n">ymin</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+             <span class="n">tymin</span> <span class="o">=</span> <span class="mi">0</span>
+             <span class="n">rymin</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="n">rymin</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">txmax</span> <span class="o">:=</span> <span class="n">xmax</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="n">txmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">rxmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">txmax</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="n">rxmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> \
+                <span class="nb">min</span><span class="p">(</span><span class="n">xmax</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rxmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">xmax</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">level</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tymax</span> <span class="o">:=</span> <span class="n">ymax</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">tymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">tymax</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">rymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> \
+                <span class="nb">min</span><span class="p">(</span><span class="n">ymax</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">border_shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">ymax</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">txmax</span> <span class="o">&lt;=</span> <span class="n">txmin</span> <span class="ow">or</span> <span class="n">tymax</span> <span class="o">&lt;=</span> <span class="n">tymin</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s2">&quot;Inconsistent region bounding box coordinates&quot;</span>
+            <span class="p">)</span>
+        <span class="n">tile_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="n">tymin</span><span class="p">:</span><span class="n">tymax</span><span class="p">,</span> <span class="n">txmin</span><span class="p">:</span><span class="n">txmax</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tile_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s2">&quot;The requested image size exceeds the server limit of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="si">}</span><span class="s2"> tile&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;s&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">max_region_tile_count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="s2">&quot;Please zoom in or increase image binning&quot;</span>
+            <span class="p">)</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">Merger</span><span class="p">(</span>
+            <span class="n">Tiler</span><span class="p">(</span>
+                <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">tymax</span> <span class="o">-</span> <span class="n">tymin</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="p">(</span><span class="n">txmax</span> <span class="o">-</span> <span class="n">txmin</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="mi">3</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="p">),</span>
+                <span class="n">tile_shape</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="mi">3</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="p">),</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;irregular&#39;</span><span class="p">,</span>
+                <span class="n">channel_dimension</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">tile_ids</span> <span class="o">=</span> <span class="n">tile_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">tile_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">tile_id_rel</span><span class="p">,</span> <span class="n">tile_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tile_ids</span><span class="p">):</span>
+            <span class="n">merger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">tile_id_rel</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_tile_raster</span><span class="p">(</span>
+                    <span class="n">level</span><span class="p">,</span>
+                    <span class="n">tile_id</span><span class="p">,</span>
+                    <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+                    <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span>
+                <span class="n">merger</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="n">rymin</span><span class="p">:</span><span class="o">-</span><span class="n">rymax</span><span class="p">,</span> <span class="n">rxmin</span><span class="p">:</span><span class="o">-</span><span class="n">rxmax</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="p">),</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_pixel_values">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_pixel_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_pixel_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">channels</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+            <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PixelValueModel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get pixel values at the given pixel coordinates in merged frame.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        channels: tuple[int]</span>
+<span class="sd">            Tuple of data channels (first channel is 1).</span>
+<span class="sd">        pos:  tuple[int, int]</span>
+<span class="sd">            Pixel coordinates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value: ~numpy.ndarray</span>
+<span class="sd">            Pixel value at the given position, or NaN outside of the</span>
+<span class="sd">            frame boundaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">chans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">nchans</span> <span class="o">=</span> <span class="n">chans</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">chanexists</span> <span class="o">=</span> <span class="p">(</span><span class="n">chans</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">chans</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">)</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">nchans</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">xpos</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">ypos</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">xpos</span> <span class="o">&lt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ypos</span> <span class="o">&lt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">vals</span><span class="p">[</span><span class="n">chanexists</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span>
+                <span class="n">chans</span><span class="p">[</span><span class="n">chanexists</span><span class="p">],</span>
+                <span class="n">ypos</span><span class="p">,</span>
+                <span class="n">xpos</span>
+            <span class="p">]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">PixelValueModel</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_profiles">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_profiles">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_profiles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">channels</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">pos1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+            <span class="n">pos2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ProfileModel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get image profile(s) between the given pixel coordinates in the merged</span>
+<span class="sd">        frame.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        channels: tuple[int, ...] or None</span>
+<span class="sd">            Tuple of data channels (first channel is 1) or None for all channels.</span>
+<span class="sd">        pos1:  tuple[int, int]</span>
+<span class="sd">            Start pixel coordinates.</span>
+<span class="sd">        pos2:  tuple[int, int]</span>
+<span class="sd">            End pixel coordinates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        profile: ProfileModel</span>
+<span class="sd">            Profile pydantic model of pixel value(s) along the line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">npchannels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">channels</span> \
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span><span class="p">)</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">line</span><span class="p">(</span><span class="n">pos1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pos1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pos2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pos2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">npchannels</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y</span><span class="o">&lt;</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span>
+        	<span class="n">npchannels</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span>
+        	<span class="n">y</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span>
+        	<span class="n">x</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ProfileModel</span><span class="p">(</span>
+            <span class="n">profile</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span>
+                <span class="n">PixelModel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pixel</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">pixel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="n">pixel</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1">#type: ignore</span>
+                    <span class="k">for</span> <span class="n">pixel</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">values</span><span class="p">)))</span>
+                <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_data">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get current memory-mapped image data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Image data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_filename</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="Tiled.get_tiles">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_tiles">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get current memory-mapped tile data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Tile data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;tiles&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">memmap</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tiles_filename</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ntiles</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="pickledTiled">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.pickledTiled">[docs]</a>
+<span class="k">def</span> <span class="nf">pickledTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tiled</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return pickled Tiled object if available, or initialized otherwise.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str | ~pathlib.Path</span>
+<span class="sd">        Path to the image.</span>
+<span class="sd">    **kwargs: dict</span>
+<span class="sd">        Additional keyword arguments.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tiled: object</span>
+<span class="sd">        Tiled object pickled from file if available, or initialized otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">afilename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">afilename</span><span class="p">)</span>
+    <span class="c1"># Check if a recent cached object is available</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">oname</span><span class="o">:=</span><span class="n">get_object_filename</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span> <span class="ow">and</span> \
+            <span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">oname</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">afilename</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">oname</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">tiled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;brightness&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;brightness&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">contrast</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;contrast&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;contrast&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">color_saturation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;color_saturation&#39;</span><span class="p">,</span>
+                <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;color_saturation&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">])</span>
+            <span class="n">tiled</span><span class="o">.</span><span class="n">quality</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;quality&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">tiled</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Tiled</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+
+<span class="k">def</span> <span class="nf">delTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">tiled</span> <span class="o">=</span> <span class="n">pickledTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">unlink</span><span class="p">(</span><span class="n">get_object_filename</span><span class="p">(</span><span class="n">tiled</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+    <span class="n">unlink</span><span class="p">(</span><span class="n">get_data_filename</span><span class="p">(</span><span class="n">tiled</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+    <span class="n">unlink</span><span class="p">(</span><span class="n">get_tiles_filename</span><span class="p">(</span><span class="n">tiled</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+    <span class="k">del</span> <span class="n">tiled</span>
+
+
+
+<div class="viewcode-block" id="get_object_filename">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_object_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">get_object_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the name of the file containing the pickled Tiled object.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Image filename: str</span>
+<span class="sd">        Full image filename.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Pickled object filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">],</span>
+        <span class="n">quote</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_data_filename">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_data_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">get_data_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the name of the file containing the memory-mapped image data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Image filename: str</span>
+<span class="sd">        Full image filename.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Filename of the memory-mapped image data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">],</span>
+        <span class="n">quote</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.data.np&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_tiles_filename">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_tiles_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">get_tiles_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the name of the file containing the memory-mapped tile datacube.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Image filename: str</span>
+<span class="sd">        Full image filename.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Filename of the memory mapped tile datacube.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">],</span>
+        <span class="n">quote</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.tiles.np&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_image_filename">
+<a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_image_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">get_image_filename</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the name of the file containing the memory-mapped image datacube.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prefix: str</span>
+<span class="sd">        Image name prefix.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Filename of the memory mapped tile datacube.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">unquote</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 CEA/CFHT/CNRS/UParisSaclay.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
