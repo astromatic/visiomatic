@@ -24,6 +24,11 @@ visiomatic image.fits
 
 A detailed documentation, including API reference is available [here](https://astromatic.github.io/visiomatic). Note: this is still work in progress.
 
+## Online demos
+
+* [A 20k x 20k, 5-channel image stack](https://visiomatic.iap.fr/v3/?image=cfhtls.fits) of the [CFHTLS D-1](https://ui.adsabs.harvard.edu/abs/2012yCat.2317....0H/abstract) field (α=2h25m59s, δ=-04°29'40'') covering about 1 square degree.
+* [A random mosaic exposure](https://visiomatic.iap.fr/v3/?image=megacam.fits) of the MegaCam camera with 40 CCDs, processed for quick-look.
+
 ## Technical overview
 
 The VisiOmatic package provides a complete remote visualization system for large multispectral/hyperspectral astronomical image data (or image sequences). The web client interface runs in standard web browsers, generating image requests to a server on behalf of the user. These HTTP requests are processed in real-time by the server, through a web API, to compute and deliver compressed images which are then updated almost immediately in the browser.
