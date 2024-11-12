@@ -27,7 +27,7 @@ A detailed documentation, including API reference is available [here](https://as
 ## Online demos
 
 * [A 20k x 20k, 5-channel image stack](https://visiomatic.iap.fr/v3/?image=cfhtls.fits) of the [CFHTLS D-1](https://ui.adsabs.harvard.edu/abs/2012yCat.2317....0H/abstract) field (α=2h25m59s, δ=-04°29'40'') covering about 1 square degree.
-* [A random mosaic exposure](https://visiomatic.iap.fr/v3/?image=megacam.fits) of the MegaCam camera with 40 CCDs, processed for quick-look.
+* [A random mosaic exposure](https://visiomatic.iap.fr/v3/?image=megacam.fits) of the [MegaCam camera](https://www.cfht.hawaii.edu/Instruments/Imaging/Megacam/) with 40 CCDs, processed for quick-look.
 
 ## Technical overview
 
