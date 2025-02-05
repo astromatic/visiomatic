@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to use VisiOmatic &mdash; VisiOmatic 3.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=3ff5e572" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f4ced14b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"macros": {"trans": ["{#1}^\\intercal", 1], "vec": ["\\boldsymbol{#1}", 1], "oper": ["\\mathbf{#1}", 1], "dvol": ["{\\rm d}^{#1}\\hspace{-2pt}#2", 2], "sinc": ["\\mbox{sinc}"], "esp": ["\\mbox{E}\\left\\{#1\\right\\}", 1]}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="api.html" />
+    <link rel="prev" title="Setup" href="setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            VisiOmatic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Technical overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use VisiOmatic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-main-window">The main window</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-coordinates-pane">The Coordinates Pane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-pixel-value-pane">The Pixel Value Pane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-navigation-pane">The Navigation Pane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-settings">Advanced Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#channel-mixing-equalizer2">Channel Mixing </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#image-preferences-contrast">Image Preferences </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#catalog-overlays-make-group">Catalog Overlays </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#region-overlays-location">Region Overlays </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profile-overlays-plot">Profile Overlays  </a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-panel-info">Documentation panel </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">VisiOmatic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">How to use VisiOmatic</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/interface.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-use-visiomatic">
+<span id="section-howtouse"></span><h1>How to use VisiOmatic<a class="headerlink" href="#how-to-use-visiomatic" title="Link to this heading"></a></h1>
+<section id="the-main-window">
+<h2>The main window<a class="headerlink" href="#the-main-window" title="Link to this heading"></a></h2>
+<p>The Figure below shows the main window of the VisiOmatic web interface in its default configuration.</p>
+<figure class="align-center" id="id4">
+<img alt="Snapshot of Main Window" src="_images/web_interface.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Snapshot of the Main VisiOmatic Window</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The main window contains a <a class="reference external" href="http://en.wikipedia.org/wiki/Tiled_web_map">&quot;slippy map&quot;</a> carrying the current image layer and optional vector overlays, plus a series of widgets.
+One navigates through the image and its overlays by &quot;dragging&quot; the map to the desired position.
+On computers this is done by clicking and holding the left button while moving the mouse, or by using the keyboard arrow keys.
+On touch devices one must press and move a finger throughout the screen.</p>
+<p>At the top left, two magnifier buttons can be used to zoom in (<a class="reference internal" href="_images/icon-magnifyplus.svg"><img alt="magnifyplus" src="_images/icon-magnifyplus.svg" style="width: 14pt;" /></a>) or out (<a class="reference internal" href="_images/icon-magnifyminus.svg"><img alt="magnifyminus" src="_images/icon-magnifyminus.svg" style="width: 14pt;" /></a>).
+One can also zoom using the mouse wheel or the -/+ keys on computers, or with a <a class="reference external" href="http://en.wikipedia.org/wiki/Pointing_device_gesture#Touchpad_and_touchscreen_gestures">pinch gesture</a> on touch devices.
+The user can switch to/from full screen mode by clicking the <a class="reference internal" href="_images/icon-fullscreen.svg"><img alt="fullscreen" src="_images/icon-fullscreen.svg" style="width: 14pt;" /></a> button (third from the top).
+The <a class="reference internal" href="_images/icon-menu.svg"><img alt="menu" src="_images/icon-menu.svg" style="width: 14pt;" /></a> button (last from the top) opens the <a class="reference internal" href="#chap-advanced"><span class="std std-ref">Advanced Settings Menu</span></a>.</p>
+<p>The coordinates of the <em>center</em> of the current field of view (indicated by the cross-shaped reticle) are displayed at the top-right of the main window, in the <em>Coordinate Pane</em>.
+Depending on the configuration, a drop-down list allows the user to switch between equatorial (RA,Dec) and other types of coordinates, including image pixel coordinates.</p>
+<p>Below the coordinate and pixel value displays, a <em>Navigation Pane</em> may be offered, offering a larger view of the current image, as well as the current field of view, represented by a shaded orange box.</p>
+<p>The scale, as measured at the center of the main window, is displayed in the lower left corner.</p>
+</section>
+<section id="the-coordinates-pane">
+<h2>The Coordinates Pane<a class="headerlink" href="#the-coordinates-pane" title="Link to this heading"></a></h2>
+<p>The Coordinates Pane allows the user to:</p>
+<ol class="arabic simple">
+<li><p>check the central coordinates and the current <abbr title="Flexible Image Transport System">FITS</abbr> extension (for mosaics of detectors) of the current field of view.</p></li>
+<li><p>pan to the given coordinates or to a given object</p></li>
+<li><p>pan to a given detector for mosaic images stored as <abbr title="Multi-Extension FITS">MEF</abbr> files.</p></li>
+</ol>
+<p>To move to specific coordinates or objects, simply click in the coordinates pane, and enter the desired coordinates or object name.
+<strong class="program">VisiOmatic</strong> uses <a class="reference external" href="http://simbad.u-strasbg.fr/simbad/sim-fid">Simbad</a> to parse the input coordinates and object names.
+According to the <a class="reference external" href="http://simbad.u-strasbg.fr/simbad/sim-fcoo">Simbad Query-by-Coordinates webpage</a>, the following coordinates writings are allowed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">20</span> <span class="pre">54</span> <span class="pre">05.689</span> <span class="pre">+37</span> <span class="pre">01</span> <span class="pre">17.38</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">10:12:45.3-45:17:50</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">15h17m-11d10m</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">15h17+89d15</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">275d11m15.6954s+17d59m59.876s</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">12.34567h-17.87654d</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">350.123456d-17.33333d</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">350.123456</span> <span class="pre">-17.33333</span></code></p></li>
+</ul>
+<p>while the dictionary of nomenclature for object identifiers can be found <a class="reference external" href="http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad">at CDS</a>.</p>
+</section>
+<section id="the-pixel-value-pane">
+<h2>The Pixel Value Pane<a class="headerlink" href="#the-pixel-value-pane" title="Link to this heading"></a></h2>
+<p>The Pixel Value Pane displays the value of the pixel at the center of the field of view in the current image channel.
+The unit is defined by the content of the <code class="docutils literal notranslate"><span class="pre">BUNIT</span></code> <abbr title="Flexible Image Transport System">FITS</abbr> image keyword; if not found, <strong class="program">VisiOmatic</strong> uses <a class="reference external" href="https://en.wikipedia.org/wiki/Analog-to-digital_converter"><abbr title="Analog-to-Digital Unit">ADU</abbr></a> (counts) by default.
+A drop-down list at the left of the widget allows the user to select various value display options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Raw</span></code>: raw value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-Bkg</span></code>: background-subtracted value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SB</span></code>: surface brightness in instrumental mag.arcsec<span class="math notranslate nohighlight">\(^{-2}\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SB-Bkg</span></code>: background-subtracted surface brightness in instrumental mag.arcsec<span class="math notranslate nohighlight">\(^{-2}\)</span>.</p></li>
+</ul>
+<p>Note that the value of the background is assumed to be constant over the whole image, which may lead locally to significant inaccuracies.</p>
+</section>
+<section id="the-navigation-pane">
+<h2>The Navigation Pane<a class="headerlink" href="#the-navigation-pane" title="Link to this heading"></a></h2>
+<p>The Navigation Pane allows the user to quickly move over the image. Just drag the shaded orange rectangle representing the current field of view to the desired location.
+The Navigation Pane can be minimized by clicking on the pair of arrows that appear on the top right when hovering the area.</p>
+<figure class="align-center" id="id5" style="width: 75%">
+<a class="reference internal image-reference" href="_images/navigation.png"><img alt="Navigation Pane" src="_images/navigation.png" style="width: 50%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Snapshot of the Navigation Pane.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="advanced-settings">
+<span id="chap-advanced"></span><h2>Advanced Settings<a class="headerlink" href="#advanced-settings" title="Link to this heading"></a></h2>
+<p>The Advanced Settings menu button gives access to a taskbar with seven tabs (in the default configuration), from top to bottom and as illustrated in <a class="reference internal" href="#advanced-menu"><span class="std std-numref">Fig. 4</span></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_images/icon-equalizer2.svg"><img alt="equalizer2" src="_images/icon-equalizer2.svg" style="width: 14pt;" /></a> Channel Mixing, which allows the user to choose which image channels to use for display, color compositing, or animation.</p></li>
+<li><p><a class="reference internal" href="_images/icon-contrast.svg"><img alt="contrast" src="_images/icon-contrast.svg" style="width: 14pt;" /></a> Image Preferences, which gives the user control over the image brightness, contrast, color saturation, gamma correction and JPEG compression level. There is also a switch for inverting the color map.</p></li>
+<li><p><a class="reference internal" href="_images/icon-make-group.svg"><img alt="make-group" src="_images/icon-make-group.svg" style="width: 14pt;" /></a> Catalog Overlays for superimposing multiple catalogs in vector form, e.g., the 2MASS Point Source Catalog <span id="id1">[<a class="reference internal" href="references.html#id5" title="R. M. Cutri, M. F. Skrutskie, S. van Dyk, C. A. Beichman, J. M. Carpenter, T. Chester, L. Cambresy, T. Evans, J. Fowler, J. Gizis, E. Howard, J. Huchra, T. Jarrett, E. L. Kopan, J. D. Kirkpatrick, R. M. Light, K. A. Marsh, H. McCallon, S. Schneider, R. Stiening, M. Sykes, M. Weinberg, W. A. Wheaton, S. Wheelock, and N. Zacarias, 2003. VizieR Online Data Catalog: 2MASS All-Sky Catalog of Point Sources (Cutri+ 2003). VizieR Online Data Catalog, 2246:0.">4</a>]</span> or the SDSS Photometric Catalog <span id="id2">[<a class="reference internal" href="references.html#id2" title="K. N. Abazajian, J. K. Adelman-McCarthy, M. A. Agüeros, S. S. Allam, C. Allende Prieto, D. An, K. S. J. Anderson, S. F. Anderson, J. Annis, N. A. Bahcall, and et al., 2009. The Seventh Data Release of the Sloan Digital Sky Survey. ApJS, 182:543-558.">5</a>]</span>.</p></li>
+<li><p><a class="reference internal" href="_images/icon-location.svg"><img alt="location" src="_images/icon-location.svg" style="width: 14pt;" /></a> Region Overlays, for overlaying Points Of Interest (such as local catalogs) or any local vector data sets in <a class="reference external" href="http://geojson.org/">GeoJSON</a> format.</p></li>
+<li><p><a class="reference internal" href="_images/icon-plot.svg"><img alt="plot" src="_images/icon-plot.svg" style="width: 14pt;" /></a> Profile Overlays, for plotting image profiles and (pseudo-)spectral energy distributions from the full precision pixel values stored on the server.</p></li>
+<li><p><a class="reference internal" href="_images/icon-camera.svg"><img alt="camera" src="_images/icon-camera.svg" style="width: 14pt;" /></a> Snapshots, for capturing snapshots of the current display or of the whole image.</p></li>
+<li><p><a class="reference internal" href="_images/icon-cog.svg"><img alt="cog" src="_images/icon-cog.svg" style="width: 14pt;" /></a> Preferences, for setting global <strong class="program">VisiOmatic</strong> parameters.</p></li>
+<li><p><a class="reference internal" href="_images/icon-info.svg"><img alt="info" src="_images/icon-info.svg" style="width: 14pt;" /></a> Documentation, which opens a panel where any web page can be embedded, e.g., an online-manual.</p></li>
+</ul>
+<figure class="align-center" id="id6">
+<span id="advanced-menu"></span><img alt="Advanced Menu main view" src="_images/advanced_menu.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Snapshot of the Advanced Menu (emphasized at the left).</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>All dialogs use similar widgets.
+The values in numerical widgets may be entered directly or decreased/increased using the -/+ buttons.
+Note that the image is only updated when the buttons are released so that data exchanges between the server and the client remain within reasonable values.</p>
+<section id="channel-mixing-equalizer2">
+<h3>Channel Mixing <a class="reference internal" href="_images/icon-equalizer2.svg"><img alt="equalizer2" src="_images/icon-equalizer2.svg" style="width: 14pt;" /></a><a class="headerlink" href="#channel-mixing-equalizer2" title="Link to this heading"></a></h3>
+<p>The Channel Mixing panel has two modes, which can be selected using the radio buttons located at the top of the dialog: the Single Channel (monochromatic) mode, and the Color Mixing (composite) mode.</p>
+<p>In Single Channel mode, one can:</p>
+<ul class="simple">
+<li><p>Select an image channel for display</p></li>
+<li><p>Select a color map for the current channel among a selection of four</p></li>
+<li><p>Set the minimum and maximum channel levels</p></li>
+<li><p>Play forward or backward an animation of the channel sequence at a given framerate</p></li>
+</ul>
+<p>In Multi-Channel mode, one can:</p>
+<ul class="simple">
+<li><p>Select an image channel to be included in the color mix</p></li>
+<li><p>Set the color this channel contributes to the mix</p></li>
+<li><p>Set the minimum and maximum channel levels</p></li>
+<li><p>Click on a channel name in the active channel list to edit a channel contributing to the current mix, or click on the trashcan button to remove it.</p></li>
+</ul>
+<p>Colors are linearly interpolated between the selected channels.</p>
+<figure class="align-center" id="id7">
+<img alt="Advanced Menu Channel Mixing" src="_images/channel_mixing.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Snapshots of the Channel Mixing panel in Single Channel mode (left) and Color Mixing mode (right).</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="image-preferences-contrast">
+<h3>Image Preferences <a class="reference internal" href="_images/icon-contrast.svg"><img alt="contrast" src="_images/icon-contrast.svg" style="width: 14pt;" /></a><a class="headerlink" href="#image-preferences-contrast" title="Link to this heading"></a></h3>
+<p>The Image Preference dialog gives access to global image display settings:</p>
+<ul class="simple">
+<li><p>Color map inversion (negative mode)</p></li>
+<li><p>Brightness (additive factor)</p></li>
+<li><p>Contrast (scaling factor)</p></li>
+<li><p>Color saturation: 0 for gray levels, &gt;1 for exaggerating colors</p></li>
+<li><p>Gamma correction: 2.2 for linear output on a properly calibrated monitor, higher values for compressing the dynamic range, lower values for expanding it</p></li>
+<li><p>JPEG quality percentage. The lower the quality percentage, the more
+compressed the image and the more artifacts in the rendering.</p></li>
+</ul>
+<figure class="align-center" id="id8" style="width: 75%">
+<a class="reference internal image-reference" href="_images/image_prefs.png"><img alt="Image Preferences" src="_images/image_prefs.png" style="width: 50%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">Snapshot of the Image Preferences panel.</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Users with a low bandwidth can improve the reactivity of the display by setting a lower JPEG quality percentage.</p>
+</div>
+</section>
+<section id="catalog-overlays-make-group">
+<h3>Catalog Overlays <a class="reference internal" href="_images/icon-make-group.svg"><img alt="make-group" src="_images/icon-make-group.svg" style="width: 14pt;" /></a><a class="headerlink" href="#catalog-overlays-make-group" title="Link to this heading"></a></h3>
+<p>The Catalog Overlay dialog allows the user to download and overlay catalogs in the current field of view.
+The available list of catalogs and the rendering of catalog sources (marker, cross, circle with magnitude-dependent radius, ellipse, etc.) depends on client settings.
+In the current default interface all catalogs are queried from the <a class="reference external" href="http://vizier.u-strasbg.fr"><cite>VizieR</cite></a> service at <a class="reference external" href="http://cds.u-strasbg.fr"><cite>CDS</cite></a> <span id="id3">[<a class="reference internal" href="references.html#id6" title="F. Ochsenbein, P. Bauer, and J. Marcout, 2000. The VizieR database of astronomical catalogues. Astronomy and Astrophysics Supplement Series, 143:23-32.">6</a>]</span>.</p>
+<p>To query a catalog, move the map and adjust the zoom level to the desired field of view; choose the catalog from the drop-down catalog selector and an overlay color from the color selector, then click the &quot;GO&quot; button.
+After a few seconds a new overlay with the chosen color should appear, as well as a new entry in the active catalog list below the drop down selector.
+Each overlay may be turned off or on by clicking on the check-mark in the corresponding entry of the active catalog list, or simply discarded by clicking on the trashcan button.</p>
+<figure class="align-center" id="id9">
+<img alt="Catalog Overlays" src="_images/catalog_overlays.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">Snapshot of the Catalog Overlay panel.</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Depending on the implementation in the client, sources may be clickable and have pop-up information windows attached.
+When several catalogs are displayed on screen, it may happen that symbols for a single source overlap, making it difficult to bring up the measurement for the chosen catalog.
+This problem can be solved by clicking on the chosen entry in the list of active catalogs, which will bring the symbols of the corresponding catalog to the front.</p>
+</section>
+<section id="region-overlays-location">
+<h3>Region Overlays <a class="reference internal" href="_images/icon-location.svg"><img alt="location" src="_images/icon-location.svg" style="width: 14pt;" /></a><a class="headerlink" href="#region-overlays-location" title="Link to this heading"></a></h3>
+<p>The Region Overlay dialog allows the user to overlay Points/Regions Of Interest, such as local catalogs, detector footprints, etc. These POIs/ROIs may be clickable and have information attached for display in pop-up windows.</p>
+<p>The Region Overlay selection mechanism is exactly the same as that of Catalog Overlays.</p>
+</section>
+<section id="profile-overlays-plot">
+<h3>Profile Overlays  <a class="reference internal" href="_images/icon-plot.svg"><img alt="plot" src="_images/icon-plot.svg" style="width: 14pt;" /></a><a class="headerlink" href="#profile-overlays-plot" title="Link to this heading"></a></h3>
+<p>The Profile overlay dialog gives the user the possibility to extract pixel values directly from the scientific data. These data are unaffected by channel mixing, image scaling or compression.</p>
+<p>The profile option extracts series of pixel values along lines of constant galactic longitude or latitude. The line color is pink by default and can be changed using the color picker. The line itself is positioned on the image by first dragging the map to the desired start coordinate, pressing the &quot;START&quot; button, and dragging the map to the desired end coordinate and pressing the &quot;END&quot; button. After some calculation, a window appears with a plot of the image profile along the selected line. In mono-channel mode, a single line is plotted that corresponds to the currently selected channel. In color mode, all active channels are plotted, with their channel mixing color. On devices equipped with a mouse one can zoom inside the plots by clicking with the left button and selecting the zoom region. Double-click to zoom out. The plot window can be closed by clicking/touching the small cross in the upper right corner, and reopened at any time by clicking on the line.</p>
+<p>The spectrum option, as its name implied extracts pixel data along the channel axis at a given position. The position is selected by dragging the map to the desired coordinate and clicking on the &quot;Go&quot; button. A circle marker appears with the color that was selected using the color picker (purple by default). After some calculation, a window pops out with the &quot;spectrum&quot; of pixel values at the selected coordinate. Note that the ordering of pixel values follows that of the channels in the data cube.</p>
+</section>
+<section id="documentation-panel-info">
+<h3>Documentation panel <a class="reference internal" href="_images/icon-info.svg"><img alt="info" src="_images/icon-info.svg" style="width: 14pt;" /></a><a class="headerlink" href="#documentation-panel-info" title="Link to this heading"></a></h3>
+<p>Clicking on the <a class="reference internal" href="_images/icon-info.svg"><img alt="info" src="_images/icon-info.svg" style="width: 14pt;" /></a> symbol (which may be located at the bottom of the taskbar) brings up the online documentation panel.
+A navigation bar is located at the bottom of the panel to facilitate browsing through the provided documentation or website sections and come back to the main page.
+Finally, a download button (PDF Symbol <a class="reference internal" href="_images/icon-pdf.svg"><img alt="pdf" src="_images/icon-pdf.svg" style="width: 14pt;" /></a>) located at the bottom right of the Manual Pane may be present to allow the user saving an entire manual as a PDF file for offline reading.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="setup.html" class="btn btn-neutral float-left" title="Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 CEA/CFHT/CNRS/UParisSaclay.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
