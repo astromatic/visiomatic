@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.cache &mdash; VisiOmatic 3.0.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
@@ -82,29 +82,29 @@
 <span class="c1"># Copyright CFHT/CNRS/SorbonneU</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
-<span class="kn">import</span> <span class="nn">atexit</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.shared_memory</span> <span class="kn">import</span> <span class="n">SharedMemory</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getpid</span><span class="p">,</span> <span class="n">getppid</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">exit</span><span class="p">,</span> <span class="n">platform</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time_ns</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.shared_memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">SharedMemory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">getpid</span><span class="p">,</span> <span class="n">getppid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">exit</span><span class="p">,</span> <span class="n">platform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">time_ns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
 
 <span class="c1"># Shared version of cache only available on Linux</span>
 <span class="k">if</span> <span class="n">package</span><span class="o">.</span><span class="n">isonlinux</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">posix_ipc</span> <span class="kn">import</span> <span class="n">Semaphore</span><span class="p">,</span> <span class="n">O_CREAT</span> <span class="c1">#type: ignore</span>
-    <span class="kn">from</span> <span class="nn">UltraDict</span> <span class="kn">import</span> <span class="n">UltraDict</span> <span class="c1">#type: ignore</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">posix_ipc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Semaphore</span><span class="p">,</span> <span class="n">O_CREAT</span> <span class="c1">#type: ignore</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">UltraDict</span><span class="w"> </span><span class="kn">import</span> <span class="n">UltraDict</span> <span class="c1">#type: ignore</span>
 
 
 <div class="viewcode-block" id="LRUCache">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.LRUCache">[docs]</a>
-<span class="k">class</span> <span class="nc">LRUCache</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LRUCache</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom Least Recently Used (LRU) memory cache.</span>
 
@@ -115,12 +115,12 @@
 <span class="sd">    maxsize: int, optional</span>
 <span class="sd">        Maximum size of the cache.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span> <span class="n">OrderedDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">=</span> <span class="n">maxsize</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cache or recover earlier cached result/object.</span>
 <span class="sd">        If the number of cached items exceeds maxsize then the least recently</span>
@@ -147,7 +147,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a specific cache entry.</span>
 
@@ -161,7 +161,7 @@
 
 <div class="viewcode-block" id="LRUSharedRWCache">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.LRUSharedRWCache">[docs]</a>
-<span class="k">class</span> <span class="nc">LRUSharedRWCache</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LRUSharedRWCache</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom, dictionary-based, Least Recently Used (LRU) reader-writer lockable</span>
 <span class="sd">    cache, shareable across processes.</span>
@@ -181,7 +181,7 @@
 <span class="sd">    logger: logging.Logger, optional</span>
 <span class="sd">        Logger object to display cache handling information.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
             <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -209,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">=</span> <span class="n">maxsize</span>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get or recover a cached entry.</span>
 
@@ -238,7 +238,7 @@
 
 <div class="viewcode-block" id="LRUSharedRWCache.call_unshared">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.LRUSharedRWCache.call_unshared">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_unshared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_unshared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get or recover a cached entry, not shared with other processes.</span>
 
@@ -317,7 +317,7 @@
 
 <div class="viewcode-block" id="LRUSharedRWCache.call_shared">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.LRUSharedRWCache.call_shared">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_shared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_shared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get or recover a cached entry, not shared with other processes.</span>
 
@@ -413,7 +413,7 @@
 
 <div class="viewcode-block" id="LRUSharedRWCache.remove">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.LRUSharedRWCache.remove">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove semaphores.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -433,7 +433,7 @@
 
 <div class="viewcode-block" id="SharedRWLock">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock">[docs]</a>
-<span class="k">class</span> <span class="nc">SharedRWLock</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SharedRWLock</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom reader-writer lock shareable across processes</span>
 
@@ -445,7 +445,7 @@
 <span class="sd">    name: str, optional</span>
 <span class="sd">        Name of the lock.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RWLock&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RWLock&quot;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rlock_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.r.lock&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_glock_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.g.lock&quot;</span>
@@ -482,7 +482,7 @@
 
 <div class="viewcode-block" id="SharedRWLock.acquire_read">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock.acquire_read">[docs]</a>
-    <span class="k">def</span> <span class="nf">acquire_read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acquire_read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Acquire lock in read mode.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -495,7 +495,7 @@
 
 <div class="viewcode-block" id="SharedRWLock.acquire_write">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock.acquire_write">[docs]</a>
-    <span class="k">def</span> <span class="nf">acquire_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acquire_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Acquire lock in write mode.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -505,7 +505,7 @@
 
 <div class="viewcode-block" id="SharedRWLock.release_read">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock.release_read">[docs]</a>
-    <span class="k">def</span> <span class="nf">release_read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release_read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Release acquired read lock.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -518,7 +518,7 @@
 
 <div class="viewcode-block" id="SharedRWLock.release_write">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock.release_write">[docs]</a>
-    <span class="k">def</span> <span class="nf">release_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Release acquired write lock.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -526,7 +526,7 @@
 
 
 
-    <span class="k">def</span> <span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clean up leftovers from the RW lock.</span>
 
@@ -537,7 +537,7 @@
 
 <div class="viewcode-block" id="SharedRWLock.remove">
 <a class="viewcode-back" href="../../../api/server/cache.html#visiomatic.server.cache.SharedRWLock.remove">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove files used by the RW lock semaphores and shared memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

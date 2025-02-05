@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.tiled &mdash; VisiOmatic 3.0.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
@@ -82,30 +82,30 @@
 <span class="c1"># Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span><span class="o">,</span><span class="w"> </span><span class="nn">math</span><span class="o">,</span><span class="w"> </span><span class="nn">pickle</span>
 
-<span class="kn">from</span> <span class="nn">methodtools</span> <span class="kn">import</span> <span class="n">lru_cache</span> <span class="c1">#type: ignore</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">unlink</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">modules</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span><span class="p">,</span> <span class="n">unquote</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">methodtools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span> <span class="c1">#type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">isnan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">unlink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">quote</span><span class="p">,</span> <span class="n">unquote</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="c1">#type: ignore</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>  <span class="c1">#type: ignore</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">simplejpeg</span> <span class="kn">import</span> <span class="n">encode_jpeg</span>  <span class="c1">#type: ignore</span>
-<span class="kn">from</span> <span class="nn">skimage.draw</span> <span class="kn">import</span> <span class="n">line</span>
-<span class="kn">from</span> <span class="nn">tiler</span> <span class="kn">import</span> <span class="n">Merger</span><span class="p">,</span> <span class="n">Tiler</span> <span class="c1">#type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span> <span class="c1">#type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>  <span class="c1">#type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplejpeg</span><span class="w"> </span><span class="kn">import</span> <span class="n">encode_jpeg</span>  <span class="c1">#type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.draw</span><span class="w"> </span><span class="kn">import</span> <span class="n">line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Merger</span><span class="p">,</span> <span class="n">Tiler</span> <span class="c1">#type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
-<span class="kn">from</span> <span class="nn">.image</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageModel</span>
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">settings</span>
 
 
 <span class="n">colordict</span> <span class="o">=</span> <span class="p">{</span>
@@ -120,7 +120,7 @@
 
 <div class="viewcode-block" id="PixelValueModel">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.PixelValueModel">[docs]</a>
-<span class="k">class</span> <span class="nc">PixelValueModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PixelValueModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pydantic model class for VisiOmatic pixel values.</span>
 
@@ -136,7 +136,7 @@
 
 <div class="viewcode-block" id="PixelModel">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.PixelModel">[docs]</a>
-<span class="k">class</span> <span class="nc">PixelModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PixelModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pydantic model class for pixels.</span>
 
@@ -158,7 +158,7 @@
 
 <div class="viewcode-block" id="ProfileModel">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.ProfileModel">[docs]</a>
-<span class="k">class</span> <span class="nc">ProfileModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProfileModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pydantic model class for VisiOmatic profiles.</span>
 
@@ -174,7 +174,7 @@
 
 <div class="viewcode-block" id="TiledModel">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.TiledModel">[docs]</a>
-<span class="k">class</span> <span class="nc">TiledModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TiledModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pydantic tiled model class.</span>
 
@@ -231,7 +231,7 @@
 
 <div class="viewcode-block" id="Tiled">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled">[docs]</a>
-<span class="k">class</span> <span class="nc">Tiled</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tiled</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for the tiled image pyramid to be visualized.</span>
 <span class="sd">    </span>
@@ -256,7 +256,7 @@
 <span class="sd">    nthreads: int, optional</span>
 <span class="sd">        Number of compute threads for parallelized operations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">extnum</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -282,7 +282,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hdus</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;denywrite&#39;</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot open </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot open </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
             <span class="k">return</span>
         <span class="c1"># Collect Header Data Units that contain 2D+ image data (&quot;HDIs&quot;)</span>
         <span class="k">if</span> <span class="n">extnum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -296,7 +296,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nimages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nimages</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span><span class="p">(</span><span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No 2D+ data found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No 2D+ data found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
             <span class="k">return</span>
         <span class="c1"># Number of image dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nchannels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -342,7 +342,7 @@
 
 <div class="viewcode-block" id="Tiled.compute_nlevels">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_nlevels">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_nlevels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_nlevels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of image resolution levels.</span>
 <span class="sd">        </span>
@@ -360,7 +360,7 @@
 
 <div class="viewcode-block" id="Tiled.compute_grid_shape">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_grid_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_grid_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_grid_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of tiles per axis at a given image resolution level.</span>
 <span class="sd">        </span>
@@ -379,7 +379,7 @@
 
 <div class="viewcode-block" id="Tiled.compute_tile_bordershape">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.compute_tile_bordershape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_tile_bordershape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_tile_bordershape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the border shape of tiles at a given image resolution level.</span>
 <span class="sd">        </span>
@@ -398,7 +398,7 @@
 
 <div class="viewcode-block" id="Tiled.get_model">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TiledModel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TiledModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a Pydantic model of the tiled object.</span>
 <span class="sd">        </span>
@@ -430,7 +430,7 @@
 
 <div class="viewcode-block" id="Tiled.make_mosaic">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_mosaic">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_mosaic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span> <span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_mosaic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span> <span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stitch together several images to make a mosaic</span>
 <span class="sd">        </span>
@@ -478,7 +478,7 @@
 
 <div class="viewcode-block" id="Tiled.make_header">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_header">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fits</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fits</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a FITS header with a global WCS for the mosaic.</span>
 
@@ -547,7 +547,7 @@
 
 <div class="viewcode-block" id="Tiled.get_iipheaderstr">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_iipheaderstr">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_iipheaderstr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_iipheaderstr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate an IIP image header.</span>
 <span class="sd">        </span>
@@ -570,7 +570,7 @@
 
 <div class="viewcode-block" id="Tiled.convert_tile">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.convert_tile">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_tile</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_tile</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">tile</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
             <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -681,7 +681,7 @@
 
 <div class="viewcode-block" id="Tiled.make_tiles">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.make_tiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate all tiles from the image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -759,7 +759,7 @@
 
 <div class="viewcode-block" id="Tiled.get_tile_raster">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_tile_raster">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_tile_raster</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tile_raster</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">tilelevel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">tileindex</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -832,7 +832,7 @@
 
 <div class="viewcode-block" id="Tiled.encode">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.encode">[docs]</a>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">raster</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
             <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -869,7 +869,7 @@
 <div class="viewcode-block" id="Tiled.get_encoded_tile">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_encoded_tile">[docs]</a>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;max_cache_tile_count&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">settings</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">get_encoded_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_encoded_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
             <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
@@ -921,7 +921,7 @@
 
 <div class="viewcode-block" id="Tiled.get_encoded_region">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_encoded_region">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_encoded_region</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_encoded_region</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
             <span class="n">binning</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -1047,7 +1047,7 @@
 
 <div class="viewcode-block" id="Tiled.get_pixel_values">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_pixel_values">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_pixel_values</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pixel_values</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">channels</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
             <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PixelValueModel</span><span class="p">:</span>
@@ -1087,7 +1087,7 @@
 
 <div class="viewcode-block" id="Tiled.get_profiles">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_profiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_profiles</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_profiles</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">channels</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">pos1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
@@ -1132,7 +1132,7 @@
 
 <div class="viewcode-block" id="Tiled.get_data">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get current memory-mapped image data.</span>
 <span class="sd">        </span>
@@ -1154,7 +1154,7 @@
 
 <div class="viewcode-block" id="Tiled.get_tiles">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.Tiled.get_tiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get current memory-mapped tile data.</span>
 <span class="sd">        </span>
@@ -1183,7 +1183,7 @@
 
 <div class="viewcode-block" id="pickledTiled">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.pickledTiled">[docs]</a>
-<span class="k">def</span> <span class="nf">pickledTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tiled</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pickledTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tiled</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return pickled Tiled object if available, or initialized otherwise.</span>
 <span class="sd">    </span>
@@ -1221,7 +1221,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">delTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">tiled</span> <span class="o">=</span> <span class="n">pickledTiled</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">unlink</span><span class="p">(</span><span class="n">get_object_filename</span><span class="p">(</span><span class="n">tiled</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
     <span class="n">unlink</span><span class="p">(</span><span class="n">get_data_filename</span><span class="p">(</span><span class="n">tiled</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
@@ -1232,7 +1232,7 @@
 
 <div class="viewcode-block" id="get_object_filename">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_object_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">get_object_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_object_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the name of the file containing the pickled Tiled object.</span>
 <span class="sd">    </span>
@@ -1256,7 +1256,7 @@
 
 <div class="viewcode-block" id="get_data_filename">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_data_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">get_data_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_data_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the name of the file containing the memory-mapped image data.</span>
 <span class="sd">    </span>
@@ -1280,7 +1280,7 @@
 
 <div class="viewcode-block" id="get_tiles_filename">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_tiles_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tiles_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tiles_filename</span><span class="p">(</span><span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the name of the file containing the memory-mapped tile datacube.</span>
 <span class="sd">    </span>
@@ -1304,7 +1304,7 @@
 
 <div class="viewcode-block" id="get_image_filename">
 <a class="viewcode-back" href="../../../api/server/tiled.html#visiomatic.server.tiled.get_image_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">get_image_filename</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_image_filename</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the name of the file containing the memory-mapped image datacube.</span>
 <span class="sd">    </span>

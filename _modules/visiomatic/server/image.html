@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.image &mdash; VisiOmatic 3.0.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
@@ -82,21 +82,21 @@
 <span class="c1"># Copyright CFHT/CNRS/SorbonneU/CEA/UParisSaclay</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="c1">#type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span> <span class="c1">#type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
 
 
 <div class="viewcode-block" id="ImageModel">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.ImageModel">[docs]</a>
-<span class="k">class</span> <span class="nc">ImageModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pydantic image model class.</span>
 
@@ -126,7 +126,7 @@
 
 <div class="viewcode-block" id="Image">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image">[docs]</a>
-<span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for the individual images that can be part of a mosaic.</span>
 <span class="sd"> </span>
@@ -141,7 +141,7 @@
 <span class="sd">    minmax: tuple[float,float], optional</span>
 <span class="sd">        Default intensity cuts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">hdu</span> <span class="p">:</span> <span class="n">fits</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">,</span>
             <span class="n">minmax</span> <span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -172,7 +172,7 @@
 
 <div class="viewcode-block" id="Image.get_model">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.get_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageModel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a Pydantic model of the image</span>
 <span class="sd">        </span>
@@ -195,7 +195,7 @@
 
 <div class="viewcode-block" id="Image.get_header_string">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.get_header_string">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_header_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_header_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the image header as a string.</span>
 <span class="sd">        </span>
@@ -212,7 +212,7 @@
 
 <div class="viewcode-block" id="Image.parse_2dslice">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.parse_2dslice">[docs]</a>
-    <span class="k">def</span> <span class="nf">parse_2dslice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_2dslice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse a string representation of a 2D slice.</span>
 
@@ -233,7 +233,7 @@
 
 <div class="viewcode-block" id="Image.compute_geometry">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.compute_geometry">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_geometry</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_geometry</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">start</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
             <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
@@ -291,7 +291,7 @@
 
 <div class="viewcode-block" id="Image.compute_background">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.compute_background">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return background level and median absolute deviation</span>
 <span class="sd">        of every image channel.</span>
@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="Image.compute_minmax">
 <a class="viewcode-back" href="../../../api/server/image.html#visiomatic.server.image.Image.compute_minmax">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_minmax</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_minmax</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">background_level</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
             <span class="n">background_mad</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>

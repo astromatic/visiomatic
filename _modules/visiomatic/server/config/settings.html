@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.server.config.settings &mdash; VisiOmatic 3.0.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=3ff5e572" />
@@ -83,23 +83,23 @@
 <span class="c1"># Copyright UParisSaclay/CEA/CFHT/CNRS</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">pydantic_settings</span> <span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
 
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">package</span>
-<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">SField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">SField</span>
 
 
 
 <div class="viewcode-block" id="HostSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.HostSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">HostSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HostSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
@@ -144,7 +144,7 @@
 
 <div class="viewcode-block" id="ImageSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.ImageSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">ImageSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
         <span class="n">ge</span><span class="o">=-</span><span class="mf">100.</span><span class="p">,</span>
@@ -194,7 +194,7 @@
 
 <div class="viewcode-block" id="ServerSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.ServerSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">ServerSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ServerSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">api_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;/api&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint URL for the webservice API&quot;</span>
@@ -260,7 +260,7 @@
 
 <div class="viewcode-block" id="EngineSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.EngineSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">EngineSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EngineSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">thread_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">short</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">ncpu</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">ncpu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">4</span><span class="p">,</span>
@@ -279,7 +279,7 @@
 
 <div class="viewcode-block" id="CacheSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.CacheSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">CacheSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CacheSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SField</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Image cache directory&quot;</span>
@@ -320,7 +320,7 @@
 
 <div class="viewcode-block" id="AppSettings">
 <a class="viewcode-back" href="../../../../api/server/settings.html#visiomatic.server.config.settings.AppSettings">[docs]</a>
-<span class="k">class</span> <span class="nc">AppSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AppSettings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="n">host</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">HostSettings</span><span class="p">()</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">ImageSettings</span><span class="p">()</span>
     <span class="n">server</span><span class="p">:</span> <span class="n">BaseSettings</span> <span class="o">=</span> <span class="n">ServerSettings</span><span class="p">()</span>

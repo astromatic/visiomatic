@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>visiomatic.cmd.start &mdash; VisiOmatic 3.0.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ff5e572" />
@@ -82,23 +82,23 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># Copyright CFHT/CNRS/SorbonneU</span>
 <span class="c1"># Licensed under the MIT licence</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">remove</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">exit</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
-<span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">remove</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">exit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">webbrowser</span>
 
-<span class="kn">from</span> <span class="nn">uvicorn</span> <span class="kn">import</span> <span class="n">run</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">supervisors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">supervisors</span>
 
-<span class="kn">from</span> <span class="nn">visiomatic</span> <span class="kn">import</span> <span class="n">package</span>
-<span class="kn">from</span> <span class="nn">visiomatic.server</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">visiomatic</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">visiomatic.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
 
 <span class="k">if</span> <span class="n">package</span><span class="o">.</span><span class="n">isonlinux</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">resource</span> <span class="kn">import</span> <span class="n">getrlimit</span><span class="p">,</span> <span class="n">setrlimit</span><span class="p">,</span> <span class="n">RLIMIT_NOFILE</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">resource</span><span class="w"> </span><span class="kn">import</span> <span class="n">getrlimit</span><span class="p">,</span> <span class="n">setrlimit</span><span class="p">,</span> <span class="n">RLIMIT_NOFILE</span>
 
 <div class="viewcode-block" id="start_server">
 <a class="viewcode-back" href="../../../api/server/cmd.html#visiomatic.cmd.start.start_server">[docs]</a>
-<span class="k">def</span> <span class="nf">start_server</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_server</span><span class="p">(</span>
         <span class="n">app</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;visiomatic.server.app:create_app&quot;</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8009</span><span class="p">,</span>
@@ -142,7 +142,7 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../api/server/cmd.html#visiomatic.cmd.start.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set up configuration and start the VisiOmatic server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -166,12 +166,12 @@
     <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">image_filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;no_browser&quot;</span><span class="p">]:</span>
         <span class="c1"># Monkey-patch Uvicorn calls to start the browser AFTER the server</span>
         <span class="n">link</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">def</span> <span class="nf">startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">original_startup</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">should_exit</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">async_startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_startup</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 
