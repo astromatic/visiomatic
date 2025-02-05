@@ -463,24 +463,7 @@ export const ChannelUI = UI.extend( /** @lends ChannelUI */ {
 			'colormix-auto',
 			'Re-color active channels',
 			function () {
-				const	nchan = visio.nChannel,
-					vrgb = visio.rgb,
-					defcol = layer.visioDefault.channelColors;
-				let	nchanon = 0;
-
-				for (const c in vrgb) {
-					nchanon++;
-				}
-				if (nchanon >= defcol.length) {
-					nchanon = defcol.length - 1;
-				}
-
-				let	cc = 0;
-				for (const c in vrgb) {
-					if (cc < nchanon) {
-						vrgb[c] = rgb(defcol[nchanon][cc++]);
-					}
-				}
+				layer.dispatchChannelColors(layer.visioDefault.channelColors);
 				layer.updateMix();
 				this._updateColPick(layer, layer.visio.channel);
 				this._updateChannelList(layer);

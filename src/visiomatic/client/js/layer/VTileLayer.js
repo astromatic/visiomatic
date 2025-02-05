@@ -99,15 +99,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		invertCMap: false,
 		minValue: [],
 		maxValue: [],
-		channelColors: [
-			[''],
-			['#FFFFFF'],
-			['#00BAFF', '#FFBA00'],
-			['#0000FF', '#00BA00', '#FF0000'],
-			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
-			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
-			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
-		],
+		channelColors: ['#0000FF', '#00FF00', '#FF0000'],
 		quality: 90,
 		framerate: 1
 	},
@@ -297,8 +289,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		   Current color mixing matrix as RGB mixes.
 		 * @property {string[]} channelLabels
 		   Label for every image channel.
-		 * @property {boolean[]} channelFlags
-		   Display activation flag for every channel.
+		 * @property {number[]} activeChannels
+		   List of active channels.
 		 * @property {string[]} channelUnits
 		   Pixel value unit for every image channel.
 		 * @property {number} quality
@@ -330,7 +322,7 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 			mix: [[]],
 			rgb: [],
 			channelLabels: [],
-			channelFlags: [],
+			activeChannels: [],
 			channelUnits: [],
 			quality: options.quality,
 			framerate: options.framerate
@@ -547,47 +539,34 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 
 			// Initialize mixing matrix depending on arguments and the number of channels
 			const	mix = visio.mix,
-				colors = options.channelColors,
-				rgb = visio.rgb,
+				colors = options.channelColors.length > 0 ? options.channelColors
+					: visioDefault.channelColors,
 				re = new RegExp(options.channelLabelMatch),
-				channelflags = visio.channelFlags;
+				chanon = visio.activeChannels;
 
+			// Identify and flag channels that match the provided channel label
+			// matching patterns (all channels with the default .* pattern)
 			let	cc = 0,
 				nchanon = 0;
 
 			for (var c = 0; c < nchannel; c++) {
-				channelflags[c] = re.test(labels[c]);
-				if (channelflags[c]) {
-					nchanon++;
+				if (re.test(labels[c])) {
+					chanon[nchanon++] = c;
 				}
 			}
-			if (nchanon >= visioDefault.channelColors.length) {
-				nchanon = visioDefault.channelColors.length - 1;
-			}
-
-			if (colors.length) {
-				// Dispatch input colors
-				for (const c in colors) {
-					// Copy RGB triplet
-					rgb[c] = rgbin(colors[c][0], colors[c][1], colors[c][2]);
+			// Dispatch input colors
+			this.dispatchChannelColors(colors);
+			this.updateMix();
+			/*
+			for (const c = 0; c < nchannel; c++) {
+				if (channelflags[c] && cc < nchanon) {
+					visio.rgb[c] = rgbin(visioDefault.channelColors[nchanon][cc++]);
+					// Compute the current row of the mixing matrix
 					mix[c] = [];
 					this.rgbToMix(c);
 				}
-			} else {
-				// Dispatch default colors
-				rgb[0] = rgbin(visioDefault.channelColors[3][0]);
-				rgb[Math.floor(nchannel / 2)] = rgbin(visioDefault.channelColors[3][1]);
-				rgb[nchannel -1] = rgbin(visioDefault.channelColors[3][2]);
-				/*
-				for (const c = 0; c < nchannel; c++) {
-					if (channelflags[c] && cc < nchanon) {
-						rgb[c] = rgbin(visioDefault.channelColors[nchanon][cc++]);
-						// Compute the current row of the mixing matrix
-						mix[c] = [];
-						this.rgbToMix(c);
-					}
-				*/
 			}
+			*/
 
 			if (options.bounds) {
 				options.bounds = latLngBounds(options.bounds);
@@ -614,13 +593,34 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 	},
 
 	/**
+	 * Dispatch a list of colors over active channels
+	 * @param {RGB[]} colors - List of colors.
+	 */
+	dispatchChannelColors: function(colors) {
+		const visio = this.visio,
+			chanon = visio.activeChannels,
+			num = chanon.length - 1,
+			den = colors.length > 1 ? colors.length - 1 : 1;
+
+		visio.channelColors = [];
+		visio.rgb = [];
+		visio.mix = [];
+		for (const c in colors) {
+			visio.channelColors[c] = colors[c];
+			// Copy RGB triplet
+			d = chanon[Math.floor(c * num / den + 1e-6)];
+			visio.rgb[d] = rgbin(colors[c]);
+		}
+	},
+
+	/**
 	 * Get color for the given channel.
 	 * @param {number} channel - Input channel.
 	 * @return {string} color string.
 	 */
 	getChannelColor: function(channel) {
 		const	rgb = this.visio.rgb
-		return channel in rgb ? this.visio.rgb[channel].toStr() : '';
+		return channel in rgb ? rgb[channel].toStr() : '';
 	},
 
 	/**
@@ -690,10 +690,8 @@ export const VTileLayer = TileLayer.extend( /** @lends VTileLayer */ {
 		const	_this = layer ? layer : this,
 			visio = _this.visio;
 
-		if (visio.mixingMode === 'color') {
-			for (const c in visio.rgb) {
-				_this.rgbToMix(c);
-			}
+		for (const c in visio.rgb) {
+			_this.rgbToMix(c);
 		}
 	},
 
