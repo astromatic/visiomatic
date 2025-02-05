@@ -20,7 +20,7 @@ export const Catalog = Class.extend( /** @lends Catalog */ {
 	options: {
 		name: 'A catalog',
 		attribution: '',
-		color: 'yellow',
+		color: 'beige',
 		properties: ['mag'],
 		propertyMask: undefined,
 		units: [''],

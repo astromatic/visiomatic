@@ -104,7 +104,7 @@ export const gaiaDR3 = new Catalog({
 	name: 'Gaia DR3',
 	className: 'logo-catalog-vizier',
 	attribution: 'Third Gaia Data Release (2022)',
-	color: 'green',
+	color: 'yellow',
 	magLim: 21.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=I/355/gaiadr3&' +
@@ -212,7 +212,7 @@ export const panstarrs1 = new Catalog({
 	name: 'PanSTARRS 1',
 	className: 'logo-catalog-vizier',
 	attribution: 'Pan-STARRS release 1 (PS1) Survey (Chambers et al. 2016)',
-	color: 'yellow',
+	color: 'lightgreen',
 	magLim: 24.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=II/349&' +
@@ -260,7 +260,7 @@ export const sdss = new Catalog({
 	name: 'SDSS release 12',
 	className: 'logo-catalog-vizier',
 	attribution: 'SDSS Photometric Catalog, Release 12 (Alam et al. 2015)',
-	color: 'yellow',
+	color: 'lightblue',
 	magLim: 25.0,
 	regionType: 'box',
 	catalogURL: '/asu-tsv?&-mime=csv&-source=V/147&' +
@@ -336,7 +336,7 @@ export const unWISE = new Catalog({
 	service: 'Vizier@CDS',
 	name: 'UnWISE',
 	attribution: 'The band-merged unWISE Catalog (Schlafly et al. 2019)',
-	color: 'red',
+	color: 'magenta',
 	magLim: 40.0,
 	magScaleType: 'linear',
 	regionType: 'box',

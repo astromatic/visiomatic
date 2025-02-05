@@ -121,10 +121,13 @@ export const CatalogUI = UI.extend( /** @lends CatalogUI */ {
 			-1,
 			'Select Catalog',
 			function () {
-				let	className = catalogs[catselect.selectedIndex - 1].className;
+				const catalog = catalogs[catselect.selectedIndex - 1];
+				let	className = catalog.className;
 				if (className === undefined) {
 					className = '';
 				}
+				console.log(colpick);
+				colpick.style.backgroundColor = colpick.value = catalog.color;
 				DomUtil.setClass(
 					catselect,
 					this._className + '-select ' + className
