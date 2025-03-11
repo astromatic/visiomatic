@@ -34,7 +34,7 @@
 		"tidy-jsdoc": "^1.4.1"
 	},
 	"devDependencies": {
-		"esbuild": "^0.14.53",
+		"esbuild": ">=0.25.0",
 		"eslint": "^8.23.1",
 		"jsdoc": "^4.0.4"
 	},
