@@ -66,7 +66,7 @@ export const EllipseMarker = Path.extend( /** @lends EllipseMarker */ {
 		Util.setOptions(this, options);
 
 		this._majAxis = this.options.majAxis;
-		this._minAxis = this.options.majAxis;
+		this._minAxis = this.options.minAxis;
 		this._posAngle = this.options.posAngle;
 		this._latlng = latLng(latlng);
 
@@ -247,8 +247,8 @@ Canvas.include({
 
 		ctx.save();
 		ctx.translate(p.x, p.y);
-		ctx.rotate(layer._posAngle * Math.PI / 180.0);
-		ctx.scale(1, s);
+		ctx.rotate(-layer._posAngle * Math.PI / 180.0);
+		ctx.scale(s, 1);
 
 		ctx.beginPath();
 		ctx.arc(0, 0, r, 0, Math.PI * 2, false);
@@ -268,11 +268,12 @@ SVG.include({
 	_updateEllipse: function (layer) {
 		const	deg = Math.PI / 180.0,
 			p = layer._point,
-			r = layer._minAxis,
-			r2 = layer._majAxis,
-			dx = r * Math.cos(layer._posAngle * deg),
-			dy = r * Math.sin(layer._posAngle * deg),
-			arc = 'a' + r + ',' + r2 + ' ' + layer._posAngle + ' 1,0 ';
+			r = layer._majAxis,
+			r2 = layer._minAxis,
+			angle = - layer._posAngle
+			dx = r * Math.cos(angle * deg),
+			dy = r * Math.sin(angle * deg),
+			arc = 'a' + r + ',' + r2 + ' ' + angle + ' 1,0 ';
 
 		// drawing a circle with two half-arcs
 		const	d = layer._empty() ? 'M0 0' :
