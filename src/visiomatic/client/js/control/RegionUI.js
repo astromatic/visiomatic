@@ -1,6 +1,6 @@
 /**
  #	This file part of:	VisiOmatic
- * @file User Interface for region and Point of Interest (PoI) overlays.
+ * @file User Interface for region and Point of Interest PoI overlays.
 
  * @requires util/VUtil.js
  * @requires control/UI.js
@@ -55,6 +55,9 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 	   Position in the selection menu.
 	 * @property {RGB} [color]
 	   Default color of the region (as it will appear on the overlay).
+	 * @property {RGB} [style]
+	   Path options or the region (as it will appear on the overlay), except
+	   color.
 	 * @property {boolean} load
 	   Is the region loaded yet?
 	 * @property {RegionUI~drawCallback} [drawPoint]
@@ -212,7 +215,9 @@ export const RegionUI = UI.extend( /** @lends RegionUI */ {
 								return new LatLng(coords[1], coords[0], coords[2]);
 							},
 							style: function (feature) {
-								return {color: region.color, weight: 2};
+								return region.style?
+								Object.assign(region.style, {color: region.color})
+								: {color: region.color, weight: 2};
 							},
 							pointToLayer: function (feature, latlng) {
 								return region.drawPoint ?
