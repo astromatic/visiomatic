@@ -318,6 +318,7 @@ def create_app() -> FastAPI:
         if FIF is None:
 			# Just return the banner describing the service
             return templates.TemplateResponse(
+                request,
                 banner_template,
                 {
                     "request": request,
@@ -481,6 +482,7 @@ def create_app() -> FastAPI:
         Main web user interface.
         """
         return templates.TemplateResponse(
+            request,
             base_template,
             {
                 "request": request,
