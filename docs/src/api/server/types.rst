@@ -1,7 +1,7 @@
 Types
 ======
 
-.. automodule:: pydiet.server.types.quantity
+.. automodule:: visiomatic.server.types.quantity
    :members:
    :show-inheritance:
 
