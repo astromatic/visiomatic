@@ -5,7 +5,7 @@ Types
    :members:
    :show-inheritance:
 
-.. automodule:: pydiet.server.types.string
+.. automodule:: visiomatic.server.types.string
    :members:
    :show-inheritance:
 
