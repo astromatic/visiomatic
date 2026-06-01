@@ -39,10 +39,12 @@ class Config(object):
         self.config_filename = config_file
 
         # Skip argument parsing if Sphinx or pytest are involved
-        if "pytest" in modules \
-        	or "sphinx" in modules \
-            or environ.get("IN_SPHINX_BUILD") == "1":
-              args = False
+        if (
+            "pytest" in modules
+            or "sphinx" in modules
+            or environ.get("IN_SPHINX_BUILD") == "1"
+        ):
+            args = False
         if args:
             args_dict = self.parse_args()
             if args_dict['version']:
