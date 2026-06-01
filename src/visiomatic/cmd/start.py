@@ -72,7 +72,7 @@ def open_browser_when_ready(host: str, port: int, root_path: str, api_path: str)
     while True:
         try:
             # succeeds only when server is actually up
-            urlopen(f"{link}{api_path}/health", timeout=2)
+            urlopen(f"{link}{api_path}/health", timeout=2).close()
             break
         except URLError:
             sleep(0.5)
