@@ -10,7 +10,7 @@ from os import cpu_count, path
 from typing import Any, Tuple
 
 from astropy import units as u #type: ignore[import-untyped]
-import numpy as np
+from pydantic import Field
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
