@@ -9,10 +9,6 @@ Config
    :members:
    :show-inheritance:
 
-.. automodule:: visiomatic.server.config.quantity
-   :members:
-   :show-inheritance:
-
 .. automodule:: visiomatic.server.config
    :members:
    :show-inheritance:
