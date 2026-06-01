@@ -37,7 +37,7 @@ class Config(object):
         self.groups = tuple(self.settings.dict().keys())
         self.image_filename = None
         self.config_filename = config_file
-        print(modules, environ)
+
         # Skip argument parsing if Sphinx or pytest are involved
         if "pytest" in modules \
         	or "sphinx" in modules \
