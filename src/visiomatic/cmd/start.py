@@ -68,7 +68,6 @@ def open_browser_when_ready(host: str, port: int, root_path: str, api_path: str)
     Start a browser session once the server is up and running.
     """
     link =  f"http://{host}:{port}{root_path or ''}"
-    f"{config.settings['root_path'] or ''}"
     while True:
         try:
             # succeeds only when server is actually up
