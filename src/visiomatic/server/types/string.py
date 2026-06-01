@@ -114,10 +114,10 @@ class StrAnnotation:
             raise ValueError("not a string")
 
         # Check if it has the right size
-        if self.min_length and len(s) < self.min_length:
-             raise ValueError(f"String should have at least {self.min_length} characters")
-        if self.max_length and len(s) > self.max_length:
-             raise ValueError(f"String should have at most {self.max_length} characters")
+        if self.min_length is not None and len(s) < self.min_length:
+            raise ValueError(f"String should have at least {self.min_length} characters")
+        if self.max_length is not None and len(s) > self.max_length:
+            raise ValueError(f"String should have at most {self.max_length} characters")
 
         # Check if it matches the regular expression if provided
         if self.pattern and not self.compiled.match(s):
