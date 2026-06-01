@@ -16,8 +16,8 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=f4ced14b"></script>
-      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -79,14 +79,14 @@
              
   <h1>Source code for visiomatic.server.config.config</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Configure application.</span>
+<span class="sd">Manage configuration.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># Copyright CEA/CFHT/CNRS/UParisSaclay</span>
 <span class="c1"># Licensed under the MIT licence</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">SUPPRESS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">environ</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">exit</span><span class="p">,</span> <span class="n">modules</span>
@@ -97,7 +97,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.quantity</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_to_quantity_array</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..types</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_to_quantity_array</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppSettings</span>
 
 
@@ -120,10 +120,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">image_filename</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span> <span class="o">=</span> <span class="n">config_file</span>
 
-        <span class="c1"># Skip argument parsing if Sphinx or PyTest are involved</span>
-        <span class="k">if</span> <span class="s1">&#39;sphinx&#39;</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+        <span class="c1"># Skip argument parsing if Sphinx or pytest are involved</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;pytest&quot;</span> <span class="ow">in</span> <span class="n">modules</span>
+            <span class="ow">or</span> <span class="s2">&quot;sphinx&quot;</span> <span class="ow">in</span> <span class="n">modules</span>
+            <span class="ow">or</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IN_SPHINX_BUILD&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+        <span class="p">):</span>
             <span class="n">args</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="c1"># Parse command line</span>
         <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
             <span class="n">args_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">args_dict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]:</span>
@@ -240,43 +243,44 @@
 <span class="sd">        gdict: dict</span>
 <span class="sd">            Dictionary of all settings, organized in groups.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">summary</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="c1"># Add options not relevant to configuration itself</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-V&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Return the version of the package and exit&quot;</span><span class="p">,</span> 
             <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">package</span><span class="o">.</span><span class="n">config_file</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Configuration filename (default=</span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">config_file</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> 
             <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--save_config&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Save a default </span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> configuration file and exit&quot;</span><span class="p">,</span>
             <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-S&quot;</span><span class="p">,</span> <span class="s2">&quot;--show_config&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Print the actual </span><span class="si">{</span><span class="n">package</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> configuration settings&quot;</span><span class="p">,</span>
             <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;file&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;FITS image filename&quot;</span><span class="p">,</span>
             <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span>
         <span class="p">)</span>
+
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-            <span class="n">args_group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+            <span class="n">args_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
             <span class="n">groupsettings</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
             <span class="n">settings</span> <span class="o">=</span> <span class="n">groupsettings</span><span class="o">.</span><span class="n">schema</span><span class="p">()[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
             <span class="n">defaults</span> <span class="o">=</span> <span class="n">groupsettings</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
@@ -319,7 +323,7 @@
                         <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">help</span><span class="si">}</span><span class="s2"> (default=</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s2">)&quot;</span>
                     <span class="p">)</span>  
         <span class="c1"># Generate dictionary of args grouped by section</span>
-        <span class="n">fdict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
+        <span class="n">fdict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">gdict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># Command-line specific arguments</span>
         <span class="n">gdict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fdict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
@@ -443,6 +447,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">other_exception</span><span class="p">)</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 </div>
+
 
 
 </pre></div>

@@ -16,8 +16,8 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=f4ced14b"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -86,10 +86,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">remove</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">exit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.request</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">URLError</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">webbrowser</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">supervisors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">visiomatic</span><span class="w"> </span><span class="kn">import</span> <span class="n">package</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">visiomatic.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
@@ -141,6 +144,25 @@
     <span class="k">return</span></div>
 
 
+
+<div class="viewcode-block" id="open_browser_when_ready">
+<a class="viewcode-back" href="../../../api/server/cmd.html#visiomatic.cmd.start.open_browser_when_ready">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_browser_when_ready</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start a browser session once the server is up and running.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">link</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}{</span><span class="n">root_path</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># succeeds only when server is actually up</span>
+            <span class="n">urlopen</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">link</span><span class="si">}{</span><span class="n">api_path</span><span class="si">}</span><span class="s2">/health&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="n">URLError</span><span class="p">:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../api/server/cmd.html#visiomatic.cmd.start.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -163,33 +185,26 @@
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
-    <span class="c1"># Local use case</span>
+    <span class="c1"># Local browsing use case</span>
     <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">image_filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;no_browser&quot;</span><span class="p">]:</span>
-        <span class="c1"># Monkey-patch Uvicorn calls to start the browser AFTER the server</span>
-        <span class="n">link</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">original_startup</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">should_exit</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
-
-        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_startup_with_browser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_startup</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
-
-        <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#type: ignore</span>
-        <span class="n">supervisors</span><span class="o">.</span><span class="n">BaseReload</span><span class="o">.</span><span class="n">startup</span> <span class="o">=</span> <span class="n">startup_with_browser</span> <span class="c1">#type: ignore</span>
-        <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">init_processes</span> <span class="c1">#type: ignore</span>
-        <span class="n">supervisors</span><span class="o">.</span><span class="n">Multiprocess</span><span class="o">.</span><span class="n">init_processes</span> <span class="o">=</span> <span class="n">startup_with_browser</span> <span class="c1">#type: ignore</span>
-
-        <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">original_startup</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">startup</span> <span class="c1">#type: ignore</span>
-        <span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="o">.</span><span class="n">startup</span> <span class="o">=</span> <span class="n">async_startup_with_browser</span> <span class="c1">#type: ignore</span>
+        <span class="c1"># Start watcher thread to open browser when server is ready</span>
+        <span class="n">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">open_browser_when_ready</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;root_path&quot;</span><span class="p">],</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;api_path&quot;</span><span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
    
     <span class="c1"># Force number of workers to be 1 if not on Linux (because of missing libs)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">package</span><span class="o">.</span><span class="n">isonlinux</span> \
         <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;workers&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;reload&quot;</span><span class="p">]:</span>
         <span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;workers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="c1"># Start the server</span>
+    <span class="c1"># Start the server itself</span>
     <span class="n">start_server</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
         <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
