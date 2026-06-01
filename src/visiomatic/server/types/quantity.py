@@ -8,7 +8,7 @@ serializing AstroPy unit-aware "quantities"
 from __future__ import annotations
 
 from numbers import Number
-from re import findall
+from re import compile, match
 from typing import TYPE_CHECKING, Annotated, Any, Iterable, Literal, Tuple
 
 from astropy import units as u  #type: ignore[import-untyped]
@@ -88,6 +88,10 @@ class QuantityAnnotation:
     unit: str
         The unit type of the Pydantic field (e.g., `"m"`, or `"deg"`).
         All input units must be convertible to this unit.
+    description: str, optional
+        Description string.
+    decimals: int, optional
+        Maximum number of decimals for the serialization of quantities.
     min_shape: tuple[int], optional
         Minimum number of vector components on each axis.
     max_shape: tuple[int], optional
@@ -110,18 +114,20 @@ class QuantityAnnotation:
         If disabled, a value without units - provided by the user - will be
         treated as the base units of the `QuantityUnit`.
     """
+    description: str = ""
+    decimals: int | None = None
     min_shape: np.ndarray | None = None
     max_shape: np.ndarray | None = None
     ge: u.Quantity | str | None = None
     gt: u.Quantity | str | None = None
     le: u.Quantity | str | None = None
     lt: u.Quantity | str | None = None
-    description: str = ""
     def __init__(
             self,
             unit: str,
             *,
             description: str = "",
+            decimals: int | None = None,
             min_shape: Tuple[int, ...] | None = None,
             max_shape: Tuple[int, ...] | None = None,
             ge: u.Quantity | str | None = None,
@@ -136,6 +142,7 @@ class QuantityAnnotation:
 
         self.unit = unit
         self.description = description
+        self.decimals = decimals
 
         self.min_shape = np.array(1 if min_shape is None else min_shape, dtype=np.int32) 
         self.max_shape = np.array(1 if max_shape is None else max_shape, dtype=np.int32)
@@ -266,12 +273,22 @@ class QuantityAnnotation:
 
         if self.ser_mode == "dict":
             return {
-                "value": v.value,
+                "value": v.value.round(self.decimals) if self.decimals is not None \
+                    else v.value,
                 "unit": v.unit if not to_json else f"{v.unit}",
             }
 
-        if self.ser_mode == "str" or to_json:
-            return f"{v}"
+        if to_json:
+            return {
+                "value": v.value.round(self.decimals).tolist() \
+                    if self.decimals is not None \
+                    else v.value.tolist(),
+                "unit": f"{v.unit}"
+            }
+
+        if self.ser_mode == "str":
+            return f"{v.round(self.decimals)}" if self.decimals is not None \
+                else f"{v}"
 
         return v
 
@@ -338,9 +355,11 @@ class QuantityAnnotation:
 
 
 def AnnotatedQuantity(
-        default: u.Quantity | str,
+        default: u.Quantity | str | None = None,
+        unit: str | None = None,
         short: str | None = None,
         description: str = "",
+        decimals: int | None = None,
         min_shape: Tuple[int, ...] | None = None,
         max_shape: Tuple[int, ...] | None = None,
         ge: u.Quantity | str | None = None,
@@ -398,12 +417,16 @@ def AnnotatedQuantity(
 
     Parameters
     ----------
-    default: ~astropy.units.Quantity or str
+    default: ~astropy.units.Quantity or str, optional
         Default value.
+    unit: str, optional
+        Unit for quantity (overrided by default unit if provided).
     short: str, optional
         shortcut for keyword.
     description: str, optional
         Description string.
+    decimals: int, optional
+        Maximum number of decimals for the serialization of quantities.
     min_shape: tuple[int], optional
         Minimum number of vector components on each axis.
     max_shape: tuple[int], optional
@@ -417,29 +440,31 @@ def AnnotatedQuantity(
     lt: ~astropy.units.Quantity or str, optional
         Lower limit (strict).
     """
-    default = u.Quantity(default)
-    unit = default.unit
-    physType = u.get_physical_type(default)
+    if default is not None:
+        default = u.Quantity(default)
+        unit = default.unit #type: ignore[union-attr]
+    elif unit is None:
+        raise ValueError
+    physType = u.get_physical_type(u.Quantity("1 " + str(unit)))
     json_extra: dict = {}
-    json_extra['default'] = default.to_string()
+    if default is not None:
+        json_extra['default'] = default.to_string() #type: ignore[union-attr]
     if min_shape is not None:
-        min_shape = tuple(min_shape)
         json_extra['minShape'] = str(min_shape)
     if max_shape is not None:
-        max_shape = tuple(max_shape)
         json_extra['maxShape'] = str(max_shape)
     if lt is not None:
         lt = u.Quantity(lt)
-        json_extra['exclusiveMaximum'] = lt.to_string()
+        json_extra['exclusiveMaximum'] = lt.to_string() #type: ignore[union-attr]
     if gt is not None:
         gt = u.Quantity(gt)
-        json_extra['exclusiveMinimum'] = gt.to_string()
+        json_extra['exclusiveMinimum'] = gt.to_string() #type: ignore[union-attr]
     if le is not None:
         le = u.Quantity(le)
-        json_extra['maximum'] = le.to_string()
+        json_extra['maximum'] = le.to_string() #type: ignore[union-attr]
     if ge is not None:
         ge = u.Quantity(ge)
-        json_extra['minimum'] = ge.to_string()
+        json_extra['minimum'] = ge.to_string() #type: ignore[union-attr]
     if physType is not None:
         json_extra['physType'] = str(physType)
     if short:
@@ -447,7 +472,8 @@ def AnnotatedQuantity(
     return Annotated[
         u.Quantity,
         QuantityAnnotation(
-            unit=u.Quantity(default).unit,
+            unit=unit,
+            decimals=decimals,
             min_shape=min_shape,
             max_shape=max_shape,
             ge=ge,
@@ -456,13 +482,78 @@ def AnnotatedQuantity(
             lt=lt
         ),
         Field(
-            default_factory=lambda: default,
-            description=description,
-            validate_default=True,
             json_schema_extra=json_extra
-        )        
+        )  
     ]
 
+
+# Setup parsing of Quantities
+
+_NUM = compile(r'[+-]?(?:(?:\d+\.\d*)|(?:\.\d+)|(?:\d+))(?:[eE][+-]?\d+)?')
+_PAIRS = {'[': ']', '(': ')', '{': '}'}
+_CLOSERS = set(_PAIRS.values())
+
+
+def _splitvu(s):
+    if not s: return None, None
+    if s[0] in _PAIRS:
+        j = _match(s, 0)
+        return (s[:j+1].strip(), s[j+1:].strip()) if j is not None else (None, None)
+    i = 0; n = len(s); ok = False
+    while 1:
+        while i < n and s[i].isspace(): i += 1
+        m = _NUM.match(s, i)
+        if not m: break
+        ok = True; i = m.end()
+        while i < n and s[i].isspace(): i += 1
+        if i < n and s[i] in ',;': i += 1
+    return (s[:i].strip(), s[i:].strip()) if ok else (None, None)
+
+
+def _match(s, i):
+    st = [_PAIRS[s[i]]]
+    for j, c in enumerate(s[i+1:], i+1):
+        if c in _PAIRS: st.append(_PAIRS[c])
+        elif c in _CLOSERS:
+            if not st or c != st.pop(): return None
+            if not st: return j
+    return None
+
+
+def _split(s, delims):
+    out, buf, st = [], [], []
+    for c in s:
+        if c in _PAIRS: st.append(_PAIRS[c]); buf.append(c)
+        elif c in _CLOSERS:
+            if not st or c != st.pop(): raise ValueError
+            buf.append(c)
+        elif not st and c in delims:
+            x = ''.join(buf).strip()
+            if x: out.append(x)
+            buf = []
+        else: buf.append(c)
+    x = ''.join(buf).strip()
+    if x: out.append(x)
+    return out
+
+
+def _parse(s):
+    s = s.strip()
+    if not s: raise ValueError
+    if s[0] in _PAIRS:
+        j = _match(s, 0)
+        if j != len(s) - 1: raise ValueError
+        s = s[1:-1].strip()
+        if not s: raise ValueError
+    rows = _split(s, ';')
+    x = [_items(r) for r in rows]
+    return x[0] if len(x) == 1 else x
+
+
+def _items(s):
+    x = [(_parse(t) if t[:1] in _PAIRS else float(t)) for t in _split(s, ', \t\r\n')]
+    if not x or any(isinstance(t, str) or (isinstance(t, list) and not t) for t in x): raise ValueError
+    return x[0] if len(x) == 1 else x
 
 
 def str_to_quantity_array(s: str) -> u.Quantity | None:
@@ -490,20 +581,13 @@ def str_to_quantity_array(s: str) -> u.Quantity | None:
     v: ~astropy.units.Quantity
         Astropy units Quantity object.
     """
-    found = findall(
-        r"^\s*[\(|\[]*([\(\[\)\]\,\;\.eE\+\-\d\s]+)[\)|\]]*\s*"
-            r"(\w+[\w\d\s\/\^\*\-\.]*)*$",
-        s
-    )
-    if found is None:
+    try:
+        if not isinstance(s, str): return None
+        vtxt, utxt = _splitvu(s.strip())
+        if not vtxt or not utxt: return None
+        a = np.array(_parse(vtxt), float)
+        return u.Quantity(float(a) if a.ndim == 0 else a, u.Unit(utxt, parse_strict='raise'))
+
+    except Exception:
         return None
-    # Return result with largest number of components
-    value = max(
-        [np.fromstring(found[0][0], sep=sep) for sep in [' ', ',', ';']],
-        key=lambda x: len(x)
-    )
-    return u.Quantity(
-        value=value if len(value) > 1 else float(value),
-        unit=found[0][1]
-    )
 

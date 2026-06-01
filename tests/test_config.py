@@ -4,8 +4,6 @@ Tests for the configuration module
 # Copyright CFHT/CNRS/CEA/UParisSaclay
 # Licensed under the MIT licence
 
-from typing import Annotated
-
 import pytest
 
 from visiomatic.server.config import Config, AppSettings

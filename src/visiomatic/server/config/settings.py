@@ -9,13 +9,18 @@ from __future__ import annotations
 from os import cpu_count, path
 from typing import Any, Tuple
 
+from astropy import units as u #type: ignore[import-untyped]
+import numpy as np
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 from ... import package
+from ..types import AnnotatedQuantity
 from .fields import SField
 
+# Enable imperial units such as inches
+u.imperial.enable()
 
 
 class HostSettings(BaseSettings):

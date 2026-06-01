@@ -1,12 +1,12 @@
 """
-Configure application.
+Manage configuration.
 """
 # Copyright CEA/CFHT/CNRS/UParisSaclay
 # Licensed under the MIT licence
 
 from argparse import ArgumentParser, SUPPRESS
 from configparser import ConfigParser
-from os import makedirs, path
+from os import environ, makedirs, path
 from pathlib import Path
 from pprint import pprint
 from sys import exit, modules
@@ -17,7 +17,7 @@ from astropy import units as u  #type: ignore[import-untyped]
 from pydantic import ValidationError
 
 from ... import package
-from .quantity import str_to_quantity_array
+from ..types import str_to_quantity_array
 from .settings import AppSettings
 
 
@@ -38,10 +38,12 @@ class Config(object):
         self.image_filename = None
         self.config_filename = config_file
 
-        # Skip argument parsing if Sphinx or PyTest are involved
-        if 'sphinx' in modules:
-            args = False
-        # Parse command line
+        # Skip argument parsing if Sphinx or pytest are involved
+        if "PYTEST_CURRENT_TEST" in environ or \
+            "COVERAGE_RUN" in environ or \
+            "COVERAGE_PROCESS_START" in environ or \
+            environ.get("IN_SPHINX_BUILD") == "1":
+              args = False
         if args:
             args_dict = self.parse_args()
             if args_dict['version']:
@@ -144,43 +146,44 @@ class Config(object):
         gdict: dict
             Dictionary of all settings, organized in groups.
         """
-        parser = ArgumentParser(
+        self.parser = ArgumentParser(
             description=f"{package.title} v{package.version} : {package.summary}"
         )
         # Add options not relevant to configuration itself
-        parser.add_argument(
+        self.parser.add_argument(
             "-V", "--version",
             default=False,
             help="Return the version of the package and exit", 
             action='store_true'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             "-c", "--config",
             type=str, default=package.config_file,
             help=f"Configuration filename (default={package.config_file})", 
             metavar="FILE"
         )
-        parser.add_argument(
+        self.parser.add_argument(
             "-s", "--save_config",
             default=False,
             help=f"Save a default {package.title} configuration file and exit",
             action='store_true'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             "-S", "--show_config",
             default=False,
             help=f"Print the actual {package.title} configuration settings",
             action='store_true'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             "file",
             default="",
             type=str,
             help="FITS image filename",
             nargs="?"
         )
+
         for group in self.groups:
-            args_group = parser.add_argument_group(group.title())
+            args_group = self.parser.add_argument_group(group.title())
             groupsettings = getattr(self.settings, group)
             settings = groupsettings.schema()['properties']
             defaults = groupsettings.dict()
@@ -223,7 +226,7 @@ class Config(object):
                         help=f"{help} (default={default})"
                     )  
         # Generate dictionary of args grouped by section
-        fdict = vars(parser.parse_args())
+        fdict = vars(self.parser.parse_known_args()[0])
         gdict = {}
         # Command-line specific arguments
         gdict['version'] = fdict['version']
@@ -337,4 +340,5 @@ class Config(object):
             except Exception as other_exception:
                 print(other_exception)
                 exit(1)
+
 
