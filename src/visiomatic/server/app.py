@@ -204,6 +204,7 @@ def create_app() -> FastAPI:
         -------
         response: dict
             Returns {"ok": True} if server is alive.
+        """
 
 
     # Tile endpoint
