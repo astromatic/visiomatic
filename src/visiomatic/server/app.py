@@ -133,7 +133,7 @@ def create_app() -> FastAPI:
         title=package.title,
         description=package.description,
         version=package.version,
-        contact={
+        contact = {
             "name":  f"{package.contact['name']} ({package.contact['affiliation']})",
             "url":   package.url,
             "email": package.contact['email']
@@ -193,6 +193,20 @@ def create_app() -> FastAPI:
     templates = Jinja2Templates(
         directory=path.join(package.src_dir, template_dir)
     )
+
+
+    @app.get(api_path + "/health", tags=["Web API"])
+    async def get_health():
+        """
+        GET endpoint for server health check.
+
+        Returns
+        -------
+        response:  byte stream
+            Returns "ok" string if server is alive.
+        """
+        return {"ok": True}
+
 
     # Tile endpoint
     @app.get(api_path, tags=["services"])

@@ -15,7 +15,7 @@ def test_Config(tmp_config_filename):
     Test Config instantiation and methods.
     We skip argument parsing for now, which causes issues with pytest.
     """
-    conf = Config(AppSettings(), config_file=tmp_config_filename)
+    conf = Config(AppSettings(), config_file=tmp_config_filename, args=False)
     # Save a configuration file
     conf.save_config(tmp_config_filename)
     # Load it
