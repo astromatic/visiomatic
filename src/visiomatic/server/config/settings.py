@@ -17,7 +17,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from ... import package
 from .fields import SField
-from .fields import SField
 
 # Enable imperial units such as inches
 u.imperial.enable()
