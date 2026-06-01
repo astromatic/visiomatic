@@ -7,10 +7,13 @@ Start script (renamed as :program:`visiomatic`).
 from glob import glob
 from os import makedirs, path, remove
 from sys import exit
+from threading import Thread
 from time import sleep
+from urllib.request import urlopen
+from urllib.error import URLError
 import webbrowser
 
-from uvicorn import run, server, supervisors
+from uvicorn import run
 
 from visiomatic import package
 from visiomatic.server import config
@@ -59,6 +62,22 @@ def start_server(
     )
     return
 
+
+def open_browser_when_ready(host: str, port: int, root_path: str, api_path: str):
+    """
+    Start a browser session once the server is up and running.
+    """
+    link =  f"http://{host}:{port}{root_path or ''}"
+    while True:
+        try:
+            # succeeds only when server is actually up
+            urlopen(f"{link}{api_path}/health", timeout=2).close()
+            break
+        except URLError:
+            sleep(0.5)
+    webbrowser.open(link)
+
+
 def main() -> int:
     """
     Set up configuration and start the VisiOmatic server.
@@ -79,33 +98,26 @@ def main() -> int:
         for file in files:
             remove(file)
 
-    # Local use case
+    # Local browsing use case
     if config.image_filename and not config.settings["no_browser"]:
-        # Monkey-patch Uvicorn calls to start the browser AFTER the server
-        link =  f"http://{config.settings['host']}:{config.settings['port']}"
-        def startup_with_browser(self, *args, **kwargs) -> None:
-            self.original_startup(*args, **kwargs)
-            self.should_exit.wait(1)
-            webbrowser.open(link)
-
-        async def async_startup_with_browser(self, *args, **kwargs) -> None:
-            await self.original_startup(*args, **kwargs)
-            webbrowser.open(link)
-
-        supervisors.BaseReload.original_startup = supervisors.BaseReload.startup #type: ignore
-        supervisors.BaseReload.startup = startup_with_browser #type: ignore
-        supervisors.Multiprocess.original_startup = supervisors.Multiprocess.init_processes #type: ignore
-        supervisors.Multiprocess.init_processes = startup_with_browser #type: ignore
-
-        server.Server.original_startup = server.Server.startup #type: ignore
-        server.Server.startup = async_startup_with_browser #type: ignore
+        # Start watcher thread to open browser when server is ready
+        Thread(
+            target=open_browser_when_ready,
+            args=(
+                config.settings["host"],
+                config.settings["port"],
+                config.settings["root_path"],
+                config.settings["api_path"]
+            ),
+            daemon=True,
+        ).start()
    
     # Force number of workers to be 1 if not on Linux (because of missing libs)
     if not package.isonlinux \
         and config.settings["workers"] > 1 and not config.settings["reload"]:
         config.settings["workers"] = 1
 
-    # Start the server
+    # Start the server itself
     start_server(
         host=config.settings["host"],
         port=config.settings["port"],
