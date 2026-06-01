@@ -17,11 +17,7 @@ dependencies = [
     "atomics >= 1.0",
     "fastapi >= 0.74",
     "jinja2 >= 3.1.2",
-    "joblib >= 1.0",
-    "methodtools >= 0.4.7",
-    "numpy >= 1.19, <2",
-    "opencv-python >= 4.5",
-    "orjson >= 3.9.0",
+    "numpy >= 1.22",
     "platformdirs >= 3.4.0",
     "posix_ipc >= 1.1.0; platform_system=='Linux'",
     "pydantic >= 2.2",
@@ -39,7 +35,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13"
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14"
 ]
 
 [project.optional-dependencies]
