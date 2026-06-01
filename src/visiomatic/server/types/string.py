@@ -124,8 +124,8 @@ class StrAnnotation:
              raise ValueError(f"String should match {self.pattern} pattern")
 
         # Check if it matches any member of the list if provided
-        if self.valid_list and not s in self.valid_list:
-             raise ValueError(f"String should match any of {self.valid_list}")
+        if self.valid_list is not None and s not in self.valid_list:
+            raise ValueError(f"String should match any of {self.valid_list}")
 
         return s
 
