@@ -202,10 +202,8 @@ def create_app() -> FastAPI:
 
         Returns
         -------
-        response:  byte stream
-            Returns "ok" string if server is alive.
-        """
-        return {"ok": True}
+        response: dict
+            Returns {"ok": True} if server is alive.
 
 
     # Tile endpoint
